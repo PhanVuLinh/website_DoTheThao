@@ -1,19 +1,11 @@
 const express = require("express");
 const path = require("path");
-const mongoose = require("mongoose");
 require('dotenv').config();
 
+const mongoose = require("mongoose");
 mongoose.connect(process.env.DATABASE);
-const Product = mongoose.model("Product", {
-  title: String,
-  description: String,
-  price: Number,
-  discountPercentage: Number,
-  stock: Number,
-  status: String,
-  position: Number,
-  deleted: Boolean,
-});
+
+const Product = require("./models/product.model");
 
 const app = express();
 const port = 3000;
