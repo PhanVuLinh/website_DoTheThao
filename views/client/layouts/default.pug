@@ -2,9 +2,16 @@ doctype html
 html
   head 
     title #{title }
+
+    link(
+      rel="stylesheet"
+      href="/client/assets/css/style.css"
+    )
   body
     include ../partials/header.pug
 
     block main
   
     include ../partials/footer.pug    
+
+    script(src="/client/assets/js/script.js") 
