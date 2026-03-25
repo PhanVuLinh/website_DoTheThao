@@ -2,5 +2,7 @@ extends ../layouts/default.pug
 
 block main
   h1 Danh sách sản phẩm
-  h3 Đây là trang danh sách sản phẩm của chúng tôi!
-  p Tại đây bạn có thể tìm thấy các sản phẩm thể thao chất lượng cao.
+  
+  ul 
+    each item in productList  
+      li #{item.title} - #{item.description} - #{item.price} - #{item.stock} 

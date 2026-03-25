@@ -1,5 +1,19 @@
 const express = require("express");
 const path = require("path");
+const mongoose = require("mongoose");
+mongoose.connect(
+  "mongodb+srv://linhphanzzz04_db_user:Linhphanvu123@cluster0.mof0szx.mongodb.net/sport_management",
+);
+const Product = mongoose.model("Product", {
+  title: String,
+  description: String,
+  price: Number,
+  discountPercentage: Number,
+  stock: Number,
+  status: String,
+  position: Number,
+  deleted: Boolean,
+});
 
 const app = express();
 const port = 3000;
@@ -12,16 +26,20 @@ app.set("view engine", "pug");
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
-  res.render('client/pages/home.pug', {
-      title: "Trang chủ"
+  res.render("client/pages/home.pug", {
+    title: "Trang chủ",
   });
 });
 
-app.get("/products", (req, res) => {
-    res.render('client/pages/product-list.pug', {
-        title: "Danh sách sản phẩm"
-    });
+app.get("/products", async (req, res) => {
+  const productList = await Product.find({});
 
+  console.log(productList);
+
+  res.render("client/pages/product-list.pug", {
+    title: "Danh sách sản phẩm",
+    productList: productList,
+  });
 });
 
 app.listen(port, () => {
