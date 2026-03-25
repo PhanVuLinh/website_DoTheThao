@@ -5,7 +5,8 @@ require('dotenv').config();
 const mongoose = require("mongoose");
 mongoose.connect(process.env.DATABASE);
 
-const Product = require("./models/product.model");
+const productController = require("./controllers/client/product.controller");
+const homeController = require("./controllers/client/home.controller");
 
 const app = express();
 const port = 3000;
@@ -17,22 +18,9 @@ app.set("view engine", "pug");
 //Thiết lập thư mục tĩnh của FE
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/", (req, res) => {
-  res.render("client/pages/home.pug", {
-    title: "Trang chủ",
-  });
-});
+app.get("/", homeController.index);
 
-app.get("/products", async (req, res) => {
-  const productList = await Product.find({});
-
-  console.log(productList);
-
-  res.render("client/pages/product-list.pug", {
-    title: "Danh sách sản phẩm",
-    productList: productList,
-  });
-});
+app.get("/products", productController.list);
 
 app.listen(port, () => {
   console.log(`Website đang chạy trên cổng ${port}`);
