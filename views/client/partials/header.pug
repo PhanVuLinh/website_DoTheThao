@@ -1,1 +1,54 @@
-div header
+// TOP BAR
+.top-bar
+  .top-bar__inner
+    .top-bar__item
+      i.fa-solid.fa-phone
+      | 0123.456.789
+    .top-bar__item
+      i.fa-solid.fa-envelope
+      | linhphanzzz04@gmail.com
+    .top-bar__item
+      i.fa-solid.fa-location-dot
+      | Số 123, đường ABC, thành phố XYZ
+
+// MAIN NAVBAR
+nav.navbar
+  .navbar__inner
+
+    // LOGO
+    a.logo(href="#")
+      img.logo__img(src="./client/assets/images/titisport.png", alt="Titi Sport")
+
+    // NAV LINKS
+    ul.nav-links
+      li
+        a.active(href="#") Trang Chủ
+      li
+        a(href="#")
+          | Bóng Đá
+          i.fa-solid.fa-chevron-down.arrow
+        .dropdown
+          a(href="#") Ngoại Hạng Anh
+          a(href="#") La Liga
+          a(href="#") V.League
+          a(href="#") Champions League
+          a(href="#") World Cup
+      li
+        a(href="#")
+          | Thể Thao Khác
+          i.fa-solid.fa-chevron-down.arrow
+        .dropdown
+          a(href="#") Bóng Rổ
+          a(href="#") Cầu Lông
+          a(href="#") Tennis
+          a(href="#") Bơi Lội
+          a(href="#") Điền Kinh
+      li
+        a(href="#") Tin Tức
+      li
+        a(href="#") Liên Hệ
+
+    // CART
+    button.cart-btn
+      i.fa-solid.fa-cart-shopping
+      span.cart-badge 1

@@ -1,3 +1,231 @@
-h1 {
-  color:green
+/* ===== RESET ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== ROOT ===== */
+:root {
+  --blue-dark: #00004d;
+  --blue-soft: #1a1a80;
+  --red-main:  #eb5438;
+  --white:     #ffffff;
+  --gray-bg:   #f5f7fa;
+  --text-dark: #1a1a1a;
+}
+
+/* ===== BODY ===== */
+body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background: var(--gray-bg);
+}
+
+/* ===== TOP BAR ===== */
+.top-bar {
+  background: linear-gradient(90deg, var(--blue-dark), var(--blue-soft));
+  color: var(--white);
+  font-size: 13px;
+  padding: 8px 0;
+}
+
+.top-bar__inner {
+  max-width: 1280px;
+  margin: auto;
+  padding: 0 40px;
+  display: flex;
+  justify-content: end;
+  gap: 50px;
+}
+
+.top-bar__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.9;
+  transition: 0.3s;
+}
+
+.top-bar__item:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.top-bar__item i {
+  font-size: 13px;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  background: var(--white);
+  box-shadow: 0 6px 25px rgba(0,0,77,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 3px solid var(--red-main);
+}
+
+.navbar__inner {
+  max-width: 1280px;
+  margin: auto;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+/* ===== LOGO ===== */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo__img {
+  height: 55px;
+  width: auto;
+  object-fit: contain;
+  transition: 0.3s;
+}
+
+.logo:hover .logo__img {
+  transform: scale(1.05);
+}
+
+/* ===== NAV LINKS ===== */
+.nav-links {
+  display: flex;
+  list-style: none;
+}
+
+.nav-links > li {
+  position: relative;
+}
+
+.nav-links > li > a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 18px;
+  height: 30px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #333;
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -3px;
+  transition: 0.25s;
+}
+
+/* Hover */
+.nav-links > li > a:hover {
+  color: var(--red-main);
+  border-bottom-color: rgba(235,84,56,0.4);
+}
+
+/* Active */
+.nav-links > li > a.active {
+  color: var(--blue-dark);
+  border-bottom: 3px solid var(--red-main);
+  font-weight: 700
+}
+
+/* ===== ARROW ===== */
+.arrow {
+  font-size: 10px;
+  opacity: 0.6;
+  transition: 0.25s;
+}
+
+.nav-links > li:hover .arrow {
+  transform: rotate(180deg);
+}
+
+/* ===== DROPDOWN ===== */
+.dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,77,0.12);
+  min-width: 220px;
+  overflow: hidden;
+  border-top: 3px solid var(--red-main);
+}
+
+.nav-links > li:hover .dropdown {
+  display: block;
+  animation: dropdownFade 0.25s ease;
+}
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown a {
+  display: block;
+  padding: 12px 18px;
+  font-size: 13.5px;
+  color: var(--text-dark);
+  text-decoration: none;
+  transition: 0.25s;
+}
+
+.dropdown a:hover {
+  background: rgba(235,84,56,0.08);
+  color: var(--blue-dark);
+  padding-left: 24px;
+}
+
+/* ===== CART ===== */
+.cart-btn {
+  position: relative;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.cart-btn i {
+  font-size: 22px;
+  color: var(--blue-dark);
+  transition: 0.3s;
+}
+
+.cart-btn:hover i {
+  color: var(--red-main);
+  transform: scale(1.15);
+}
+
+/* BADGE */
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  background: var(--red-main);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .nav-links {
+    display: none;
+  }
 }
