@@ -1,9 +1,9 @@
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
-mongoose.connect(
-  "mongodb+srv://linhphanzzz04_db_user:Linhphanvu123@cluster0.mof0szx.mongodb.net/sport_management",
-);
+require('dotenv').config();
+
+mongoose.connect(process.env.DATABASE);
 const Product = mongoose.model("Product", {
   title: String,
   description: String,
