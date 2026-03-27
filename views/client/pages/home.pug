@@ -1,5 +1,38 @@
 extends ../layouts/default.pug
 
 block main
-  h1 Trang chủ
-  h3 Chào mừng đến với trang chủ của chúng tôi!
+  // SECTION 1: HERO
+  section.hero
+    //- Ảnh nền dùng thẻ img chuẩn SEO
+    img.hero__img(src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=2070&auto=format&fit=crop" alt="TitiSport - Bứt Phá Mọi Giới Hạn")
+    
+    .hero__overlay
+    .hero__container 
+      .hero__content
+        span.hero__badge Thế Giới Đồ Thể Thao Chính Hãng
+        h1.hero__title Bứt Phá Mọi Giới Hạn
+        p.hero__description 
+          | Trang bị những sản phẩm thể thao chất lượng cao từ TitiSport. 
+          | Chất lượng vượt trội, hỗ trợ tối đa cho mọi hoạt động thể chất của bạn.
+        
+        //- Ô tìm kiếm Pill-shape (Bo tròn) cực đẹp
+        .hero__search-box
+          form.hero-search-form
+            i.fa-solid.fa-magnifying-glass.icon-search
+            input(placeholder="Nhập tên giày, áo đấu, phụ kiện..." type="text")
+            button(type="submit") Tìm Kiếm
+
+      //- Truy cập nhanh danh mục
+      .hero__categories
+        a.category-pill(href="#")
+          i.fa-solid.fa-shoe-prints
+          span Giày Thể Thao
+        a.category-pill(href="#")
+          i.fa-solid.fa-shirt
+          span Quần Áo
+        a.category-pill(href="#")
+          i.fa-solid.fa-stopwatch
+          span Phụ Kiện
+        a.category-pill(href="#")
+          i.fa-solid.fa-percent
+          span Khuyến Mãi
