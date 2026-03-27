@@ -1,4 +1,5 @@
 extends ../layouts/default.pug
+include ../mixins/product-item.pug
 
 block main
   // SECTION 1: HERO
@@ -36,3 +37,81 @@ block main
         a.category-pill(href="#")
           i.fa-solid.fa-percent
           span Khuyến Mãi
+  // END SECTION 1: HERO
+
+  // SECTION 2
+  -
+    var productListSection2 = [
+      {
+        avatar: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
+        slug: "#",
+        discount: 30,
+        name: "Giày Chạy Bộ Nike Zoom Alpha 3 (Nam)",
+        priceOld: 3500000,
+        priceNew: 2450000,
+        code: "NK-ZA3-2024",
+        feature: "Phân loại: Giày chạy bộ chuyên nghiệp",
+        warranty: "Bảo hành: 12 tháng chính hãng",
+        delivery: "Giao hàng: Hỏa tốc 2H",
+        ratingStars: 4.5,
+        ratingTotal: 152,
+        stock: 10
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1622279457486-69d73ce156fe?q=80&w=800&auto=format&fit=crop",
+        slug: "#",
+        discount: 25,
+        name: "Vợt Tennis Wilson Ultra V4.0 (Siêu nhẹ)",
+        priceOld: 4200000,
+        priceNew: 3150000,
+        code: "WS-U4-280",
+        feature: "Trọng lượng: 280g (Chưa đan dây)",
+        warranty: "Bảo hành: Đổi trả trong 7 ngày",
+        delivery: "Giao hàng: Dự kiến 2-3 ngày",
+        ratingStars: 5,
+        ratingTotal: 89,
+        stock: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?q=80&w=800&auto=format&fit=crop",
+        slug: "#",
+        discount: 15,
+        name: "Đồng Hồ Thông Minh Garmin Forerunner 255",
+        priceOld: 8500000,
+        priceNew: 7225000,
+        code: "GM-FR255",
+        feature: "Chức năng: GPS, Đo nhịp tim, VO2 Max",
+        warranty: "Bảo hành: 24 tháng chính hãng",
+        delivery: "Giao hàng: Miễn phí toàn quốc",
+        ratingStars: 1,
+        ratingTotal: 230,
+        stock: 12
+      }
+    ];
+
+  section.deals
+    .deals__container 
+      
+      .deals__promo
+        h2.deals__title ƯU ĐÃI 2026
+        h3.deals__subtitle DEALS THỂ THAO CHÍNH HÃNG
+        p.deals__desc SĂN NGAY TRƯỚC KHI HẾT HÀNG
+        p.deals__text Nhanh tay sở hữu các sản phẩm thể thao chất lượng cao với giá cực tốt. Ưu đãi số lượng có hạn!
+        
+        .deals__countdown-title Kết thúc sau
+        .countdown
+          .countdown__item
+            span.countdown__number 12
+          .countdown__item
+            span.countdown__number 20
+          .countdown__item
+            span.countdown__number 30
+            
+        .deals__discount
+          span GIẢM ĐẾN
+          strong 990.000đ
+      //- Cột phải: Danh sách sản phẩm
+      .deals__products
+        each item in productListSection2
+          +productItem(item)
+  // End SECTION 2

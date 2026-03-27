@@ -1,0 +1,30 @@
+mixin productItem (item) 
+  .product-card
+    .product-card__img
+      img(src=item.avatar alt=item.name)
+    .product-card__badge ⚡ GIẢM -#{item.discount}%
+    .product-card__content
+      h4.product-card__title= item.name
+      .product-card__price
+        if(item.discount > 0)
+          span.price-new #{item.priceNew.toLocaleString('vi-VN')}đ
+          span.price-old #{item.priceOld.toLocaleString('vi-VN')}đ
+        else
+          span.price-new #{item.priceNew.toLocaleString('vi-VN')}đ
+
+      ul.product-card__specs
+        li= item.feature
+        li Mã SP: #{item.code}
+        li= item.warranty
+        li= item.delivery
+      .product-card__footer
+        .product-card__rating
+          - for(let i = 1; i<= item.ratingStars; i++)
+            i.fa-solid.fa-star
+          - for(let j = item.ratingStars + 1; j<= 5; j++)
+            i.fa-regular.fa-star
+          if(item.ratingStars % 1 !== 0)
+            i.fa-solid.fa-star-half-stroke
+          span (#{item.ratingTotal})
+        .product-card__stock Còn lại: 
+          span #{item.stock}
