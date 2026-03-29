@@ -2,32 +2,65 @@ footer.footer
   div(class="footer__container")
     // NEWSLETTER
     div(class="footer__newsletter")
-      h3 Đăng Ký Ngay Để Không Bỏ Lỡ Các Chương Trình Của Chúng Tôi
+      div(class="newsletter-info")
+        h3 Stay in the Game
+        p Đăng ký để nhận thông tin ưu đãi mới nhất và <span>giảm giá 10%</span> cho đơn hàng đầu tiên!
       div(class="newsletter-form")
         input(placeholder="Nhập email của bạn..." type="email")
-        button Đăng Ký Ngay
+        button 
+          | Đăng Ký 
+          i.fa-regular.fa-paper-plane
 
-    // MID
-    div(class="footer__mid")
-      ul(class="footer__nav")
-        li: a(href="#") Trang Chủ
-        li: a(href="#") Tour Trong Nước
-        li: a(href="#") Tour Nước Ngoài
-        li: a(href="#") Tin Tức
-        li: a(href="#") Liên Hệ
-      div(class="footer__social")
-        a(href="#"): i.fa-brands.fa-facebook-f
-        a(href="#"): i.fa-brands.fa-x-twitter
-        a(href="#"): i.fa-brands.fa-instagram
-        a(href="#"): i.fa-brands.fa-youtube
+    // MAIN FOOTER CONTENT
+    div(class="footer__main")
+      // Col 1: Brand Info
+      div(class="footer__col brand-col")
+        a.logo(href="/")
+          img(src="./client/assets/images/titisport.png", alt="TitiSport")
+        p Điểm đến số 1 cho những người đam mê thể thao. Cam kết hàng chính hãng 100%, chất lượng đỉnh cao, dịch vụ tận tâm.
+        div(class="footer__social")
+          a(href="#"): i.fa-brands.fa-facebook-f
+          a(href="#"): i.fa-brands.fa-instagram
+          a(href="#"): i.fa-brands.fa-twitter
+          a(href="#"): i.fa-brands.fa-youtube
 
-    hr(class="footer__divider")
+      // Col 2: Categories
+      div(class="footer__col")
+        h4 Danh Mục
+        ul.footer__links
+          li: a(href="#") Giày Thể Thao
+          li: a(href="#") Quần Áo
+          li: a(href="#") Phụ Kiện
+          li: a(href="#") Dụng Cụ Tập
+          li: a(href="#") Hàng Mới Về
+          li: a(href="#") Khuyến Mãi
 
-    // BOTTOM
-    div(class="footer__bottom")
-      p(class="footer__copy") © 2026 TITISPORT. All rights reserved.
-      a.logo(href="#")
-        img(src="./client/assets/images/titisport_footer.png")
-      div(class="footer__links")
-        a(href="#") Điều khoản dịch vụ
-        a(href="#") Chính sách bảo mật
+      // Col 3: Support
+      div(class="footer__col")
+        h4 Hỗ Trợ Khách Hàng
+        ul.footer__links
+          li: a(href="#") Hướng dẫn mua hàng
+          li: a(href="#") Chính sách đổi trả
+          li: a(href="#") Chính sách bảo hành
+          li: a(href="#") Vận chuyển & Giao nhận
+          li: a(href="#") Bảo mật thông tin
+          li: a(href="#") Câu hỏi thường gặp
+
+      // Col 4: Contact
+      div(class="footer__col contact-col")
+        h4 Liên Hệ
+        ul.footer__contact
+          li
+            div.icon-wrapper: i.fa-solid.fa-location-dot
+            span 123 Sport Street, Quận Hoàn Kiếm, Hà Nội
+          li
+            div.icon-wrapper: i.fa-solid.fa-phone
+            span 0987 654 321
+          li
+            div.icon-wrapper: i.fa-solid.fa-envelope
+            span contact@titisport.vn
+
+  // BOTTOM
+  div(class="footer__bottom")
+    div(class="footer__bottom-inner")
+      p © 2026 TitiSport. All rights reserved. Designed with ❤️ for athletes.

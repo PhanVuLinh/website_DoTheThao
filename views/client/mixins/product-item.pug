@@ -1,30 +1,41 @@
 mixin productItem (item) 
-  .product-card
-    .product-card__img
-      img(src=item.avatar alt=item.name)
-    .product-card__badge ⚡ GIẢM -#{item.discount}%
-    .product-card__content
-      h4.product-card__title= item.name
-      .product-card__price
-        if(item.discount > 0)
-          span.price-new #{item.priceNew.toLocaleString('vi-VN')}đ
-          span.price-old #{item.priceOld.toLocaleString('vi-VN')}đ
-        else
-          span.price-new #{item.priceNew.toLocaleString('vi-VN')}đ
+  .flash-product-card
+    .flash-product-card__img-wrap
+      //- span.badge.badge-orange FLASH SALE
+      span.badge.badge-pink #{item.badgeText}
+      img(src=item.avatar, alt=item.name)
+    h3.flash-product-card__title #{item.name}
+    
+    ul.flash-product-card__info
+      li
+        i.fa-solid.fa-barcode
+        | Mã SP: #{item.code}
+      li
+        i.fa-solid.fa-tag
+        | Phân loại: #{item.feature}
+      li
+        i.fa-solid.fa-shield-halved
+        | Bảo hành: #{item.warranty}
+      li
+        i.fa-solid.fa-truck-fast
+        | Giao hàng: #{item.delivery}
 
-      ul.product-card__specs
-        li= item.feature
-        li Mã SP: #{item.code}
-        li= item.warranty
-        li= item.delivery
-      .product-card__footer
-        .product-card__rating
-          - for(let i = 1; i<= item.ratingStars; i++)
-            i.fa-solid.fa-star
-          - for(let j = item.ratingStars + 1; j<= 5; j++)
-            i.fa-regular.fa-star
-          if(item.ratingStars % 1 !== 0)
-            i.fa-solid.fa-star-half-stroke
-          span (#{item.ratingTotal})
-        .product-card__stock Còn lại: 
-          span #{item.stock}
+    .flash-product-card__bottom
+      .flash-product-card__price
+        span.old-price #{item.priceOld.toLocaleString('vi-VN')}đ
+        span.new-price #{item.priceNew.toLocaleString('vi-VN')}đ
+      button.btn-cart
+        i.fa-solid.fa-cart-plus
+
+    //- Thêm khối Đánh giá và Tồn kho
+    .flash-product-card__rating-stock
+      .rating
+        i.fa-solid.fa-star
+        i.fa-solid.fa-star
+        i.fa-solid.fa-star
+        i.fa-solid.fa-star
+        i.fa-solid.fa-star-half-stroke
+        span.rating-total (1250)
+      .stock
+        span.stock-label Còn lại:
+        span.stock-number 5

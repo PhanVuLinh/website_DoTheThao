@@ -5,113 +5,192 @@ block main
   // SECTION 1: HERO
   section.hero
     //- Ảnh nền dùng thẻ img chuẩn SEO
-    img.hero__img(src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=2070&auto=format&fit=crop" alt="TitiSport - Bứt Phá Mọi Giới Hạn")
+    img.hero__img(src="../client/assets/images/banner2.jpg" alt="TitiSport")
     
     .hero__overlay
     .hero__container 
       .hero__content
-        span.hero__badge Thế Giới Đồ Thể Thao Chính Hãng
-        h1.hero__title Bứt Phá Mọi Giới Hạn
-        p.hero__description 
-          | Trang bị những sản phẩm thể thao chất lượng cao từ TitiSport. 
-          | Chất lượng vượt trội, hỗ trợ tối đa cho mọi hoạt động thể chất của bạn.
+        //- Badge
+        .hero__badge 
+          i.fa-solid.fa-trophy
+          | THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG
         
-        //- Ô tìm kiếm Pill-shape (Bo tròn) cực đẹp
+        //- Tiêu đề
+        h1.hero__title
+          | BỨT PHÁ
+          br
+          | MỌI GIỚI HẠN
+        
+        p.hero__description 
+          | Trải nghiệm đẳng cấp với bộ sưu tập thể thao mới nhất. Chất lượng
+          br
+          | vượt trội, thiết kế tối ưu cho mọi chuyển động.
+        
         .hero__search-box
           form.hero-search-form
             i.fa-solid.fa-magnifying-glass.icon-search
-            input(placeholder="Nhập tên giày, áo đấu, phụ kiện..." type="text")
+            input(placeholder="Bạn muốn tìm gì hôm nay?" type="text")
             button(type="submit") Tìm Kiếm
 
-      //- Truy cập nhanh danh mục
-      .hero__categories
-        a.category-pill(href="#")
-          i.fa-solid.fa-shoe-prints
-          span Giày Thể Thao
-        a.category-pill(href="#")
-          i.fa-solid.fa-shirt
-          span Quần Áo
-        a.category-pill(href="#")
-          i.fa-solid.fa-stopwatch
-          span Phụ Kiện
-        a.category-pill(href="#")
-          i.fa-solid.fa-percent
-          span Khuyến Mãi
+        //- Gợi ý tìm kiếm
+        .hero__suggestions
+          span.suggestion-label Gợi ý:
+          a.suggestion-pill(href="#")
+            i.fa-solid.fa-shoe-prints
+            span Giày
+          a.suggestion-pill(href="#")
+            i.fa-solid.fa-shirt
+            span Quần áo
+          a.suggestion-pill(href="#")
+            i.fa-solid.fa-volleyball
+            span Phụ kiện
   // END SECTION 1: HERO
 
-  // SECTION 2
+  // SECTION 2: CATEGORIES
+  section.categories
+    .categories__container
+      
+      //- Phần tiêu đề và nút xem tất cả
+      .categories__header
+        .categories__title-wrap
+          span.categories__subtitle DANH MỤC
+          h2.categories__title Khám Phá Bộ Sưu Tập
+        a.categories__view-all(href="#")
+          | Xem Tất Cả
+          i.fa-solid.fa-arrow-right-long
+
+      //- Lưới chứa 4 danh mục
+      .categories__grid
+        // Item 1: Giày Thể Thao
+        a.category-card(href="#")
+          .category-card__img-wrap
+            img(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop", alt="Giày Thể Thao")
+          h3.category-card__title Giày Thể Thao
+          span.category-card__count 245 Sản phẩm
+
+        // Item 2: Quần Áo
+        a.category-card(href="#")
+          .category-card__img-wrap
+            img(src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1000&auto=format&fit=crop", alt="Quần Áo")
+          h3.category-card__title Quần Áo
+          span.category-card__count 189 Sản phẩm
+
+        // Item 3: Phụ Kiện
+        a.category-card(href="#")
+          .category-card__img-wrap
+            img(src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000&auto=format&fit=crop", alt="Phụ Kiện")
+          h3.category-card__title Phụ Kiện
+          span.category-card__count 542 Sản phẩm
+
+        // Item 4: Dụng Cụ Tập
+        a.category-card(href="#")
+          .category-card__img-wrap
+            img(src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?q=80&w=1000&auto=format&fit=crop", alt="Dụng Cụ Tập")
+          h3.category-card__title Dụng Cụ Tập
+          span.category-card__count 76 Sản phẩm
+  // END SECTION 2: CATEGORIES
+  // SECTION 3: FLASH DEALS
   -
-    var productListSection2 = [
+    var productListSectio3 = [
       {
-        avatar: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
+        avatar: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=800&auto=format&fit=crop",
         slug: "#",
-        discount: 30,
-        name: "Giày Chạy Bộ Nike Zoom Alpha 3 (Nam)",
-        priceOld: 3500000,
-        priceNew: 2450000,
-        code: "NK-ZA3-2024",
-        feature: "Phân loại: Giày chạy bộ chuyên nghiệp",
+        badgeText: "-40%",
+        badgeClass: "badge-pink",
+        name: "Nike Mercurial Vapor 14 Elite FG",
+        priceOld: 5500000,
+        priceNew: 3300000,
+        code: "NK-MV14-FG",
+        feature: "Phân loại: Giày đinh sân cỏ (FG)",
+        warranty: "Bảo hành: 6 tháng keo đế",
+        delivery: "Giao hàng: Miễn phí toàn quốc",
+        ratingStars: 5,
+        ratingTotal: 340,
+        stock: 15
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
+        slug: "#",
+        badgeText: "HOT",
+        badgeClass: "badge-orange",
+        name: "Air Jordan 1 Retro High OG",
+        priceOld: 4800000,
+        priceNew: 4100000,
+        code: "NK-AJ1-OG",
+        feature: "Phân loại: Giày bóng rổ / Thời trang",
         warranty: "Bảo hành: 12 tháng chính hãng",
         delivery: "Giao hàng: Hỏa tốc 2H",
         ratingStars: 4.5,
-        ratingTotal: 152,
-        stock: 10
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1622279457486-69d73ce156fe?q=80&w=800&auto=format&fit=crop",
-        slug: "#",
-        discount: 25,
-        name: "Vợt Tennis Wilson Ultra V4.0 (Siêu nhẹ)",
-        priceOld: 4200000,
-        priceNew: 3150000,
-        code: "WS-U4-280",
-        feature: "Trọng lượng: 280g (Chưa đan dây)",
-        warranty: "Bảo hành: Đổi trả trong 7 ngày",
-        delivery: "Giao hàng: Dự kiến 2-3 ngày",
-        ratingStars: 5,
-        ratingTotal: 89,
+        ratingTotal: 1250,
         stock: 5
       },
       {
-        avatar: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?q=80&w=800&auto=format&fit=crop",
+        avatar: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
         slug: "#",
-        discount: 15,
-        name: "Đồng Hồ Thông Minh Garmin Forerunner 255",
-        priceOld: 8500000,
-        priceNew: 7225000,
-        code: "GM-FR255",
-        feature: "Chức năng: GPS, Đo nhịp tim, VO2 Max",
-        warranty: "Bảo hành: 24 tháng chính hãng",
+        badgeText: "-20%",
+        badgeClass: "badge-pink",
+        name: "Nike Air Max 270 React",
+        priceOld: 3200000,
+        priceNew: 2560000,
+        code: "NK-AM270-R",
+        feature: "Phân loại: Giày thể thao nam",
+        warranty: "Bảo hành: 6 tháng chính hãng",
+        delivery: "Giao hàng: Tiêu chuẩn 2-3 ngày",
+        ratingStars: 4.5,
+        ratingTotal: 89,
+        stock: 20
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=800&auto=format&fit=crop",
+        slug: "#",
+        badgeText: "MỚI",
+        badgeClass: "badge-orange",
+        name: "Adidas Ultraboost 22",
+        priceOld: 4500000,
+        priceNew: 4500000,
+        code: "AD-UB22",
+        feature: "Phân loại: Giày chạy bộ cao cấp",
+        warranty: "Bảo hành: Đổi trả trong 7 ngày",
         delivery: "Giao hàng: Miễn phí toàn quốc",
-        ratingStars: 1,
-        ratingTotal: 230,
-        stock: 12
+        ratingStars: 5,
+        ratingTotal: 412,
+        stock: 8
       }
-    ];
-
-  section.deals
-    .deals__container 
+    ]
+  section.flash-deals
+    .flash-deals__container
       
-      .deals__promo
-        h2.deals__title ƯU ĐÃI 2026
-        h3.deals__subtitle DEALS THỂ THAO CHÍNH HÃNG
-        p.deals__desc SĂN NGAY TRƯỚC KHI HẾT HÀNG
-        p.deals__text Nhanh tay sở hữu các sản phẩm thể thao chất lượng cao với giá cực tốt. Ưu đãi số lượng có hạn!
+      //- 1. Cột Promo (Bên trái)
+      .flash-promo
+        .flash-promo__badge
+          i.fa-solid.fa-bolt
+          | ƯU ĐÃI 2026
         
-        .deals__countdown-title Kết thúc sau
-        .countdown
-          .countdown__item
-            span.countdown__number 12
-          .countdown__item
-            span.countdown__number 20
-          .countdown__item
-            span.countdown__number 30
-            
-        .deals__discount
-          span GIẢM ĐẾN
-          strong 990.000đ
-      //- Cột phải: Danh sách sản phẩm
-      .deals__products
-        each item in productListSection2
+        h2.flash-promo__title-new
+          | DEALS THỂ THAO
+          br
+          | CHÍNH HÃNG
+        
+        p.flash-promo__desc
+          strong.flash-promo__alert SĂN NGAY TRƯỚC KHI HẾT HÀNG
+          | Nhanh tay sở hữu các sản phẩm thể thao chất lượng cao với giá cực tốt. Ưu đãi số lượng có hạn!
+        
+        p.flash-promo__countdown-label Kết thúc sau:
+        .flash-promo__countdown
+          .countdown-box
+            span.num 12
+            span.label GIỜ
+          span.colon :
+          .countdown-box
+            span.num 20
+            span.label PHÚT
+          span.colon :
+          .countdown-box
+            span.num 30
+            span.label GIÂY
+
+      //- 2. Cột Sản phẩm (Gồm 4 sản phẩm)
+      .flash-products
+        each item in productListSectio3
           +productItem(item)
-  // End SECTION 2
+  // END SECTION 3: FLASH DEALS
