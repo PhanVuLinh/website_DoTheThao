@@ -863,7 +863,7 @@ body {
 
 /* ĐÁNH GIÁ VÀ TỒN KHO */
 .flash-product-card__rating-stock {
-  border-top: 1px solid #eee; 
+  border-top: 1px solid #eee;
   padding-top: 15px;
   margin-top: 15px;
 }
@@ -937,6 +937,123 @@ body {
   }
 }
 /* END SECTION 3 */
+
+/* =========================================
+   SECTION 4: KHUYẾN MẠI THỂ THAO
+   ========================================= */
+.promotions {
+  padding: 60px 0;
+  background-color: #fcfcfc; /* Nền xám thật nhạt để làm nổi bật khối banner */
+}
+
+.promotions__container {
+  max-width: 1280px;
+  margin: auto;
+  padding: 0 40px;
+}
+
+.promotions__title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--blue-dark); /* Màu xanh đen chủ đạo của web */
+  margin-bottom: 40px;
+  text-transform: capitalize;
+}
+
+/* KHUNG TRƯỢT (SLIDER) */
+.promotions__slider {
+  overflow: hidden; /* Cắt đi những banner bị tràn ra ngoài khung */
+  width: 100%;
+  margin-bottom: 30px;
+  padding-bottom: 10px; /* Chừa khoảng trống để box-shadow khi hover không bị cắt */
+}
+
+.promotions__list {
+  display: flex;
+  gap: 30px; /* Khoảng cách giữa các banner */
+  transition: transform 0.5s ease-in-out; /* Hiệu ứng trượt mượt mà */
+}
+
+/* TỪNG BANNER (ITEM) */
+.promotions__item {
+  /* Hiển thị 3 banner trên 1 hàng (trừ đi 2 khoảng gap 30px) */
+  flex: 0 0 calc((100% - 60px) / 3);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.promotions__item a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.promotions__item img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+/* HIỆU ỨNG HOVER BANNER */
+.promotions__item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.promotions__item:hover img {
+  transform: scale(1.05); /* Zoom nhẹ ảnh bên trong */
+}
+
+/* CHẤM TRÒN ĐIỀU HƯỚNG (PAGINATION DOTS) */
+.promotions__dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot.active,
+.dot:hover {
+  background-color: var(--red-main); /* Chấm active màu đỏ cam của web */
+  transform: scale(1.2);
+}
+
+/* =========================================
+   RESPONSIVE CHO KHUYẾN MẠI
+   ========================================= */
+@media (max-width: 992px) {
+  .promotions__item {
+    /* Màn hình vừa: Hiển thị 2 banner trên 1 hàng */
+    flex: 0 0 calc((100% - 30px) / 2);
+  }
+}
+
+@media (max-width: 768px) {
+  .promotions__title {
+    font-size: 28px;
+  }
+  .promotions__item {
+    /* Màn hình điện thoại: Hiển thị 1 banner trên 1 hàng */
+    flex: 0 0 100%;
+  }
+}
+/* END SECTION 4 */
 
 /* FLASH DEALS */
 .deals {

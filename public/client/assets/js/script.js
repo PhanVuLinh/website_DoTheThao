@@ -1,26 +1,43 @@
-const menuBtn = document.querySelector('.menu-toggle');
-const mobileMenu = document.querySelector('.mobile-menu');
+document.addEventListener('DOMContentLoaded', () => {
+  const track = document.getElementById('promo-track');
+  const dots = document.querySelectorAll('#promo-dots .dot');
+  
+  if(!track || dots.length === 0) return;
 
-// overlay
-const overlay = document.createElement('div');
-overlay.classList.add('overlay');
-document.body.appendChild(overlay);
+  let currentIndex = 0;
+  let autoplayInterval;
+  const slideTo = (index) => {
+    const itemWidth = track.children[0].getBoundingClientRect().width;
+    const gap = 30; 
+    const moveDistance = (itemWidth + gap) * index;
+    
+    track.style.transform = `translateX(-${moveDistance}px)`;
 
-// open menu
-menuBtn.onclick = () => {
-  mobileMenu.classList.add('active');
-  overlay.classList.add('active');
-};
+    dots.forEach(dot => dot.classList.remove('active'));
+    dots[index].classList.add('active');
+    
+    currentIndex = index;
+  };
 
-// close menu
-overlay.onclick = () => {
-  mobileMenu.classList.remove('active');
-  overlay.classList.remove('active');
-};
-
-// dropdown mobile
-document.querySelectorAll('.has-sub').forEach(item => {
-  item.addEventListener('click', () => {
-    item.classList.toggle('active');
+  dots.forEach((dot) => {
+    dot.addEventListener('click', (e) => {
+      const clickedIndex = parseInt(e.target.getAttribute('data-index'));
+      slideTo(clickedIndex);
+      
+      resetAutoplay();
+    });
   });
+
+  const startAutoplay = () => {
+    autoplayInterval = setInterval(() => {
+      let nextIndex = (currentIndex + 1) % dots.length;
+      slideTo(nextIndex);
+    }, 4000);
+  };
+
+  const resetAutoplay = () => {
+    clearInterval(autoplayInterval);
+    startAutoplay();
+  };
+  startAutoplay();
 });

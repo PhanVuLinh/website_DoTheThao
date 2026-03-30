@@ -136,7 +136,7 @@ block main
         feature: "Phân loại: Giày thể thao nam",
         warranty: "Bảo hành: 6 tháng chính hãng",
         delivery: "Giao hàng: Tiêu chuẩn 2-3 ngày",
-        ratingStars: 4.5,
+        ratingStars: 1,
         ratingTotal: 89,
         stock: 20
       },
@@ -152,7 +152,7 @@ block main
         feature: "Phân loại: Giày chạy bộ cao cấp",
         warranty: "Bảo hành: Đổi trả trong 7 ngày",
         delivery: "Giao hàng: Miễn phí toàn quốc",
-        ratingStars: 5,
+        ratingStars:3.5,
         ratingTotal: 412,
         stock: 8
       }
@@ -194,3 +194,40 @@ block main
         each item in productListSectio3
           +productItem(item)
   // END SECTION 3: FLASH DEALS
+
+  // SECTION 4: KHUYẾN MẠI THỂ THAO
+  section.promotions
+    .promotions__container
+      h2.promotions__title Siêu Sale Thể Thao - Bứt Phá Giới Hạn
+      
+      //- Khung chứa slider
+      .promotions__slider
+        //- Dải băng dài chứa tất cả các banner (Track)
+        .promotions__list#promo-track
+          .promotions__item
+            a(href="#")
+              img(src="https://images.unsplash.com/photo-1556906781-9a412961c28c?q=80&w=800&auto=format&fit=crop", alt="Sale Giày Chạy Bộ")
+          .promotions__item
+            a(href="#")
+              img(src="https://images.unsplash.com/photo-1511886929837-354d827aae26?q=80&w=800&auto=format&fit=crop", alt="Bộ Sưu Tập Bóng Đá Mùa Giải Mới")
+          .promotions__item
+            a(href="#")
+              img(src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop", alt="Thời trang Gym & Training")
+          .promotions__item
+            a(href="#")
+              img(src="https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=800&auto=format&fit=crop", alt="Đồ Bóng Rổ & Phụ Kiện")
+          .promotions__item
+            a(href="#")
+              img(src="https://images.unsplash.com/photo-1483721310020-03333e577078?q=80&w=800&auto=format&fit=crop", alt="Quần Áo Thể Thao Nữ")
+          .promotions__item
+            a(href="#")
+              img(src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?q=80&w=800&auto=format&fit=crop", alt="Vợt & Phụ kiện Cầu Lông")
+
+      //- Khối chấm tròn (Pagination dots)
+      .promotions__dots#promo-dots
+        span.dot.active(data-index="0")
+        span.dot(data-index="1")
+        span.dot(data-index="2")
+        span.dot(data-index="3")
+  // END SECTION 4
+

@@ -26,15 +26,14 @@ mixin productItem (item)
         span.new-price #{item.priceNew.toLocaleString('vi-VN')}đ
       button.btn-cart
         i.fa-solid.fa-cart-plus
-
-    //- Thêm khối Đánh giá và Tồn kho
     .flash-product-card__rating-stock
       .rating
-        i.fa-solid.fa-star
-        i.fa-solid.fa-star
-        i.fa-solid.fa-star
-        i.fa-solid.fa-star
-        i.fa-solid.fa-star-half-stroke
+        - for (let i =1; i<=item.ratingStars; i++)
+          i.fa-solid.fa-star
+        - if (item.ratingStars % 1 !== 0)
+          i.fa-solid.fa-star-half-stroke
+        - for (let j= item.ratingStars + 1; j<=5; j++)
+          i.fa-regular.fa-star
         span.rating-total (1250)
       .stock
         span.stock-label Còn lại:
