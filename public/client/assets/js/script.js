@@ -41,3 +41,15 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   startAutoplay();
 });
+
+
+// Thay đổi ảnh Gallery
+function changeImage(element) {
+  const newSrc = element.src;
+  document.getElementById('main-image').src = newSrc;
+  
+  const thumbs = document.querySelectorAll('.gallery-thumbs img');
+  thumbs.forEach(thumb => thumb.classList.remove('active'));
+  
+  element.classList.add('active');
+}

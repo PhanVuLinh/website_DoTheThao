@@ -10,3 +10,8 @@ module.exports.list = async (req, res) => {
     productList: productList,
   });
 };
+module.exports.detail = async (req, res) => {
+  res.render("client/pages/product-detail.pug", {
+    title: "Chi tiết sản phẩm",
+  });
+};

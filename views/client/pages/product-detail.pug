@@ -1,0 +1,114 @@
+extends ../layouts/default.pug
+include ../mixins/box-breadcrumb.pug
+
+block main 
+  -
+    var breadcrumb = {
+      title: "Chi Tiết Sản Phẩm",
+      list: [
+        { link: "/", title: "Trang Chủ" },
+        { link: "/products", title: "Sản Phẩm Thể Thao" },
+        { link: "#", title: "Nike Air Zoom Pegasus 40 Đỏ" }
+      ]
+    };
+
+  +box-breadcrumb(breadcrumb)
+
+  // SECTION: CHI TIẾT SẢN PHẨM
+  section.product-detail-page
+    .container
+      .detail-grid
+        
+        // --- CỘT TRÁI: HÌNH ẢNH & THÔNG TIN ---
+        .detail-left
+          // Khối 1: Thư viện ảnh
+          .detail-card
+            h2.card-title Giày Chạy Bộ Nike Air Zoom Pegasus 40 Đỏ
+            
+            .gallery-main
+              img#main-image(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop", alt="Nike Air Zoom Pegasus 40")
+            
+            .gallery-thumbs
+              img.active(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400&auto=format&fit=crop", alt="Thumb 1", onclick="changeImage(this)")
+              img(src="https://images.unsplash.com/photo-1605340536625-2e382b6b553e?q=80&w=400&auto=format&fit=crop", alt="Thumb 2", onclick="changeImage(this)")
+              img(src="https://images.unsplash.com/photo-1584735175097-719d848f844f?q=80&w=400&auto=format&fit=crop", alt="Thumb 3", onclick="changeImage(this)")
+              img(src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=400&auto=format&fit=crop", alt="Thumb 4", onclick="changeImage(this)")
+
+          // Khối 2: Mô tả sản phẩm
+          .detail-card.info-card
+            h3.card-title Mô Tả Sản Phẩm
+            p Giày chạy bộ Nike Air Zoom Pegasus 40 mang đến cảm giác êm ái, đàn hồi tốt nhờ công nghệ đệm React kết hợp túi khí Zoom Air. Phần upper được làm từ chất liệu mesh thoáng khí, ôm sát bàn chân giúp bạn tự tin bứt tốc trên mọi cung đường.
+            p Thiết kế form dáng thể thao, màu đỏ nổi bật, dễ dàng phối hợp với các trang phục tập luyện hoặc dạo phố. Phù hợp cho những buổi chạy đường dài hoặc tập luyện cường độ cao tại phòng Gym.
+
+          // Khối 3: Timeline Cấu tạo/Công nghệ
+          .detail-card.timeline-card
+            h3.card-title Đặc Điểm Cấu Tạo & Công Nghệ
+            .timeline-container
+              .timeline-item
+                span.timeline-badge Lớp phủ Upper (Thân giày)
+                .timeline-content
+                  p Sử dụng lưới Engineered Mesh đa lớp siêu nhẹ, tăng cường khả năng thoáng khí tại các điểm dễ tích nhiệt.
+              .timeline-item
+                span.timeline-badge Đệm Midsole (Đế giữa)
+                .timeline-content
+                  p Công nghệ đệm mút React siêu việt kết hợp cùng 2 túi khí Zoom Air ở mũi và gót chân tạo độ nảy hoàn hảo sau mỗi bước chạy.
+              .timeline-item
+                span.timeline-badge Outsole (Đế ngoài)
+                .timeline-content
+                  p Cao su dẻo dai cao cấp với vân đế Waffle đặc trưng, tăng ma sát và bám đường cực tốt trên mọi mặt sân.
+
+        // --- CỘT PHẢI: FORM ĐẶT HÀNG (STICKY - Đã tích hợp sẵn trong CSS cũ) ---
+        .detail-right
+          .booking-card
+            h3.booking-title Tùy Chọn Đặt Hàng
+            
+            // Thông tin thu gọn
+            .mini-product
+              img(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop", alt="Nike Air Zoom")
+              .mini-info
+                h4 Nike Pegasus 40 Đỏ
+                .stars
+                  i.fa-solid.fa-star
+                  i.fa-solid.fa-star
+                  i.fa-solid.fa-star
+                  i.fa-solid.fa-star
+                  i.fa-solid.fa-star-half-stroke
+                  span (128 Đánh giá)
+
+            // Danh sách Meta
+            ul.meta-list
+              li
+                i.fa-solid.fa-check-circle
+                | Tình trạng: <strong>Còn hàng</strong>
+              li
+                i.fa-solid.fa-tag
+                | Thương hiệu: <strong>Nike</strong>
+              li
+                i.fa-solid.fa-shield-halved
+                | Bảo hành: <strong>6 tháng chính hãng</strong>
+
+            // Form Tùy chọn Kích thước (Đã sửa lại đẹp hơn - dạng ô bấm)
+            .form-group.size-selection
+              label Kích Thước (Size)
+              .filter-grid-size
+                - var sizes = [{val: "39", label: "39"}, {val: "40", label: "40"}, {val: "41", label: "41"}, {val: "42", label: "42"}, {val: "43", label: "43"}]
+                each size, index in sizes
+                  div.size-item
+                    input(type="radio", id=`size-${size.val}`, name="size", value=size.val, checked=(index === 2))
+                    label(for=`size-${size.val}`).size-btn #{size.label}
+
+            .qty-sectio
+              .qty-row
+                span Số lượng
+                .qty-input
+                  input#quantity(type="number", value="1", min="1", max="10")
+                .qty-price.price-red 3.800.000đ
+
+            // Tổng tiền & Nút Submit
+            .total-section
+              span Tổng Tạm Tính
+              strong#total-price.price-red 3.800.000đ
+
+            button.btn-submit-cart 
+              i.fa-solid.fa-cart-shopping.mr-2
+              | Thêm Vào Giỏ Hàng

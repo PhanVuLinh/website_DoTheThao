@@ -2,8 +2,7 @@ extends ../layouts/default.pug
 include ../mixins/box-breadcrumb.pug
 include ../mixins/product-item.pug
 
-block main
-  //- 1. KHAI BÁO DỮ LIỆU BREADCRUMB
+block main 
   -
     var breadcrumb = {
       title: "Tất Cả Sản Phẩm",
@@ -134,14 +133,6 @@ block main
                 input(type="checkbox")
                 |  Adidas
 
-          .filter-group
-            h4.filter-group-title Kích Thước (Size)
-            .filter-grid-size
-              span.size-btn.active 39
-              span.size-btn 40
-              span.size-btn 41
-              span.size-btn 42
-
           button.btn-apply-filter Áp Dụng Bộ Lọc
 
         // --- 2. KHU VỰC SẢN PHẨM (BÊN PHẢI) ---
@@ -149,7 +140,7 @@ block main
           .product-content__header
             .header-info
               h2.title #{breadcrumb.title}
-              p.desc Hiển thị 1 - 8 trong tổng số 85 sản phẩm
+              p.desc Tổng 85 sản phẩm
             .header-sort
               span Sắp xếp:
               select.sort-select

@@ -80,16 +80,6 @@ block main
   -
     var productListSectio3 = [
       {
-        avatar: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=800&auto=format&fit=crop",
-        slug: "#",
-        badgeText: "-40%",
-        badgeClass: "badge-pink",
-        name: "Nike Mercurial Vapor 14 Elite FG",
-        priceOld: 5500000,
-        priceNew: 3300000,
-        ratingStars: 5
-      },
-      {
         avatar: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
         slug: "#",
         badgeText: "HOT",
@@ -148,7 +138,7 @@ block main
             span.num 30
             span.label GIÂY
 
-      //- 2. Cột Sản phẩm (Gồm 4 sản phẩm)
+      //- 2. Cột Sản phẩm (Gồm 3 sản phẩm)
       .flash-products
         each item in productListSectio3
           +productItem(item)
