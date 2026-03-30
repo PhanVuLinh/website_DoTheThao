@@ -4,23 +4,18 @@ include ../mixins/product-item.pug
 block main
   // SECTION 1: HERO
   section.hero
-    //- Ảnh nền dùng thẻ img chuẩn SEO
     img.hero__img(src="../client/assets/images/banner2.jpg" alt="TitiSport")
     
     .hero__overlay
     .hero__container 
       .hero__content
-        //- Badge
         .hero__badge 
           i.fa-solid.fa-trophy
           | THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG
-        
-        //- Tiêu đề
         h1.hero__title
           | BỨT PHÁ
           br
           | MỌI GIỚI HẠN
-        
         p.hero__description 
           | Trải nghiệm đẳng cấp với bộ sưu tập thể thao mới nhất. Chất lượng
           br
@@ -31,8 +26,6 @@ block main
             i.fa-solid.fa-magnifying-glass.icon-search
             input(placeholder="Bạn muốn tìm gì hôm nay?" type="text")
             button(type="submit") Tìm Kiếm
-
-        //- Gợi ý tìm kiếm
         .hero__suggestions
           span.suggestion-label Gợi ý:
           a.suggestion-pill(href="#")
@@ -49,8 +42,6 @@ block main
   // SECTION 2: CATEGORIES
   section.categories
     .categories__container
-      
-      //- Phần tiêu đề và nút xem tất cả
       .categories__header
         .categories__title-wrap
           span.categories__subtitle DANH MỤC
@@ -59,36 +50,32 @@ block main
           | Xem Tất Cả
           i.fa-solid.fa-arrow-right-long
 
-      //- Lưới chứa 4 danh mục
       .categories__grid
-        // Item 1: Giày Thể Thao
         a.category-card(href="#")
           .category-card__img-wrap
             img(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop", alt="Giày Thể Thao")
           h3.category-card__title Giày Thể Thao
           span.category-card__count 245 Sản phẩm
 
-        // Item 2: Quần Áo
         a.category-card(href="#")
           .category-card__img-wrap
             img(src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1000&auto=format&fit=crop", alt="Quần Áo")
           h3.category-card__title Quần Áo
           span.category-card__count 189 Sản phẩm
 
-        // Item 3: Phụ Kiện
         a.category-card(href="#")
           .category-card__img-wrap
             img(src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000&auto=format&fit=crop", alt="Phụ Kiện")
           h3.category-card__title Phụ Kiện
           span.category-card__count 542 Sản phẩm
 
-        // Item 4: Dụng Cụ Tập
         a.category-card(href="#")
           .category-card__img-wrap
             img(src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?q=80&w=1000&auto=format&fit=crop", alt="Dụng Cụ Tập")
           h3.category-card__title Dụng Cụ Tập
           span.category-card__count 76 Sản phẩm
   // END SECTION 2: CATEGORIES
+
   // SECTION 3: FLASH DEALS
   -
     var productListSectio3 = [
@@ -100,13 +87,7 @@ block main
         name: "Nike Mercurial Vapor 14 Elite FG",
         priceOld: 5500000,
         priceNew: 3300000,
-        code: "NK-MV14-FG",
-        feature: "Phân loại: Giày đinh sân cỏ (FG)",
-        warranty: "Bảo hành: 6 tháng keo đế",
-        delivery: "Giao hàng: Miễn phí toàn quốc",
-        ratingStars: 5,
-        ratingTotal: 340,
-        stock: 15
+        ratingStars: 5
       },
       {
         avatar: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
@@ -116,13 +97,7 @@ block main
         name: "Air Jordan 1 Retro High OG",
         priceOld: 4800000,
         priceNew: 4100000,
-        code: "NK-AJ1-OG",
-        feature: "Phân loại: Giày bóng rổ / Thời trang",
-        warranty: "Bảo hành: 12 tháng chính hãng",
-        delivery: "Giao hàng: Hỏa tốc 2H",
-        ratingStars: 4.5,
-        ratingTotal: 1250,
-        stock: 5
+        ratingStars: 4.5
       },
       {
         avatar: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
@@ -132,13 +107,7 @@ block main
         name: "Nike Air Max 270 React",
         priceOld: 3200000,
         priceNew: 2560000,
-        code: "NK-AM270-R",
-        feature: "Phân loại: Giày thể thao nam",
-        warranty: "Bảo hành: 6 tháng chính hãng",
-        delivery: "Giao hàng: Tiêu chuẩn 2-3 ngày",
-        ratingStars: 1,
-        ratingTotal: 89,
-        stock: 20
+        ratingStars: 1
       },
       {
         avatar: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=800&auto=format&fit=crop",
@@ -148,13 +117,7 @@ block main
         name: "Adidas Ultraboost 22",
         priceOld: 4500000,
         priceNew: 4500000,
-        code: "AD-UB22",
-        feature: "Phân loại: Giày chạy bộ cao cấp",
-        warranty: "Bảo hành: Đổi trả trong 7 ngày",
-        delivery: "Giao hàng: Miễn phí toàn quốc",
-        ratingStars:3.5,
-        ratingTotal: 412,
-        stock: 8
+        ratingStars: 3.5
       }
     ]
   section.flash-deals
@@ -170,11 +133,7 @@ block main
           | DEALS THỂ THAO
           br
           | CHÍNH HÃNG
-        
-        p.flash-promo__desc
-          strong.flash-promo__alert SĂN NGAY TRƯỚC KHI HẾT HÀNG
-          | Nhanh tay sở hữu các sản phẩm thể thao chất lượng cao với giá cực tốt. Ưu đãi số lượng có hạn!
-        
+      
         p.flash-promo__countdown-label Kết thúc sau:
         .flash-promo__countdown
           .countdown-box
@@ -199,10 +158,7 @@ block main
   section.promotions
     .promotions__container
       h2.promotions__title Siêu Sale Thể Thao - Bứt Phá Giới Hạn
-      
-      //- Khung chứa slider
       .promotions__slider
-        //- Dải băng dài chứa tất cả các banner (Track)
         .promotions__list#promo-track
           .promotions__item
             a(href="#")
@@ -231,3 +187,262 @@ block main
         span.dot(data-index="3")
   // END SECTION 4
 
+  // SECTION 5: SẢN PHẨM NỔI BẬT
+  -
+    var featuredProducts = [
+      {
+        avatar: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
+        badgeText: "-30%",
+        badgeClass: "badge-pink",
+        name: "Giày Chạy Bộ Nike Air Zoom Pegasus 39",
+        priceOld: 3500000,
+        priceNew: 2450000,
+        ratingStars: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=800&auto=format&fit=crop",
+        badgeText: "HOT",
+        badgeClass: "badge-orange",
+        name: "Giày Đá Bóng Nike Mercurial Vapor 14",
+        priceOld: 4500000,
+        priceNew: 3825000,
+        ratingStars: 4.5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
+        badgeText: "MỚI",
+        badgeClass: "badge-orange",
+        name: "Giày Bóng Rổ Air Jordan 1 Retro",
+        priceOld: 5200000,
+        priceNew: 4160000,
+        ratingStars: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=800&auto=format&fit=crop",
+        badgeText: "-15%",
+        badgeClass: "badge-pink",
+        name: "Giày Thể Thao Adidas Ultraboost 22",
+        priceOld: 4000000,
+        priceNew: 3400000,
+        ratingStars: 4
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=800&auto=format&fit=crop",
+        badgeText: "-20%",
+        badgeClass: "badge-pink",
+        name: "Vans Old Skool Classic Black",
+        priceOld: 1800000,
+        priceNew: 1440000,
+        ratingStars: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop",
+        badgeText: "HOT",
+        badgeClass: "badge-orange",
+        name: "Puma RS-X3 Puzzle Nam/Nữ",
+        priceOld: 2800000,
+        priceNew: 2500000,
+        ratingStars: 4.5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=800&auto=format&fit=crop",
+        badgeText: "MỚI",
+        badgeClass: "badge-orange",
+        name: "Converse Chuck Taylor All Star",
+        priceOld: 1500000,
+        priceNew: 1500000,
+        ratingStars: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?q=80&w=800&auto=format&fit=crop",
+        badgeText: "-10%",
+        badgeClass: "badge-pink",
+        name: "New Balance 574 Core Trắng",
+        priceOld: 2200000,
+        priceNew: 1980000,
+        ratingStars: 4
+      }
+    ]
+
+  section.featured-products
+    .featured-products__container
+      h2.section-title Sản Phẩm Nổi Bật
+      
+      .featured-products__grid
+        each item in featuredProducts
+          +productItem(item)
+
+      .featured-products__actions
+        a.btn-view-all-outline(href="#") 
+          | Xem Tất Cả 
+          i.fa-solid.fa-arrow-right-long
+  // END SECTION 5
+
+  // SECTION 6: BANNER QUẢNG CÁO
+  section.banner-promo(data-aos="fade-up" data-aos-duration="800")
+    .banner-promo__container
+      .banner-promo__inner
+        a(href="#")
+          img(src="https://giayhaanh.vn/wp-content/uploads/2025/10/banner-quang-cao-giay-the-thao-voi-hinh-anh-an-tuong-va-thong-diep-ro-rang.jpg", alt="Banner Khuyến Mãi Thể Thao")
+  // END SECTION 6
+
+  // SECTION 7: SẢN PHẨM MỚI NHẤT
+  -
+    var newArrivals = [
+      {
+        avatar: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop", // Nike Đỏ
+        badgeText: "MỚI",
+        badgeClass: "badge-orange",
+        name: "Nike Air Zoom Pegasus 40 Đỏ",
+        priceOld: 3800000,
+        priceNew: 3800000,
+        ratingStars: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=800&auto=format&fit=crop", // Adidas Trắng/Xanh
+        badgeText: "HOT",
+        badgeClass: "badge-pink",
+        name: "Adidas Ultraboost Light 2026",
+        priceOld: 4500000,
+        priceNew: 4100000,
+        ratingStars: 4.5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop", // Air Jordan Mới
+        badgeText: "MỚI",
+        badgeClass: "badge-orange",
+        name: "Air Jordan 1 Low SE Mới Nhất",
+        priceOld: 4200000,
+        priceNew: 4200000,
+        ratingStars: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop", // Puma 
+        badgeText: "-5%",
+        badgeClass: "badge-pink",
+        name: "Puma RS-X Efekt PRM",
+        priceOld: 3200000,
+        priceNew: 3040000,
+        ratingStars: 4
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=800&auto=format&fit=crop", // Asics (ảnh giày thể thao khác)
+        badgeText: "MỚI",
+        badgeClass: "badge-orange",
+        name: "Asics Gel-Kayano 30 Trắng Đen",
+        priceOld: 4000000,
+        priceNew: 4000000,
+        ratingStars: 4.5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?q=80&w=800&auto=format&fit=crop", // Vans 
+        badgeText: "HOT",
+        badgeClass: "badge-orange",
+        name: "Vans Authentic Pro Black/Gum",
+        priceOld: 1600000,
+        priceNew: 1600000,
+        ratingStars: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1521774971864-62e842046145?q=80&w=800&auto=format&fit=crop", // Converse (ảnh giày cao cổ đỏ)
+        badgeText: "MỚI",
+        badgeClass: "badge-orange",
+        name: "Converse Chuck 70 Vintage Canvas",
+        priceOld: 2100000,
+        priceNew: 2100000,
+        ratingStars: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1539185441755-769473a23570?q=80&w=800&auto=format&fit=crop", // New Balance
+        badgeText: "HOT",
+        badgeClass: "badge-pink",
+        name: "New Balance 550 White/Green",
+        priceOld: 3000000,
+        priceNew: 2800000,
+        ratingStars: 4.5
+      }
+    ]
+  section.featured-products
+    .featured-products__container
+      h2.section-title Sản Phẩm Mới Nhất
+      
+      .featured-products__grid
+        each item in newArrivals
+          +productItem(item)
+
+      .featured-products__actions
+        a.btn-view-all-outline(href="#") 
+          | Xem Tất Cả 
+          i.fa-solid.fa-arrow-right-long
+    // END SECTION 7
+
+    // SECTION 9: TIN TỨC MỚI (CHỦ ĐỀ BÓNG ĐÁ & BÓNG CHUYỀN)
+  -
+    var newsCenter = {
+      image: "https://images.unsplash.com/photo-1614632537197-38a17061c2bd?q=80&w=800&auto=format&fit=crop", // Ảnh giày đá bóng đinh
+      date: "28/03/2026",
+      title: "Top 5 Mẫu Giày Đá Bóng Sân Cỏ Nhân Tạo Đáng Mua Nhất 2026",
+      desc: "Khám phá những siêu phẩm giày bóng đá đinh dăm (TF) từ Nike, Adidas, Puma giúp bạn bứt tốc, bám sân và kiểm soát bóng cực đỉnh trên mặt sân nhân tạo..."
+    }
+    
+    var newsLeft = [
+      {
+        image: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=500&auto=format&fit=crop", // Ảnh đập bóng chuyền
+        date: "25/03/2026",
+        title: "Bí Quyết Chọn Bóng Chuyền Hơi & Da Chuẩn Cảm Giác Thi Đấu"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1508344928928-7165b67de128?q=80&w=500&auto=format&fit=crop", // Ảnh áo bóng đá
+        date: "22/03/2026",
+        title: "Hướng Dẫn Chọn Quần Áo Bóng Đá Thoáng Khí Cho Mùa Hè Oi Bức"
+      }
+    ]
+    
+    var newsRight = [
+      {
+        image: "https://images.unsplash.com/photo-1592656094267-764a45160876?q=80&w=500&auto=format&fit=crop", // Ảnh sân bóng chuyền
+        date: "20/03/2026",
+        title: "Các Loại Bó Gối, Phụ Kiện Không Thể Thiếu Cho Dân Đập Bóng"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1553775282-20af80779df7?q=80&w=500&auto=format&fit=crop", // Ảnh găng tay thủ môn
+        date: "18/03/2026",
+        title: "Đánh Giá Chi Tiết Dòng Găng Tay Thủ Môn Predator Cực Dính"
+      }
+    ]
+
+  section.news-section(data-aos="fade-up" data-aos-duration="800")
+    .news-section__container
+      h2.section-title Tin Tức Mới
+      
+      .news-grid
+        // Cột Trái (2 bài nhỏ)
+        .news-col.news-col--side
+          each item in newsLeft
+            a.news-card-small(href="#")
+              img(src=item.image, alt=item.title)
+              .news-card-small__overlay
+                span.date= item.date
+                h4.title= item.title
+
+        // Cột Giữa (1 bài lớn)
+        .news-col.news-col--center
+          article.news-card-large
+            a.news-card-large__img(href="#")
+              img(src=newsCenter.image, alt=newsCenter.title)
+            .news-card-large__content
+              span.date= newsCenter.date
+              h3.title
+                a(href="#")= newsCenter.title
+              p.desc= newsCenter.desc
+
+        // Cột Phải (2 bài nhỏ)
+        .news-col.news-col--side
+          each item in newsRight
+            a.news-card-small(href="#")
+              img(src=item.image, alt=item.title)
+              .news-card-small__overlay
+                span.date= item.date
+                h4.title= item.title
+  // END SECTION 9
+    

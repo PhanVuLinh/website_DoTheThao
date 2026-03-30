@@ -650,12 +650,6 @@ body {
   margin-bottom: 20px;
 }
 
-.flash-promo__desc {
-  font-size: 14px;
-  color: #d1d1e0;
-  margin-bottom: 25px;
-}
-
 .flash-promo__countdown {
   display: flex;
   align-items: center;
@@ -715,10 +709,11 @@ body {
 }
 
 /* KHỐI 4 SẢN PHẨM (BÊN PHẢI) */
+/* KHỐI 4 SẢN PHẨM (BÊN PHẢI) */
 .flash-products {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Chia đều 4 cột */
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
@@ -740,7 +735,7 @@ body {
 .flash-product-card__img-wrap {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 200px; /* Có thể tăng lên 240px nếu muốn ảnh to hơn */
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 16px;
@@ -758,90 +753,79 @@ body {
   top: 12px;
   left: 12px;
   color: var(--white);
-  padding: 4px 10px;
-  font-size: 12px;
+  padding: 4px 12px;
+  font-size: 13px;
   font-weight: 700;
   border-radius: 20px;
   z-index: 2;
 }
 
 .badge-pink {
-  background: #f04262; /* Màu đỏ hồng của badge -40% */
+  background: #ff5252; /* Chỉnh lại màu đỏ cam cho giống ảnh */
 }
 
 .badge-orange {
-  background: #fa9b32; /* Màu cam của badge HOT */
+  background: #fa9b32;
 }
 
 .flash-product-card__title {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   color: var(--text-dark);
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 42px;
+  /* THÊM DÒNG NÀY ĐỂ GIỮ CỐ ĐỊNH KHOẢNG TRỐNG CHO 2 DÒNG */
+  min-height: 45px; 
 }
 
-.flash-product-card__info {
-  list-style-type: none;
-  padding-left: 0;
-  margin-bottom: auto;
+/* KHỐI ĐÁNH GIÁ (Căn lề phải) */
+.flash-product-card__rating {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-bottom: 20px;
+  justify-content: flex-end; /* Ép các ngôi sao sang phải */
+  gap: 4px;
+  margin-bottom: 12px;
 }
 
-.flash-product-card__info li {
-  font-size: 13px;
-  color: #555;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  line-height: 1.4;
+.flash-product-card__rating i {
+  color: #ffca28;
+  font-size: 14px;
 }
 
-.flash-product-card__info li i {
-  color: var(--red-main);
-  font-size: 13px;
-  width: 16px;
-  text-align: center;
-  margin-top: 2px;
-  flex-shrink: 0;
-}
-
+/* KHỐI GIÁ VÀ GIỎ HÀNG (Ép nằm ngang hàng nhau) */
 .flash-product-card__bottom {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  justify-content: space-between; /* Đẩy giá và nút xa nhau */
+  align-items: center; /* Căn giữa theo chiều dọc để không bị lệch */
+  margin-top: auto; /* Tự động đẩy xuống dưới cùng */
+  padding-top: 10px; /* Thêm chút khoảng trống phía trên */
 }
 
 .flash-product-card__price {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .old-price {
   font-size: 13px;
   color: #a0a0a0;
   text-decoration: line-through;
-  font-weight: 600;
-  margin-bottom: 2px;
+  font-weight: 500;
 }
 
 .new-price {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
-  color: var(--red-main);
+  color: #ff5252;
 }
 
 .btn-cart {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   border: 1px solid #eee;
   background: var(--white);
@@ -851,62 +835,15 @@ body {
   align-items: center;
   justify-content: center;
   transition: 0.3s;
-  font-size: 14px;
+  font-size: 16px;
+  flex-shrink: 0; /* QUAN TRỌNG: Không cho phép nút giỏ hàng bị co lại làm vỡ layout */
 }
 
-.btn-cart.btn-active,
 .btn-cart:hover {
   background: var(--red-main);
   color: var(--white);
   border-color: var(--red-main);
 }
-
-/* ĐÁNH GIÁ VÀ TỒN KHO */
-.flash-product-card__rating-stock {
-  border-top: 1px solid #eee;
-  padding-top: 15px;
-  margin-top: 15px;
-}
-
-.rating {
-  display: flex;
-  justify-content: end;
-  gap: 3px;
-  margin-bottom: 10px;
-}
-
-.rating i {
-  color: #ffca28; /* Màu vàng sao */
-  font-size: 13px;
-}
-
-.rating-total {
-  color: #888;
-  font-size: 13px;
-  margin-left: 5px;
-}
-
-.stock {
-  display: flex;
-  justify-content: end;
-  gap: 6px;
-}
-
-.stock-label {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--blue-dark);
-}
-
-.stock-number {
-  background: var(--red-main); /* Nền đỏ chữ trắng nổi bật */
-  color: var(--white);
-  font-size: 13px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 6px;
-}
-
 /* RESPONSIVE FLASH DEALS */
 @media (max-width: 1200px) {
   .flash-products {
@@ -1055,260 +992,333 @@ body {
 }
 /* END SECTION 4 */
 
-/* FLASH DEALS */
-.deals {
-  background: linear-gradient(90deg, var(--blue-dark), var(--blue-soft));
+/* =========================================
+   SECTION 5: SẢN PHẨM NỔI BẬT
+   ========================================= */
+.featured-products {
   padding: 60px 0;
-  margin: 40px auto;
-  max-width: 1360px;
-  border-radius: 20px;
+  background: var(--white);
 }
 
-.deals__container {
+.featured-products__container {
   max-width: 1280px;
   margin: auto;
   padding: 0 40px;
-  display: flex;
-  gap: 30px;
-  align-items: stretch;
 }
 
-.deals__promo {
-  flex: 0 0 320px;
-  color: var(--white);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.deals__title {
-  font-size: 28px;
+.section-title {
+  text-align: center;
+  font-size: 36px;
   font-weight: 800;
-  margin-bottom: 5px;
-}
-
-.deals__subtitle {
-  font-size: 22px;
-  font-weight: 700;
-  color: #ffca28;
-  margin-bottom: 15px;
-}
-
-.deals__desc {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.deals__text {
-  font-size: 14px;
-  line-height: 1.5;
-  opacity: 0.85;
-  margin-bottom: 30px;
-}
-
-.deals__countdown-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 15px;
-}
-
-.countdown {
-  display: flex;
-  gap: 15px;
+  color: var(--blue-dark);
   margin-bottom: 40px;
+  text-transform: capitalize;
 }
 
-.countdown__item {
-  background: var(--white);
-  color: #2a0a82;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  font-size: 24px;
-  font-weight: 800;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.deals__discount {
-  display: flex;
-  flex-direction: column;
-}
-
-.deals__discount span {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 1px;
-}
-
-.deals__discount strong {
-  font-size: 40px;
-  color: #ffca28;
-  font-weight: 900;
-}
-
-.deals__products {
-  flex: 1;
-  display: flex;
+/* Định dạng lưới 4 cột */
+.featured-products__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  padding-bottom: 10px;
 }
 
-.deals__products::-webkit-scrollbar {
-  height: 6px;
-}
-
-.deals__products::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-}
-
-.product-card {
-  background: var(--white);
-  border-radius: 16px;
-  overflow: hidden;
-  min-width: 280px;
-  flex: 1;
+/* KHỐI NÚT XEM TẤT CẢ SECTION 5 */
+.featured-products__actions {
   display: flex;
-  flex-direction: column;
-  position: relative;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  justify-content: center; /* Căn giữa nút */
+  margin-top: 40px; /* Tạo khoảng cách với lưới sản phẩm ở trên */
+}
+
+.btn-view-all-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 35px;
+  border: 2px solid var(--blue-dark); /* Viền màu xanh đen */
+  border-radius: 50px; /* Bo tròn hoàn toàn */
+  color: var(--blue-dark);
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+/* Hiệu ứng khi hover vào nút */
+.btn-view-all-outline:hover {
+  background: var(--blue-dark);
+  color: var(--white);
+}
+
+.btn-view-all-outline i {
   transition: transform 0.3s ease;
 }
 
-.product-card:hover {
-  transform: translateY(-5px);
+.btn-view-all-outline:hover i {
+  transform: translateX(6px); /* Mũi tên trượt nhẹ sang phải */
 }
 
-.product-card__img {
-  width: 100%;
-  height: 200px;
+/* Tinh chỉnh Responsive cho lưới 4 cột */
+@media (max-width: 1200px) {
+  .featured-products__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .featured-products__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .featured-products__grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* END SECTION 5 */
+
+/* =========================================
+   SECTION 6: BANNER QUẢNG CÁO
+   ========================================= */
+.banner-promo {
+  padding: 20px 0 60px 0; /* Khoảng cách trên dưới */
+  background: var(--white);
+}
+
+.banner-promo__container {
+  max-width: 1280px;
+  margin: auto;
+  padding: 0 40px;
+}
+
+.banner-promo__inner {
+  border-radius: 20px; /* Bo góc banner giống thiết kế hiện đại */
   overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.product-card__img img {
+.banner-promo__inner a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.banner-promo__inner img {
+  width: 100%;
+  height: auto;
+  max-height: 300px; /* Giới hạn chiều cao để không bị quá bự trên PC */
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+/* Hiệu ứng khi hover vào banner */
+.banner-promo__inner:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.banner-promo__inner:hover img {
+  transform: scale(1.02); /* Phóng to nhẹ ảnh bên trong */
+}
+
+/* RESPONSIVE BANNER */
+@media (max-width: 768px) {
+  .banner-promo__inner {
+    border-radius: 12px;
+  }
+  .banner-promo__inner img {
+    min-height: 120px; /* Đảm bảo banner không bị ép quá mỏng trên mobile */
+  }
+}
+/* END SECTION 6 */
+/* =========================================
+   SECTION 9: TIN TỨC MỚI (MAGAZINE)
+   ========================================= */
+.news-section {
+  padding: 60px 0 80px 0;
+  background: #f8f9fa; /* Nền xám nhạt để khối bài viết giữa nổi bật hơn */
+}
+
+.news-section__container {
+  max-width: 1280px;
+  margin: auto;
+  padding: 0 40px;
+}
+
+/* Lưới 3 cột: Cột trái (1 phần) - Cột giữa (2 phần) - Cột phải (1 phần) */
+.news-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.news-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* --- THẺ BÀI VIẾT NHỎ (2 BÊN) --- */
+.news-card-small {
+  flex: 1; /* Chiều cao tự động dàn đều */
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  display: block;
+  min-height: 220px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.news-card-small img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: 0.3s;
+  transition: transform 0.6s ease;
 }
 
-.product-card:hover .product-card__img img {
-  transform: scale(1.05);
+.news-card-small:hover img {
+  transform: scale(1.08);
 }
 
-.product-card__price {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 15px;
-}
-
-.price-new {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--red-main);
-}
-
-.price-old {
-  font-size: 14px;
-  color: #999;
-  text-decoration: line-through;
-  font-weight: 500;
-}
-
-.product-card__badge {
+/* Lớp phủ Gradient mờ ảo chứa text (Màu xanh đậm TitiSport) */
+.news-card-small__overlay {
   position: absolute;
-  top: 185px;
+  bottom: 0;
   left: 0;
-  background: var(--red-main);
+  width: 100%;
+  padding: 60px 20px 20px 20px;
+  background: linear-gradient(to top, rgba(0, 0, 77, 0.95) 0%, rgba(0, 0, 77, 0.6) 40%, transparent 100%);
   color: var(--white);
-  padding: 6px 12px;
-  font-size: 13px;
-  font-weight: 700;
-  border-radius: 0 10px 10px 0;
-  z-index: 2;
-}
-
-.product-card__content {
-  padding: 25px 20px 20px;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  justify-content: flex-end;
 }
 
-.product-card__title {
-  font-size: 16px;
+.news-card-small__overlay .date {
+  font-size: 11px;
+  opacity: 0.8;
+  margin-bottom: 5px;
+}
+
+.news-card-small__overlay .title {
+  font-size: 15px;
   font-weight: 700;
-  color: var(--blue-dark);
-  margin-bottom: 15px;
   line-height: 1.4;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.product-card__specs {
-  list-style: none;
-  margin-bottom: 20px;
+/* --- THẺ BÀI VIẾT LỚN (Ở GIỮA) --- */
+.news-card-large {
+  background: var(--white);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Căng full chiều cao bằng cột bên cạnh */
+  transition: transform 0.3s ease;
+}
+
+.news-card-large:hover {
+  transform: translateY(-5px);
+}
+
+.news-card-large__img {
+  display: block;
+  width: 100%;
+  flex: 0 0 60%; /* Ảnh chiếm 60% chiều cao */
+  overflow: hidden;
+}
+
+.news-card-large__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.news-card-large:hover .news-card-large__img img {
+  transform: scale(1.05);
+}
+
+.news-card-large__content {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
   flex: 1;
 }
 
-.product-card__specs li {
+.news-card-large__content .date {
   font-size: 13px;
-  color: #555;
-  margin-bottom: 6px;
-  padding-left: 12px;
-  position: relative;
+  color: #777;
+  margin-bottom: 12px;
 }
 
-.product-card__specs li::before {
-  content: "•";
-  position: absolute;
-  left: 0;
+.news-card-large__content .title {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.4;
+  margin-bottom: 15px;
+}
+
+.news-card-large__content .title a {
+  color: var(--blue-dark);
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.news-card-large__content .title a:hover {
   color: var(--red-main);
 }
 
-.product-card__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid #eee;
-  padding-top: 15px;
-  margin-top: auto;
+.news-card-large__content .desc {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Hiển thị tối đa 3 dòng */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.product-card__rating {
-  font-size: 12px;
-  color: #ffca28;
-  display: flex;
-  align-items: center;
-  gap: 3px;
+/* =========================================
+   RESPONSIVE SECTION 9
+   ========================================= */
+@media (max-width: 1024px) {
+  /* Gộp thành 2 cột: Bài lớn ở trên, các bài nhỏ dàn hàng ở dưới */
+  .news-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .news-col--center {
+    grid-column: span 2; /* Cột giữa tràn 2 ô */
+    order: -1; /* Đẩy lên trên cùng */
+  }
+  .news-card-large__img {
+    height: 350px; /* Cố định chiều cao thay vì phần trăm */
+    flex: none;
+  }
 }
 
-.product-card__rating span {
-  color: #888;
-  margin-left: 5px;
+@media (max-width: 768px) {
+  .news-grid {
+    grid-template-columns: 1fr; /* Xuống 1 cột trên mobile */
+  }
+  .news-col--center {
+    grid-column: span 1;
+  }
 }
-
-.product-card__stock {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--blue-dark);
-}
-
-.product-card__stock span {
-  background: var(--red-main);
-  color: white;
-  padding: 3px 8px;
-  border-radius: 6px;
-  margin-left: 5px;
-}
-/* END FLASH DEALS */
+/* END SECTION 9 */
 
 /* FOOTER */
 .footer {

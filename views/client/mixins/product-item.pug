@@ -1,24 +1,22 @@
-mixin productItem (item) 
+mixin productItem(item) 
   .flash-product-card
     .flash-product-card__img-wrap
-      //- span.badge.badge-orange FLASH SALE
-      span.badge.badge-pink #{item.badgeText}
+      span(class=`badge ${item.badgeClass || 'badge-pink'}`) #{item.badgeText}
       img(src=item.avatar, alt=item.name)
+      
     h3.flash-product-card__title #{item.name}
-    
-    ul.flash-product-card__info
-      li
-        i.fa-solid.fa-barcode
-        | Mã SP: #{item.code}
-      li
-        i.fa-solid.fa-tag
-        | Phân loại: #{item.feature}
-      li
-        i.fa-solid.fa-shield-halved
-        | Bảo hành: #{item.warranty}
-      li
-        i.fa-solid.fa-truck-fast
-        | Giao hàng: #{item.delivery}
+
+    .flash-product-card__rating
+      - var fullStars = Math.floor(item.ratingStars)
+      - var hasHalfStar = item.ratingStars % 1 !== 0
+      - var emptyStars = 5 - Math.ceil(item.ratingStars)
+      
+      - for (let i = 0; i < fullStars; i++)
+        i.fa-solid.fa-star
+      - if (hasHalfStar)
+        i.fa-solid.fa-star-half-stroke
+      - for (let i = 0; i < emptyStars; i++)
+        i.fa-regular.fa-star
 
     .flash-product-card__bottom
       .flash-product-card__price
@@ -26,15 +24,3 @@ mixin productItem (item)
         span.new-price #{item.priceNew.toLocaleString('vi-VN')}đ
       button.btn-cart
         i.fa-solid.fa-cart-plus
-    .flash-product-card__rating-stock
-      .rating
-        - for (let i =1; i<=item.ratingStars; i++)
-          i.fa-solid.fa-star
-        - if (item.ratingStars % 1 !== 0)
-          i.fa-solid.fa-star-half-stroke
-        - for (let j= item.ratingStars + 1; j<=5; j++)
-          i.fa-regular.fa-star
-        span.rating-total (1250)
-      .stock
-        span.stock-label Còn lại:
-        span.stock-number 5
