@@ -2,10 +2,11 @@ const express = require("express");
 const path = require("path");
 require("dotenv").config();
 const database = require("./config/database");
+const adminRoutes = require("./routes/admin/index.route");
 const clientRoutes = require("./routes/client/index.route");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 //Kết nối database
 database.connect();
@@ -18,6 +19,7 @@ app.set("view engine", "pug");
 app.use(express.static(path.join(__dirname, "public")));
 
 //Thiết lập đường dẫn
+app.use("/admin", adminRoutes); 
 app.use("/", clientRoutes);
 
 app.listen(port, () => {
