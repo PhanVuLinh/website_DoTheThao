@@ -1,0 +1,13 @@
+mixin box-breadcrumb(breadcrumb) 
+  .box-breadcrumb
+    .inner-content
+      .container
+        h1.inner-title #{breadcrumb.title}
+        .inner-list
+          each item, index in breadcrumb.list
+            if index === breadcrumb.list.length - 1
+              a.active(href=item.link) #{item.title}
+            else
+              a(href=item.link) #{item.title}
+              span.divider
+                i.fa-solid.fa-angles-right

@@ -1,8 +1,172 @@
 extends ../layouts/default.pug
+include ../mixins/box-breadcrumb.pug
+include ../mixins/product-item.pug
 
 block main
-  h1 Danh sách sản phẩm
-  
-  ul 
-    each item in productList  
-      li #{item.title} - #{item.description} - #{item.price} - #{item.stock} 
+  //- 1. KHAI BÁO DỮ LIỆU BREADCRUMB
+  -
+    var breadcrumb = {
+      title: "Tất Cả Sản Phẩm",
+      list: [
+        { link: "/", title: "Trang Chủ" },
+        { link: "/products", title: "Sản Phẩm Thể Thao" }
+      ]
+    };
+
+  +box-breadcrumb(breadcrumb)
+
+  // SECTION 9: DANH SÁCH SẢN PHẨM & BỘ LỌC
+  -
+    var newArrivals = [
+      {
+        avatar: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop", // Nike Đỏ
+        badgeText: "MỚI",
+        badgeClass: "badge-orange",
+        name: "Nike Air Zoom Pegasus 40 Đỏ",
+        priceOld: 3800000,
+        priceNew: 3800000,
+        ratingStars: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=800&auto=format&fit=crop", // Adidas Trắng/Xanh
+        badgeText: "HOT",
+        badgeClass: "badge-pink",
+        name: "Adidas Ultraboost Light 2026",
+        priceOld: 4500000,
+        priceNew: 4100000,
+        ratingStars: 4.5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop", // Air Jordan Mới
+        badgeText: "MỚI",
+        badgeClass: "badge-orange",
+        name: "Air Jordan 1 Low SE Mới Nhất",
+        priceOld: 4200000,
+        priceNew: 4200000,
+        ratingStars: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop", // Puma 
+        badgeText: "-5%",
+        badgeClass: "badge-pink",
+        name: "Puma RS-X Efekt PRM",
+        priceOld: 3200000,
+        priceNew: 3040000,
+        ratingStars: 4
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=800&auto=format&fit=crop", // Asics (ảnh giày thể thao khác)
+        badgeText: "MỚI",
+        badgeClass: "badge-orange",
+        name: "Asics Gel-Kayano 30 Trắng Đen",
+        priceOld: 4000000,
+        priceNew: 4000000,
+        ratingStars: 4.5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?q=80&w=800&auto=format&fit=crop", // Vans 
+        badgeText: "HOT",
+        badgeClass: "badge-orange",
+        name: "Vans Authentic Pro Black/Gum",
+        priceOld: 1600000,
+        priceNew: 1600000,
+        ratingStars: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1521774971864-62e842046145?q=80&w=800&auto=format&fit=crop", // Converse (ảnh giày cao cổ đỏ)
+        badgeText: "MỚI",
+        badgeClass: "badge-orange",
+        name: "Converse Chuck 70 Vintage Canvas",
+        priceOld: 2100000,
+        priceNew: 2100000,
+        ratingStars: 5
+      },
+      {
+        avatar: "https://images.unsplash.com/photo-1539185441755-769473a23570?q=80&w=800&auto=format&fit=crop", // New Balance
+        badgeText: "HOT",
+        badgeClass: "badge-pink",
+        name: "New Balance 550 White/Green",
+        priceOld: 3000000,
+        priceNew: 2800000,
+        ratingStars: 4.5
+      }
+    ]
+  section.product-list-page
+    .container
+      .product-list-page__inner
+        
+        // --- 1. SIDEBAR BỘ LỌC (BÊN TRÁI) ---
+        aside.product-filter
+          .product-filter__header
+            i.fa-solid.fa-filter
+            h3.filter-title Bộ Lọc Sản Phẩm
+            
+          .filter-group
+            h4.filter-group-title Danh Mục
+            ul.filter-list
+              li: a(href="/products/giay-bong-da")
+                i.fa-solid.fa-shoe-prints
+                | Giày Bóng Đá
+              li.active: a(href="/products/quan-ao-bong-da")
+                i.fa-solid.fa-shirt
+                | Quần Áo Bóng Đá
+              li: a(href="/products/giay-bong-chuyen")
+                i.fa-solid.fa-volleyball
+                | Giày Bóng Chuyền
+
+          .filter-group
+            h4.filter-group-title Khoảng Giá
+            ul.filter-list
+              li: label
+                input(type="radio" name="price-filter")
+                |  Dưới 1 Triệu
+              li: label
+                input(type="radio" name="price-filter")
+                |  1 Triệu - 3 Triệu
+
+          .filter-group
+            h4.filter-group-title Thương Hiệu
+            ul.filter-list
+              li: label
+                input(type="checkbox")
+                |  Nike
+              li: label
+                input(type="checkbox")
+                |  Adidas
+
+          .filter-group
+            h4.filter-group-title Kích Thước (Size)
+            .filter-grid-size
+              span.size-btn.active 39
+              span.size-btn 40
+              span.size-btn 41
+              span.size-btn 42
+
+          button.btn-apply-filter Áp Dụng Bộ Lọc
+
+        // --- 2. KHU VỰC SẢN PHẨM (BÊN PHẢI) ---
+        main.product-content
+          .product-content__header
+            .header-info
+              h2.title #{breadcrumb.title}
+              p.desc Hiển thị 1 - 8 trong tổng số 85 sản phẩm
+            .header-sort
+              span Sắp xếp:
+              select.sort-select
+                option(value="newest") Mới Nhất
+                option(value="price-asc") Giá tăng dần
+                option(value="price-desc") Giá giảm dần
+          
+          .product-content__grid
+            each product in newArrivals
+              +productItem(product)
+
+          // PHÂN TRANG
+          .box-pagination
+            ul.pagination-list
+              li.pagination-item.prev.disabled: a(href="#"): i.fa-solid.fa-angle-left
+              li.pagination-item.active: a(href="#") 1
+              li.pagination-item: a(href="#") 2
+              li.pagination-item: a(href="#") 3
+              li.pagination-item.dot ...
+              li.pagination-item.next: a(href="#"): i.fa-solid.fa-angle-right
