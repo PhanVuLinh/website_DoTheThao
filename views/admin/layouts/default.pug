@@ -12,7 +12,7 @@ html(lang="vi")
       
     link(
       rel="stylesheet"
-      href="/client/assets/css/style.css"
+      href="/admin/assets/css/style.css"
     )
 
     link(
@@ -22,13 +22,14 @@ html(lang="vi")
 
 
 
-  body
-    include ../partials/header.pug
+  body.admin-body
+    include ../partials/sidebar.pug
 
-    block main
-  
-    include ../partials/footer.pug    
+    .admin-main-wrapper
+      include ../partials/header.pug
 
-    include ../partials/box-contact.pug   
+      main.admin-content
+        block main
 
-    script(src="/client/assets/js/script.js") 
+    script(src="https://cdn.jsdelivr.net/npm/chart.js")
+    script(src="/admin/assets/js/script.js")

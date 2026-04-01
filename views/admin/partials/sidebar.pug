@@ -1,0 +1,38 @@
+aside.admin-sidebar
+  .sidebar-brand
+    i.fa-solid.fa-shield-halved
+    span TitiSport
+  
+  //- MENU CHÍNH (Sẽ đẩy phần Footer xuống đáy)
+  ul.sidebar-menu
+    li: a.active(href="/admin/dashboard")
+      i.fa-solid.fa-chart-pie
+      span Tổng quan
+    li: a(href="/admin/categories")
+      i.fa-solid.fa-table-cells-large
+      span Quản lý danh mục
+    li: a(href="/admin/products")
+      i.fa-solid.fa-box-open
+      span Quản lý sản phẩm
+    li: a(href="/admin/orders")
+      i.fa-solid.fa-cart-shopping
+      span Quản lý đơn hàng
+    li: a(href="/admin/users")
+      i.fa-solid.fa-users
+      span Quản lý người dùng
+
+  //- FOOTER (Nằm cố định dưới đáy)
+  .sidebar-footer
+    //- Menu cài đặt & cá nhân
+    ul.sidebar-menu.bottom-menu
+      li: a(href="/admin/settings")
+        i.fa-solid.fa-gear
+        span Cài đặt chung
+      li: a(href="/admin/profile")
+        i.fa-regular.fa-user
+        span Thông tin cá nhân
+    
+    //- Nút đăng xuất
+    a(href="/admin/logout").logout-btn
+      i.fa-solid.fa-arrow-right-from-bracket
+      span Đăng xuất
