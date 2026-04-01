@@ -7,17 +7,12 @@ block main
 
   .form-account-wrapper
     .form-account
-      //- Header Form
       .auth-header
         .logo-icon
           i.fa-solid.fa-shield-halved
         h2.inner-title TitiSport Admin
         p.inner-desc Đăng nhập hệ thống quản trị viên
-
-      //- Form Đăng Nhập
       form.inner-form#login-form(action="/admin/login" method="POST")
-        
-        // Group: Email
         .inner-group
           label.inner-label(for="email") Email quản trị
           .input-wrapper
@@ -30,7 +25,6 @@ block main
               required
             )
         
-        // Group: Mật khẩu
         .inner-group
           label.inner-label(for="password") Mật khẩu
           .input-wrapper
@@ -42,10 +36,8 @@ block main
               placeholder="••••••••"
               required
             )
-            //- Icon bật/tắt mật khẩu
             i.fa-regular.fa-eye-slash.toggle-password(onclick="togglePassword()")
         
-        // Nút Đăng Nhập
         button.inner-button(type="submit") 
           | Đăng Nhập
           i.fa-solid.fa-arrow-right-to-bracket

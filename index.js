@@ -4,6 +4,7 @@ require("dotenv").config();
 const database = require("./config/database");
 const adminRoutes = require("./routes/admin/index.route");
 const clientRoutes = require("./routes/client/index.route");
+const variableCongfig = require("./config/variable");
 
 const app = express();
 const port = process.env.PORT;
@@ -18,8 +19,11 @@ app.set("view engine", "pug");
 //Thiết lập thư mục tĩnh của FE
 app.use(express.static(path.join(__dirname, "public")));
 
+//Tạo biến toàn cục trong PUG
+app.locals.pathAdmin = variableCongfig.pathAdmin;
+
 //Thiết lập đường dẫn
-app.use("/admin", adminRoutes); 
+app.use(`/${variableCongfig.pathAdmin}`, adminRoutes);
 app.use("/", clientRoutes);
 
 app.listen(port, () => {
