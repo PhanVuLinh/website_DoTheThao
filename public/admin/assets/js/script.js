@@ -38,59 +38,69 @@ document.addEventListener("DOMContentLoaded", function () {
   const ctx = document.getElementById("revenueChart");
 
   if (ctx) {
+    // Tạo mảng 30 ngày cho trục X (Từ ngày 1 đến 30)
+    const daysInMonth = Array.from({ length: 30 }, (_, i) => "Ngày " + (i + 1));
+    
+    // Dữ liệu doanh thu giả lập trong khoảng 500k đến 10 triệu
+    const revenueData = [
+      500000, 1200000, 800000, 2500000, 1800000, 4000000, 3500000, 5200000,
+      4800000, 6000000, 4500000, 7200000, 8500000, 6800000, 5500000, 7800000,
+      9000000, 10000000, 8200000, 6500000, 5000000, 4200000, 5800000, 7000000,
+      8500000, 7500000, 9200000, 8800000, 9800000, 10000000
+    ];
+
     new Chart(ctx, {
       type: "line",
       data: {
-        // Trục X: Các mốc thời gian/giá trị
-        labels: [
-          "5k",
-          "10k",
-          "15k",
-          "20k",
-          "25k",
-          "30k",
-          "35k",
-          "40k",
-          "45k",
-          "50k",
-          "55k",
-          "60k",
-        ],
+        labels: daysInMonth, // Trục X: Các ngày trong tháng
         datasets: [
           {
             label: "Doanh thu",
-            // Trục Y: Dữ liệu doanh thu (Giả lập để tạo đường dốc nhấp nhô)
-            data: [20, 30, 45, 30, 85, 35, 50, 45, 60, 25, 70, 55],
+            data: revenueData, // Trục Y: Dữ liệu số tiền
             borderColor: "#466BD6", // Màu xanh dương của đường Line
-            backgroundColor: "rgba(70, 107, 214, 0.1)", // Màu gradient mờ dưới đường Line
+            backgroundColor: "rgba(70, 107, 214, 0.1)", // Màu gradient mờ dưới đường
             borderWidth: 2,
             pointBackgroundColor: "#466BD6",
             pointBorderColor: "#fff",
             pointBorderWidth: 2,
-            pointRadius: 4,
+            pointRadius: 3, // Giảm size chấm tròn xuống chút xíu vì 30 ngày khá dày
             tension: 0.4, // Làm cho đường gấp khúc mềm mại (bo cong)
-            fill: true, // Cho phép tô màu phần bên dưới đường Line
+            fill: true, // Tô màu phần bên dưới đường Line
           },
         ],
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false, // Để biểu đồ fill đầy container height: 350px
+        maintainAspectRatio: false,
         plugins: {
           legend: { display: false }, // Ẩn nhãn "Doanh thu" ở trên cùng
+          tooltip: {
+            callbacks: {
+              // Format lại số tiền khi trỏ chuột vào điểm trên biểu đồ
+              label: function(context) {
+                let value = context.parsed.y;
+                return "Doanh thu: " + value.toLocaleString('vi-VN') + " đ";
+              }
+            }
+          }
         },
         scales: {
           y: {
             beginAtZero: true,
+            suggestedMin: 500000, // Gợi ý mức thấp nhất là 500k
+            suggestedMax: 10000000, // Gợi ý mức cao nhất là 10M
             ticks: {
-              // Thêm dấu % vào sau các con số ở trục Y (giống ảnh mẫu)
+              // Format số tiền ở trục Y (VD: 5.000.000 đ)
               callback: function (value) {
-                return value + "%";
+                return value.toLocaleString('vi-VN') + " đ";
               },
             },
           },
           x: {
-            grid: { display: false }, // Ẩn lưới sọc dọc cho gọn gàng
+            grid: { display: false }, // Ẩn lưới sọc dọc cho gọn
+            ticks: {
+              maxTicksLimit: 15 // Giới hạn số lượng ngày hiển thị ở trục X tránh bị rối mắt
+            }
           },
         },
         interaction: {

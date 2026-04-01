@@ -3,12 +3,11 @@ aside.admin-sidebar
     i.fa-solid.fa-shield-halved
     span TitiSport
   
-  //- MENU CHÍNH (Sẽ đẩy phần Footer xuống đáy)
   ul.sidebar-menu
     li: a.active(href="/admin/dashboard")
       i.fa-solid.fa-chart-pie
       span Tổng quan
-    li: a(href="/admin/categories")
+    li: a(href="/admin/category/list")
       i.fa-solid.fa-table-cells-large
       span Quản lý danh mục
     li: a(href="/admin/products")
@@ -21,9 +20,7 @@ aside.admin-sidebar
       i.fa-solid.fa-users
       span Quản lý người dùng
 
-  //- FOOTER (Nằm cố định dưới đáy)
   .sidebar-footer
-    //- Menu cài đặt & cá nhân
     ul.sidebar-menu.bottom-menu
       li: a(href="/admin/settings")
         i.fa-solid.fa-gear
@@ -32,7 +29,6 @@ aside.admin-sidebar
         i.fa-regular.fa-user
         span Thông tin cá nhân
     
-    //- Nút đăng xuất
     a(href="/admin/logout").logout-btn
       i.fa-solid.fa-arrow-right-from-bracket
       span Đăng xuất

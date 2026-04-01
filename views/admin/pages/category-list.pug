@@ -1,0 +1,128 @@
+extends ../layouts/default.pug
+
+block main
+  h1.page-title Quản lý danh mục
+
+  //- 1. KHỐI BỘ LỌC VÀ HÀNH ĐỘNG
+  .filter-action-card
+    .filter-row
+      .filter-label
+        i.fa-solid.fa-filter
+        span Bộ lọc
+      
+      select.form-select
+        option(value="") Trạng thái
+        option(value="active") Hoạt động
+        option(value="inactive") Tạm dừng
+        
+      select.form-select
+        option(value="") Người tạo
+        option Lê Văn A
+        option Lê Văn B
+        
+      .date-range-picker
+        input(type="text" placeholder="dd/mm/yyyy")
+        span -
+        input(type="text" placeholder="dd/mm/yyyy")
+        
+      button.btn-clear
+        i.fa-solid.fa-rotate-right
+        | Xóa bộ lọc
+    .action-row
+      .bulk-action
+        select.form-select
+          option(value="") -- Hành động --
+          option(value="delete") Xóa nhiều
+          option(value="active") Đổi trạng thái
+        button.btn-apply Áp dụng
+        
+      .search-box-large
+        i.fa-solid.fa-magnifying-glass
+        input(type="text" placeholder="Tìm kiếm danh mục...")
+        
+      a(href=`/${pathAdmin}/category/create`).btn-create
+        i.fa-solid.fa-plus
+        | Tạo mới
+
+  //- 2. BẢNG DỮ LIỆU
+  .table-section
+    .table-responsive
+      table.admin-table.table-hover
+        thead
+          tr
+            th.text-center(width="50px")
+              input(type="checkbox")
+            th Tên danh mục
+            th Ảnh đại diện
+            th Vị trí
+            th Trạng thái
+            th Tạo bởi
+            th Cập nhật bởi
+            th Hành động
+        
+        tbody
+          //- Dòng 1
+          tr
+            td.text-center
+              input(type="checkbox")
+            td.font-weight-600 Giày Chạy Bộ
+            td
+              img.td-thumbnail(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=100&auto=format&fit=crop" alt="Danh mục")
+            td 1
+            td: span.badge-status.badge-active Hoạt động
+            td
+              .user-date
+                span.name Lê Văn A
+                span.time 16:30 - 20/10/2026
+            td
+              .user-date
+                span.name Lê Văn A
+                span.time 16:30 - 20/10/2026
+            td
+              .action-btns
+                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+
+          //- Dòng 2
+          tr
+            td.text-center
+              input(type="checkbox")
+            td.font-weight-600 Quần Áo Bóng Đá
+            td
+              img.td-thumbnail(src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=100&auto=format&fit=crop" alt="Danh mục")
+            td 2
+            td: span.badge-status.badge-inactive Tạm dừng
+            td
+              .user-date
+                span.name Lê Văn B
+                span.time 16:30 - 20/10/2026
+            td
+              .user-date
+                span.name Lê Văn B
+                span.time 16:30 - 20/10/2026
+            td
+              .action-btns
+                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+                
+          //- Dòng 3
+          tr
+            td.text-center
+              input(type="checkbox")
+            td.font-weight-600 Phụ Kiện Thể Thao
+            td
+              img.td-thumbnail(src="https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=100&auto=format&fit=crop" alt="Danh mục")
+            td 3
+            td: span.badge-status.badge-active Hoạt động
+            td
+              .user-date
+                span.name Lê Văn A
+                span.time 16:30 - 20/10/2026
+            td
+              .user-date
+                span.name Lê Văn A
+                span.time 16:30 - 20/10/2026
+            td
+              .action-btns
+                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
