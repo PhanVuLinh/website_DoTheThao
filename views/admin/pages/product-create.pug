@@ -1,0 +1,95 @@
+extends ../layouts/default.pug
+
+block main
+  //- Phần Header của trang
+  .page-header
+    h1.page-title Tạo sản phẩm
+    a.btn-back(href="/admin/products") 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  .form-card
+    form(action="/admin/products/create" method="POST" enctype="multipart/form-data")
+      
+      //- Hàng 1: Tên & Danh mục
+      .form-row-2
+        .form-group
+          label Tên sản phẩm
+          input.form-control(type="text" name="title" placeholder="Ví dụ: Nike Air Zoom Pegasus 39" required)
+        
+        .form-group
+          label Danh mục
+          select.form-control(name="category_id")
+            option(value="") -- Chọn danh mục --
+            option(value="1") Giày Chạy Bộ
+            option(value="2") Quần Áo Thể Thao
+      
+      //- Hàng 2: Vị trí & Trạng thái
+      .form-row-2
+        .form-group
+          label Vị trí
+          input.form-control(type="number" name="position" placeholder="Tự động tăng" min="1")
+        
+        .form-group
+          label Trạng thái
+          select.form-control(name="status")
+            option(value="active") Hoạt động
+            option(value="inactive") Tạm dừng
+
+      //- Hàng 3: Khối Upload Ảnh
+      .form-group
+        label Ảnh đại diện
+        .upload-image-wrapper
+          input#file-upload.hidden-input(type="file" name="thumbnail" accept="image/*" onchange="previewImage(event)")
+          
+          label.upload-box(for="file-upload" id="upload-label")
+            i.fa-solid.fa-plus
+            
+          .image-preview-container.hidden#preview-container
+            img#image-preview(src="" alt="Preview")
+            button.btn-remove-image(type="button" onclick="removeImage()" title="Xóa ảnh")
+              i.fa-solid.fa-xmark
+
+      //- --- PHẦN THAY ĐỔI: GIÁ & TỒN KHO THEO SIZE ---
+      //- Hàng 4: Giá bán (Chỉ 1 mức giá)
+      .form-group
+        label Giá bán (VNĐ)
+        input.form-control(type="number" name="price" placeholder="Ví dụ: 2500000" min="0" required style="max-width: 48%;")
+      
+      //- Hàng 5: Quản lý tồn kho theo Size
+      .form-group
+        label Số lượng tồn kho theo Size
+        .size-inventory-grid
+          // Size 39
+          .size-input-group
+            span.size-label Size 39
+            input.form-control(type="number" name="stock_39" placeholder="0" min="0")
+          
+          // Size 40
+          .size-input-group
+            span.size-label Size 40
+            input.form-control(type="number" name="stock_40" placeholder="0" min="0")
+            
+          // Size 41
+          .size-input-group
+            span.size-label Size 41
+            input.form-control(type="number" name="stock_41" placeholder="0" min="0")
+            
+          // Size 42
+          .size-input-group
+            span.size-label Size 42
+            input.form-control(type="number" name="stock_42" placeholder="0" min="0")
+            
+          // Size 43
+          .size-input-group
+            span.size-label Size 43
+            input.form-control(type="number" name="stock_43" placeholder="0" min="0")
+
+      //- Hàng 6: Mô tả
+      .form-group
+        label Mô tả sản phẩm
+        textarea.form-control(name="description" rows="6" placeholder="Nhập mô tả chi tiết cho sản phẩm này...")
+
+      //- Nút Submit
+      .form-actions
+        button.btn-submit(type="submit") Tạo mới

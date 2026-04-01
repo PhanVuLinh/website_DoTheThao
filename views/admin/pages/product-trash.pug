@@ -1,0 +1,113 @@
+extends ../layouts/default.pug
+
+block main
+  //- Tiêu đề & Nút Quay lại
+  .page-header
+    h1.page-title Thùng rác sản phẩm
+    a.btn-back(href=`/${pathAdmin}/products`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  //- 1. KHỐI HÀNH ĐỘNG VÀ TÌM KIẾM (Rút gọn)
+  .filter-action-card
+    .action-row
+      .bulk-action
+        select.form-select
+          option(value="") -- Hành động --
+          option(value="restore") Khôi phục
+          option(value="delete-permanent") Xóa vĩnh viễn
+        button.btn-apply Áp dụng
+        
+      .search-box-large
+        i.fa-solid.fa-magnifying-glass
+        input(type="text" placeholder="Tìm kiếm sản phẩm trong thùng rác...")
+
+  //- 2. BẢNG DỮ LIỆU THÙNG RÁC
+  .table-section
+    .table-responsive
+      table.admin-table.table-hover
+        thead
+          tr
+            th.text-center(width="50px"): input(type="checkbox")
+            th Tên sản phẩm
+            th Ảnh đại diện
+            th Giá (VNĐ)
+            th Tồn kho
+            th Vị trí
+            th Trạng thái
+            th Tạo bởi
+            th Xóa bởi
+            th Hành động
+        
+        tbody
+          //- Dòng 1
+          tr
+            td.text-center: input(type="checkbox")
+            td.font-weight-600 Nike Air Zoom Pegasus 39
+            td: img.td-thumbnail(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=100&auto=format&fit=crop")
+            
+            td.text-price 2.450.000đ
+            td
+              .inventory-list
+                .inventory-item
+                  span.size-name Size 40:
+                  span.size-qty 15
+                .inventory-item
+                  span.size-name Size 41:
+                  span.size-qty 20
+                  
+            td 1
+            td: span.badge-status.badge-inactive Đã xóa
+            td: .user-date
+                span.name Lê Văn A
+                span.time 16:30 - 20/10/2026
+            
+            //- Cột mới: Xóa bởi
+            td: .user-date
+                span.name Lê Văn B
+                span.time 09:15 - 22/10/2026
+                
+            td: .action-btns
+                //- Nút Khôi phục (Restore)
+                button.btn-restore(title="Khôi phục"): i.fa-solid.fa-rotate-left
+                //- Nút Xóa vĩnh viễn
+                button.btn-delete(title="Xóa vĩnh viễn"): i.fa-regular.fa-trash-can
+
+          //- Dòng 2
+          tr
+            td.text-center: input(type="checkbox")
+            td.font-weight-600 Adidas Ultraboost 22
+            td: img.td-thumbnail(src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=100&auto=format&fit=crop")
+            
+            td.text-price 3.400.000đ
+            td
+              .inventory-list
+                .inventory-item
+                  span.size-name Size 40:
+                  span.size-qty.out-of-stock 0
+                .inventory-item
+                  span.size-name Size 41:
+                  span.size-qty 5
+                  
+            td 2
+            td: span.badge-status.badge-inactive Đã xóa
+            td: .user-date
+                span.name Lê Văn B
+                span.time 16:30 - 20/10/2026
+            
+            td: .user-date
+                span.name Admin Tổng
+                span.time 14:00 - 25/10/2026
+                
+            td: .action-btns
+                button.btn-restore(title="Khôi phục"): i.fa-solid.fa-rotate-left
+                button.btn-delete(title="Xóa vĩnh viễn"): i.fa-regular.fa-trash-can
+
+    //- 3. PHÂN TRANG (PAGINATION)
+    .admin-pagination
+      ul.pagination-list
+        li.page-item.disabled: a.page-link(href="#"): i.fa-solid.fa-angle-left
+        li.page-item.active: a.page-link(href="#") 1
+        li.page-item: a.page-link(href="#") 2
+        li.page-item.dots: span ...
+        li.page-item: a.page-link(href="#"): i.fa-solid.fa-angle-right

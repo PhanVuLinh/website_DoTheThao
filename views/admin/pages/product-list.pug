@@ -1,0 +1,180 @@
+extends ../layouts/default.pug
+
+block main
+  h1.page-title Quản lý sản phẩm
+
+  //- 1. KHỐI BỘ LỌC VÀ HÀNH ĐỘNG
+  .filter-action-card
+    //- Hàng trên: Bộ lọc (Nhiều tiêu chí hơn)
+    .filter-row
+      .filter-label
+        i.fa-solid.fa-filter
+        span Bộ lọc
+      
+      select.form-select
+        option(value="") Trạng thái
+        option(value="active") Hoạt động
+        option(value="inactive") Tạm dừng
+        
+      select.form-select
+        option(value="") Người tạo
+        option Lê Văn A
+        option Lê Văn B
+        
+      .date-range-picker
+        input(type="text" placeholder="dd/mm/yyyy")
+        span -
+        input(type="text" placeholder="dd/mm/yyyy")
+        
+      //- Thêm lọc theo Danh mục
+      select.form-select
+        option(value="") Danh mục
+        option Giày Chạy Bộ
+        option Quần Áo
+        
+      //- Thêm lọc theo Mức giá
+      select.form-select
+        option(value="") Mức giá
+        option Dưới 1 triệu
+        option 1 - 3 triệu
+        option Trên 3 triệu
+        
+      button.btn-clear
+        i.fa-solid.fa-rotate-right
+        | Xóa bộ lọc
+
+    //- Hàng dưới: Hành động, Tìm kiếm, Tạo mới & Thùng rác
+    .action-row
+      .bulk-action
+        select.form-select
+          option(value="") -- Hành động --
+          option(value="delete") Xóa nhiều
+          option(value="active") Đổi trạng thái
+        button.btn-apply Áp dụng
+        
+      .search-box-large
+        i.fa-solid.fa-magnifying-glass
+        input(type="text" placeholder="Tìm kiếm sản phẩm...")
+        
+      .action-buttons-right
+        a(href=`/${pathAdmin}/product/create`).btn-create
+          i.fa-solid.fa-plus
+          | Tạo mới
+        a(href=`/${pathAdmin}/product/trash`).btn-trash
+          i.fa-regular.fa-trash-can
+          | Thùng rác
+
+  //- 2. BẢNG DỮ LIỆU
+  .table-section
+    .table-responsive
+      table.admin-table.table-hover
+        thead
+          tr
+            th.text-center(width="50px")
+              input(type="checkbox")
+            th Tên sản phẩm
+            th Ảnh đại diện
+            th Giá (VNĐ)
+            th Tồn kho
+            th Vị trí
+            th Trạng thái
+            th Tạo bởi
+            th Cập nhật bởi
+            th Hành động
+        
+        tbody
+          //- Dòng 1
+          tr
+            td.text-center
+              input(type="checkbox")
+            td.font-weight-600 Nike Air Zoom Pegasus 39
+            td
+              img.td-thumbnail(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=100&auto=format&fit=crop" alt="Sản phẩm")
+            
+            //- Cột giá chỉ có 1 số in đậm
+            td.text-price 2.450.000đ
+            
+            //- Cột tồn kho chia 2 bên
+            td
+              .inventory-list
+                .inventory-item
+                  span Size 40
+                  span 15
+                .inventory-item
+                  span Size 41
+                  span 20
+                .inventory-item
+                  span Size 42
+                  span 10
+                  
+            td 1
+            td: span.badge-status.badge-active Hoạt động
+            td
+              .user-date
+                span.name Lê Văn A
+                span.time 16:30 - 20/10/2026
+            td
+              .user-date
+                span.name Lê Văn A
+                span.time 16:30 - 20/10/2026
+            td
+              .action-btns
+                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+
+          //- Dòng 2
+          tr
+            td.text-center
+              input(type="checkbox")
+            td.font-weight-600 Adidas Ultraboost 22
+            td
+              img.td-thumbnail(src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=100&auto=format&fit=crop" alt="Sản phẩm")
+            
+            td.text-price 3.400.000đ
+            
+            td
+              .inventory-list
+                .inventory-item
+                  span Size 40
+                  span 0
+                .inventory-item
+                  span Size 41
+                  span 5
+                .inventory-item
+                  span Size 42
+                  span 8
+                  
+            td 2
+            td: span.badge-status.badge-inactive Tạm dừng
+            td
+              .user-date
+                span.name Lê Văn B
+                span.time 16:30 - 20/10/2026
+            td
+              .user-date
+                span.name Lê Văn B
+                span.time 16:30 - 20/10/2026
+            td
+              .action-btns
+                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+
+    //- 3. PHÂN TRANG (PAGINATION)
+    .admin-pagination
+      ul.pagination-list
+        li.page-item.disabled
+          a.page-link(href="#")
+            i.fa-solid.fa-angle-left
+        li.page-item.active
+          a.page-link(href="#") 1
+        li.page-item
+          a.page-link(href="#") 2
+        li.page-item
+          a.page-link(href="#") 3
+        li.page-item.dots
+          span ...
+        li.page-item
+          a.page-link(href="#") 10
+        li.page-item
+          a.page-link(href="#")
+            i.fa-solid.fa-angle-right

@@ -6,7 +6,7 @@ const cartRoutes = require("../client/cart.route");
 
 router.use("/", homeRoutes);
 
-router.use("/products", productRoutes);
+router.use("/product", productRoutes);
 
 router.use("/cart", cartRoutes);
 
