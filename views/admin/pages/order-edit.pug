@@ -1,0 +1,80 @@
+extends ../layouts/default.pug
+
+block main
+  //- 1. PAGE HEADER
+  .page-header
+    h1.page-title Chi tiết đơn hàng
+      span.order-code OD000001
+    a.btn-back(href=`/${pathAdmin}/orders`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  //- 2. CONTAINER CHÍNH
+  .order-details-container
+    form(action=`/${pathAdmin}/orders/edit/1?_method=PATCH` method="POST")
+
+      //- --- CỘT TRÁI: SẢN PHẨM & TỔNG CỘNG ---
+      .order-main-content
+        //- a. Sản phẩm
+        h3.section-title Sản phẩm
+        .order-products-list.mb-4
+          //- Sản phẩm 1
+          .product-list-item
+            img(src="https://images.unsplash.com/photo-15422 Zoom Pegasus 39")
+            .prod-info-stack
+              span.prod-name-main Nike Air Zoom Pegasus 39
+              span.prod-meta-main Size: 40
+            .prod-qty-price
+              span.prod-qty 1
+              span.prod-price 2.450.000đ
+          
+          //- Sản phẩm 2
+          .product-list-item
+            img(src="https://images.unsplash.com/photo-15511 Ultraboost 22")
+            .prod-info-stack
+              span.prod-name-main Adidas Ultraboost 22
+              span.prod-meta-main Size: 41
+            .prod-qty-price
+              span.prod-qty 1
+              span.prod-price 3.400.000đ
+
+        //- b. Tổng kết thanh toán (Tái tạo y hệt ảnh)
+        h3.section-title Thanh toán
+        .payment-summary.mb-4
+          span Tạm tính: 5.850.000đ
+          span Phí vận chuyển: 30.000đ
+          span Giảm giá: -100.000đ
+          span.total-amount-display TỔNG CỘNG: 5.780.000đ
+
+      //- --- CỘT PHẢI: THÔNG TIN KHÁCH & TRẠNG THÁI ---
+      .order-side-content
+        //- a. Thông tin khách
+        .order-section-box.mb-4
+          label Thông tin khách
+          .customer-info-box
+            span.cust-name Lê Văn A
+            span.cust-phone SĐT: 0987654321
+            span.cust-address Địa chỉ: 123 Lê Lợi, Quận 1, TP.HCM
+            span.cust-note Ghi chú: Giao giờ hành chính
+
+        //- b. Phương thức thanh toán
+        .order-section-box.mb-4
+          label Phương thức thanh toán
+          input.form-control(type="text" value="Chuyển khoản VNPay" readonly)
+
+        //- c. Trạng thái đơn và cập nhật
+        .order-section-box.mb-4
+          label Trạng thái đơn
+          .status-update-row
+            span.badge-status.badge-pending Khởi tạo
+            select.form-select.w-auto(name="status")
+              option(value="pending" selected) Cập nhật trạng thái...
+              option(value="processing") Đang xử lý
+              option(value="shipping") Đang giao hàng
+              option(value="completed") Hoàn thành
+              option(value="cancelled") Đã hủy
+            button.btn-apply.w-auto Áp dụng
+
+    //- 3. HÀNH ĐỘNG CỦA FORM
+    .form-actions
+      button.btn-submit(type="submit") Lưu thay đổi
