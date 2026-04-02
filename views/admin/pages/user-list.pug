@@ -1,0 +1,115 @@
+extends ../layouts/default.pug
+
+block main
+  h1.page-title Quản lý người dùng
+
+  //- 1. KHỐI BỘ LỌC VÀ TÌM KIẾM
+  .filter-action-card
+    //- Hàng trên: Bộ lọc (Đã được thu gọn theo thiết kế)
+    .filter-row
+      .filter-label
+        i.fa-solid.fa-filter
+        span Bộ lọc
+      
+      select.form-select
+        option(value="") Trạng thái
+        option(value="active") Hoạt động
+        option(value="inactive") Tạm dừng
+        
+      .date-range-picker
+        input(type="text" placeholder="dd/mm/yyyy")
+        span -
+        input(type="text" placeholder="dd/mm/yyyy")
+        
+      button.btn-clear
+        i.fa-solid.fa-rotate-right
+        | Xóa bộ lọc
+
+    //- Hàng dưới: Hành động, Tìm kiếm
+    .action-row
+      .bulk-action
+        select.form-select
+          option(value="") -- Hành động --
+          option(value="active") Đổi trạng thái
+          option(value="delete") Xóa
+        button.btn-apply Áp dụng
+        
+      .search-box-large(style="max-width: 500px;")
+        i.fa-solid.fa-magnifying-glass
+        input(type="text" placeholder="Tìm kiếm theo Tên, Email, SĐT...")
+
+  //- 2. BẢNG DỮ LIỆU NGƯỜI DÙNG
+  .table-section
+    .table-responsive
+      table.admin-table.table-hover
+        thead
+          tr
+            th.text-center(width="50px")
+              input(type="checkbox")
+            th Họ tên
+            th.text-center Ảnh đại diện
+            th Email
+            th Số điện thoại
+            th Địa chỉ
+            th Trạng thái
+            th Hành động
+        
+        tbody
+          //- Người dùng 1
+          tr
+            td.text-center
+              input(type="checkbox")
+            td.font-weight-600 Lê Văn A
+            td.text-center
+              img.td-thumbnail(src="https://ui-avatars.com/api/?name=Le+Van+A&background=0D8ABC&color=fff" alt="Avatar" )
+            td levana@gmail.com
+            td 01234567890
+            td Số 123, đường ABC, Phường X, Quận Y, TP.HCM
+            td: span.badge-status.badge-active Hoạt động
+            td
+              .action-btns
+                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+
+          //- Người dùng 2
+          tr
+            td.text-center
+              input(type="checkbox")
+            td.font-weight-600 Lê Văn B
+            td.text-center
+              img.td-thumbnail(src="https://ui-avatars.com/api/?name=Le+Van+B&background=EF4444&color=fff" alt="Avatar")
+            td levanb@gmail.com
+            td 09876543210
+            td Số 456, đường XYZ, Phường Z, Quận W, Hà Nội
+            td: span.badge-status.badge-inactive Tạm dừng
+            td
+              .action-btns
+                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+                
+          //- Người dùng 3
+          tr
+            td.text-center
+              input(type="checkbox")
+            td.font-weight-600 Trần Thị C
+            td.text-center
+              img.td-thumbnail(src="https://ui-avatars.com/api/?name=Tran+Thi+C&background=10B981&color=fff" alt="Avatar" )
+            td tranthic@gmail.com
+            td 03456789012
+            td Số 789, đường DEF, Phường M, Quận N, Đà Nẵng
+            td: span.badge-status.badge-active Hoạt động
+            td
+              .action-btns
+                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+
+    //- 3. PHÂN TRANG
+    .admin-pagination
+      ul.pagination-list
+        li.page-item.disabled: a.page-link(href="#"): i.fa-solid.fa-angle-left
+        li.page-item.active: a.page-link(href="#") 1
+        li.page-item: a.page-link(href="#") 2
+        li.page-item: a.page-link(href="#") 3
+        li.page-item.dots: span ...
+        li.page-item: a.page-link(href="#") 10
+        li.page-item: a.page-link(href="#"): i.fa-solid.fa-angle-right
