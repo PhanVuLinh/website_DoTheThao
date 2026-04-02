@@ -1,0 +1,20 @@
+extends ../layouts/default.pug
+
+block main
+  h1.page-title Cài đặt chung
+
+  .settings-grid
+    a.setting-card(href=`/${pathAdmin}/setting/website-info`)
+      .setting-icon
+        i.fa-solid.fa-info
+      span.setting-title Thông tin website
+
+    a.setting-card(href=`/${pathAdmin}/setting/account-admin/list`)
+      .setting-icon
+        i.fa-solid.fa-user-tie
+      span.setting-title Tài khoản quản trị
+
+    a.setting-card(href=`/${pathAdmin}/setting/role/list`)
+      .setting-icon
+        i.fa-solid.fa-user-gear
+      span.setting-title Nhóm quyền

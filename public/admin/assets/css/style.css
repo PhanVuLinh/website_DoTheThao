@@ -1197,7 +1197,139 @@ textarea.form-control {
 .hidden {
   display: none !important;
 }
+/* =========================================
+   12. TRANG CÀI ĐẶT CHUNG (SETTINGS)
+   ========================================= */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  margin-top: 10px;
+}
 
+.setting-card {
+  background-color: var(--white);
+  border-radius: 16px;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+/* Hiệu ứng khi rê chuột vào Card */
+.setting-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(70, 107, 214, 0.1);
+  border-color: rgba(70, 107, 214, 0.2);
+}
+
+.setting-icon {
+  width: 55px;
+  height: 55px;
+  background-color: #eef2ff; /* Màu xanh pastel nhạt giống trong ảnh */
+  color: var(--blue-active);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.setting-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 1024px) {
+  .settings-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================
+   13. TIỆN ÍCH CHO FORM SETTINGS 
+   ========================================= */
+
+/* Tách hàng upload ảnh rộng ra một chút */
+.upload-row {
+  margin-top: 20px;
+}
+
+/* Căn giữa và xếp dọc nút Submit & Nút Quay lại */
+.form-actions-stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 50px;
+}
+
+/* Nút Submit to dài theo thiết kế */
+.btn-submit-large {
+  width: auto;
+  padding: 14px 100px;
+}
+
+/* Link quay lại có gạch chân */
+.link-back-underline {
+  color: var(--blue-active);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: underline;
+  transition: 0.3s;
+}
+
+.link-back-underline:hover {
+  color: var(--blue-dark);
+}
+/* =========================================
+   14. TRANG NHÓM QUYỀN (ROLES)
+   ========================================= */
+
+/* Khung chứa các ô checkbox phân quyền */
+.permissions-box {
+  background-color: var(--bg-input); /* Màu xám nhạt đồng bộ với input */
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 20px 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Khoảng cách giữa các dòng checkbox */
+}
+
+/* Từng dòng checkbox */
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.check-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--blue-active); /* Đổi màu checkbox khi tick vào thành màu xanh chủ đạo */
+}
+
+/* Reset lại label bên trong check-item để không bị in đậm và dính margin của form-group */
+.check-item label {
+  margin-bottom: 0; 
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-dark);
+}
 /* =========================================
    11. ĐÁP ỨNG THIẾT BỊ DI ĐỘNG (RESPONSIVE)
    ========================================= */

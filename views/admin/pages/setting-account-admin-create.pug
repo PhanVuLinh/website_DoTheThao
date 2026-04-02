@@ -1,0 +1,75 @@
+extends ../layouts/default.pug
+
+block main
+  //- Tiêu đề & Nút Quay lại
+  .page-header
+    h1.page-title Tạo tài khoản quản trị
+    a.btn-back(href=`/${pathAdmin}/setting/account-admin/list`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  .form-card
+    form(action=`/${pathAdmin}/accounts/create` method="POST" enctype="multipart/form-data")
+      
+      //- Hàng 1: Họ tên & Email
+      .form-row-2
+        .form-group
+          label Họ tên
+          input.form-control(type="text" name="fullName" placeholder="Nhập họ tên" required)
+        
+        .form-group
+          label Email
+          input.form-control(type="email" name="email" placeholder="Nhập email" required)
+      
+      //- Hàng 2: Số điện thoại & Nhóm quyền
+      .form-row-2
+        .form-group
+          label Số điện thoại
+          input.form-control(type="text" name="phone" placeholder="Nhập số điện thoại")
+        
+        .form-group
+          label Nhóm quyền
+          select.form-control(name="role_id" required)
+            option(value="" disabled selected) -- Chọn nhóm quyền --
+            option(value="1") Quản trị viên
+            option(value="2") Kế toán
+            option(value="3") Nhân viên Sale
+
+      //- Hàng 3: Chức vụ & Trạng thái
+      .form-row-2
+        .form-group
+          label Chức vụ
+          input.form-control(type="text" name="position" placeholder="Nhập chức vụ")
+        
+        .form-group
+          label Trạng thái
+          select.form-control(name="status")
+            option(value="active" selected) Hoạt động
+            option(value="inactive") Tạm dừng
+
+      //- Hàng 4: Mật khẩu (Nằm một mình ở cột trái)
+      .form-row-2
+        .form-group
+          label Mật khẩu
+          input.form-control(type="password" name="password" placeholder="Nhập mật khẩu" required)
+        
+        //- Cột trống bên phải để đẩy ô Mật khẩu sang trái, giữ nguyên layout 2 cột y như thiết kế
+        .form-group 
+
+      //- Hàng 5: Upload Ảnh đại diện
+      .form-group(style="margin-top: 10px;")
+        label Ảnh đại diện
+        .upload-image-wrapper
+          input#avatar-upload.hidden-input(type="file" name="avatar" accept="image/*" onchange="previewImage(event, 'preview-avatar', 'avatar-container', 'avatar-label')")
+          
+          label.upload-box(for="avatar-upload" id="avatar-label")
+            i.fa-solid.fa-plus
+            
+          .image-preview-container.hidden#avatar-container
+            img#preview-avatar(src="" alt="Preview")
+            button.btn-remove-image(type="button" onclick="removeImage('avatar-upload', 'preview-avatar', 'avatar-container', 'avatar-label')" title="Xóa ảnh")
+              i.fa-solid.fa-xmark
+
+      //- Nút Submit căn giữa
+      .form-actions-stacked
+        button.btn-submit.btn-submit-large(type="submit") Tạo mới

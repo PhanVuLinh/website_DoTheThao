@@ -1,0 +1,70 @@
+extends ../layouts/default.pug
+
+block main
+  //- 1. PAGE HEADER
+  .page-header
+    h1.page-title Nhóm quyền
+
+  //- 2. KHỐI TÌM KIẾM VÀ HÀNH ĐỘNG (Lược bỏ bộ lọc)
+  .filter-action-card
+    .action-row
+      .bulk-action
+        select.form-select
+          option(value="") -- Hành động --
+          option(value="delete") Xóa nhiều
+        button.btn-apply Áp dụng
+        
+      .search-box-large
+        i.fa-solid.fa-magnifying-glass
+        input(type="text" placeholder="Tìm kiếm nhóm quyền...")
+        
+      .action-buttons-right
+        a.btn-create(href=`/${pathAdmin}/setting/role/create`)
+          i.fa-solid.fa-plus
+          | Tạo mới
+
+  //- 3. BẢNG DỮ LIỆU NHÓM QUYỀN
+  .table-section
+    .table-responsive
+      table.admin-table.table-hover
+        thead
+          tr
+            th.text-center(width="50px")
+              input(type="checkbox")
+            th Tên nhóm quyền
+            th Mô tả ngắn
+            th Hành động
+        
+        tbody
+          //- Nhóm quyền 1
+          tr
+            td.text-center
+              input(type="checkbox")
+            td.font-weight-600 Quản trị viên
+            td Có đầy đủ các quyền trên hệ thống
+            td
+              .action-btns
+                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+
+          //- Nhóm quyền 2
+          tr
+            td.text-center
+              input(type="checkbox")
+            td.font-weight-600 Quản lý sản phẩm
+            td Có đầy đủ quyền liên quan đến danh mục và sản phẩm
+            td
+              .action-btns
+                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+                
+          //- Nhóm quyền 3
+          tr
+            td.text-center
+              input(type="checkbox")
+            td.font-weight-600 Quản lý đơn hàng
+            td Có đầy đủ quyền liên quan đến xử lý đơn hàng và khách hàng
+            td
+              .action-btns
+                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
