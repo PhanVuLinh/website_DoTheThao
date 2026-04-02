@@ -1,0 +1,58 @@
+extends ../layouts/default.pug
+
+block main
+  //- 1. PAGE HEADER
+  .page-header
+    h1.page-title Thông tin cá nhân
+
+  //- 2. FORM THÔNG TIN
+  .form-card
+    form(action=`/${pathAdmin}/profile/edit?_method=PATCH` method="POST" enctype="multipart/form-data")
+      
+      //- Hàng 1: Họ tên (Được sửa) & Email (Không được sửa)
+      .form-row-2
+        .form-group
+          label Họ tên
+          input.form-control(type="text" name="fullName" value="Lê Văn A" required)
+        
+        .form-group
+          label Email
+          input.form-control(type="email" name="email" value="levana@gmail.com" readonly)
+      
+      //- Hàng 2: Số điện thoại (Được sửa) & Chức vụ (Không được sửa)
+      .form-row-2
+        .form-group
+          label Số điện thoại
+          input.form-control(type="text" name="phone" value="0123456789")
+        
+        .form-group
+          label Chức vụ
+          input.form-control(type="text" name="position" value="Giám đốc" readonly)
+
+      //- Hàng 3: Nhóm quyền (Không được sửa) nằm cột trái
+      .form-row-2
+        .form-group
+          label Nhóm quyền
+          input.form-control(type="text" value="Quản trị viên" readonly)
+        
+        //- Cột phải để trống để ép ô Nhóm quyền sang trái
+        .form-group
+
+      //- Hàng 4: Upload Ảnh đại diện (Được sửa)
+      .form-group(style="margin-top: 10px;")
+        label Ảnh đại diện
+        .upload-image-wrapper
+          input#avatar-upload.hidden-input(type="file" name="avatar" accept="image/*" onchange="previewImage(event, 'preview-avatar', 'avatar-container', 'avatar-label')")
+          
+          label.upload-box(for="avatar-upload" id="avatar-label")
+            i.fa-solid.fa-plus
+            
+          .image-preview-container.hidden#avatar-container
+            img#preview-avatar(src="" alt="Preview")
+            button.btn-remove-image(type="button" onclick="removeImage('avatar-upload', 'preview-avatar', 'avatar-container', 'avatar-label')" title="Xóa ảnh")
+              i.fa-solid.fa-xmark
+
+      //- Hàng 5: Nút Cập nhật & Link Đổi mật khẩu
+      .form-actions-stacked
+        button.btn-submit.btn-submit-large(type="submit") Cập nhật
+        a.link-back-underline(href=`/${pathAdmin}/profile/change-password`) Đổi mật khẩu

@@ -1330,6 +1330,19 @@ textarea.form-control {
   font-size: 14px;
   color: var(--text-dark);
 }
+
+/* Các ô Input bị khóa (Readonly) */
+.form-control[readonly] {
+  background-color: #f1f3f7; /* Nền xám hơn bình thường một chút */
+  color: #888; /* Chữ mờ đi */
+  cursor: not-allowed; /* Con trỏ chuột hiện dấu cấm */
+  border-color: var(--border-color);
+}
+
+.form-control[readonly]:focus {
+  box-shadow: none;
+  border-color: var(--border-color);
+}
 /* =========================================
    11. ĐÁP ỨNG THIẾT BỊ DI ĐỘNG (RESPONSIVE)
    ========================================= */
