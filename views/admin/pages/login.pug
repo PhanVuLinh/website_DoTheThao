@@ -1,43 +1,50 @@
 extends ../layouts/auth.pug
 
 block main
-  //- Vòng tròn trang trí nền
-  .bg-shape.shape-1
-  .bg-shape.shape-2
+  //- THÊM CLASS NÀY ĐỂ BAO TRỌN TOÀN MÀN HÌNH
+  .auth-page
+  
+    //- Vòng tròn trang trí nền
+    .auth-bg-shape.auth-shape-1
+    .auth-bg-shape.auth-shape-2
 
-  .form-account-wrapper
-    .form-account
-      .auth-header
-        .logo-icon
-          i.fa-solid.fa-shield-halved
-        h2.inner-title TitiSport Admin
-        p.inner-desc Đăng nhập hệ thống quản trị viên
-      form.inner-form#login-form(action="/admin/login" method="POST")
-        .inner-group
-          label.inner-label(for="email") Email quản trị
-          .input-wrapper
-            i.fa-regular.fa-envelope.input-icon
-            input.inner-control(
-              type="email"
-              name="email"
-              id="email"
-              placeholder="admin@titisport.vn"
-              required
-            )
+    .auth-form-wrapper
+      .auth-form-container
+        //- Tiêu đề & Logo
+        .auth-header
+          .auth-logo-icon
+            i.fa-solid.fa-shield-halved
+          h2.auth-title TitiSport Admin
+          p.auth-desc Đăng nhập hệ thống quản trị viên
         
-        .inner-group
-          label.inner-label(for="password") Mật khẩu
-          .input-wrapper
-            i.fa-solid.fa-lock.input-icon
-            input.inner-control(
-              type="password"
-              name="password"
-              id="password"
-              placeholder="••••••••"
-              required
-            )
-            i.fa-regular.fa-eye-slash.toggle-password(onclick="togglePassword()")
-        
-        button.inner-button(type="submit") 
-          | Đăng Nhập
-          i.fa-solid.fa-arrow-right-to-bracket
+        //- Form Đăng Nhập
+        form.auth-form#login-form(action=`/${pathAdmin}/auth/login` method="POST")
+          
+          .auth-group
+            label.auth-label(for="email") Email quản trị
+            .auth-input-wrapper
+              i.fa-regular.fa-envelope.auth-input-icon
+              input.auth-control(
+                type="email"
+                name="email"
+                id="email"
+                placeholder="admin@titisport.vn"
+                required
+              )
+          
+          .auth-group
+            label.auth-label(for="password") Mật khẩu
+            .auth-input-wrapper
+              i.fa-solid.fa-lock.auth-input-icon
+              input.auth-control(
+                type="password"
+                name="password"
+                id="password"
+                placeholder="••••••••"
+                required
+              )
+              i.fa-regular.fa-eye-slash.auth-toggle-password(onclick="togglePassword()")
+          
+          button.auth-submit-btn(type="submit") 
+            | Đăng Nhập
+            i.fa-solid.fa-arrow-right-to-bracket

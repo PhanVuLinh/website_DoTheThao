@@ -111,34 +111,3 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
-
-// Tính năng Preview Ảnh đa năng (dùng cho nhiều ô upload trên 1 trang)
-function previewImage(event, imgId, containerId, labelId) {
-    const input = event.target;
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            // Cập nhật đường dẫn ảnh
-            document.getElementById(imgId).src = e.target.result;
-            // Ẩn nút dấu cộng
-            document.getElementById(labelId).classList.add("hidden");
-            // Hiện vùng chứa ảnh
-            document.getElementById(containerId).classList.remove("hidden");
-        }
-        
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-// Xóa ảnh đã chọn
-function removeImage(inputId, imgId, containerId, labelId) {
-    // Reset ô input file
-    document.getElementById(inputId).value = "";
-    // Xóa đường dẫn ảnh
-    document.getElementById(imgId).src = "";
-    // Ẩn vùng chứa ảnh
-    document.getElementById(containerId).classList.add("hidden");
-    // Hiện lại nút dấu cộng
-    document.getElementById(labelId).classList.remove("hidden");
-}

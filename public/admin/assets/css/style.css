@@ -34,30 +34,32 @@ a {
 /* =========================================
    2. GIAO DIỆN ĐĂNG NHẬP (AUTH)
    ========================================= */
-body.auth-body {
-  background: linear-gradient(135deg, var(--blue-dark), var(--blue-soft));
+.auth-page {
+  /* background: linear-gradient(135deg, var(--blue-dark), var(--blue-soft)); */
+  background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOr61EZ1ySPC-oZ3k3Hf84HeYIMevv5QeaGw&s');
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  width: 100%;
   position: relative;
   overflow: hidden;
 }
 
-.bg-shape {
+.auth-bg-shape {
   position: absolute;
   border-radius: 50%;
   filter: blur(60px);
   z-index: 1;
 }
-.shape-1 {
+.auth-shape-1 {
   width: 400px;
   height: 400px;
   background: rgba(235, 84, 56, 0.2);
   top: -100px;
   left: -100px;
 }
-.shape-2 {
+.auth-shape-2 {
   width: 500px;
   height: 500px;
   background: rgba(255, 255, 255, 0.1);
@@ -65,25 +67,26 @@ body.auth-body {
   right: -100px;
 }
 
-.form-account-wrapper {
+.auth-form-wrapper {
   position: relative;
   z-index: 10;
   width: 100%;
   max-width: 450px;
   padding: 20px;
 }
-.form-account {
+.auth-form-container {
   background-color: var(--white);
   padding: 45px 40px;
   border-radius: 20px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
+
 .auth-header {
   text-align: center;
   margin-bottom: 35px;
 }
-.logo-icon {
+.auth-logo-icon {
   width: 60px;
   height: 60px;
   background: rgba(0, 0, 77, 0.05);
@@ -95,7 +98,7 @@ body.auth-body {
   justify-content: center;
   margin: 0 auto 15px auto;
 }
-.inner-title {
+.auth-title {
   font-size: 26px;
   font-weight: 800;
   color: var(--blue-dark);
@@ -103,33 +106,35 @@ body.auth-body {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.inner-desc {
+.auth-desc {
   font-size: 14px;
   color: var(--text-gray);
 }
-.inner-group {
+
+.auth-group {
   margin-bottom: 20px;
 }
-.inner-label {
+.auth-label {
   display: block;
   font-size: 14px;
   font-weight: 700;
   color: var(--blue-dark);
   margin-bottom: 8px;
 }
-.input-wrapper {
+.auth-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
-.input-icon {
+.auth-input-icon {
   position: absolute;
   left: 16px;
   color: #888;
   font-size: 16px;
   transition: 0.3s;
 }
-.inner-control {
+
+.auth-control {
   width: 100%;
   padding: 14px 45px;
   border: 1px solid #ddd;
@@ -140,19 +145,20 @@ body.auth-body {
   transition: all 0.3s ease;
   outline: none;
 }
-.inner-control::placeholder {
+.auth-control::placeholder {
   color: #aaa;
 }
-.inner-control:focus {
+.auth-control:focus {
   background-color: var(--white);
   border-color: var(--blue-dark);
   box-shadow: 0 0 0 4px rgba(0, 0, 77, 0.08);
 }
-.inner-control:focus + .input-icon,
-.input-wrapper:focus-within .input-icon {
+.auth-control:focus + .auth-input-icon,
+.auth-input-wrapper:focus-within .auth-input-icon {
   color: var(--blue-dark);
 }
-.toggle-password {
+
+.auth-toggle-password {
   position: absolute;
   right: 16px;
   color: #888;
@@ -160,10 +166,11 @@ body.auth-body {
   font-size: 16px;
   transition: 0.3s;
 }
-.toggle-password:hover {
+.auth-toggle-password:hover {
   color: var(--red-main);
 }
-.inner-button {
+
+.auth-submit-btn {
   width: 100%;
   padding: 16px;
   background-color: var(--blue-dark);
@@ -181,7 +188,7 @@ body.auth-body {
   transition: all 0.3s ease;
   margin-top: 30px;
 }
-.inner-button:hover {
+.auth-submit-btn:hover {
   background-color: var(--red-main);
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(235, 84, 56, 0.25);
@@ -449,7 +456,7 @@ body.admin-body {
 }
 
 /* =========================================
-   5. BỘ LỌC VÀ BẢNG DỮ LIỆU
+   5. BỘ LỌC VÀ BẢNG DỮ LIỆU & BIỂU ĐỒ
    ========================================= */
 .filter-action-card,
 .chart-section,
@@ -460,6 +467,15 @@ body.admin-body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
   margin-bottom: 25px;
 }
+
+/* ---- FIX LỖI CHART BỊ HẸP Ở ĐÂY ---- */
+.chart-container {
+  position: relative;
+  height: 350px;
+  width: 100%;
+}
+/* ------------------------------------- */
+
 .filter-row {
   display: flex;
   align-items: center;
@@ -573,7 +589,6 @@ body.admin-body {
   gap: 12px;
 }
 
-/* Nút bấm (Tạo mới, Thùng rác) */
 .btn-create {
   background-color: var(--blue-active);
   color: var(--white);
@@ -866,7 +881,6 @@ body.admin-body {
   font-size: 12px;
   color: var(--text-gray);
 }
-
 .payment-summary {
   display: flex;
   flex-direction: column;
@@ -898,13 +912,6 @@ body.admin-body {
   grid-template-columns: 2fr 1fr;
   gap: 30px;
 }
-.form-actions {
-  grid-column: 1 / -1;
-  text-align: center;
-  margin-top: 40px;
-}
-
-/* Cột trái */
 .order-main-content {
   background: var(--white);
   border-radius: 16px;
@@ -970,7 +977,6 @@ body.admin-body {
   letter-spacing: 1px;
 }
 
-/* Cột phải */
 .order-side-content {
   display: flex;
   flex-direction: column;
@@ -1091,6 +1097,67 @@ textarea.form-control {
   resize: vertical;
 }
 
+/* Các ô Input bị khóa (Readonly) */
+.form-control[readonly] {
+  background-color: #f1f3f7;
+  color: #888;
+  cursor: not-allowed;
+  border-color: var(--border-color);
+}
+.form-control[readonly]:focus {
+  box-shadow: none;
+  border-color: var(--border-color);
+}
+
+/* Tiện ích Form chung */
+.upload-row {
+  margin-top: 20px;
+}
+.form-actions {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-top: 40px;
+}
+.form-actions-stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 50px;
+}
+.link-back-underline {
+  color: var(--blue-active);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: underline;
+  transition: 0.3s;
+}
+.link-back-underline:hover {
+  color: var(--blue-dark);
+}
+
+/* Nút Submit Form */
+.btn-submit {
+  background-color: var(--blue-active);
+  color: var(--white);
+  border: none;
+  padding: 14px 60px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(70, 107, 214, 0.2);
+  transition: 0.3s;
+}
+.btn-submit:hover {
+  background-color: var(--blue-dark);
+  transform: translateY(-2px);
+}
+.btn-submit-large {
+  width: auto;
+  padding: 14px 100px;
+}
+
 /* Grid Tồn Kho Size */
 .size-inventory-grid {
   display: grid;
@@ -1115,23 +1182,6 @@ textarea.form-control {
 .size-input-group .form-control {
   padding: 10px;
   background-color: var(--white);
-}
-
-/* Nút Submit Form */
-.btn-submit {
-  background-color: var(--blue-active);
-  color: var(--white);
-  border: none;
-  padding: 14px 60px;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(70, 107, 214, 0.2);
-}
-.btn-submit:hover {
-  background-color: var(--blue-dark);
-  transform: translateY(-2px);
 }
 
 /* Khối Upload Ảnh */
@@ -1189,6 +1239,7 @@ textarea.form-control {
   cursor: pointer;
   font-size: 12px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
 }
 .btn-remove-image:hover {
   transform: scale(1.1);
@@ -1197,8 +1248,9 @@ textarea.form-control {
 .hidden {
   display: none !important;
 }
+
 /* =========================================
-   12. TRANG CÀI ĐẶT CHUNG (SETTINGS)
+   11. TRANG CÀI ĐẶT CHUNG (SETTINGS CARDS)
    ========================================= */
 .settings-grid {
   display: grid;
@@ -1206,7 +1258,6 @@ textarea.form-control {
   gap: 25px;
   margin-top: 10px;
 }
-
 .setting-card {
   background-color: var(--white);
   border-radius: 16px;
@@ -1218,18 +1269,15 @@ textarea.form-control {
   transition: all 0.3s ease;
   border: 1px solid transparent;
 }
-
-/* Hiệu ứng khi rê chuột vào Card */
 .setting-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 25px rgba(70, 107, 214, 0.1);
   border-color: rgba(70, 107, 214, 0.2);
 }
-
 .setting-icon {
   width: 55px;
   height: 55px;
-  background-color: #eef2ff; /* Màu xanh pastel nhạt giống trong ảnh */
+  background-color: #eef2ff;
   color: var(--blue-active);
   border-radius: 50%;
   display: flex;
@@ -1237,114 +1285,45 @@ textarea.form-control {
   justify-content: center;
   font-size: 22px;
 }
-
 .setting-title {
   font-size: 16px;
   font-weight: 700;
   color: var(--text-dark);
 }
 
-/* Responsive cho màn hình nhỏ */
-@media (max-width: 1024px) {
-  .settings-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .settings-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* =========================================
-   13. TIỆN ÍCH CHO FORM SETTINGS 
+   12. TRANG NHÓM QUYỀN (ROLES)
    ========================================= */
-
-/* Tách hàng upload ảnh rộng ra một chút */
-.upload-row {
-  margin-top: 20px;
-}
-
-/* Căn giữa và xếp dọc nút Submit & Nút Quay lại */
-.form-actions-stacked {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  margin-top: 50px;
-}
-
-/* Nút Submit to dài theo thiết kế */
-.btn-submit-large {
-  width: auto;
-  padding: 14px 100px;
-}
-
-/* Link quay lại có gạch chân */
-.link-back-underline {
-  color: var(--blue-active);
-  font-weight: 600;
-  font-size: 14px;
-  text-decoration: underline;
-  transition: 0.3s;
-}
-
-.link-back-underline:hover {
-  color: var(--blue-dark);
-}
-/* =========================================
-   14. TRANG NHÓM QUYỀN (ROLES)
-   ========================================= */
-
-/* Khung chứa các ô checkbox phân quyền */
 .permissions-box {
-  background-color: var(--bg-input); /* Màu xám nhạt đồng bộ với input */
+  background-color: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 20px 25px;
   display: flex;
   flex-direction: column;
-  gap: 15px; /* Khoảng cách giữa các dòng checkbox */
+  gap: 15px;
 }
-
-/* Từng dòng checkbox */
 .check-item {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-
 .check-item input[type="checkbox"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: var(--blue-active); /* Đổi màu checkbox khi tick vào thành màu xanh chủ đạo */
+  accent-color: var(--blue-active);
 }
-
-/* Reset lại label bên trong check-item để không bị in đậm và dính margin của form-group */
 .check-item label {
-  margin-bottom: 0; 
+  margin-bottom: 0;
   font-weight: 500;
   cursor: pointer;
   font-size: 14px;
   color: var(--text-dark);
 }
 
-/* Các ô Input bị khóa (Readonly) */
-.form-control[readonly] {
-  background-color: #f1f3f7; /* Nền xám hơn bình thường một chút */
-  color: #888; /* Chữ mờ đi */
-  cursor: not-allowed; /* Con trỏ chuột hiện dấu cấm */
-  border-color: var(--border-color);
-}
-
-.form-control[readonly]:focus {
-  box-shadow: none;
-  border-color: var(--border-color);
-}
 /* =========================================
-   11. ĐÁP ỨNG THIẾT BỊ DI ĐỘNG (RESPONSIVE)
+   13. ĐÁP ỨNG THIẾT BỊ DI ĐỘNG (RESPONSIVE)
    ========================================= */
 @media (max-width: 1024px) {
   .stat-widgets {
@@ -1353,10 +1332,13 @@ textarea.form-control {
   .order-details-container form {
     grid-template-columns: 1fr;
   }
+  .settings-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
-  .form-account {
+  .auth-form-container {
     padding: 35px 25px;
   }
   .form-row-2 {
@@ -1374,6 +1356,9 @@ textarea.form-control {
     box-shadow: 10px 0 20px rgba(0, 0, 0, 0.1);
   }
   .stat-widgets {
+    grid-template-columns: 1fr;
+  }
+  .settings-grid {
     grid-template-columns: 1fr;
   }
 }

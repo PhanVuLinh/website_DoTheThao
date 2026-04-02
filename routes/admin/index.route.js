@@ -1,5 +1,6 @@
 const router = require("express").Router();
 
+const authRoutes = require("./auth.route");
 const dashboardRoutes = require("../admin/dashboard.route");
 const categoryRoutes = require("../admin/category.route");
 const productRoutes = require("../admin/product.route");
@@ -7,7 +8,9 @@ const orderRoutes = require("../admin/order.route");
 const userRoutes = require("../admin/user.route");
 const settingRoutes = require("../admin/setting.route");
 const profileRoutes = require("../admin/profile.route");
-const accountRoutes = require("../admin/account.route");
+
+
+router.use("/auth", authRoutes);
 
 router.use("/dashboard", dashboardRoutes);
 
@@ -23,6 +26,6 @@ router.use("/setting", settingRoutes);
 
 router.use("/profile", profileRoutes);
 
-router.use("/account", accountRoutes);
+
 
 module.exports = router;
