@@ -38,11 +38,11 @@ block main
     .chart-container
       canvas#revenueChart
 
-  //- 3. BẢNG ĐƠN HÀNG MỚI
+  //- 3. BẢNG ĐƠN HÀNG MỚI (ĐÃ CHUẨN HÓA CSS)
   .table-section
     h2.section-title Đơn hàng mới
     .table-responsive
-      table.admin-table
+      table.admin-table.table-hover 
         thead
           tr
             th Mã ĐH
@@ -51,31 +51,36 @@ block main
             th Thanh toán
             th Trạng thái
             th Ngày đặt
+        
         tbody
+          //- Đơn hàng 1
           tr
-            td: strong #DH1002
+            td: span.order-code #DH1002
             td
               .customer-info
-                span.name Nguyễn Văn B
+                span.font-weight-600 Nguyễn Văn B
                 span.phone 0901234567
             td
-              .product-mini
-                img(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=100&auto=format&fit=crop" alt="")
-                span Giày Nike Pegasus 39
-            td 2.450.000đ
+              .product-mini-item
+                img(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=100&auto=format&fit=crop" alt="Nike Pegasus")
+                .prod-info
+                  span.prod-name Giày Nike Pegasus 39
+            td: span.text-price 2.450.000đ
             td: span.badge-status.badge-pending Chờ xử lý
             td 01/11/2026
           
+          //- Đơn hàng 2
           tr
-            td: strong #DH1001
+            td: span.order-code #DH1001
             td
               .customer-info
-                span.name Trần Thị C
+                span.font-weight-600 Trần Thị C
                 span.phone 0987654321
             td
-              .product-mini
-                img(src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=100&auto=format&fit=crop" alt="")
-                span Adidas Ultraboost 22
-            td 3.400.000đ
+              .product-mini-item
+                img(src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=100&auto=format&fit=crop" alt="Adidas Ultraboost")
+                .prod-info
+                  span.prod-name Adidas Ultraboost 22
+            td: span.text-price 3.400.000đ
             td: span.badge-status.badge-success Đã giao
             td 30/10/2026

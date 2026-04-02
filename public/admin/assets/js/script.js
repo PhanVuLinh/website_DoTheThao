@@ -1,3 +1,21 @@
+//sidebar active  
+const sider = document.querySelector(".admin-sidebar");
+if(sider) {
+  const pathNameCurrent = window.location.pathname;
+  const splitPathNameCurrent = pathNameCurrent.split("/");
+  const menuList = sider.querySelectorAll(".sidebar-menu li a");
+  menuList.forEach((item) => {
+    const href = item.href;
+    const pathName = new URL(href).pathname;
+    const splitPathName = pathName.split("/");  
+    if(splitPathNameCurrent[1] == splitPathName[1] && splitPathNameCurrent[2] == splitPathName[2]) {
+      item.classList.add("active");
+    }
+  });
+}
+//sidebar active  
+
+
 function togglePassword() {
   const passInput = document.getElementById("password");
   const eyeIcon = document.querySelector(".toggle-password");

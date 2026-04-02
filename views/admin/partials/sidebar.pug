@@ -1,33 +1,40 @@
 aside.admin-sidebar
-  .sidebar-brand
+  a(href=`/${pathAdmin}/dashboard`).sidebar-brand
     i.fa-solid.fa-shield-halved
     span TitiSport
   
   ul.sidebar-menu
-    li: a.active(href=`/${pathAdmin}/dashboard`)
-      i.fa-solid.fa-chart-pie
-      span Tổng quan
-    li: a(href=`/${pathAdmin}/category/list`)
-      i.fa-solid.fa-table-cells-large
-      span Quản lý danh mục
-    li: a(href=`/${pathAdmin}/product/list`)
-      i.fa-solid.fa-box-open
-      span Quản lý sản phẩm
-    li: a(href=`/${pathAdmin}/order/list`)
-      i.fa-solid.fa-cart-shopping
-      span Quản lý đơn hàng
-    li: a(href=`/${pathAdmin}/user/list`)
-      i.fa-solid.fa-users
-      span Quản lý người dùng
+    li
+      a(href=`/${pathAdmin}/dashboard`)
+        i.fa-solid.fa-chart-pie
+        span Tổng quan
+    li
+      a(href=`/${pathAdmin}/category/list`)
+        i.fa-solid.fa-table-cells-large
+        span Quản lý danh mục
+    li
+      a(href=`/${pathAdmin}/product/list`)
+        i.fa-solid.fa-box-open
+        span Quản lý sản phẩm
+    li
+      a(href=`/${pathAdmin}/order/list`)
+        i.fa-solid.fa-cart-shopping
+        span Quản lý đơn hàng
+    li
+      a(href=`/${pathAdmin}/user/list`)
+        i.fa-solid.fa-users
+        span Quản lý người dùng
 
   .sidebar-footer
     ul.sidebar-menu.bottom-menu
-      li: a(href=`/${pathAdmin}/setting/list`)
-        i.fa-solid.fa-gear
-        span Cài đặt chung
-      li: a(href=`/${pathAdmin}/profile/edit`)
-        i.fa-regular.fa-user
-        span Thông tin cá nhân
+      li
+        a(href=`/${pathAdmin}/setting/list`)
+          i.fa-solid.fa-gear
+          span Cài đặt chung
+      li
+        a(href=`/${pathAdmin}/profile/edit`)
+          i.fa-regular.fa-user
+          span Thông tin cá nhân
     
     a(href=`/${pathAdmin}/logout`).logout-btn
       i.fa-solid.fa-arrow-right-from-bracket
