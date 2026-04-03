@@ -1,6 +1,15 @@
-module.exports.list = (req, res) => {
+const Product = require("../../models/product.model");
+
+module.exports.list = async(req, res) => {
+  let find = {
+    deleted: false
+  }
+
+  const products = await Product.find(find);
+
   res.render("admin/pages/product-list.pug", {
     title: "Danh sách sản phẩm",
+    products: products
   });
 }
 

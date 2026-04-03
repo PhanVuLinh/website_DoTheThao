@@ -83,81 +83,53 @@ block main
             th Hành động
         
         tbody
-          //- Dòng 1
-          tr
-            td.text-center
-              input(type="checkbox")
-            td.font-weight-600 Nike Air Zoom Pegasus 39
-            td
-              img.td-thumbnail(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=100&auto=format&fit=crop" alt="Sản phẩm")
-            
-            //- Cột giá chỉ có 1 số in đậm
-            td.text-price 2.450.000đ
-            
-            //- Cột tồn kho chia 2 bên
-            td
-              .inventory-list
-                .inventory-item
-                  span Size 40
-                  span 15
-                .inventory-item
-                  span Size 41
-                  span 20
-                .inventory-item
-                  span Size 42
-                  span 10
-                  
-            td 1
-            td: span.badge-status.badge-active Hoạt động
-            td
-              .user-date
-                span.name Lê Văn A
-                span.time 16:30 - 20/10/2026
-            td
-              .user-date
-                span.name Lê Văn A
-                span.time 16:30 - 20/10/2026
-            td
-              .action-btns
-                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
-                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+          each item in products
+            tr
+              td.text-center
+                input(type="checkbox")
+              td.font-weight-600 #{item.title}
+              td
+                img.td-thumbnail(src=item.thumbnail alt=item.title)
+              
+              td.text-price #{item.price.toLocaleString('vi-VN')}đ
+              
+              td
+                .inventory-list
+                  each size in item.sizes
+                    .inventory-item
+                      span #{size.size}
+                      span #{size.stock}
+                    
+              td #{item.position}
+              td 
+                  span(class=`badge-status ${item.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{item.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}
+              //- Cột: Tạo bởi
+              td
+                .user-date
+                  if item.createdBy && item.createdBy.account_id
+                    span.name #{item.createdBy.account_id.fullName || 'Admin'}
+                  if item.createdBy && item.createdBy.createdAt
+                    span.time #{new Date(item.createdBy.createdAt).toLocaleString('vi-VN', { hour: '2-digit', minute:'2-digit', day:'2-digit', month:'2-digit', year:'numeric' })}
+              
+              //- Cột: Cập nhật bởi
+              td
+                .user-date
+                  if item.updatedBy && item.updatedBy.length > 0
+                    - const lastUpdate = item.updatedBy.slice(-1)[0]
+                    if lastUpdate.account_id
+                      span.name #{lastUpdate.account_id.fullName || 'Admin'}
+                    else
+                      span.name Không rõ
+                    if lastUpdate.updatedAt
+                      span.time #{new Date(lastUpdate.updatedAt).toLocaleString('vi-VN', { hour: '2-digit', minute:'2-digit', day:'2-digit', month:'2-digit', year:'numeric' })}
+                  else
+                    span.name(style="color: #999; font-style: italic;") Chưa cập nhật
+              td
+                .action-btns
+                  button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                  button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
 
-          //- Dòng 2
-          tr
-            td.text-center
-              input(type="checkbox")
-            td.font-weight-600 Adidas Ultraboost 22
-            td
-              img.td-thumbnail(src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=100&auto=format&fit=crop" alt="Sản phẩm")
-            
-            td.text-price 3.400.000đ
-            
-            td
-              .inventory-list
-                .inventory-item
-                  span Size 40
-                  span 0
-                .inventory-item
-                  span Size 41
-                  span 5
-                .inventory-item
-                  span Size 42
-                  span 8
-                  
-            td 2
-            td: span.badge-status.badge-inactive Tạm dừng
-            td
-              .user-date
-                span.name Lê Văn B
-                span.time 16:30 - 20/10/2026
-            td
-              .user-date
-                span.name Lê Văn B
-                span.time 16:30 - 20/10/2026
-            td
-              .action-btns
-                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
-                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+          
 
     //- 3. PHÂN TRANG (PAGINATION)
     .admin-pagination
