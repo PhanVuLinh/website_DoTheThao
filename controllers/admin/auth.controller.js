@@ -3,9 +3,13 @@ const Account = require("../../models/Account.model");
 const variableCongfig = require("../../config/variable");
 
 module.exports.login = (req, res) => {
-  res.render("admin/pages/login.pug", {
-    title: "Đăng nhập",
-  });
+  if (req.cookies.token) {
+    res.redirect(`/${variableCongfig.pathAdmin}/dashboard`);
+  } else {
+    res.render("admin/pages/login.pug", {
+      title: "Đăng nhập",
+    });
+  }
 };
 
 module.exports.loginPost = async (req, res) => {
@@ -31,9 +35,7 @@ module.exports.loginPost = async (req, res) => {
     res.redirect(req.get("Referer"));
     return;
   }
-
   res.cookie("token", user.token);
-
   res.redirect(`/${variableCongfig.pathAdmin}/dashboard`);
 };
 

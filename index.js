@@ -6,6 +6,7 @@ const adminRoutes = require("./routes/admin/index.route");
 const clientRoutes = require("./routes/client/index.route");
 const variableCongfig = require("./config/variable");
 
+const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
 
@@ -16,6 +17,7 @@ const port = process.env.PORT;
 database.connect();
 
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // session + flash
 app.use(
@@ -23,7 +25,7 @@ app.use(
     secret: "admin-secret-key",
     resave: false,
     saveUninitialized: true,
-  })
+  }),
 );
 
 app.use(flash());
