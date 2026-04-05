@@ -1,0 +1,26 @@
+mixin alert-success(time)
+  if success.length > 0
+    each item in success
+      div(
+        data-alert="success"
+        data-message=item
+        data-time=time
+      )
+
+mixin alert-error(time)
+  if error.length > 0
+    each item in error
+      div(
+        data-alert="error"
+        data-message=item
+        data-time=time
+      )
+
+mixin alert-warning(time)
+  if warning.length > 0
+    each item in warning
+      div(
+        data-alert="warning"
+        data-message=item
+        data-time=time
+      )

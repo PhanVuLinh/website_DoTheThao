@@ -24,6 +24,7 @@ router.use("/user", userRoutes);
 
 router.use("/setting", settingRoutes);
 
+
 router.use("/profile", profileRoutes);
 
 

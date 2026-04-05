@@ -6,11 +6,34 @@ const adminRoutes = require("./routes/admin/index.route");
 const clientRoutes = require("./routes/client/index.route");
 const variableCongfig = require("./config/variable");
 
+const session = require("express-session");
+const flash = require("connect-flash");
+
 const app = express();
 const port = process.env.PORT;
 
 //Kết nối database
 database.connect();
+
+app.use(express.urlencoded({ extended: true }));
+
+// session + flash
+app.use(
+  session({
+    secret: "admin-secret-key",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.warning = req.flash("warning");
+  next();
+});
 
 //Thiết lập views
 app.set("views", path.join(__dirname, "views"));

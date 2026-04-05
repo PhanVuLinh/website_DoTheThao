@@ -3,11 +3,11 @@ extends ../layouts/default.pug
 block main
   .page-header
     h1.page-title Tạo danh mục
-    a.btn-back(href="/admin/categories") 
+    a.btn-back(href=`/${pathAdmin}/category/list`) 
       i.fa-solid.fa-arrow-left
       | Quay lại danh sách
   .form-card
-    form(action="/admin/categories/create" method="POST" enctype="multipart/form-data")
+    form(action=`/${pathAdmin}/category/create` method="POST" enctype="multipart/form-data")
       
       //- Hàng 1: Tên & Danh mục cha
       .form-row-2

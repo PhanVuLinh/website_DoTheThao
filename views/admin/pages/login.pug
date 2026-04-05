@@ -1,6 +1,8 @@
 extends ../layouts/auth.pug
+include ../mixins/alert.pug
 
 block main
+  +alert-error(3000)
   //- THÊM CLASS NÀY ĐỂ BAO TRỌN TOÀN MÀN HÌNH
   .auth-page
   
@@ -28,8 +30,7 @@ block main
                 type="email"
                 name="email"
                 id="email"
-                placeholder="admin@titisport.vn"
-                required
+                placeholder="**********@gmail.com"
               )
           
           .auth-group
@@ -41,7 +42,6 @@ block main
                 name="password"
                 id="password"
                 placeholder="••••••••"
-                required
               )
               i.fa-regular.fa-eye-slash.auth-toggle-password(onclick="togglePassword()")
           

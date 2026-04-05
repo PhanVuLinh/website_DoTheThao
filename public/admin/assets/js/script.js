@@ -1,42 +1,12 @@
-//sidebar active  
-const sider = document.querySelector(".admin-sidebar");
-if(sider) {
-  const pathNameCurrent = window.location.pathname;
-  const splitPathNameCurrent = pathNameCurrent.split("/");
-  const menuList = sider.querySelectorAll(".sidebar-menu li a");
-  menuList.forEach((item) => {
-    const href = item.href;
-    const pathName = new URL(href).pathname;
-    const splitPathName = pathName.split("/");  
-    if(splitPathNameCurrent[1] == splitPathName[1] && splitPathNameCurrent[2] == splitPathName[2]) {
-      item.classList.add("active");
-    }
-  });
-}
-//sidebar active  
+// =========================================
+// 1. CÁC HÀM TIỆN ÍCH CHUNG (Utility Functions)
+// =========================================
 
-
+// Bật/tắt hiển thị mật khẩu
 function togglePassword() {
   const passInput = document.getElementById("password");
   const eyeIcon = document.querySelector(".toggle-password");
 
-  if (passInput.type === "password") {
-    passInput.type = "text";
-    eyeIcon.classList.remove("fa-eye-slash");
-    eyeIcon.classList.add("fa-eye");
-  } else {
-    passInput.type = "password";
-    eyeIcon.classList.remove("fa-eye");
-    eyeIcon.classList.add("fa-eye-slash");
-  }
-}
-
-// 1. Hàm bật/tắt hiển thị mật khẩu (Dùng cho trang Login)
-function togglePassword() {
-  const passInput = document.getElementById("password");
-  const eyeIcon = document.querySelector(".toggle-password");
-
-  // Kiểm tra xem thẻ input và icon có tồn tại trên trang hiện tại không
   if (passInput && eyeIcon) {
     if (passInput.type === "password") {
       passInput.type = "text";
@@ -50,40 +20,80 @@ function togglePassword() {
   }
 }
 
-// 2. Khởi tạo các Component khi trang web load xong
-document.addEventListener("DOMContentLoaded", function () {
-  // --- KHỞI TẠO BIỂU ĐỒ DOANH THU (Dùng cho trang Dashboard) ---
-  const ctx = document.getElementById("revenueChart");
+// Hiển thị ảnh (Preview) khi chọn file
+function previewImage(event) {
+  const input = event.target;
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById("image-preview").src = e.target.result;
+      document.getElementById("upload-label").classList.add("hidden");
+      document.getElementById("preview-container").classList.remove("hidden");
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
 
-  if (ctx) {
-    // Tạo mảng 30 ngày cho trục X (Từ ngày 1 đến 30)
+// Xóa ảnh khi bấm dấu [X]
+function removeImage() {
+  document.getElementById("file-upload").value = "";
+  document.getElementById("image-preview").src = "";
+  document.getElementById("preview-container").classList.add("hidden");
+  document.getElementById("upload-label").classList.remove("hidden");
+}
+
+// =========================================
+// 2. KHỞI TẠO KHI TRANG ĐÃ TẢI XONG (DOM Ready)
+// =========================================
+document.addEventListener("DOMContentLoaded", function () {
+  // --- A. XỬ LÝ SIDEBAR ACTIVE ---
+  const sider = document.querySelector(".admin-sidebar");
+  if (sider) {
+    const pathNameCurrent = window.location.pathname;
+    const splitPathNameCurrent = pathNameCurrent.split("/");
+    const menuList = sider.querySelectorAll(".sidebar-menu li a");
+
+    menuList.forEach((item) => {
+      const href = item.href;
+      const pathName = new URL(href).pathname;
+      const splitPathName = pathName.split("/");
+      if (
+        splitPathNameCurrent[1] == splitPathName[1] &&
+        splitPathNameCurrent[2] == splitPathName[2]
+      ) {
+        item.classList.add("active");
+      }
+    });
+  }
+
+  // --- B. KHỞI TẠO BIỂU ĐỒ DOANH THU (Dùng cho trang Dashboard) ---
+  const ctx = document.getElementById("revenueChart");
+  if (ctx && typeof Chart !== "undefined") {
     const daysInMonth = Array.from({ length: 30 }, (_, i) => "Ngày " + (i + 1));
-    
-    // Dữ liệu doanh thu giả lập trong khoảng 500k đến 10 triệu
     const revenueData = [
       500000, 1200000, 800000, 2500000, 1800000, 4000000, 3500000, 5200000,
       4800000, 6000000, 4500000, 7200000, 8500000, 6800000, 5500000, 7800000,
       9000000, 10000000, 8200000, 6500000, 5000000, 4200000, 5800000, 7000000,
-      8500000, 7500000, 9200000, 8800000, 9800000, 10000000
+      8500000, 7500000, 9200000, 8800000, 9800000, 10000000,
     ];
 
     new Chart(ctx, {
       type: "line",
       data: {
-        labels: daysInMonth, // Trục X: Các ngày trong tháng
+        labels: daysInMonth,
         datasets: [
           {
             label: "Doanh thu",
-            data: revenueData, // Trục Y: Dữ liệu số tiền
-            borderColor: "#466BD6", // Màu xanh dương của đường Line
-            backgroundColor: "rgba(70, 107, 214, 0.1)", // Màu gradient mờ dưới đường
+            data: revenueData,
+            borderColor: "#466BD6",
+            backgroundColor: "rgba(70, 107, 214, 0.1)",
             borderWidth: 2,
             pointBackgroundColor: "#466BD6",
             pointBorderColor: "#fff",
             pointBorderWidth: 2,
-            pointRadius: 3, // Giảm size chấm tròn xuống chút xíu vì 30 ngày khá dày
-            tension: 0.4, // Làm cho đường gấp khúc mềm mại (bo cong)
-            fill: true, // Tô màu phần bên dưới đường Line
+            pointRadius: 3,
+            tension: 0.4,
+            fill: true,
           },
         ],
       },
@@ -91,34 +101,32 @@ document.addEventListener("DOMContentLoaded", function () {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { display: false }, // Ẩn nhãn "Doanh thu" ở trên cùng
+          legend: { display: false },
           tooltip: {
             callbacks: {
-              // Format lại số tiền khi trỏ chuột vào điểm trên biểu đồ
-              label: function(context) {
+              label: function (context) {
                 let value = context.parsed.y;
-                return "Doanh thu: " + value.toLocaleString('vi-VN') + " đ";
-              }
-            }
-          }
+                return "Doanh thu: " + value.toLocaleString("vi-VN") + " đ";
+              },
+            },
+          },
         },
         scales: {
           y: {
             beginAtZero: true,
-            suggestedMin: 500000, // Gợi ý mức thấp nhất là 500k
-            suggestedMax: 10000000, // Gợi ý mức cao nhất là 10M
+            suggestedMin: 500000,
+            suggestedMax: 10000000,
             ticks: {
-              // Format số tiền ở trục Y (VD: 5.000.000 đ)
               callback: function (value) {
-                return value.toLocaleString('vi-VN') + " đ";
+                return value.toLocaleString("vi-VN") + " đ";
               },
             },
           },
           x: {
-            grid: { display: false }, // Ẩn lưới sọc dọc cho gọn
+            grid: { display: false },
             ticks: {
-              maxTicksLimit: 15 // Giới hạn số lượng ngày hiển thị ở trục X tránh bị rối mắt
-            }
+              maxTicksLimit: 15,
+            },
           },
         },
         interaction: {
@@ -127,5 +135,29 @@ document.addEventListener("DOMContentLoaded", function () {
         },
       },
     });
+  }
+
+  // --- C. SWEET ALERT FLASH MESSAGE ---
+  const alertItems = document.querySelectorAll("[data-alert]");
+  if (alertItems.length > 0 && typeof Swal !== "undefined") {
+    alertItems.forEach((item) => {
+      const type = item.dataset.alert;
+      const message = item.dataset.message;
+      const time = parseInt(item.dataset.time) || 3000;
+
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: type,
+        title: message,
+        showConfirmButton: false,
+        timer: time,
+        timerProgressBar: true,
+      });
+    });
+  } else if (alertItems.length > 0) {
+    console.warn(
+      "Cảnh báo: Không tìm thấy thư viện SweetAlert2, thông báo không thể hiển thị.",
+    );
   }
 });
