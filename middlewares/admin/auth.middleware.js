@@ -6,15 +6,17 @@ module.exports.requireAuth = async (req, res, next) => {
     req.flash("error", "Vui lòng đăng nhập");
     res.redirect(`/${variableCongfig.pathAdmin}/auth/login`);
   } else {
-    const user = await Account.findOne({
+    const account = await Account.findOne({
       token: req.cookies.token,
       status: "active",
       deleted: false,
     });
-    if (!user) {
+    if (!account) {
       req.flash("error", "Vui lòng đăng nhập");
       res.redirect(`/${variableCongfig.pathAdmin}/auth/login`);
     } else {
+      req.account = account;
+      res.locals.account = account;
       next();
     }
   }

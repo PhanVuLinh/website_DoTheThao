@@ -1,14 +1,21 @@
 const router = require("express").Router();
 
 const multer = require("multer");
-const upload = multer( { dest: "public/admin/uploads/images/" } );
 
 const categoryController = require("../../controllers/admin/category.controller");
+
+const cloudinaryHelper = require("../../helpers/cloudinary.helper");
+
+const upload = multer({ storage: cloudinaryHelper.storage });
 
 router.get("/list", categoryController.list);
 
 router.get("/create", categoryController.create);
 
-router.post("/create", upload.single("thumbnail"), categoryController.createPost);
+router.post(
+  "/create",
+  upload.single("thumbnail"),
+  categoryController.createPost,
+);
 
 module.exports = router;

@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const slug = require("mongoose-slug-updater");
+mongoose.plugin(slug);
 
 const categorySchema = new mongoose.Schema(
   {
@@ -10,6 +12,7 @@ const categorySchema = new mongoose.Schema(
     position: Number,
     slug: {
       type: String,
+      slug: "title",
       unique: true,
     },
     createdBy: String,
