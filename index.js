@@ -6,9 +6,11 @@ const adminRoutes = require("./routes/admin/index.route");
 const clientRoutes = require("./routes/client/index.route");
 const variableCongfig = require("./config/variable");
 
+const alertMiddleware = require("./middlewares/admin/alert.middleware");
+
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const flash = require("connect-flash");
+const flash = require("express-flash");
 
 const app = express();
 const port = process.env.PORT;
@@ -17,25 +19,12 @@ const port = process.env.PORT;
 database.connect();
 
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieParser("PPCCLLAABB001"));
 
-// session + flash
-app.use(
-  session({
-    secret: "admin-secret-key",
-    resave: false,
-    saveUninitialized: true,
-  }),
-);
-
+// session + flash + locals -> alert
+app.use(session({ cookie: { maxAge: 60000 } }));
 app.use(flash());
-
-app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
-  res.locals.warning = req.flash("warning");
-  next();
-});
+app.use(alertMiddleware.alert);
 
 //Thiết lập views
 app.set("views", path.join(__dirname, "views"));

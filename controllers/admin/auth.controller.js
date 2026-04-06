@@ -35,7 +35,11 @@ module.exports.loginPost = async (req, res) => {
     res.redirect(req.get("Referer"));
     return;
   }
-  res.cookie("token", user.token);
+  // res.cookie("token", user.token);
+  res.cookie("token", user.token, {
+    maxAge: 2 * 60 * 60 * 1000,
+    httpOnly: true,
+  });
   res.redirect(`/${variableCongfig.pathAdmin}/dashboard`);
 };
 
