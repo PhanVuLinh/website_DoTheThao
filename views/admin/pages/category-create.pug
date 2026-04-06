@@ -1,6 +1,8 @@
 extends ../layouts/default.pug
+include ../mixins/alert.pug
 include ../mixins/options.pug
 block main
+  +alert-error(3000)
   .page-header
     h1.page-title Tạo danh mục
     a.btn-back(href=`/${pathAdmin}/category/list`) 
@@ -13,7 +15,7 @@ block main
       .form-row-2
         .form-group
           label Tên danh mục
-          input.form-control(type="text" name="title" placeholder="Nhập tên danh mục..." required)
+          input.form-control(type="text" name="title" placeholder="Nhập tên danh mục...")
         
         .form-group
           label Danh mục cha
@@ -24,7 +26,7 @@ block main
       .form-row-2
         .form-group
           label Vị trí
-          input.form-control(type="number" name="position" placeholder="Tự động tăng" min="1")
+          input.form-control(type="number" name="position" placeholder="Tự động tăng" )
         
         .form-group
           label Trạng thái
