@@ -1,5 +1,7 @@
-const Category = require("../../models/category.model");
 const variableCongfig = require("../../config/variable");
+const Category = require("../../models/category.model");
+
+const categoryHelper = require("../../helpers/category.helper");
 
 module.exports.list = (req, res) => {
   res.render("admin/pages/category-list.pug", {
@@ -7,9 +9,17 @@ module.exports.list = (req, res) => {
   });
 };
 
-module.exports.create = (req, res) => {
+module.exports.create = async (req, res) => {
+  let find = {
+    deleted: false,
+    status: "active",
+  };
+  const categoryList = await Category.find(find);
+  const categoryTree = categoryHelper.buildCategoryTree(categoryList);
+
   res.render("admin/pages/category-create.pug", {
     title: "Tạo mới danh mục",
+    categoryList: categoryTree,
   });
 };
 

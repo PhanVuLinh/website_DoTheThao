@@ -1,5 +1,5 @@
 extends ../layouts/default.pug
-
+include ../mixins/options.pug
 block main
   .page-header
     h1.page-title Tạo danh mục
@@ -19,9 +19,7 @@ block main
           label Danh mục cha
           select.form-control(name="parent_id")
             option(value="") -- Chọn danh mục --
-            option(value="1") Danh mục 1
-            option(value="2") Danh mục 2
-      
+            +options(categoryList, 0)
       //- Hàng 2: Vị trí & Trạng thái
       .form-row-2
         .form-group
@@ -38,14 +36,9 @@ block main
       .form-group
         label Ảnh đại diện
         .upload-image-wrapper
-          //- Ô input file bị ẩn đi, chỉ hiện UI
           input#file-upload.hidden-input(type="file" name="thumbnail" accept="image/*" onchange="previewImage(event)")
-          
-          //- Giao diện nút bấm [+]
           label.upload-box(for="file-upload" id="upload-label")
             i.fa-solid.fa-plus
-            
-          //- Nơi hiển thị ảnh sau khi chọn
           .image-preview-container.hidden#preview-container
             img#image-preview(src="" alt="Preview")
             button.btn-remove-image(type="button" onclick="removeImage()" title="Xóa ảnh")

@@ -15,6 +15,10 @@ const categorySchema = new mongoose.Schema(
       slug: "title",
       unique: true,
     },
+    deleted: {
+      type: Boolean,
+      default: false,
+    },
     createdBy: String,
     updatedBy: String,
     deletedBy: String,
