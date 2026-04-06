@@ -1,5 +1,5 @@
 const md5 = require("md5");
-const Account = require("../../models/Account.model");
+const Account = require("../../models/account.model");
 const variableCongfig = require("../../config/variable");
 
 module.exports.login = (req, res) => {

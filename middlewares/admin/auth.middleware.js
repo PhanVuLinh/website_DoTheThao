@@ -1,5 +1,5 @@
 const variableCongfig = require("../../config/variable");
-const Account = require("../../models/Account.model");
+const Account = require("../../models/account.model");
 
 module.exports.requireAuth = async (req, res, next) => {
   if (!req.cookies.token) {
