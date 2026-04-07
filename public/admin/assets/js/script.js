@@ -42,6 +42,25 @@ function removeImage() {
   document.getElementById("upload-label").classList.remove("hidden");
 }
 
+//button delete
+const listButtonDelete = document.querySelectorAll("[button-delete]");
+if (listButtonDelete.length > 0) {
+  const formDeleteItem = document.querySelector("#form-delete-item");
+  const path = formDeleteItem.getAttribute("data-path");
+  listButtonDelete.forEach((button) => {
+    button.addEventListener("click", () => {
+      const isConfirm = confirm("Bạn có muốn xóa?");
+      if (isConfirm) {
+        const id = button.getAttribute("data-id");
+        const action = `${path}/${id}?_method=DELETE`;
+        formDeleteItem.action = action;
+        formDeleteItem.submit();
+      }
+    });
+  });
+}
+//End button delete
+
 // =========================================
 // 2. KHỞI TẠO KHI TRANG ĐÃ TẢI XONG (DOM Ready)
 // =========================================

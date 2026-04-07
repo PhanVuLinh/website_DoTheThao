@@ -30,4 +30,6 @@ router.patch(
   categoryController.editPatch,
 );
 
+router.delete("/delete/:id", categoryController.delete);
+
 module.exports = router;

@@ -116,3 +116,22 @@ module.exports.editPatch = async (req, res) => {
     res.redirect(`/${variableCongfig.pathAdmin}/category/list`);
   }
 };
+
+module.exports.delete = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Category.updateOne(
+      { _id: id },
+      { 
+        deleted: true, 
+        deletedBy: req.account.id, 
+        deletedAt: Date.now() 
+      },
+    );
+    req.flash("success", "Xóa danh mục thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/category/list`);
+  }
+};
