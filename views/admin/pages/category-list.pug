@@ -2,6 +2,7 @@ extends ../layouts/default.pug
 include ../mixins/alert.pug
 block main
   +alert-success(3000)
+  +alert-error(3000)
   h1.page-title Quản lý danh mục
 
   //- 1. KHỐI BỘ LỌC VÀ HÀNH ĐỘNG
@@ -60,10 +61,8 @@ block main
             th Tạo bởi
             th Cập nhật bởi
             th Hành động
-        
         tbody
           each item in categoryList
-            //- Dòng 1
             tr
               td.text-center
                 input(type="checkbox")
@@ -83,7 +82,8 @@ block main
                   span.time #{item.updatedAtFormat}
               td
                 .action-btns
-                  button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                  a(href=`/${pathAdmin}/category/edit/${item.id}`).btn-edit
+                    i.fa-regular.fa-pen-to-square
                   button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
 
             

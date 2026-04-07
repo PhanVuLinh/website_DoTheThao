@@ -3,45 +3,47 @@ include ../mixins/alert.pug
 include ../mixins/options.pug
 block main
   +alert-error(3000)
+  +alert-success(3000)
   .page-header
-    h1.page-title Tạo danh mục
+    h1.page-title Chỉnh sửa danh mục
     a.btn-back(href=`/${pathAdmin}/category/list`) 
       i.fa-solid.fa-arrow-left
       | Quay lại danh sách
   .form-card
-    form(action=`/${pathAdmin}/category/create` method="POST" enctype="multipart/form-data")
+    form(action=`/${pathAdmin}/category/edit/${categoryDetail.id}?_method=PATCH` method="POST" enctype="multipart/form-data")
       .form-row-2
         .form-group
           label Tên danh mục
-          input.form-control(type="text" name="title" placeholder="Nhập tên danh mục...")
+          input.form-control(type="text" name="title" placeholder="Nhập tên danh mục..."  value=categoryDetail.title)
         
         .form-group
           label Danh mục cha
           select.form-control(name="parent_id")
             option(value="") -- Chọn danh mục --
-            +options(categoryList, 0)
+            +options(categoryList, 0, categoryDetail.parent_id)
       .form-row-2
         .form-group
           label Vị trí
-          input.form-control(type="number" name="position" placeholder="Tự động tăng" )
+          input.form-control(type="number" name="position" placeholder="Tự động tăng"  value=categoryDetail.position)
         
         .form-group
           label Trạng thái
           select.form-control(name="status")
-            option(value="active") Hoạt động
-            option(value="inactive") Tạm dừng
+            option(value="active" selected=(categoryDetail.status === "active" ? true : false)) Hoạt động
+            option(value="inactive" selected=(categoryDetail.status === "inactive" ? true : false)) Tạm dừng
+
       .form-group
         label Ảnh đại diện
         .upload-image-wrapper
           input#file-upload.hidden-input(type="file" name="thumbnail" accept="image/*" onchange="previewImage(event)")
           label.upload-box(for="file-upload" id="upload-label")
             i.fa-solid.fa-plus
-          .image-preview-container.hidden#preview-container
-            img#image-preview(src="" alt="Preview")
+          .image-preview-container(class=categoryDetail.thumbnail ? "" : "hidden")#preview-container
+            img#image-preview(src=categoryDetail.thumbnail alt="Preview")
             button.btn-remove-image(type="button" onclick="removeImage()" title="Xóa ảnh")
               i.fa-solid.fa-xmark
       .form-group
         label Mô tả
-        textarea.form-control(name="description" rows="6" placeholder="Nhập mô tả cho danh mục này...")
+        textarea.form-control(name="description" rows="6" placeholder="Nhập mô tả cho danh mục này...") #{categoryDetail.description}
       .form-actions
-        button.btn-submit(type="submit") Tạo mới
+        button.btn-submit(type="submit") Cập nhật

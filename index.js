@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const methodOverride = require("method-override");
 require("dotenv").config();
 const database = require("./config/database");
 const adminRoutes = require("./routes/admin/index.route");
@@ -14,6 +15,7 @@ const flash = require("express-flash");
 
 const app = express();
 const port = process.env.PORT;
+app.use(methodOverride("_method"));
 
 //Kết nối database
 database.connect();

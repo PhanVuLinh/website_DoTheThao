@@ -21,7 +21,7 @@ module.exports.list = async (req, res) => {
     }
     if (item.updatedBy) {
       const infoAccountUpdated = await Account.findOne({
-        _id: item.createdBy,
+        _id: item.updatedBy,
       });
       item.updatedByFullName = infoAccountUpdated.fullName;
     }
@@ -35,11 +35,9 @@ module.exports.list = async (req, res) => {
 };
 
 module.exports.create = async (req, res) => {
-  let find = {
+  const categoryList = await Category.find({
     deleted: false,
-    status: "active",
-  };
-  const categoryList = await Category.find(find);
+  });
   const categoryTree = categoryHelper.buildCategoryTree(categoryList);
 
   res.render("admin/pages/category-create.pug", {
@@ -64,4 +62,57 @@ module.exports.createPost = async (req, res) => {
 
   req.flash("success", "Tạo danh mục thành công");
   res.redirect(`/${variableCongfig.pathAdmin}/category/list`);
+};
+
+module.exports.edit = async (req, res) => {
+  try {
+    const categoryList = await Category.find({
+      deleted: false,
+    });
+    const categoryTree = categoryHelper.buildCategoryTree(categoryList);
+    const id = req.params.id;
+    const categoryDetail = await Category.findOne({
+      _id: id,
+      deleted: false,
+    });
+    res.render("admin/pages/category-edit.pug", {
+      title: "Chỉnh sửa danh mục",
+      categoryList: categoryTree,
+      categoryDetail: categoryDetail,
+    });
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/category/list`);
+  }
+};
+
+module.exports.editPatch = async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (req.body.position) {
+      req.body.position = parseInt(req.body.position);
+    } else {
+      const totalCategories = await Category.countDocuments({});
+      req.body.position = totalCategories + 1;
+    }
+    req.body.updatedBy = req.account.id;
+    if (req.file) {
+      req.body.thumbnail = req.file.path;
+    } else {
+      delete req.body.thumbnail;
+    }
+    await Category.updateOne(
+      {
+        _id: id,
+        deleted: false,
+      },
+      req.body,
+    );
+
+    req.flash("success", "Chinh sửa danh mục thành công");
+    res.redirect(`/${variableCongfig.pathAdmin}/category/edit/${id}`);
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/category/list`);
+  }
 };
