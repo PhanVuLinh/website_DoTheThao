@@ -141,6 +141,17 @@ if (filterEndDate) {
 }
 ///end filter end Date lọc
 
+///filter reset
+const filterReset = document.querySelector("[filter-reset]");
+if (filterReset) {
+  const url = new URL(window.location.href);
+  filterReset.addEventListener("click", () => {
+    url.search = "";
+    window.location.href = url.href;
+  });
+}
+
+///end filter reset
 // =========================================
 // 2. KHỞI TẠO KHI TRANG ĐÃ TẢI XONG (DOM Ready)
 // =========================================
