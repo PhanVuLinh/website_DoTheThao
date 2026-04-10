@@ -41,9 +41,28 @@ module.exports.list = async (req, res) => {
     find.slug = keywordRegex;
   }
 
-  const categoryList = await Category.find(find).sort({
-    position: "asc",
-  });
+  //Phân trang
+  let objectPagination = {
+    currentPage: 1,
+    limitItems: 5,
+    skipItems: 0,
+  };
+  if (req.query.page) {
+    objectPagination.currentPage = parseInt(req.query.page);
+  }
+  objectPagination.skip =
+    (objectPagination.currentPage - 1) * objectPagination.limitItems;
+
+  const countCategory = await Category.countDocuments(find);
+  objectPagination.totalPage = Math.ceil(
+    countCategory / objectPagination.limitItems,
+  );
+  //hết Phân trang
+
+  const categoryList = await Category.find(find)
+    .sort({ position: "asc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
 
   for (const item of categoryList) {
     if (item.createdBy) {
@@ -70,6 +89,7 @@ module.exports.list = async (req, res) => {
     title: "Danh sách danh mục",
     categoryList: categoryList,
     accountAdminList: accountAdminList,
+    pagination: objectPagination,
   });
 };
 

@@ -106,10 +106,15 @@ block main
     //- 3. PHÂN TRANG
     .admin-pagination
       ul.pagination-list
-        li.page-item.disabled: a.page-link(href="#"): i.fa-solid.fa-angle-left
-        li.page-item.active: a.page-link(href="#") 1
-        li.page-item: a.page-link(href="#") 2
-        li.page-item: a.page-link(href="#") 3
-        li.page-item.dots: span ...
-        li.page-item: a.page-link(href="#") 10
-        li.page-item: a.page-link(href="#"): i.fa-solid.fa-angle-right
+        li.page-item.disabled
+          a.page-link(href="#")
+            i.fa-solid.fa-angle-left
+        li.page-item.active
+          a.page-link(href="#") 1
+        li.page-item
+          a.page-link(href="#") 2
+        li.page-item
+          a.page-link(href="#") 10
+        li.page-item
+          a.page-link(href="#")
+            i.fa-solid.fa-angle-right

@@ -181,10 +181,28 @@ if (search) {
   });
   const valueCurrent = url.searchParams.get("keyword");
   if (valueCurrent) {
-    search.value = valueCurrent; 
+    search.value = valueCurrent;
   }
 }
 //End Search
+
+//Pagination
+const buttonsPagination = document.querySelectorAll("[button-pagination]");
+if (buttonsPagination) {
+  const url = new URL(window.location.href);
+  buttonsPagination.forEach((button) => {
+    button.addEventListener("click", () => {
+      const page = button.getAttribute("button-pagination");
+      if (page) {
+        url.searchParams.set("page", page);
+      } else {
+        url.searchParams.delete("page");
+      }
+      window.location.href = url.href;
+    });
+  });
+}
+//End Pagination
 
 // =========================================
 // 2. KHỞI TẠO KHI TRANG ĐÃ TẢI XONG (DOM Ready)
