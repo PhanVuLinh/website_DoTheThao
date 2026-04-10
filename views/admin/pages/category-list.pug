@@ -23,9 +23,9 @@ block main
           option(value=item.id) #{item.fullName}
         
       .date-range-picker
-        input(type="date" placeholder="dd/mm/yyyy")
+        input(type="date" filter-start-date placeholder="dd/mm/yyyy")
         span -
-        input(type="date" placeholder="dd/mm/yyyy")
+        input(type="date" filter-end-date placeholder="dd/mm/yyyy")
         
       button.btn-clear
         i.fa-solid.fa-rotate-right

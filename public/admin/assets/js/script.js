@@ -101,6 +101,46 @@ if (filterCreatedBy) {
 }
 ///end filter-created-by lọc
 
+///filter start Date
+const filterStartDate = document.querySelector("[filter-start-date]");
+if (filterStartDate) {
+  const url = new URL(window.location.href);
+  filterStartDate.addEventListener("change", () => {
+    const value = filterStartDate.value;
+    if (value) {
+      url.searchParams.set("startDate", value);
+    } else {
+      url.searchParams.delete("startDate");
+    }
+    window.location.href = url.href;
+  });
+  const valueCurrent = url.searchParams.get("startDate");
+  if (valueCurrent) {
+    filterStartDate.value = valueCurrent;
+  }
+}
+///end filter start Date lọc
+
+///filter end Date
+const filterEndDate = document.querySelector("[filter-end-date]");
+if (filterEndDate) {
+  const url = new URL(window.location.href);
+  filterEndDate.addEventListener("change", () => {
+    const value = filterEndDate.value;
+    if (value) {
+      url.searchParams.set("endDate", value);
+    } else {
+      url.searchParams.delete("endDate");
+    }
+    window.location.href = url.href;
+  });
+  const valueCurrent = url.searchParams.get("endDate");
+  if (valueCurrent) {
+    filterEndDate.value = valueCurrent;
+  }
+}
+///end filter end Date lọc
+
 // =========================================
 // 2. KHỞI TẠO KHI TRANG ĐÃ TẢI XONG (DOM Ready)
 // =========================================
