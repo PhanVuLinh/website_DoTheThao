@@ -364,7 +364,7 @@ body.admin-body {
 /* Page Content */
 .admin-content {
   flex: 1;
-  padding: 30px;
+  padding: 15px;
   overflow-y: auto;
 }
 .page-title {
@@ -463,7 +463,7 @@ body.admin-body {
 .table-section {
   background: var(--white);
   border-radius: 16px;
-  padding: 30px;
+  padding: 15px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   margin-bottom: 25px;
   border: 1px solid rgba(0, 0, 0, 0.02);
@@ -574,7 +574,6 @@ body.admin-body {
   border-radius: 8px;
   transition: all 0.3s ease;
   font-size: 14px;
-  margin-left: auto;
 }
 
 .btn-clear:hover {
@@ -714,7 +713,7 @@ body.admin-body {
 }
 .admin-table th {
   background: #fafafa;
-  padding: 12px;
+  padding: 10px;
   font-size: 13px;
   font-weight: 600;
   color: var(--text-gray);

@@ -6,9 +6,13 @@ const Account = require("../../models/account.model");
 const categoryHelper = require("../../helpers/category.helper");
 
 module.exports.list = async (req, res) => {
-  const categoryList = await Category.find({
+  const find = {
     deleted: false,
-  }).sort({
+  };
+  if (req.query.status) {
+    find.status = req.query.status;
+  }
+  const categoryList = await Category.find(find).sort({
     position: "asc",
   });
 
@@ -122,10 +126,10 @@ module.exports.delete = async (req, res) => {
     const id = req.params.id;
     await Category.updateOne(
       { _id: id },
-      { 
-        deleted: true, 
-        deletedBy: req.account.id, 
-        deletedAt: Date.now() 
+      {
+        deleted: true,
+        deletedBy: req.account.id,
+        deletedAt: Date.now(),
       },
     );
     req.flash("success", "Xóa danh mục thành công");

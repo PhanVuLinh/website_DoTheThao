@@ -12,7 +12,7 @@ block main
         i.fa-solid.fa-filter
         span Bộ lọc
       
-      select.form-select
+      select.form-select(filter-status)
         option(value="") Trạng thái
         option(value="active") Hoạt động
         option(value="inactive") Tạm dừng
@@ -23,9 +23,9 @@ block main
         option Lê Văn B
         
       .date-range-picker
-        input(type="text" placeholder="dd/mm/yyyy")
+        input(type="date" placeholder="dd/mm/yyyy")
         span -
-        input(type="text" placeholder="dd/mm/yyyy")
+        input(type="date" placeholder="dd/mm/yyyy")
         
       button.btn-clear
         i.fa-solid.fa-rotate-right

@@ -61,6 +61,26 @@ if (listButtonDelete.length > 0) {
 }
 //End button delete
 
+///filter-status lọc
+const filterStatus = document.querySelector("[filter-status]");
+if (filterStatus) {
+  const url = new URL(window.location.href);
+  filterStatus.addEventListener("change", () => {
+    const value = filterStatus.value;
+    if (value) {
+      url.searchParams.set("status", value);
+    } else {
+      url.searchParams.delete("status");
+    }
+    window.location.href = url.href;
+  });
+  const valueCurrent = url.searchParams.get("status");
+  if (valueCurrent) {
+    filterStatus.value = valueCurrent;
+  }
+}
+///end filter-status lọc
+
 // =========================================
 // 2. KHỞI TẠO KHI TRANG ĐÃ TẢI XONG (DOM Ready)
 // =========================================
