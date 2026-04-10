@@ -1,4 +1,5 @@
 const moment = require("moment");
+const slugify = require("slugify");
 const variableCongfig = require("../../config/variable");
 const Category = require("../../models/category.model");
 const Account = require("../../models/account.model");
@@ -30,6 +31,14 @@ module.exports.list = async (req, res) => {
   }
   if (Object.keys(dateFilter).length > 0) {
     find.createdAt = dateFilter;
+  }
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = slugify(req.query.keyword, {
+      lower: true,
+    });
+    const keywordRegex = new RegExp(keyword);
+    find.slug = keywordRegex;
   }
 
   const categoryList = await Category.find(find).sort({

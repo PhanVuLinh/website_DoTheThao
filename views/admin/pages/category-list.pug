@@ -32,15 +32,16 @@ block main
         | Xóa bộ lọc
     .action-row
       .bulk-action
-        select.form-select
+        select.form-select(chang-multi)
           option(value="") -- Hành động --
           option(value="delete") Xóa nhiều
           option(value="active") Đổi trạng thái
+          option(value="active") Xóa
         button.btn-apply Áp dụng
         
       .search-box-large
         i.fa-solid.fa-magnifying-glass
-        input(type="text" placeholder="Tìm kiếm danh mục...")
+        input(type="text" placeholder="Tìm kiếm danh mục..." search)
         
       a(href=`/${pathAdmin}/category/create`).btn-create
         i.fa-solid.fa-plus
@@ -53,7 +54,7 @@ block main
         thead
           tr
             th.text-center(width="50px")
-              input(type="checkbox")
+              input(type="checkbox" check-all)
             th Tên danh mục
             th Ảnh đại diện
             th Vị trí
@@ -65,7 +66,7 @@ block main
           each item in categoryList
             tr
               td.text-center
-                input(type="checkbox")
+                input(type="checkbox" check-item=item.id)
               td.font-weight-600 #{item.title}
               td
                 img.td-thumbnail(src=item.thumbnail alt=item.title)

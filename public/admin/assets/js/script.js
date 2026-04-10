@@ -150,8 +150,42 @@ if (filterReset) {
     window.location.href = url.href;
   });
 }
-
 ///end filter reset
+
+//Check ALL
+const checkAll = document.querySelector("[check-all]");
+if (checkAll) {
+  checkAll.addEventListener("click", () => {
+    const listCheckItem = document.querySelectorAll("[check-item]");
+    listCheckItem.forEach((item) => {
+      item.checked = checkAll.checked;
+    });
+  });
+}
+//end Check ALL
+
+//Search
+const search = document.querySelector("[search]");
+if (search) {
+  const url = new URL(window.location.href);
+  search.addEventListener("keyup", (e) => {
+    const value = e.target.value;
+    if (e.code == "Enter") {
+      if (value) {
+        url.searchParams.set("keyword", value.trim());
+      } else {
+        url.searchParams.delete("keyword");
+      }
+      window.location.href = url.href;
+    }
+  });
+  const valueCurrent = url.searchParams.get("keyword");
+  if (valueCurrent) {
+    search.value = valueCurrent; 
+  }
+}
+//End Search
+
 // =========================================
 // 2. KHỞI TẠO KHI TRANG ĐÃ TẢI XONG (DOM Ready)
 // =========================================
