@@ -9,8 +9,14 @@ module.exports.list = async (req, res) => {
   const find = {
     deleted: false,
   };
+  //lọc theo trạng thái
   if (req.query.status) {
     find.status = req.query.status;
+  }
+
+  //lọc theo người tạo
+  if (req.query.createdBy) {
+    find.createdBy = req.query.createdBy;
   }
   const categoryList = await Category.find(find).sort({
     position: "asc",
@@ -32,9 +38,15 @@ module.exports.list = async (req, res) => {
     item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
     item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY");
   }
+  //List ADMIN
+  const accountAdminList = await Account.find({
+    deleted: false,
+  }).select("id fullName");
+
   res.render("admin/pages/category-list.pug", {
     title: "Danh sách danh mục",
     categoryList: categoryList,
+    accountAdminList: accountAdminList,
   });
 };
 

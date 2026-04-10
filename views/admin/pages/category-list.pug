@@ -17,10 +17,10 @@ block main
         option(value="active") Hoạt động
         option(value="inactive") Tạm dừng
         
-      select.form-select
+      select.form-select(filter-created-by)
         option(value="") Người tạo
-        option Lê Văn A
-        option Lê Văn B
+        each item in accountAdminList
+          option(value=item.id) #{item.fullName}
         
       .date-range-picker
         input(type="date" placeholder="dd/mm/yyyy")
