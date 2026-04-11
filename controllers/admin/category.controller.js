@@ -36,6 +36,8 @@ module.exports.list = async (req, res) => {
   if (req.query.keyword) {
     const keyword = slugify(req.query.keyword, {
       lower: true,
+      locale: "vi",
+      strict: true,
     });
     const keywordRegex = new RegExp(keyword);
     find.slug = keywordRegex;
