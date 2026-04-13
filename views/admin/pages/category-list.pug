@@ -1,5 +1,9 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/filter-status.pug
+include ../mixins/filter-created-by.pug
+include ../mixins/filter-date-range.pug
+include ../mixins/pagination.pug
 block main
   +alert-success(3000)
   +alert-error(3000)
@@ -12,20 +16,11 @@ block main
         i.fa-solid.fa-filter
         span Bộ lọc
       
-      select.form-select(filter-status)
-        option(value="") Trạng thái
-        option(value="active") Hoạt động
-        option(value="inactive") Tạm dừng
+      +filter-status()
         
-      select.form-select(filter-created-by)
-        option(value="") Người tạo
-        each item in accountAdminList
-          option(value=item.id) #{item.fullName}
+      +filter-created-by(accountAdminList)
         
-      .date-range-picker
-        input(type="date" filter-start-date placeholder="dd/mm/yyyy")
-        span -
-        input(type="date" filter-end-date placeholder="dd/mm/yyyy")
+      +filter-date-range()
         
       button.btn-clear(filter-reset)
         i.fa-solid.fa-rotate-right
@@ -88,16 +83,7 @@ block main
                   button.btn-delete(button-delete data-id=item.id)
                     i.fa-regular.fa-trash-can
     .admin-pagination
-      ul.pagination-list
-        li(class=`page-item ${pagination.currentPage > 1 ? "": "disabled"} `)
-          button.page-link(button-pagination=pagination.currentPage-1)
-            i.fa-solid.fa-angle-left
-        - for (var i = 1; i <= pagination.totalPage; i++)
-          li(class=`page-item ${pagination.currentPage == i ? "active": ""}`)
-            button.page-link(button-pagination=i) #{i}
-        lili(class=`page-item ${pagination.currentPage == pagination.totalPage ? "disabled": ""} `)
-          button.page-link(button-pagination=pagination.currentPage+1)
-            i.fa-solid.fa-angle-right
+      +pagination(pagination)
   form(
       action=""
       method="POST"

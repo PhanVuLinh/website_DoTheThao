@@ -5,6 +5,7 @@ const Category = require("../../models/category.model");
 const Account = require("../../models/account.model");
 
 const categoryHelper = require("../../helpers/category.helper");
+const paginationHelper = require("../../helpers/pagination.helper");
 
 module.exports.list = async (req, res) => {
   const find = {
@@ -44,20 +45,15 @@ module.exports.list = async (req, res) => {
   }
 
   //Phân trang
-  let objectPagination = {
-    currentPage: 1,
-    limitItems: 5,
-    skipItems: 0,
-  };
-  if (req.query.page) {
-    objectPagination.currentPage = parseInt(req.query.page);
-  }
-  objectPagination.skip =
-    (objectPagination.currentPage - 1) * objectPagination.limitItems;
-
+  
   const countCategory = await Category.countDocuments(find);
-  objectPagination.totalPage = Math.ceil(
-    countCategory / objectPagination.limitItems,
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countCategory,
   );
   //hết Phân trang
 
