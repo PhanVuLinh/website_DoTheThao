@@ -82,7 +82,7 @@ block main
             th Hành động
         
         tbody
-          each item in products
+          each item in productList
             tr
               td.text-center
                 input(type="checkbox")
@@ -104,28 +104,19 @@ block main
                   span(class=`badge-status ${item.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{item.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}
               td
                 .user-date
-                  if item.createdBy && item.createdBy.account_id
-                    span.name #{item.createdBy.account_id.fullName || 'Admin'}
-                  if item.createdBy && item.createdBy.createdAt
-                    span.time #{new Date(item.createdBy.createdAt).toLocaleString('vi-VN', { hour: '2-digit', minute:'2-digit', day:'2-digit', month:'2-digit', year:'numeric' })}
+                  span.name #{item.createdByFullName}
+                  span.time #{item.createdAtFormat}
               
               td
                 .user-date
-                  if item.updatedBy && item.updatedBy.length > 0
-                    - const lastUpdate = item.updatedBy.slice(-1)[0]
-                    if lastUpdate.account_id
-                      span.name #{lastUpdate.account_id.fullName || 'Admin'}
-                    else
-                      span.name Không rõ
-                    if lastUpdate.updatedAt
-                      span.time #{new Date(lastUpdate.updatedAt).toLocaleString('vi-VN', { hour: '2-digit', minute:'2-digit', day:'2-digit', month:'2-digit', year:'numeric' })}
-                  else
-                    span.name(style="color: #999; font-style: italic;") Chưa cập nhật
+                  span.name #{item.updatedByFullName}
+                  span.time #{item.updatedAtFormat}
               td
                 .action-btns
-                  button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
-                  button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
-
+                  a(href=`/${pathAdmin}/product/edit/${item.id}`).btn-edit
+                    i.fa-regular.fa-pen-to-square
+                  button.btn-delete(button-delete data-id=item.id)
+                    i.fa-regular.fa-trash-can
           
 
     //- 3. PHÂN TRANG (PAGINATION)
@@ -147,3 +138,11 @@ block main
         li.page-item
           a.page-link(href="#")
             i.fa-solid.fa-angle-right
+
+  form(
+      action=""
+      method="POST"
+      id="form-delete-item"
+      data-path=`/${pathAdmin}/product/delete`
+    )
+            

@@ -1,7 +1,10 @@
 extends ../layouts/default.pug
 include ../mixins/options.pug
+include ../mixins/alert.pug
 
 block main
+  +alert-error(3000)
+  +alert-success(3000)
   //- Phần Header của trang
   .page-header
     h1.page-title Tạo sản phẩm
@@ -16,7 +19,7 @@ block main
       .form-row-2
         .form-group
           label Tên sản phẩm
-          input.form-control(type="text" name="title" placeholder="Ví dụ: Nike Air Zoom Pegasus 39" required)
+          input.form-control(type="text" name="title" placeholder="Ví dụ: Nike Air Zoom Pegasus 39" )
         
         .form-group
           label Danh mục
@@ -50,40 +53,25 @@ block main
             button.btn-remove-image(type="button" onclick="removeImage()" title="Xóa ảnh")
               i.fa-solid.fa-xmark
 
-      //- --- PHẦN THAY ĐỔI: GIÁ & TỒN KHO THEO SIZE ---
-      //- Hàng 4: Giá bán (Chỉ 1 mức giá)
-      .form-group
-        label Giá bán (VNĐ)
-        input.form-control(type="number" name="price" placeholder="Ví dụ: 2500000" min="0" required style="max-width: 48%;")
-      
+      //- --- PHẦN THAY ĐỔI: GIÁ, GIẢM GIÁ & TỒN KHO THEO SIZE ---
+      //- Hàng 4: Giá bán & Phần trăm giảm giá (chia 2 cột)
+      .form-row-2
+        .form-group
+          label Giá bán (VNĐ)
+          input.form-control(type="number" name="price" placeholder="Ví dụ: 2500000" min="0" )
+        
+        .form-group
+          label Giảm giá (%)
+          input.form-control(type="number" name="discountPercentage" placeholder="Ví dụ: 15" min="0" max="100" value="0")
+
       //- Hàng 5: Quản lý tồn kho theo Size
       .form-group
-        label Số lượng tồn kho theo Size
-        .size-inventory-grid
-          // Size 39
-          .size-input-group
-            span.size-label Size 39
-            input.form-control(type="number" name="stock_39" placeholder="0" min="0")
-          
-          // Size 40
-          .size-input-group
-            span.size-label Size 40
-            input.form-control(type="number" name="stock_40" placeholder="0" min="0")
-            
-          // Size 41
-          .size-input-group
-            span.size-label Size 41
-            input.form-control(type="number" name="stock_41" placeholder="0" min="0")
-            
-          // Size 42
-          .size-input-group
-            span.size-label Size 42
-            input.form-control(type="number" name="stock_42" placeholder="0" min="0")
-            
-          // Size 43
-          .size-input-group
-            span.size-label Size 43
-            input.form-control(type="number" name="stock_43" placeholder="0" min="0")
+        label Kho hàng theo size / kích cỡ
+        #dynamic-size-list
+
+        button.btn-add-size(type="button" onclick="addSizeField()")
+          i.fa-solid.fa-plus
+          |  Thêm size khác
 
       //- Hàng 6: Mô tả
       .form-group
@@ -93,3 +81,5 @@ block main
       //- Nút Submit
       .form-actions
         button.btn-submit(type="submit") Tạo mới
+
+  script(src="/admin/assets/js/product.js")

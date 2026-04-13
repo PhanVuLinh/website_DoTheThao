@@ -36,7 +36,7 @@ a {
    ========================================= */
 .auth-page {
   /* background: linear-gradient(135deg, var(--blue-dark), var(--blue-soft)); */
-  background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOr61EZ1ySPC-oZ3k3Hf84HeYIMevv5QeaGw&s');
+  background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOr61EZ1ySPC-oZ3k3Hf84HeYIMevv5QeaGw&s");
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1326,7 +1326,64 @@ textarea.form-control {
 .hidden {
   display: none !important;
 }
+/* --- Phần quản lý size động --- */
+#dynamic-size-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 15px;
+}
 
+.size-input-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.size-input-row .form-control {
+  background-color: var(--white);
+}
+
+.btn-add-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #eef2ff;
+  color: var(--blue-active);
+  border: 1px dashed var(--blue-active);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 5px;
+}
+
+.btn-add-size:hover {
+  background-color: var(--blue-active);
+  color: white;
+  border-style: solid;
+}
+
+.btn-remove-size {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-remove-size:hover {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
 /* =========================================
    11. TRANG CÀI ĐẶT CHUNG (SETTINGS CARDS)
    ========================================= */
@@ -1399,7 +1456,6 @@ textarea.form-control {
   font-size: 14px;
   color: var(--text-dark);
 }
-
 
 /* =========================================
    13. ĐÁP ỨNG THIẾT BỊ DI ĐỘNG (RESPONSIVE)
