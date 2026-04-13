@@ -3,12 +3,13 @@ const mongoose = require("mongoose");
 const productSchema = new mongoose.Schema(
   {
     title: String,
-    product_category_id: {
-      type: String, 
-      default: ""
-    },
-    description: String,
+    category_id: String, 
+    position: Number,
+    status: String,
+    thumbnail: String,
     price: Number,
+    description: String,
+    
     discountPercentage: Number,
     sizes: [
       {
@@ -16,10 +17,8 @@ const productSchema = new mongoose.Schema(
         stock: Number   
       }
     ],
-    thumbnail: String,
-    status: String,
-    featured: String,
-    position: Number,
+    
+    
     createdBy: {
       account_id: String, 
       createdAt: {

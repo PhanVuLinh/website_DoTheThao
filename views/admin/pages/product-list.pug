@@ -5,7 +5,6 @@ block main
 
   //- 1. KHỐI BỘ LỌC VÀ HÀNH ĐỘNG
   .filter-action-card
-    //- Hàng trên: Bộ lọc (Nhiều tiêu chí hơn)
     .filter-row
       .filter-label
         i.fa-solid.fa-filter
@@ -103,7 +102,6 @@ block main
               td #{item.position}
               td 
                   span(class=`badge-status ${item.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{item.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}
-              //- Cột: Tạo bởi
               td
                 .user-date
                   if item.createdBy && item.createdBy.account_id
@@ -111,7 +109,6 @@ block main
                   if item.createdBy && item.createdBy.createdAt
                     span.time #{new Date(item.createdBy.createdAt).toLocaleString('vi-VN', { hour: '2-digit', minute:'2-digit', day:'2-digit', month:'2-digit', year:'numeric' })}
               
-              //- Cột: Cập nhật bởi
               td
                 .user-date
                   if item.updatedBy && item.updatedBy.length > 0
