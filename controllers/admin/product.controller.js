@@ -135,6 +135,25 @@ module.exports.editPatch = async (req, res) => {
   }
 };
 
+module.exports.delete = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Product.updateOne(
+      { _id: id },
+      {
+        deleted: true,
+        deletedBy: req.account.id,
+        deletedAt: Date.now(),
+      },
+    );
+    req.flash("success", "Xóa sản phẩm thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/category/list`);
+  }
+};
+
 module.exports.trash = (req, res) => {
   res.render("admin/pages/product-trash.pug", {
     title: "Thùng rác sản phẩm",
