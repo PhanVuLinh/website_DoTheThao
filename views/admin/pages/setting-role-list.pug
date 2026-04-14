@@ -1,11 +1,11 @@
 extends ../layouts/default.pug
-
+include ../mixins/alert.pug
 block main
-  //- 1. PAGE HEADER
+  +alert-success(3000)
+  +alert-error(3000)
   .page-header
     h1.page-title Nhóm quyền
 
-  //- 2. KHỐI TÌM KIẾM VÀ HÀNH ĐỘNG (Lược bỏ bộ lọc)
   .filter-action-card
     .action-row
       .bulk-action
@@ -23,7 +23,6 @@ block main
           i.fa-solid.fa-plus
           | Tạo mới
 
-  //- 3. BẢNG DỮ LIỆU NHÓM QUYỀN
   .table-section
     .table-responsive
       table.admin-table.table-hover
@@ -36,35 +35,23 @@ block main
             th Hành động
         
         tbody
-          //- Nhóm quyền 1
-          tr
-            td.text-center
-              input(type="checkbox")
-            td.font-weight-600 Quản trị viên
-            td Có đầy đủ các quyền trên hệ thống
-            td
-              .action-btns
-                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
-                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+          each item in roleList
+            tr
+              td.text-center
+                input(type="checkbox")
+              td.font-weight-600 #{item.name}
+              td #{item.description}
+              td
+                .action-btns
+                  a(href=`/${pathAdmin}/setting/role/edit/${item.id}`).btn-edit
+                    i.fa-regular.fa-pen-to-square
+                  button.btn-delete(button-delete data-id=item.id)
+                    i.fa-regular.fa-trash-can
 
-          //- Nhóm quyền 2
-          tr
-            td.text-center
-              input(type="checkbox")
-            td.font-weight-600 Quản lý sản phẩm
-            td Có đầy đủ quyền liên quan đến danh mục và sản phẩm
-            td
-              .action-btns
-                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
-                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
-                
-          //- Nhóm quyền 3
-          tr
-            td.text-center
-              input(type="checkbox")
-            td.font-weight-600 Quản lý đơn hàng
-            td Có đầy đủ quyền liên quan đến xử lý đơn hàng và khách hàng
-            td
-              .action-btns
-                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
-                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+  form(
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`/${pathAdmin}/setting/role/delete`
+  )
+          

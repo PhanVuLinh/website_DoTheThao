@@ -4,7 +4,7 @@ const multer = require("multer");
 
 const cloudinaryHelper = require("../../helpers/cloudinary.helper");
 
-// const validate = require("../../validates/admin/category.validate");
+const validate = require("../../validates/admin/role.validate");
 
 const upload = multer({ storage: cloudinaryHelper.storage });
 
@@ -36,5 +36,19 @@ router.post(
 router.get("/role/list", settingController.roleList);
 
 router.get("/role/create", settingController.roleCreate);
+
+router.post(
+  "/role/create",
+  validate.createPost,
+  settingController.roleCreatePost,
+);
+
+router.get("/role/edit/:id", settingController.roleEdit);
+
+router.patch(
+  "/role/edit/:id",
+  validate.createPost,
+  settingController.roleEditPatch,
+);
 
 module.exports = router;

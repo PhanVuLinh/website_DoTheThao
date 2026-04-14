@@ -1,7 +1,6 @@
 extends ../layouts/default.pug
 
 block main
-  //- Phần Header
   .page-header
     h1.page-title Tạo nhóm quyền
     a.btn-back(href=`/${pathAdmin}/setting/role/list`) 
@@ -9,47 +8,26 @@ block main
       | Quay lại danh sách
 
   .form-card
-    form(action=`/${pathAdmin}/roles/create` method="POST")
+    form(action=`/${pathAdmin}/setting/role/create` method="POST")
       
-      //- Hàng 1: Tên nhóm quyền & Mô tả ngắn
       .form-row-2
         .form-group
           label Tên nhóm quyền
-          input.form-control(type="text" name="title" placeholder="Ví dụ: Quản trị viên" required)
+          input.form-control(type="text" name="name" placeholder="Ví dụ: Quản trị viên")
         
         .form-group
           label Mô tả ngắn
           input.form-control(type="text" name="description" placeholder="Ví dụ: Có đầy đủ các quyền")
 
-      //- Hàng 2: Khối Phân quyền (Nằm một mình chiếm trọn chiều ngang hoặc ở cột trái)
-      //- Theo ảnh thiết kế, nó nằm ở cột trái, cột phải để trống. Ta xài form-row-2 và để trống 1 div
       .form-row-2
         .form-group
           label Phân quyền
           .permissions-box
-            .check-item
-              input(type="checkbox" id="perm-overview" name="permissions" value="overview_view")
-              label(for="perm-overview") Xem trang Tổng quan
-              
-            .check-item
-              input(type="checkbox" id="perm-category-view" name="permissions" value="categories_view")
-              label(for="perm-category-view") Xem danh mục
-              
-            .check-item
-              input(type="checkbox" id="perm-category-create" name="permissions" value="categories_create")
-              label(for="perm-category-create") Tạo danh mục
-              
-            .check-item
-              input(type="checkbox" id="perm-category-edit" name="permissions" value="categories_edit")
-              label(for="perm-category-edit") Sửa danh mục
-              
-            .check-item
-              input(type="checkbox" id="perm-category-delete" name="permissions" value="categories_delete")
-              label(for="perm-category-delete") Xóa danh mục
-
-        //- Cột phải để trống để ép khối phân quyền sang trái y như ảnh
+            each item in permissionList
+              .check-item
+                input(type="checkbox" name="permissions" value=item.value)
+                label(for="perm-overview") #{item.label}
+                
         .form-group
-
-      //- Hàng 3: Nút Cập nhật và Link Quay lại
       .form-actions-stacked
         button.btn-submit.btn-submit-large(type="submit") Tạo mới

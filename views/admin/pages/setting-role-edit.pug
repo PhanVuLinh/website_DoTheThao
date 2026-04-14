@@ -1,0 +1,40 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+block main
+  +alert-error(3000)
+  +alert-success(3000)
+  .page-header
+    h1.page-title Chỉnh sửa nhóm quyền
+    a.btn-back(href=`/${pathAdmin}/setting/role/list`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  .form-card
+    form(action=`/${pathAdmin}/setting/role/edit/${roleDetail.id}?_method=PATCH` method="POST" )
+      
+      .form-row-2
+        .form-group
+          label Tên nhóm quyền
+          input.form-control(type="text" name="name" value=roleDetail.name)
+        
+        .form-group
+          label Mô tả ngắn
+          input.form-control(type="text" name="description" value=roleDetail.description)
+
+      .form-row-2
+        .form-group
+          label Phân quyền
+          .permissions-box
+            each item in permissionList
+              .check-item
+                input(
+                  type="checkbox" 
+                  name="permissions" 
+                  value=item.value
+                  checked=roleDetail.permissions.includes(item.value)
+                )
+                label(for="perm-overview") #{item.label}
+                
+        .form-group
+      .form-actions-stacked
+        button.btn-submit.btn-submit-large(type="submit") Chỉnh sửa
