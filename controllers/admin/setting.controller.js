@@ -1,5 +1,6 @@
 const md5 = require("md5");
 const Account = require("../../models/account.model");
+const SettingWebsiteInfo = require("../../models/setting-website-info.model");
 const variableCongfig = require("../../config/variable");
 module.exports.list = (req, res) => {
   res.render("admin/pages/setting-list.pug", {
@@ -7,16 +8,38 @@ module.exports.list = (req, res) => {
   });
 };
 
-module.exports.websiteInfo = (req, res) => {
+module.exports.websiteInfo = async (req, res) => {
+  const settingWebsiteInfo = await SettingWebsiteInfo.findOne({});
   res.render("admin/pages/website-info.pug", {
     title: "Thông tin website",
+    settingWebsiteInfo: settingWebsiteInfo,
   });
 };
 
 module.exports.websiteInfoPatch = async (req, res) => {
-  console.log(req.body);
-  console.log(req.files);
-  res.send("ok");
+  if (req.files && req.files.logo) {
+    req.body.logo = req.files.logo[0].path;
+  } else {
+    delete req.body.logo;
+  }
+  if (req.files && req.files.favicon) {
+    req.body.favicon = req.files.favicon[0].path;
+  } else {
+    delete req.body.favicon;
+  }
+  const settingWebsiteInfo = await SettingWebsiteInfo.findOne({});
+  if (settingWebsiteInfo) {
+    await SettingWebsiteInfo.updateOne(
+      { _id: settingWebsiteInfo.id },
+      req.body,
+    );
+  } else {
+    const newRecord = new SettingWebsiteInfo(req.body);
+    await newRecord.save();
+  }
+
+  req.flash("success", "Cập nhật thành công");
+  res.redirect(req.get("Referer"));
 };
 
 module.exports.accountAdminList = (req, res) => {
@@ -38,12 +61,12 @@ module.exports.accountAdminCreatePost = async (req, res) => {
   });
   if (emailExist) {
     req.flash("error", "Email đã tồn tại");
-    res.redirect(req.get('Referer'));
+    res.redirect(req.get("Referer"));
   } else {
     const record = new Account(req.body);
     record.password = md5(record.password);
     await record.save();
-    
+
     req.flash("success", "Tạo tài khoản thành công");
     res.redirect(`/${variableCongfig.pathAdmin}/setting/account-admin/list`);
   }

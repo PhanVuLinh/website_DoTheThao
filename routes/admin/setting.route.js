@@ -15,7 +15,7 @@ router.get("/list", settingController.list);
 router.get("/website-info", settingController.websiteInfo);
 
 router.patch(
-  "/edit/:id",
+  "/website-info",
   upload.fields([
     { name: "logo", maxCount: 1 },
     { name: "favicon", maxCount: 1 },

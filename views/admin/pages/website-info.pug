@@ -1,7 +1,9 @@
 extends ../layouts/default.pug
+include ../mixins/alert.pug
 
 block main
-  //- Phần Header của trang (Đã xóa dòng thừa)
+  +alert-error(3000)
+  +alert-success(3000)
   .page-header
     h1.page-title Thông tin website
     a.btn-back(href=`/${pathAdmin}/setting/list`) 
@@ -9,55 +11,46 @@ block main
       | Quay lại danh sách
 
   .form-card
-    form(action=`/${pathAdmin}/settings/website-info?_method=PATCH` method="POST" enctype="multipart/form-data")
-      
-      //- Hàng 1: Tên website & Số điện thoại
+    form(action=`/${pathAdmin}/setting/website-info?_method=PATCH` method="POST" enctype="multipart/form-data")
       .form-row-2
         .form-group
           label Tên website
-          input.form-control(type="text" name="websiteName")
+          input.form-control(type="text" name="websiteName" value=settingWebsiteInfo.websiteName)
         
         .form-group
           label Số điện thoại
-          input.form-control(type="text" name="phone")
-      
-      //- Hàng 2: Email & Địa chỉ
+          input.form-control(type="text" name="phone" value=settingWebsiteInfo.phone)
+
       .form-row-2
         .form-group
           label Email
-          input.form-control(type="email" name="email")
+          input.form-control(type="email" name="email" value=settingWebsiteInfo.email)
         
         .form-group
           label Địa chỉ
-          input.form-control(type="text" name="address" )
-
-      //- Hàng 3: Khối Upload Ảnh (Đã dùng class .upload-row)
+          input.form-control(type="text" name="address" value=settingWebsiteInfo.address)
       .form-row-2.upload-row
         .form-group
           label Logo
           .upload-image-wrapper(upload-image-wrapper)
-            //- Đặt ID riêng là logo-upload
             input#logo-upload.hidden-input(upload-image-input type="file" name="logo" accept="image/*")
-            label.upload-box(for="logo-upload" upload-image-label)
+            label.upload-box(for="logo-upload" upload-image-label class=(settingWebsiteInfo.logo ? "hidden" : ""))
               i.fa-solid.fa-plus
-            .image-preview-container.hidden(upload-image-preview-container)
-              img(upload-image-preview src="" alt="Preview")
+            .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo.logo ? "" : "hidden"))
+              img(upload-image-preview src=(settingWebsiteInfo.logo ? settingWebsiteInfo.logo : "") alt="Preview")
               button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
                 i.fa-solid.fa-xmark
                 
-        //- Cột phải: Upload Favicon
         .form-group
           label Favicon
           .upload-image-wrapper(upload-image-wrapper)
-            //- Đặt ID riêng là favicon-upload
             input#favicon-upload.hidden-input(upload-image-input type="file" name="favicon" accept="image/*")
-            label.upload-box(for="favicon-upload" upload-image-label)
+            label.upload-box(for="favicon-upload" upload-image-label class=(settingWebsiteInfo.favicon ? "hidden" : ""))
               i.fa-solid.fa-plus
-            .image-preview-container.hidden(upload-image-preview-container)
-              img(upload-image-preview src="" alt="Preview")
+            .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo.favicon ? "" : "hidden"))
+              img(upload-image-preview src=(settingWebsiteInfo.favicon ? settingWebsiteInfo.favicon : "") alt="Preview")
               button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
                 i.fa-solid.fa-xmark
 
-      //- Hàng 4: Nút Cập nhật và Link Quay lại (Đã dùng class)
       .form-actions-stacked
         button.btn-submit.btn-submit-large(type="submit") Cập nhật
