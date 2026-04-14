@@ -737,8 +737,8 @@ body.admin-body {
   font-weight: 600 !important;
 }
 .td-thumbnail {
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   border-radius: 8px;
   object-fit: cover;
   border: 1px solid #eee;

@@ -18,7 +18,15 @@ router.post(
   productController.createPost,
 );
 
+router.get("/edit/:id", productController.edit);
+
 router.get("/trash", productController.trash);
 
+router.patch(
+  "/edit/:id",
+  upload.single("thumbnail"),
+  validate.createPost,
+  productController.editPatch,
+);
 
 module.exports = router;
