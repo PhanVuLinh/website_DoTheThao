@@ -1,60 +1,63 @@
-// TOP BAR
 .top-bar
   .top-bar__inner
-    .top-bar__item
-      i.fa-solid.fa-phone
-      | 0123.456.789
-    .top-bar__item
-      i.fa-solid.fa-envelope
-      | linhphanzzz04@gmail.com
-    .top-bar__item
-      i.fa-solid.fa-location-dot
-      | Số 123, đường ABC, thành phố XYZ
+    if(settingWebsiteInfo.phone)
+      .top-bar__item
+        i.fa-solid.fa-phone
+        | #{settingWebsiteInfo.phone}
 
-// MAIN NAVBAR
+    if(settingWebsiteInfo.email)
+      .top-bar__item
+        i.fa-solid.fa-envelope
+        | #{settingWebsiteInfo.email}
+  
+    if(settingWebsiteInfo.address)
+      .top-bar__item
+        i.fa-solid.fa-location-dot
+        | #{settingWebsiteInfo.address}
+
 nav.navbar
   .navbar__inner
+    button.mobile-toggle-btn
+      i.fa-solid.fa-bars
 
-    // LOGO
     a.logo(href="/")
-      img.logo__img(src="./client/assets/images/titisport.png", alt="Titi Sport")
+      img.logo__img(src=settingWebsiteInfo.logo, alt=settingWebsiteInfo.websiteName)
 
-    // NAV LINKS
-    ul.nav-links
-      li
-        a.active(href="/") Trang Chủ
-      li
-        a(href="#")
-          | Bóng Đá
-          i.fa-solid.fa-chevron-down.arrow
-        .dropdown
-          a(href="#") Ngoại Hạng Anh
-          a(href="#") La Liga
-          a(href="#") V.League
-          a(href="#") Champions League
-          a(href="#") World Cup
-      li
-        a(href="#")
-          | Thể Thao Khác
-          i.fa-solid.fa-chevron-down.arrow
-        .dropdown
-          a(href="#") Bóng Rổ
-          a(href="#") Cầu Lông
-          a(href="#") Tennis
-          a(href="#") Bơi Lội
-          a(href="#") Điền Kinh
-      li
-        a(href="#") Tin Tức
-      li
-        a(href="#") Liên Hệ
+    .mobile-overlay
 
-    // NAV ACTIONS
+    .nav-menu-wrapper
+      button.mobile-close-btn
+        i.fa-solid.fa-xmark
+        
+      ul.nav-links
+        li
+          a.active(href="/") Trang Chủ
+          
+        each item in categoryList
+          li
+            a(href=`/category/${item.slug}`) #{item.title}
+              if(item.children && item.children.length > 0)
+                i.fa-solid.fa-chevron-down.arrow
+                
+            if(item.children && item.children.length > 0)
+              .dropdown
+                each itemChild in item.children 
+                  a(href=`/category/${itemChild.slug}`) #{itemChild.title}
+              
+        li
+          a(href="#") Tin Tức
+          
+        li
+          a(href="#") Liên Hệ
+
     .nav-actions
-      button.action-btn
+      button.action-btn.search-btn-mobile
         i.fa-solid.fa-magnifying-glass
-      button.action-btn
+        
+      button.action-btn.hide-on-mobile
         i.fa-regular.fa-heart
         span.action-badge.badge-dark 0
+        
       button.action-btn
         i.fa-solid.fa-cart-shopping
         span.action-badge.badge-red 3

@@ -1777,6 +1777,11 @@ textarea.form-control {
     gap: 50px;
   }
 }
+.mobile-toggle-btn,
+.mobile-close-btn,
+.mobile-overlay {
+  display: none;
+}
 
 /* TABLET PORTRAIT */
 @media (max-width: 992px) {
@@ -1836,6 +1841,128 @@ textarea.form-control {
   }
   .newsletter-form {
     min-width: 100%;
+  }
+  /* Sắp xếp lại Header cho Mobile */
+  .navbar__inner {
+    justify-content: space-between;
+  }
+  .hide-on-mobile {
+    display: none; /* Ẩn nút Heart cho gọn */
+  }
+  
+  /* Nút Hamburger */
+  .mobile-toggle-btn {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 26px;
+    color: var(--blue-dark);
+    cursor: pointer;
+  }
+
+  /* Khối Menu trượt (Side Drawer) */
+  .nav-menu-wrapper {
+    position: fixed;
+    top: 0;
+    left: -320px; /* Giấu ra ngoài màn hình bên trái */
+    width: 300px;
+    height: 100vh;
+    background: var(--white);
+    z-index: 1001;
+    transition: left 0.4s ease-in-out;
+    box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+    overflow-y: auto; /* Cho phép cuộn nếu menu dài */
+    padding: 60px 0 20px 0; /* Chừa khoảng trống cho nút X */
+  }
+  .nav-menu-wrapper.active {
+    left: 0; /* Trượt vào trong */
+  }
+
+  /* Lớp phủ màu đen */
+  .mobile-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+  }
+  .mobile-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Nút tắt Menu (Dấu X) */
+  .mobile-close-btn {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--text-dark);
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .mobile-close-btn:hover {
+    color: var(--red-main);
+  }
+
+  /* Style lại danh sách link (Thành dạng dọc) */
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+  }
+  .nav-links > li {
+    width: 100%;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .nav-links > li > a {
+    justify-content: space-between;
+    padding: 16px 20px;
+    height: auto;
+    font-size: 16px;
+    color: var(--blue-dark);
+    border-bottom: none;
+  }
+  .nav-links > li > a::after {
+    display: none; /* Bỏ gạch chân đỏ ở desktop */
+  }
+
+  /* Style lại Dropdown thành dạng Accordion (Xổ xuống) */
+  .dropdown {
+    position: static;
+    box-shadow: none;
+    border-radius: 0;
+    border-top: none;
+    background: #f9f9fb;
+    min-width: 100%;
+    display: none; /* Mặc định ẩn, để JS mở */
+    animation: none;
+  }
+  .dropdown.active {
+    display: block; /* Mở Accordion */
+  }
+  .dropdown a {
+    padding: 12px 20px 12px 40px; /* Thụt lề cho menu con */
+    color: var(--blue-soft);
+    font-weight: 500;
+  }
+  
+  /* Hiệu ứng xoay mũi tên */
+  .arrow {
+    padding: 10px;
+    margin-right: -10px;
+    transition: transform 0.3s ease;
+  }
+  .arrow.active {
+    transform: rotate(180deg);
   }
 }
 
