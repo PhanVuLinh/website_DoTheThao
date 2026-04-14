@@ -72,7 +72,6 @@ block main
                   span.time #{item.deletedAtFormat}
                   
               td: .action-btns
-                  //- button.btn-restore(title="Khôi phục"): i.fa-solid.fa-rotate-left
                   button.btn-restore(button-restore data-id=item.id)
                     i.fa-solid.fa-rotate-left
                   button.btn-delete( title="Xóa vĩnh viễn" button-delete data-id=item.id)

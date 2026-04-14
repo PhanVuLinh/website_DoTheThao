@@ -1,7 +1,12 @@
 const router = require("express").Router();
 
 const multer = require("multer");
-const upload = multer( { dest: "public/admin/uploads/images/" } );
+
+const cloudinaryHelper = require("../../helpers/cloudinary.helper");
+
+// const validate = require("../../validates/admin/category.validate");
+
+const upload = multer({ storage: cloudinaryHelper.storage });
 
 const settingController = require("../../controllers/admin/setting.controller");
 
@@ -9,11 +14,24 @@ router.get("/list", settingController.list);
 
 router.get("/website-info", settingController.websiteInfo);
 
+router.patch(
+  "/edit/:id",
+  upload.fields([
+    { name: "logo", maxCount: 1 },
+    { name: "favicon", maxCount: 1 },
+  ]),
+  settingController.websiteInfoPatch,
+);
+
 router.get("/account-admin/list", settingController.accountAdminList);
 
 router.get("/account-admin/create", settingController.accountAdminCreate);
 
-router.post("/account-admin/create", upload.single("avatar"), settingController.accountAdminCreatePost);
+router.post(
+  "/account-admin/create",
+  upload.single("avatar"),
+  settingController.accountAdminCreatePost,
+);
 
 router.get("/role/list", settingController.roleList);
 

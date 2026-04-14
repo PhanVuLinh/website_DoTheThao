@@ -20,27 +20,39 @@ function togglePassword() {
   }
 }
 
-// Hiển thị ảnh (Preview) khi chọn file
-function previewImage(event) {
-  const input = event.target;
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      document.getElementById("image-preview").src = e.target.result;
-      document.getElementById("upload-label").classList.add("hidden");
-      document.getElementById("preview-container").classList.remove("hidden");
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
+//upload image
+const uploadImageWrappers = document.querySelectorAll("[upload-image-wrapper]");
+if (uploadImageWrappers.length > 0) {
+  uploadImageWrappers.forEach((wrapper) => {
+    const input = wrapper.querySelector("[upload-image-input]");
+    const label = wrapper.querySelector("[upload-image-label]");
+    const previewContainer = wrapper.querySelector(
+      "[upload-image-preview-container]",
+    );
+    const previewImage = wrapper.querySelector("[upload-image-preview]");
+    const btnRemove = wrapper.querySelector("[button-remove-image]");
+    if (input && previewImage) {
+      input.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          previewImage.src = URL.createObjectURL(file);
+          label.classList.add("hidden");
+          previewContainer.classList.remove("hidden");
+        }
+      });
+    }
 
-// Xóa ảnh khi bấm dấu [X]
-function removeImage() {
-  document.getElementById("file-upload").value = "";
-  document.getElementById("image-preview").src = "";
-  document.getElementById("preview-container").classList.add("hidden");
-  document.getElementById("upload-label").classList.remove("hidden");
+    if (btnRemove) {
+      btnRemove.addEventListener("click", () => {
+        input.value = "";
+        previewImage.src = "";
+        previewContainer.classList.add("hidden");
+        label.classList.remove("hidden");
+      });
+    }
+  });
 }
+//End upload image
 
 //button delete
 const listButtonDelete = document.querySelectorAll("[button-delete]");

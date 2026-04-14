@@ -42,15 +42,13 @@ block main
       //- Hàng 3: Khối Upload Ảnh
       .form-group
         label Ảnh đại diện
-        .upload-image-wrapper
-          input#file-upload.hidden-input(type="file" name="thumbnail" accept="image/*" onchange="previewImage(event)")
-          
-          label.upload-box(for="file-upload" id="upload-label")
+        .upload-image-wrapper(upload-image-wrapper)
+          input#thumbnail-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
+          label.upload-box(for="thumbnail-upload" upload-image-label class=(productDetail.thumbnail ? "hidden" : ""))
             i.fa-solid.fa-plus
-            
-          .image-preview-container(class=productDetail.thumbnail ? "" : "hidden")#preview-container
-            img#image-preview(src=productDetail.thumbnail alt=productDetail.title)
-            button.btn-remove-image(type="button" onclick="removeImage()" title="Xóa ảnh")
+          .image-preview-container(upload-image-preview-container class=(productDetail.thumbnail ? "" : "hidden"))
+            img(upload-image-preview src=(productDetail.thumbnail ? productDetail.thumbnail : "") alt=productDetail.title)
+            button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
               i.fa-solid.fa-xmark
 
       //- Hàng 4: Giá bán & Phần trăm giảm giá (chia 2 cột)

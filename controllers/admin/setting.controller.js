@@ -13,6 +13,12 @@ module.exports.websiteInfo = (req, res) => {
   });
 };
 
+module.exports.websiteInfoPatch = async (req, res) => {
+  console.log(req.body);
+  console.log(req.files);
+  res.send("ok");
+};
+
 module.exports.accountAdminList = (req, res) => {
   res.render("admin/pages/setting-account-admin-list.pug", {
     title: "Danh sách tài khoản admin",

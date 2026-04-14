@@ -9,56 +9,53 @@ block main
       | Quay lại danh sách
 
   .form-card
-    form(action=`/${pathAdmin}/settings/general?_method=PATCH` method="POST" enctype="multipart/form-data")
+    form(action=`/${pathAdmin}/settings/website-info?_method=PATCH` method="POST" enctype="multipart/form-data")
       
       //- Hàng 1: Tên website & Số điện thoại
       .form-row-2
         .form-group
           label Tên website
-          input.form-control(type="text" name="websiteName" value="TitiSport" required)
+          input.form-control(type="text" name="websiteName")
         
         .form-group
           label Số điện thoại
-          input.form-control(type="text" name="phone" value="0123456789")
+          input.form-control(type="text" name="phone")
       
       //- Hàng 2: Email & Địa chỉ
       .form-row-2
         .form-group
           label Email
-          input.form-control(type="email" name="email" value="contact@titisport.com")
+          input.form-control(type="email" name="email")
         
         .form-group
           label Địa chỉ
-          input.form-control(type="text" name="address" value="Số 123, đường ABC, TP.HCM")
+          input.form-control(type="text" name="address" )
 
       //- Hàng 3: Khối Upload Ảnh (Đã dùng class .upload-row)
       .form-row-2.upload-row
-        //- Cột trái: Upload Logo
         .form-group
           label Logo
-          .upload-image-wrapper
-            input#logo-upload.hidden-input(type="file" name="logo" accept="image/*" onchange="previewImage(event, 'preview-logo', 'logo-container', 'logo-label')")
-            
-            label.upload-box(for="logo-upload" id="logo-label")
+          .upload-image-wrapper(upload-image-wrapper)
+            //- Đặt ID riêng là logo-upload
+            input#logo-upload.hidden-input(upload-image-input type="file" name="logo" accept="image/*")
+            label.upload-box(for="logo-upload" upload-image-label)
               i.fa-solid.fa-plus
-              
-            .image-preview-container.hidden#logo-container
-              img#preview-logo(src="" alt="Preview")
-              button.btn-remove-image(type="button" onclick="removeImage('logo-upload', 'preview-logo', 'logo-container', 'logo-label')" title="Xóa ảnh")
+            .image-preview-container.hidden(upload-image-preview-container)
+              img(upload-image-preview src="" alt="Preview")
+              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
                 i.fa-solid.fa-xmark
                 
         //- Cột phải: Upload Favicon
         .form-group
           label Favicon
-          .upload-image-wrapper
-            input#favicon-upload.hidden-input(type="file" name="favicon" accept="image/*" onchange="previewImage(event, 'preview-favicon', 'favicon-container', 'favicon-label')")
-            
-            label.upload-box(for="favicon-upload" id="favicon-label")
+          .upload-image-wrapper(upload-image-wrapper)
+            //- Đặt ID riêng là favicon-upload
+            input#favicon-upload.hidden-input(upload-image-input type="file" name="favicon" accept="image/*")
+            label.upload-box(for="favicon-upload" upload-image-label)
               i.fa-solid.fa-plus
-              
-            .image-preview-container.hidden#favicon-container
-              img#preview-favicon(src="" alt="Preview")
-              button.btn-remove-image(type="button" onclick="removeImage('favicon-upload', 'preview-favicon', 'favicon-container', 'favicon-label')" title="Xóa ảnh")
+            .image-preview-container.hidden(upload-image-preview-container)
+              img(upload-image-preview src="" alt="Preview")
+              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
                 i.fa-solid.fa-xmark
 
       //- Hàng 4: Nút Cập nhật và Link Quay lại (Đã dùng class)
