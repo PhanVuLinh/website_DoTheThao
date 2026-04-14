@@ -204,6 +204,21 @@ if (buttonsPagination) {
 }
 //End Pagination
 
+//button restore
+const listButtonRestore = document.querySelectorAll("[button-restore]");
+if (listButtonRestore.length > 0) {
+  const formRestoreItem = document.querySelector("#form-restore-item");
+  const path = formRestoreItem.getAttribute("data-path");
+  listButtonRestore.forEach((button) => {
+    button.addEventListener("click", () => {
+      const id = button.getAttribute("data-id");
+      const action = `${path}/${id}?_method=PATCH`;
+      formRestoreItem.action = action;
+      formRestoreItem.submit();
+    });
+  });
+}
+//End button restore
 // =========================================
 // 2. KHỞI TẠO KHI TRANG ĐÃ TẢI XONG (DOM Ready)
 // =========================================

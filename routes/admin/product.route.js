@@ -20,8 +20,6 @@ router.post(
 
 router.get("/edit/:id", productController.edit);
 
-router.get("/trash", productController.trash);
-
 router.patch(
   "/edit/:id",
   upload.single("thumbnail"),
@@ -30,5 +28,9 @@ router.patch(
 );
 
 router.delete("/delete/:id", productController.delete);
+
+router.get("/trash", productController.trash);
+
+router.patch("/restore/:id", productController.restore);
 
 module.exports = router;

@@ -154,8 +154,49 @@ module.exports.delete = async (req, res) => {
   }
 };
 
-module.exports.trash = (req, res) => {
+module.exports.trash = async (req, res) => {
+  const find = {
+    deleted: true,
+  };
+  const productList = await Product.find(find).sort({
+    deletedAt: "desc",
+  });
+
+  for (const item of productList) {
+    if (item.createdBy) {
+      const infoAccountCreated = await Account.findOne({
+        _id: item.createdBy,
+      });
+      item.createdByFullName = infoAccountCreated.fullName;
+    }
+    if (item.deletedBy) {
+      const infoAccountDeleted = await Account.findOne({
+        _id: item.deletedBy,
+      });
+      item.deletedByFullName = infoAccountDeleted.fullName;
+    }
+    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+    item.deletedAtFormat = moment(item.deletedAt).format("HH:mm - DD/MM/YYYY");
+  }
   res.render("admin/pages/product-trash.pug", {
     title: "Thùng rác sản phẩm",
+    productList: productList,
   });
+};
+
+module.exports.restore = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Product.updateOne(
+      { _id: id },
+      {
+        deleted: false,
+      },
+    );
+    req.flash("success", "Khôi phục sản phẩm thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/trash`);
+  }
 };
