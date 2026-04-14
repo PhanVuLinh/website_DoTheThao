@@ -200,3 +200,16 @@ module.exports.restore = async (req, res) => {
     res.redirect(`/${variableCongfig.pathAdmin}/trash`);
   }
 };
+
+module.exports.deleteDestroy = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Product.deleteOne({ _id: id } );
+    req.flash("success", "Đã xóa vĩnh viễn sản phẩm thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/trash`);
+  }
+};
+

@@ -75,7 +75,8 @@ block main
                   //- button.btn-restore(title="Khôi phục"): i.fa-solid.fa-rotate-left
                   button.btn-restore(button-restore data-id=item.id)
                     i.fa-solid.fa-rotate-left
-                  button.btn-delete(title="Xóa vĩnh viễn"): i.fa-regular.fa-trash-can
+                  button.btn-delete( title="Xóa vĩnh viễn" button-delete data-id=item.id)
+                    i.fa-regular.fa-trash-can
 
 
     //- 3. PHÂN TRANG (PAGINATION)
@@ -92,4 +93,10 @@ block main
     method="POST"
     id="form-restore-item"
     data-path=`/${pathAdmin}/product/restore`
+  )
+  form(
+      action=""
+      method="POST"
+      id="form-delete-item"
+      data-path=`/${pathAdmin}/product/delete-destroy`
   )

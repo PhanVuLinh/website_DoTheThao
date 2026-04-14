@@ -33,4 +33,6 @@ router.get("/trash", productController.trash);
 
 router.patch("/restore/:id", productController.restore);
 
+router.delete("/delete-destroy/:id", productController.deleteDestroy);
+
 module.exports = router;
