@@ -146,89 +146,13 @@ block main
   // END SECTION 4
 
   // SECTION 5: SẢN PHẨM NỔI BẬT
-  -
-    var featuredProducts = [
-      {
-        avatar: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
-        badgeText: "-30%",
-        badgeClass: "badge-pink",
-        name: "Giày Chạy Bộ Nike Air Zoom Pegasus 39",
-        priceOld: 3500000,
-        priceNew: 2450000,
-        ratingStars: 5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=800&auto=format&fit=crop",
-        badgeText: "HOT",
-        badgeClass: "badge-orange",
-        name: "Giày Đá Bóng Nike Mercurial Vapor 14",
-        priceOld: 4500000,
-        priceNew: 3825000,
-        ratingStars: 4.5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
-        badgeText: "MỚI",
-        badgeClass: "badge-orange",
-        name: "Giày Bóng Rổ Air Jordan 1 Retro",
-        priceOld: 5200000,
-        priceNew: 4160000,
-        ratingStars: 5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=800&auto=format&fit=crop",
-        badgeText: "-15%",
-        badgeClass: "badge-pink",
-        name: "Giày Thể Thao Adidas Ultraboost 22",
-        priceOld: 4000000,
-        priceNew: 3400000,
-        ratingStars: 4
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=800&auto=format&fit=crop",
-        badgeText: "-20%",
-        badgeClass: "badge-pink",
-        name: "Vans Old Skool Classic Black",
-        priceOld: 1800000,
-        priceNew: 1440000,
-        ratingStars: 5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop",
-        badgeText: "HOT",
-        badgeClass: "badge-orange",
-        name: "Puma RS-X3 Puzzle Nam/Nữ",
-        priceOld: 2800000,
-        priceNew: 2500000,
-        ratingStars: 4.5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=800&auto=format&fit=crop",
-        badgeText: "MỚI",
-        badgeClass: "badge-orange",
-        name: "Converse Chuck Taylor All Star",
-        priceOld: 1500000,
-        priceNew: 1500000,
-        ratingStars: 5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?q=80&w=800&auto=format&fit=crop",
-        badgeText: "-10%",
-        badgeClass: "badge-pink",
-        name: "New Balance 574 Core Trắng",
-        priceOld: 2200000,
-        priceNew: 1980000,
-        ratingStars: 4
-      }
-    ]
-
   section.featured-products
     .featured-products__container
       h2.section-title Sản Phẩm Nổi Bật
       
       .featured-products__grid
-        each item in featuredProducts
-          //- +productItem(item)
+        each item in productFeaturedSection5
+          +productItem(item)
 
       .featured-products__actions
         a.btn-view-all-outline(href="#") 
@@ -245,88 +169,13 @@ block main
   // END SECTION 6
 
   // SECTION 7: SẢN PHẨM MỚI NHẤT
-  -
-    var newArrivals = [
-      {
-        avatar: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop", // Nike Đỏ
-        badgeText: "MỚI",
-        badgeClass: "badge-orange",
-        name: "Nike Air Zoom Pegasus 40 Đỏ",
-        priceOld: 3800000,
-        priceNew: 3800000,
-        ratingStars: 5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=800&auto=format&fit=crop", // Adidas Trắng/Xanh
-        badgeText: "HOT",
-        badgeClass: "badge-pink",
-        name: "Adidas Ultraboost Light 2026",
-        priceOld: 4500000,
-        priceNew: 4100000,
-        ratingStars: 4.5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop", // Air Jordan Mới
-        badgeText: "MỚI",
-        badgeClass: "badge-orange",
-        name: "Air Jordan 1 Low SE Mới Nhất",
-        priceOld: 4200000,
-        priceNew: 4200000,
-        ratingStars: 5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop", // Puma 
-        badgeText: "-5%",
-        badgeClass: "badge-pink",
-        name: "Puma RS-X Efekt PRM",
-        priceOld: 3200000,
-        priceNew: 3040000,
-        ratingStars: 4
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=800&auto=format&fit=crop", // Asics (ảnh giày thể thao khác)
-        badgeText: "MỚI",
-        badgeClass: "badge-orange",
-        name: "Asics Gel-Kayano 30 Trắng Đen",
-        priceOld: 4000000,
-        priceNew: 4000000,
-        ratingStars: 4.5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?q=80&w=800&auto=format&fit=crop", // Vans 
-        badgeText: "HOT",
-        badgeClass: "badge-orange",
-        name: "Vans Authentic Pro Black/Gum",
-        priceOld: 1600000,
-        priceNew: 1600000,
-        ratingStars: 5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1521774971864-62e842046145?q=80&w=800&auto=format&fit=crop", // Converse (ảnh giày cao cổ đỏ)
-        badgeText: "MỚI",
-        badgeClass: "badge-orange",
-        name: "Converse Chuck 70 Vintage Canvas",
-        priceOld: 2100000,
-        priceNew: 2100000,
-        ratingStars: 5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1539185441755-769473a23570?q=80&w=800&auto=format&fit=crop", // New Balance
-        badgeText: "HOT",
-        badgeClass: "badge-pink",
-        name: "New Balance 550 White/Green",
-        priceOld: 3000000,
-        priceNew: 2800000,
-        ratingStars: 4.5
-      }
-    ]
   section.featured-products
     .featured-products__container
       h2.section-title Sản Phẩm Mới Nhất
       
       .featured-products__grid
-        each item in newArrivals
-          //- +productItem(item)
+        each item in productListSection7
+          +productItem(item)
 
       .featured-products__actions
         a.btn-view-all-outline(href="#") 

@@ -40,16 +40,26 @@ block main
             option(value="inactive" selected=(productDetail.status === "inactive" ? true : false)) Tạm dừng
 
       //- Hàng 3: Khối Upload Ảnh
-      .form-group
-        label Ảnh đại diện
-        .upload-image-wrapper(upload-image-wrapper)
-          input#thumbnail-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
-          label.upload-box(for="thumbnail-upload" upload-image-label class=(productDetail.thumbnail ? "hidden" : ""))
-            i.fa-solid.fa-plus
-          .image-preview-container(upload-image-preview-container class=(productDetail.thumbnail ? "" : "hidden"))
-            img(upload-image-preview src=(productDetail.thumbnail ? productDetail.thumbnail : "") alt=productDetail.title)
-            button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
-              i.fa-solid.fa-xmark
+      .form-row-2
+        .form-group
+          label Ảnh đại diện
+          .upload-image-wrapper(upload-image-wrapper)
+            input#thumbnail-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
+            label.upload-box(for="thumbnail-upload" upload-image-label class=(productDetail.thumbnail ? "hidden" : ""))
+              i.fa-solid.fa-plus
+            .image-preview-container(upload-image-preview-container class=(productDetail.thumbnail ? "" : "hidden"))
+              img(upload-image-preview src=(productDetail.thumbnail ? productDetail.thumbnail : "") alt=productDetail.title)
+              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                i.fa-solid.fa-xmark
+        .form-group
+            label Sản phẩm nổi bật
+            div(style="display: flex; gap: 30px; margin-top: 8px;")
+              label(style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500;")
+                input(type="radio" name="featured" value="1" checked=(productDetail.featured === "1" ? true : false)) 
+                | Nổi bật
+              label(style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500;")
+                input(type="radio" name="featured" value="0" checked=(productDetail.featured === "0" ? true : false)) 
+                | Không nổi bật
 
       //- Hàng 4: Giá bán & Phần trăm giảm giá (chia 2 cột)
       .form-row-2

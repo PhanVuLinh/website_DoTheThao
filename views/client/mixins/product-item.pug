@@ -6,10 +6,10 @@ mixin productItem(item)
         if item.discountPercentage > 0
           span.badge.badge-left.badge-pink -#{item.discountPercentage} %
         
-        //- if item.featured == "1"
-        span.badge.badge-right.badge-orange HOT
-        //- else if item.isNew == true
-        //-   span.badge.badge-right.badge-dark MỚI
+        if item.featured == "1"
+          span.badge.badge-right.badge-orange HOT
+        else if item.isNew == true
+          span.badge.badge-right.badge-dark MỚI
           
         img(src=item.thumbnail, alt=item.title)
         
@@ -30,12 +30,11 @@ mixin productItem(item)
 
     .flash-product-card__bottom
       .flash-product-card__price
-        if item.priceOld
-          span.old-price #{item.priceOld.toLocaleString('vi-VN')}đ
-          
-        if item.priceNew
+        if (item.priceNew )
+          span.old-price #{item.price.toLocaleString('vi-VN')}đ
           span.new-price #{item.priceNew.toLocaleString('vi-VN')}đ
-        else if item.price
+          
+        else
           span.new-price #{item.price.toLocaleString('vi-VN')}đ
       
       button.btn-cart

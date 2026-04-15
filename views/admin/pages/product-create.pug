@@ -5,6 +5,7 @@ include ../mixins/alert.pug
 block main
   +alert-error(3000)
   +alert-success(3000)
+  
   //- Phần Header của trang
   .page-header
     h1.page-title Tạo sản phẩm
@@ -39,20 +40,33 @@ block main
             option(value="active") Hoạt động
             option(value="inactive") Tạm dừng
 
-      //- Hàng 3: Khối Upload Ảnh
-      .form-group
-        label Ảnh đại diện
-        .upload-image-wrapper(upload-image-wrapper)
-          input#thumbnail-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
-          label.upload-box(for="thumbnail-upload" upload-image-label)
-            i.fa-solid.fa-plus
-          .image-preview-container.hidden(upload-image-preview-container)
-            img(upload-image-preview src="" alt="Preview")
-            button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
-              i.fa-solid.fa-xmark
+      
+      .form-row-2 
+        //- Hàng 3: Khối Upload Ảnh
+        .form-group
+          label Ảnh đại diện
+          .upload-image-wrapper(upload-image-wrapper)
+            input#thumbnail-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
+            label.upload-box(for="thumbnail-upload" upload-image-label)
+              i.fa-solid.fa-plus
+            .image-preview-container.hidden(upload-image-preview-container)
+              img(upload-image-preview src="" alt="Preview")
+              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                i.fa-solid.fa-xmark
+        //- Hàng 4: Sản phẩm nổi bật
+        .form-group
+          label Sản phẩm nổi bật
+          div(style="display: flex; gap: 30px; margin-top: 8px;")
+            label(style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500;")
+              input(type="radio" name="featured" value="1") 
+              | Nổi bật
+            label(style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500;")
+              input(type="radio" name="featured" value="0" checked) 
+              | Không nổi bật
 
-      //- --- PHẦN THAY ĐỔI: GIÁ, GIẢM GIÁ & TỒN KHO THEO SIZE ---
-      //- Hàng 4: Giá bán & Phần trăm giảm giá (chia 2 cột)
+        
+
+      //- Hàng 5: Giá bán & Phần trăm giảm giá (chia 2 cột)
       .form-row-2
         .form-group
           label Giá bán (VNĐ)
@@ -62,7 +76,7 @@ block main
           label Giảm giá (%)
           input.form-control(type="number" name="discountPercentage" placeholder="Ví dụ: 15" min="0" max="100" value="0")
 
-      //- Hàng 5: Quản lý tồn kho theo Size
+      //- Hàng 6: Quản lý tồn kho theo Size
       .form-group
         label Kho hàng theo size / kích cỡ
         #dynamic-size-list
@@ -71,7 +85,7 @@ block main
           i.fa-solid.fa-plus
           |  Thêm size khác
 
-      //- Hàng 6: Mô tả
+      //- Hàng 7: Mô tả
       .form-group
         label Mô tả sản phẩm
         textarea.form-control(name="description" rows="6" placeholder="Nhập mô tả chi tiết cho sản phẩm này...")
