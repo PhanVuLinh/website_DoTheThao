@@ -1,4 +1,7 @@
 const Category = require("../../models/category.model");
+const Product = require("../../models/product.model");
+
+const productPriceHelper = require("../../helpers/getPriceNew.helper.js");
 module.exports.list = async (req, res) => {
   const slug = req.params.slug;
   const category = await Category.findOne({
@@ -41,11 +44,26 @@ module.exports.list = async (req, res) => {
       link: `/category/${category.slug}`,
       title: category.title,
     });
-
     //End Breadcrumb
+
+    //danh sách sản phẩm
+    const productCategory = await Product.find({
+      category_id: category.id,
+      deleted: false,
+      status: "active",
+    })
+      .sort({
+        position: "desc",
+      })
+      .lean();
+    const newProductCategory =
+      productPriceHelper.priceNewProduct(productCategory);
+    //end danh sách sản phẩm
+
     res.render("client/pages/product-list.pug", {
       title: "Danh sách sản phẩm",
       breadcrumb: breadcrumb,
+      productCategory: newProductCategory,
     });
   } else {
     res.redirect(`/`);

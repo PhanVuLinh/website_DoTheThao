@@ -31,7 +31,7 @@ nav.navbar
         
       ul.nav-links
         li
-          a.active(href="/") Trang Chủ
+          a(href="/") Trang Chủ
           
         each item in categoryList
           li
@@ -44,11 +44,11 @@ nav.navbar
                 each itemChild in item.children 
                   a(href=`/category/${itemChild.slug}`) #{itemChild.title}
               
-        li
-          a(href="#") Tin Tức
+        //- li
+        //-   a(href="") Tin Tức
           
-        li
-          a(href="#") Liên Hệ
+        //- li
+        //-   a(href="") Liên Hệ
 
     .nav-actions
       button.action-btn.search-btn-mobile

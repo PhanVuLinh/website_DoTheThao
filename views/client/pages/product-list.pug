@@ -56,7 +56,7 @@ block main
           .product-content__header
             .header-info
               h2.title #{breadcrumb.title}
-              p.desc Tổng 85 sản phẩm
+              p.desc Tổng #{productCategory.length} sản phẩm
             .header-sort
               span Sắp xếp:
               select.sort-select
@@ -65,8 +65,8 @@ block main
                 option(value="price-desc") Giá giảm dần
           
           .product-content__grid
-            //- each product in newArrivals
-              //- +productItem(product)
+            each product in productCategory
+              +productItem(product)
 
           // PHÂN TRANG
           .box-pagination
