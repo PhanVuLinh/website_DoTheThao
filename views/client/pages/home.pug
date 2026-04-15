@@ -77,53 +77,16 @@ block main
   // END SECTION 2: CATEGORIES
 
   // SECTION 3: FLASH DEALS
-  -
-    var productListSectio3 = [
-      {
-        avatar: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
-        slug: "#",
-        badgeText: "HOT",
-        badgeClass: "badge-orange",
-        name: "Air Jordan 1 Retro High OG",
-        priceOld: 4800000,
-        priceNew: 4100000,
-        ratingStars: 4.5
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
-        slug: "#",
-        badgeText: "-20%",
-        badgeClass: "badge-pink",
-        name: "Nike Air Max 270 React",
-        priceOld: 3200000,
-        priceNew: 2560000,
-        ratingStars: 1
-      },
-      {
-        avatar: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=800&auto=format&fit=crop",
-        slug: "#",
-        badgeText: "MỚI",
-        badgeClass: "badge-orange",
-        name: "Adidas Ultraboost 22",
-        priceOld: 4500000,
-        priceNew: 4500000,
-        ratingStars: 3.5
-      }
-    ]
   section.flash-deals
     .flash-deals__container
-      
-      //- 1. Cột Promo (Bên trái)
       .flash-promo
         .flash-promo__badge
           i.fa-solid.fa-bolt
           | ƯU ĐÃI 2026
-        
         h2.flash-promo__title-new
           | DEALS THỂ THAO
           br
           | CHÍNH HÃNG
-      
         p.flash-promo__countdown-label Kết thúc sau:
         .flash-promo__countdown
           .countdown-box
@@ -138,10 +101,15 @@ block main
             span.num 30
             span.label GIÂY
 
-      //- 2. Cột Sản phẩm (Gồm 3 sản phẩm)
-      .flash-products
-        each item in productListSectio3
-          +productItem(item)
+      .flash-products-wrapper
+        button.slider-btn.prev-btn
+          i.fa-solid.fa-chevron-left
+        .flash-products-list
+          each item in productListSection3
+            .flash-product-item
+              +productItem(item)
+        button.slider-btn.next-btn
+          i.fa-solid.fa-chevron-right
   // END SECTION 3: FLASH DEALS
 
   // SECTION 4: KHUYẾN MẠI THỂ THAO
@@ -260,7 +228,7 @@ block main
       
       .featured-products__grid
         each item in featuredProducts
-          +productItem(item)
+          //- +productItem(item)
 
       .featured-products__actions
         a.btn-view-all-outline(href="#") 
@@ -358,7 +326,7 @@ block main
       
       .featured-products__grid
         each item in newArrivals
-          +productItem(item)
+          //- +productItem(item)
 
       .featured-products__actions
         a.btn-view-all-outline(href="#") 

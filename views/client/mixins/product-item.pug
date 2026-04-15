@@ -1,26 +1,42 @@
 mixin productItem(item) 
   .flash-product-card
-    .flash-product-card__img-wrap
-      span(class=`badge ${item.badgeClass || 'badge-pink'}`) #{item.badgeText}
-      img(src=item.avatar, alt=item.name)
-      
-    h3.flash-product-card__title #{item.name}
+    a.card-link-wrapper(href=`/product/detail/${item.slug}`)
+      .flash-product-card__img-wrap
+        
+        if item.discountPercentage > 0
+          span.badge.badge-left.badge-pink -#{item.discountPercentage} %
+        
+        //- if item.featured == "1"
+        span.badge.badge-right.badge-orange HOT
+        //- else if item.isNew == true
+        //-   span.badge.badge-right.badge-dark MỚI
+          
+        img(src=item.thumbnail, alt=item.title)
+        
+      h3.flash-product-card__title #{item.title}
 
     .flash-product-card__rating
-      - var fullStars = Math.floor(item.ratingStars)
-      - var hasHalfStar = item.ratingStars % 1 !== 0
-      - var emptyStars = 5 - Math.ceil(item.ratingStars)
+      - var rating = item.ratingStars || 0
+      - var fullStars = Math.floor(rating)
+      - var hasHalfStar = rating % 1 !== 0
+      - var emptyStars = 5 - Math.ceil(rating)
       
       - for (let i = 0; i < fullStars; i++)
         i.fa-solid.fa-star
-      - if (hasHalfStar)
+      if (hasHalfStar)
         i.fa-solid.fa-star-half-stroke
       - for (let i = 0; i < emptyStars; i++)
         i.fa-regular.fa-star
 
     .flash-product-card__bottom
       .flash-product-card__price
-        span.old-price #{item.priceOld.toLocaleString('vi-VN')}đ
-        span.new-price #{item.priceNew.toLocaleString('vi-VN')}đ
+        if item.priceOld
+          span.old-price #{item.priceOld.toLocaleString('vi-VN')}đ
+          
+        if item.priceNew
+          span.new-price #{item.priceNew.toLocaleString('vi-VN')}đ
+        else if item.price
+          span.new-price #{item.price.toLocaleString('vi-VN')}đ
+      
       button.btn-cart
         i.fa-solid.fa-cart-plus

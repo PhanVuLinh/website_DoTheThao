@@ -42,7 +42,6 @@ img {
   display: block;
 }
 
-
 a {
   color: inherit;
   text-decoration: none;
@@ -74,12 +73,11 @@ ul {
   padding: 0 var(--container-padding);
 }
 
-/* Khoảng cách chuẩn cho các section */
+
 .section-padding {
   padding: var(--section-spacing) 0;
 }
 
-/* Tiêu đề chung cho các khối */
 .section-title {
   text-align: center;
   font-size: 36px;
@@ -91,12 +89,17 @@ ul {
 
 /* Badges */
 .badge {
+  position: absolute;
+  top: 12px;
+  z-index: 2;
   color: var(--white);
-  padding: 4px 12px;
+  padding: 4px 8px;
   font-size: 13px;
   font-weight: 700;
   border-radius: 20px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
+
 .badge-pink {
   background: #ff5252;
 }
@@ -110,7 +113,14 @@ ul {
   background: var(--red-main);
 }
 
-/* Đổi màu chữ sang đỏ (Dùng cho Giá tiền) */
+.badge-left {
+  left: 5px;
+}
+
+.badge-right {
+  right: 5px;
+}
+
 .price-red {
   color: red !important;
 }
@@ -603,11 +613,58 @@ ul {
   font-weight: 800;
   color: rgba(255, 255, 255, 0.5);
 }
-.flash-products {
+.flash-products-wrapper {
   flex: 1;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  position: relative;
+  min-width: 0;
+}
+
+.flash-products-list {
+  display: flex;
   gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.flash-products-list::-webkit-scrollbar {
+  display: none;
+}
+
+.flash-product-item {
+  flex: 0 0 calc((100% - 40px) / 3);
+  scroll-snap-align: start;
+}
+
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  font-size: 16px;
+  color: var(--blue-dark);
+  transition: 0.3s;
+}
+
+.slider-btn:hover {
+  background: var(--red-main);
+  color: var(--white);
+}
+
+.prev-btn {
+  left: -15px;
+}
+.next-btn {
+  right: -15px;
 }
 
 /* Product Cards (Dùng chung) */
@@ -636,8 +693,7 @@ ul {
 }
 .flash-product-card__img-wrap .badge {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 5px;
   z-index: 2;
 }
 .flash-product-card__img-wrap img {
@@ -1287,12 +1343,12 @@ ul {
 
 .form-control {
   width: 100%;
-  padding: 14px 18px; 
-  border: 1.5px solid #e5e7eb; 
-  border-radius: 10px; 
+  padding: 14px 18px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
   font-size: 15px;
   color: var(--text-dark);
-  background-color: #fafafa; 
+  background-color: #fafafa;
   outline: none;
   font-family: inherit;
   transition: all 0.3s ease;
@@ -1304,14 +1360,14 @@ ul {
 }
 
 .form-control:focus {
-  border-color: var(--blue-dark); 
-  background-color: var(--white); 
+  border-color: var(--blue-dark);
+  background-color: var(--white);
   box-shadow: 0 0 0 4px rgba(0, 0, 77, 0.08);
 }
 
 textarea.form-control {
   min-height: 120px;
-  resize: vertical; 
+  resize: vertical;
   line-height: 1.6;
 }
 
@@ -1561,7 +1617,7 @@ textarea.form-control {
 .summary-row.total .price-red {
   font-size: 24px;
   color: var(--blue-dark);
-} 
+}
 
 /* Khách hàng - Check out */
 .form-grid {
@@ -1798,7 +1854,15 @@ textarea.form-control {
   .flash-products {
     grid-template-columns: repeat(2, 1fr);
   }
-
+  .flash-product-item {
+    flex: 0 0 calc((100% - 20px) / 2);
+  }
+  .prev-btn {
+    left: -10px;
+  }
+  .next-btn {
+    right: -10px;
+  }
   .flash-deals__container {
     flex-direction: column;
   }
@@ -1849,7 +1913,7 @@ textarea.form-control {
   .hide-on-mobile {
     display: none; /* Ẩn nút Heart cho gọn */
   }
-  
+
   /* Nút Hamburger */
   .mobile-toggle-btn {
     display: block;
@@ -1870,7 +1934,7 @@ textarea.form-control {
     background: var(--white);
     z-index: 1001;
     transition: left 0.4s ease-in-out;
-    box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
     overflow-y: auto; /* Cho phép cuộn nếu menu dài */
     padding: 60px 0 20px 0; /* Chừa khoảng trống cho nút X */
   }
@@ -1886,7 +1950,7 @@ textarea.form-control {
     left: 0;
     width: 100%;
     height: 100vh;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
@@ -1954,7 +2018,7 @@ textarea.form-control {
     color: var(--blue-soft);
     font-weight: 500;
   }
-  
+
   /* Hiệu ứng xoay mũi tên */
   .arrow {
     padding: 10px;
@@ -2070,6 +2134,9 @@ textarea.form-control {
 @media (max-width: 576px) {
   .flash-products {
     grid-template-columns: 1fr;
+  }
+  .flash-product-item {
+    flex: 0 0 100%;
   }
   .product-content__grid {
     grid-template-columns: 1fr;
