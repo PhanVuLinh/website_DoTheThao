@@ -117,3 +117,29 @@ if (flashList && prevBtn && nextBtn) {
     flashList.scrollBy({ left: -itemWidth, behavior: "smooth" });
   });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  // -- SWEET ALERT FLASH MESSAGE ---
+  const alertItems = document.querySelectorAll("[data-alert]");
+  if (alertItems.length > 0 && typeof Swal !== "undefined") {
+    alertItems.forEach((item) => {
+      const type = item.dataset.alert;
+      const message = item.dataset.message;
+      const time = parseInt(item.dataset.time) || 3000;
+
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: type,
+        title: message,
+        showConfirmButton: false,
+        timer: time,
+        timerProgressBar: true,
+      });
+    });
+  } else if (alertItems.length > 0) {
+    console.warn(
+      "Cảnh báo: Không tìm thấy thư viện SweetAlert2, thông báo không thể hiển thị.",
+    );
+  }
+});

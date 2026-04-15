@@ -7,7 +7,8 @@ const adminRoutes = require("./routes/admin/index.route");
 const clientRoutes = require("./routes/client/index.route");
 const variableCongfig = require("./config/variable");
 
-const alertMiddleware = require("./middlewares/admin/alert.middleware");
+const alertMiddleware = require("./middlewares/alert.middleware");
+
 
 const cookieParser = require("cookie-parser");
 const session = require("express-session");

@@ -8,6 +8,7 @@ const categoryRoutes = require("../admin/category.route");
 const productRoutes = require("../admin/product.route");
 const orderRoutes = require("../admin/order.route");
 const userRoutes = require("../admin/user.route");
+const contactRoutes = require("../admin/contact.route");
 const settingRoutes = require("../admin/setting.route");
 const profileRoutes = require("../admin/profile.route");
 
@@ -22,6 +23,8 @@ router.use("/product", authMiddleware.requireAuth, productRoutes);
 router.use("/order", authMiddleware.requireAuth, orderRoutes);
 
 router.use("/user", authMiddleware.requireAuth, userRoutes);
+
+router.use("/contact", authMiddleware.requireAuth, contactRoutes);
 
 router.use("/setting", authMiddleware.requireAuth, settingRoutes);
 

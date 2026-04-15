@@ -5,9 +5,9 @@ footer.footer
       div(class="newsletter-info")
         h3 Đừng bỏ lỡ ưu đãi
         p Đăng ký để nhận thông tin ưu đãi mới nhất và <span>giảm giá 10%</span> cho đơn hàng đầu tiên!
-      div(class="newsletter-form")
-        input(placeholder="Nhập email của bạn..." type="email")
-        button 
+      form(class="newsletter-form" action="/contact/create" method="POST")
+        input(name="email" placeholder="Nhập email của bạn..." type="email" required)
+        button(type="submit") 
           | Đăng Ký 
           i.fa-regular.fa-paper-plane
 
