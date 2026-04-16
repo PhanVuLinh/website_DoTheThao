@@ -57,7 +57,8 @@ module.exports.createPost = async (req, res) => {
 
   req.body.createdBy = req.account.id;
   req.body.updatedBy = req.account.id;
-  req.body.thumbnail = req.file ? req.file.path : "";
+  req.body.thumbnail =
+    req.files && req.files.thumbnail ? req.files.thumbnail[0].path : delete req.body.thumbnail;
   req.body.price = req.body.price ? parseInt(req.body.price) : 0;
   req.body.discountPercentage = req.body.discountPercentage
     ? parseInt(req.body.discountPercentage)
@@ -68,6 +69,13 @@ module.exports.createPost = async (req, res) => {
       stock: item.stock ? parseInt(item.stock) : 0,
     }));
   }
+
+  if (req.files && req.files.images && req.files.images.length > 0) {
+    req.body.images = req.files.images.map((file) => file.path);
+  } else {
+    delete req.body.images;
+  }
+
   const newRecord = new Product(req.body);
   await newRecord.save();
 
@@ -109,11 +117,12 @@ module.exports.editPatch = async (req, res) => {
       req.body.position = totalRecord + 1;
     }
     req.body.updatedBy = req.account.id;
-    if (req.file) {
-      req.body.thumbnail = req.file.path;
+    if (req.files && req.files.thumbnail) {
+      req.body.thumbnail = req.files.thumbnail[0].path;
     } else {
       delete req.body.thumbnail;
     }
+
     req.body.price = req.body.price ? parseInt(req.body.price) : 0;
     req.body.discountPercentage = req.body.discountPercentage
       ? parseInt(req.body.discountPercentage)
@@ -125,9 +134,18 @@ module.exports.editPatch = async (req, res) => {
       }));
     }
 
+    let oldImages = req.body.old_images || [];
+    if (req.files && req.files.images && req.files.images.length > 0) {
+      const newImages = req.files.images.map((file) => file.path);
+      req.body.images = [...oldImages, ...newImages];
+    } else {
+      req.body.images = oldImages;
+    }
+    delete req.body.old_images;
+
     await Product.updateOne({ _id: id }, req.body);
 
-    req.flash("success", "Tạo sản phẩm thành công");
+    req.flash("success", "Cập nhật sản phẩm thành công");
     res.redirect(`/${variableCongfig.pathAdmin}/product/edit/${id}`);
   } catch (error) {
     req.flash("error", "Không tồn tài");
@@ -204,7 +222,7 @@ module.exports.restore = async (req, res) => {
 module.exports.deleteDestroy = async (req, res) => {
   try {
     const id = req.params.id;
-    await Product.deleteOne({ _id: id } );
+    await Product.deleteOne({ _id: id });
     req.flash("success", "Đã xóa vĩnh viễn sản phẩm thành công");
     res.redirect(req.get("Referer"));
   } catch (error) {
@@ -212,4 +230,3 @@ module.exports.deleteDestroy = async (req, res) => {
     res.redirect(`/${variableCongfig.pathAdmin}/trash`);
   }
 };
-

@@ -19,18 +19,20 @@ function togglePassword() {
     }
   }
 }
+// ==========================================
+// XỬ LÝ UPLOAD ẢNH (SINGLE & MULTIPLE)
+// ==========================================
 
-//upload image
+// 1. Upload ảnh đại diện (Single Image)
 const uploadImageWrappers = document.querySelectorAll("[upload-image-wrapper]");
 if (uploadImageWrappers.length > 0) {
   uploadImageWrappers.forEach((wrapper) => {
     const input = wrapper.querySelector("[upload-image-input]");
     const label = wrapper.querySelector("[upload-image-label]");
-    const previewContainer = wrapper.querySelector(
-      "[upload-image-preview-container]",
-    );
+    const previewContainer = wrapper.querySelector("[upload-image-preview-container]");
     const previewImage = wrapper.querySelector("[upload-image-preview]");
     const btnRemove = wrapper.querySelector("[button-remove-image]");
+    
     if (input && previewImage) {
       input.addEventListener("change", (e) => {
         const file = e.target.files[0];
@@ -52,7 +54,58 @@ if (uploadImageWrappers.length > 0) {
     }
   });
 }
-//End upload image
+
+// 2. Upload thư viện ảnh (Multiple Images)
+const uploadImagesInput = document.querySelector("[upload-images-input]");
+const uploadImagesPreviewContainer = document.querySelector("[upload-images-preview-container]");
+
+if (uploadImagesInput && uploadImagesPreviewContainer) {
+  let dataTransfer = new DataTransfer(); 
+
+  uploadImagesInput.addEventListener("change", (e) => {
+    const files = e.target.files;
+    if (files.length > 0) {
+      for (let file of files) {
+        dataTransfer.items.add(file); 
+        
+        const src = URL.createObjectURL(file);
+        const div = document.createElement("div");
+        div.classList.add("image-preview-item");
+        div.innerHTML = `
+          <img src="${src}" />
+          <button class="btn-remove-image-multi btn-remove-new" type="button" title="Xóa ảnh" data-file-name="${file.name}">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        `;
+        uploadImagesPreviewContainer.appendChild(div);
+      }
+      uploadImagesInput.files = dataTransfer.files;
+    }
+  });
+
+  uploadImagesPreviewContainer.addEventListener("click", (e) => {
+    const btnRemove = e.target.closest(".btn-remove-image-multi");
+    if (btnRemove) {
+      const item = btnRemove.closest(".image-preview-item");
+      
+      // NẾU LÀ ẢNH MỚI (có class btn-remove-new)
+      if (btnRemove.classList.contains("btn-remove-new")) {
+        const fileName = btnRemove.getAttribute("data-file-name");
+        for (let i = 0; i < dataTransfer.items.length; i++) {
+          if (dataTransfer.items[i].getAsFile().name === fileName) {
+            dataTransfer.items.remove(i);
+            break;
+          }
+        }
+        uploadImagesInput.files = dataTransfer.files;
+      }
+      
+      // Xóa khối hiển thị ảnh khỏi giao diện
+      item.remove();
+    }
+  });
+}
+// End upload image
 
 //button delete
 const listButtonDelete = document.querySelectorAll("[button-delete]");

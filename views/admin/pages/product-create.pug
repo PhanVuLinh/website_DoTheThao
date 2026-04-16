@@ -40,7 +40,6 @@ block main
             option(value="active") Hoạt động
             option(value="inactive") Tạm dừng
 
-      
       .form-row-2 
         //- Hàng 3: Khối Upload Ảnh
         .form-group
@@ -53,18 +52,30 @@ block main
               img(upload-image-preview src="" alt="Preview")
               button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
                 i.fa-solid.fa-xmark
-        //- Hàng 4: Sản phẩm nổi bật
+                
+        //- Hàng 4: Sản phẩm nổi bật (Đã xóa style inline)
         .form-group
           label Sản phẩm nổi bật
-          div(style="display: flex; gap: 30px; margin-top: 8px;")
-            label(style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500;")
+          .featured-radios
+            label
               input(type="radio" name="featured" value="1") 
               | Nổi bật
-            label(style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500;")
+            label
               input(type="radio" name="featured" value="0" checked) 
               | Không nổi bật
 
-        
+      //- THÊM MỚI: Khối Upload Danh sách ảnh (Thư viện ảnh)
+      .form-group
+        label Danh sách ảnh (Thư viện ảnh)
+        .upload-images-wrapper(upload-images-wrapper)
+          input#images-upload.hidden-input(upload-images-input type="file" name="images" accept="image/*" multiple)
+          
+          label.btn-view-all-outline.btn-add-images(for="images-upload")
+            i.fa-solid.fa-images
+            |  Thêm nhiều ảnh
+          
+          .images-preview-grid(upload-images-preview-container)
+      
 
       //- Hàng 5: Giá bán & Phần trăm giảm giá (chia 2 cột)
       .form-row-2

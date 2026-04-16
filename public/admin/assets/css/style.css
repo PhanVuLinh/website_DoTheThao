@@ -1109,7 +1109,78 @@ body.admin-body {
   width: auto !important;
   font-size: 13px;
 }
+/* =========================================
+   SẢN PHẨM NỔI BẬT (RADIO BUTTONS)
+   ========================================= */
+.featured-radios {
+  display: flex;
+  gap: 30px;
+  margin-top: 8px;
+}
 
+.featured-radios label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+/* =========================================
+   THƯ VIỆN ẢNH (MULTIPLE UPLOAD)
+   ========================================= */
+.btn-add-images {
+  cursor: pointer;
+  margin-bottom: 15px;
+  padding: 8px 20px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.images-preview-grid {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.image-preview-item {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.image-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.image-preview-item .btn-remove-image-multi {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ff4d4f; /* Màu đỏ báo xóa */
+  color: white;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.image-preview-item .btn-remove-image-multi:hover {
+  background-color: #ff7875;
+  transform: scale(1.1);
+}
 
 /* =========================================
    9. QUẢN LÝ NGƯỜI DÙNG (USERS)

@@ -51,17 +51,40 @@ block main
               img(upload-image-preview src=(productDetail.thumbnail ? productDetail.thumbnail : "") alt=productDetail.title)
               button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
                 i.fa-solid.fa-xmark
+                
+        //- Đã dùng class .featured-radios thay vì style inline
         .form-group
             label Sản phẩm nổi bật
-            div(style="display: flex; gap: 30px; margin-top: 8px;")
-              label(style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500;")
+            .featured-radios
+              label
                 input(type="radio" name="featured" value="1" checked=(productDetail.featured === "1" ? true : false)) 
                 | Nổi bật
-              label(style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500;")
+              label
                 input(type="radio" name="featured" value="0" checked=(productDetail.featured === "0" ? true : false)) 
                 | Không nổi bật
 
-      //- Hàng 4: Giá bán & Phần trăm giảm giá (chia 2 cột)
+      //- Hàng 3.5: Khối Upload Danh sách ảnh (Thư viện ảnh)
+      .form-group
+        label Danh sách ảnh (Thư viện ảnh)
+        .upload-images-wrapper(upload-images-wrapper)
+          input#images-upload.hidden-input(upload-images-input type="file" name="images" accept="image/*" multiple)
+          
+          //- Đã thêm class .btn-add-images
+          label.btn-view-all-outline.btn-add-images(for="images-upload")
+            i.fa-solid.fa-images
+            |  Thêm nhiều ảnh
+          
+          //- Đã chuyển sang dùng class .images-preview-grid
+          .images-preview-grid(upload-images-preview-container)
+            if productDetail.images && productDetail.images.length > 0
+              each img in productDetail.images
+                .image-preview-item
+                  img(src=img)
+                  button.btn-remove-image-multi(type="button" title="Xóa ảnh")
+                    i.fa-solid.fa-xmark
+                  input(type="hidden" name="old_images" value=img)
+
+      //- Hàng 4: Giá bán & Phần trăm giảm giá
       .form-row-2
         .form-group
           label Giá bán (VNĐ)
@@ -83,7 +106,7 @@ block main
       //- Hàng 6: Mô tả
       .form-group
         label Mô tả sản phẩm
-        textarea.form-control(name="description" rows="6" placeholder="Nhập mô tả chi tiết cho sản phẩm này...") #{value=productDetail.description}
+        textarea.form-control(name="description" rows="6" placeholder="Nhập mô tả chi tiết cho sản phẩm này...")= productDetail.description
 
       //- Nút Submit
       .form-actions

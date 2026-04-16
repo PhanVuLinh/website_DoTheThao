@@ -13,7 +13,10 @@ router.get("/create", productController.create);
 
 router.post(
   "/create",
-  upload.single("thumbnail"),
+  upload.fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "images", maxCount: 5 },
+  ]),
   validate.createPost,
   productController.createPost,
 );
@@ -22,7 +25,10 @@ router.get("/edit/:id", productController.edit);
 
 router.patch(
   "/edit/:id",
-  upload.single("thumbnail"),
+  upload.fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "images", maxCount: 5 },
+  ]),
   validate.createPost,
   productController.editPatch,
 );
