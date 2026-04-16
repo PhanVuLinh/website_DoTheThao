@@ -36,40 +36,32 @@ block main
         // --- CỘT TRÁI: HÌNH ẢNH & THÔNG TIN ---
         .detail-left
           .detail-card.product-image-card
-            //- Slider Ảnh Chính
             .swiper.main-swiper
               .swiper-wrapper
-                each img in product.images
-                  - var mainUrl = img.includes('/upload/') ? img.replace('/upload/', '/upload/w_800,c_limit,q_auto,f_auto/') : img
+                each img in productDetail.images
                   .swiper-slide
-                    img(src=mainUrl, alt=product.title)
-            
-              //- Nút Next/Prev
+                    img(src=img, alt=productDetail.title)
               .swiper-button-next
               .swiper-button-prev
-
-            //- Slider Ảnh Thumbs (Nhỏ)
             .swiper.thumb-swiper
               .swiper-wrapper
-                each img in product.images
-                  - var thumbUrl = img.includes('/upload/') ? img.replace('/upload/', '/upload/w_150,h_100,c_fill,q_auto,f_auto/') : img
+                each img in productDetail.images
                   .swiper-slide
-                    img(src=thumbUrl, alt=product.title)
+                    img(src=img, alt=productDetail.title)
 
           //- Thông tin mô tả
           .detail-card.info-card
             h3.card-title
               i.fa-solid.fa-circle-info
               | Thông Tin Chi Tiết
-            p.info-desc= product.description
+            p.info-desc= productDetail.description
 
         // --- CỘT PHẢI: FORM ĐẶT HÀNG ---
         .detail-right
           .booking-card
             
-            // Header Sản phẩm
             .product-header
-              h1.product-title= product.title
+              h1.product-title= productDetail.title
               
               .product-meta-top
                 .stars
@@ -84,35 +76,31 @@ block main
                   i.fa-solid.fa-check-circle
                   | Còn hàng
 
-            // Giá tiền nổi bật
             .price-wrap
-              .current-price= formatCurrency(product.price)
+              .current-price= formatCurrency(productDetail.price)
 
-            // Chọn Size
             .form-group.size-selection
               label Kích Thước (Size)
               .filter-grid-size
-                if product.sizes && product.sizes.length > 0
-                  each item, index in product.sizes
-                    - var sizeLabel = item.size.replace("size: ", "").trim();
+                if productDetail.sizes && productDetail.sizes.length > 0
+                  each item, index in productDetail.sizes
                     div.size-item
                       input(
                         type="radio", 
-                        id=`size-${sizeLabel}`, 
+                        id=`size-${item.size}`, 
                         name="size", 
-                        value=sizeLabel, 
+                        value=item.size, 
                         checked=(index === 0), 
                         data-stock=item.stock
                       )
-                      label.size-btn(for=`size-${sizeLabel}`) #{sizeLabel}
+                      label.size-btn(for=`size-${item.size}`) #{item.size}
                 else 
                   p.text-danger Sản phẩm tạm hết hàng.
 
-            // Chọn số lượng
             .form-group.qty-selection
               label Số lượng
               
-              - var initialStock = product.sizes && product.sizes.length > 0 ? product.sizes[0].stock : 1;
+              - var initialStock = productDetail.sizes && productDetail.sizes.length > 0 ? productDetail.sizes[0].stock : 1;
               
               .qty-control-wrapper
                 .qty-custom
@@ -123,12 +111,10 @@ block main
                 span.stock-info
                   | Còn <strong id="current-stock">#{initialStock}</strong> sản phẩm
 
-            // Nút Thêm vào giỏ hàng
             button.btn-submit-cart 
               i.fa-solid.fa-cart-plus
               | Thêm Vào Giỏ Hàng
 
-            // Trust Badges (Cam kết)
             .trust-badges
               .trust-item
                 .icon-box
@@ -144,3 +130,5 @@ block main
                 .icon-box
                   i.fa-solid.fa-truck-fast
                 span Miễn phí vận chuyển toàn quốc
+
+  script(src="/client/assets/js/productStock.js")

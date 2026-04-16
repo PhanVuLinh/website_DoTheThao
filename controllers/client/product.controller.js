@@ -55,6 +55,7 @@ module.exports.detail = async (req, res) => {
       title: "Chi tiết sản phẩm",
       product: productDetail,
       breadcrumb: breadcrumb,
+      productDetail: productDetail,
     });
   } catch (error) {
     req.flash("error", "Sản phẩm không tồn tại");
