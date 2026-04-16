@@ -2,30 +2,6 @@ extends ../layouts/default.pug
 include ../mixins/box-breadcrumb.pug
 
 block main 
-  //- GIẢ LẬP DỮ LIỆU TỪ DB (Xóa khối này khi ghép API thực tế)
-  -
-    var product = {
-      title: "Áo thun thể thao nam Adidas Aeroready",
-      images: [
-        "https://picsum.photos/id/237/1000/1000",
-        "https://picsum.photos/id/238/1000/1000",
-        "https://picsum.photos/id/239/1000/1000",
-        "https://picsum.photos/id/240/1000/1000"
-      ],
-      thumbnail: "https://res.cloudinary.com/dywi6r8jx/image/upload/v1776099415/grft4ayct89mv3owioyc.webp",
-      price: 850000,
-      description: "Áo thun tập luyện nam Adidas...",
-      sizes: [
-        { size: "size: M", stock: 30 },
-        { size: "size: L", stock: 20 },
-        { size: "size: XL", stock: 12 }
-      ]
-    };
-    
-    var formatCurrency = (amount) => {
-      return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
-    };
-
   +box-breadcrumb(breadcrumb)
 
   // SECTION: CHI TIẾT SẢN PHẨM
@@ -76,8 +52,13 @@ block main
                   i.fa-solid.fa-check-circle
                   | Còn hàng
 
-            .price-wrap
-              .current-price= formatCurrency(productDetail.price)
+            .price-wrap(data-base-price=productDetail.price data-base-price-new=(productDetail.priceNew || productDetail.price))
+              if productDetail.discountPercentage > 0
+                span.price-old #{productDetail.price.toLocaleString('vi-VN')}đ
+                span.price-new #{productDetail.priceNew.toLocaleString('vi-VN')}đ
+                span.discount-tag -#{productDetail.discountPercentage}%
+              else
+                span.price-new #{productDetail.price.toLocaleString('vi-VN')}đ
 
             .form-group.size-selection
               label Kích Thước (Size)
@@ -111,7 +92,7 @@ block main
                 span.stock-info
                   | Còn <strong id="current-stock">#{initialStock}</strong> sản phẩm
 
-            button.btn-submit-cart 
+            button.btn-submit-cart(product-id=productDetail.id)
               i.fa-solid.fa-cart-plus
               | Thêm Vào Giỏ Hàng
 

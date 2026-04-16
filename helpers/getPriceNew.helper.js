@@ -8,3 +8,15 @@ module.exports.priceNewProduct = (productList) => {
   });
   return newProductPriceNew;
 };
+
+module.exports.priceNewOne = (product) => {
+  if (product.discountPercentage > 0) {
+    product.priceNew =
+      product.price -
+      Math.round((product.price * product.discountPercentage) / 100);
+  } else {
+    product.priceNew = product.price;
+  }
+
+  return product;
+};

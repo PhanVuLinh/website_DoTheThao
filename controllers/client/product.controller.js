@@ -1,6 +1,9 @@
 const Product = require("../../models/product.model");
 const Category = require("../../models/category.model");
 
+const productPriceHelper = require("../../helpers/getPriceNew.helper.js");
+
+
 module.exports.detail = async (req, res) => {
   try {
     const slug = req.params.slug;
@@ -50,12 +53,15 @@ module.exports.detail = async (req, res) => {
       link: `/product/detail/${slug}`,
       title: productDetail.title,
     });
+
+    const newProductDetail =
+        productPriceHelper.priceNewOne(productDetail);
     //End Breadcrumb
     res.render("client/pages/product-detail.pug", {
       title: "Chi tiết sản phẩm",
       product: productDetail,
       breadcrumb: breadcrumb,
-      productDetail: productDetail,
+      productDetail: newProductDetail,
     });
   } catch (error) {
     req.flash("error", "Sản phẩm không tồn tại");

@@ -1354,10 +1354,32 @@ ul {
 .price-wrap {
   margin-bottom: 25px;
 }
-.current-price {
-  font-size: 32px;
-  font-weight: 900;
-  color: var(--red-main);
+.price-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 15px 0;
+}
+
+.price-new {
+  font-size: 24px;
+  font-weight: 700;
+  color: #eb5438; 
+}
+
+.price-old {
+  font-size: 16px;
+  color: #999;
+  text-decoration: line-through; 
+}
+
+.discount-tag {
+  background-color: #eb5438;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 /* Chọn Size (Chỉ ảnh hưởng trong trang chi tiết) */
