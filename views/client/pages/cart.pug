@@ -9,25 +9,25 @@ block main
         .cart-box
           .cart-box__header
             h2.title Giỏ Hàng
-            a.continue-link(href="/products") Quay lại mua hàng <i class="fa-solid fa-angle-right"></i>
+            a.continue-link(href="/") Quay lại mua hàng <i class="fa-solid fa-angle-right"></i>
           
           .cart-list
-            // Item 1
-            .cart-item
-              .cart-item__checkbox
-                input(type="checkbox" checked)
-              img.cart-item__img(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop" alt="Nike Air Zoom")
+            //- // Item 1
+            //- .cart-item
+            //-   .cart-item__checkbox
+            //-     input(type="checkbox" checked)
+            //-   img.cart-item__img(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop" alt="Nike Air Zoom")
               
-              .cart-item__info
-                h3.name Giày Chạy Bộ Nike Air Zoom Pegasus 40 Đỏ
-                p.variant Phân loại: Size 41
+            //-   .cart-item__info
+            //-     h3.name Giày Chạy Bộ Nike Air Zoom Pegasus 40 Đỏ
+            //-     p.variant Phân loại: Size 41
               
-              .cart-item__action
-                .qty-control
-                  button.btn-qty.minus -
-                  input(type="number" value="1" min="1")
-                  button.btn-qty.plus +
-                .item-price 3.800.000 đ
+            //-   .cart-item__action
+            //-     .qty-control
+            //-       button.btn-qty.minus -
+            //-       input(type="number" value="1" min="1")
+            //-       button.btn-qty.plus +
+            //-     .item-price 3.800.000 đ
 
           // Khối Nhập Mã Giảm Giá
           .cart-discount-row
@@ -38,14 +38,16 @@ block main
           // Tổng kết tiền
           .cart-summary
             .summary-row
-              span Tổng tiền:
-              span 3.800.000 đ
+              span Tạm tính:
+              .inner-price
+                span(cart-sub-total) 0 
             .summary-row
               span Giảm:
-              span 0 đ
+              span - 0 đ
             .summary-row.total
               span Thanh toán:
-              strong.price-red 3.800.000 đ
+              strong.price-red
+                span(cart-total) 0
 
         // --- KHỐI 2: THÔNG TIN KHÁCH HÀNG & THANH TOÁN ---
         .cart-box.checkout-box

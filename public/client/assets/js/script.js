@@ -320,3 +320,66 @@ if (miniCart) {
   miniCart.textContent = totalQuantity;
 }
 // end mini cart
+
+// Cart page
+const drawCart = () => {
+  const cart = localStorage.getItem("cart");
+  fetch(`/cart/detail`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: cart,
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.code === 200) {
+        let subTotalPrice = 0;
+        const htmlCart = data.cart.map((item) => {
+          const priceNew = (item.price * (100 - item.discountPercentage)) / 100;
+          const itemTotalPrice = priceNew * item.quantity;
+          subTotalPrice += itemTotalPrice;
+          return `
+            <div class="cart-item">
+              <div class="cart-item__checkbox">
+                <input type="checkbox" checked="checked">
+              </div>
+              <a href="/product/detail/${item.slug}">
+                <img class="cart-item__img" src="${item.thumbnail}" alt="${item.title}">
+              </a>
+              <div class="cart-item__info">
+                <a href="/product/detail/${item.slug}" class="name">${item.title}</a>
+                <p class="variant">Phân loại: ${item.size}</p>
+              </div>
+              
+              <div class="cart-item__action">
+                <div class="qty-control">
+                  <button class="btn-qty minus">-</button>
+                  <input type="number" value="${item.quantity}" min="1">
+                  <button class="btn-qty plus">+</button>
+                </div>
+                <div class="item-price">${itemTotalPrice.toLocaleString("vi-VN")} đ</div>
+              </div>
+            </div>
+            `;
+        });
+        const cartList = document.querySelector(".cart-list");
+        cartList.innerHTML = htmlCart.join("");
+
+        localStorage.setItem("cart", JSON.stringify(data.cart));
+
+        const cartSubTotal = document.querySelector("[cart-sub-total]");
+        const cartTotal = document.querySelector("[cart-total]");
+        if (cartSubTotal)
+          cartSubTotal.innerHTML = subTotalPrice.toLocaleString("vi-VN") + " đ";
+        if (cartTotal)
+          cartTotal.innerHTML = subTotalPrice.toLocaleString("vi-VN") + " đ";
+      }
+    });
+};
+
+const cartPage = document.querySelector(".cart-page");
+if (cartPage) {
+  drawCart();
+}
+//End  Cart page

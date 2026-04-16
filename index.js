@@ -17,6 +17,7 @@ const flash = require("express-flash");
 const app = express();
 const port = process.env.PORT;
 app.use(methodOverride("_method"));
+app.use(express.json()); 
 
 //Kết nối database
 database.connect();

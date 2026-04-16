@@ -1666,7 +1666,7 @@ textarea.form-control {
 }
 .cart-item__img {
   width: 100px;
-  height: 80px;
+  height: 100px;
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid #f0f0f0;
