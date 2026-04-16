@@ -14,6 +14,8 @@ router.use(categoryMiddleware.list);
 
 router.use("/", homeRoutes);
 
+router.use("/product", productRoutes);
+
 router.use("/cart", cartRoutes);
 
 router.use("/contact", contactRoutes);

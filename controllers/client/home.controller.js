@@ -11,7 +11,6 @@ module.exports.index = async (req, res) => {
       position: "desc",
     })
     .limit(6)
-    .lean();
   const newProductListSection3 =
     productPriceHelper.priceNewProduct(productListSection3);
   //End section 3
@@ -26,7 +25,6 @@ module.exports.index = async (req, res) => {
       position: "desc",
     })
     .limit(8)
-    .lean();
 
   const newProductFeaturedSection5 = productPriceHelper.priceNewProduct(
     productFeaturedSection5,
@@ -42,7 +40,6 @@ module.exports.index = async (req, res) => {
       position: "desc",
     })
     .limit(8)
-    .lean();
 
   const newProductListSection7 =
     productPriceHelper.priceNewProduct(productListSection7);
