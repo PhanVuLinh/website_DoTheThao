@@ -168,4 +168,31 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
   }
+  // ==========================================
+  // KHỞI TẠO SWIPER CHO CHI TIẾT SẢN PHẨM
+  // ==========================================
+
+  // 1. Slider ảnh nhỏ (Thumbs)
+  const swiperThumbs = new Swiper(".thumb-swiper", {
+    spaceBetween: 10,
+    slidesPerView: 4,
+    freeMode: true,
+    watchSlidesProgress: true,
+    breakpoints: {
+      320: { slidesPerView: 3 },
+      768: { slidesPerView: 4 },
+    },
+  });
+
+  // 2. Slider ảnh lớn (Main) đồng bộ với Thumbs
+  const swiperMain = new Swiper(".main-swiper", {
+    spaceBetween: 10,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    thumbs: {
+      swiper: swiperThumbs,
+    },
+  });
 });

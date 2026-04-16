@@ -1160,6 +1160,7 @@ ul {
   display: flex;
   flex-direction: column;
   gap: 30px;
+  min-width: 0;
 }
 .detail-card {
   background: var(--white);
@@ -1169,6 +1170,87 @@ ul {
 }
 .detail-right {
   position: relative;
+}
+/* =========================================
+   THƯ VIỆN ẢNH SẢN PHẨM (SWIPER)
+   ========================================= */
+.product-image-card {
+  padding: 20px;
+  text-align: center;
+}
+
+/* Slider Ảnh Chính */
+.main-swiper {
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 15px;
+  background: #f8f9fa;
+  padding: 10px;
+  --swiper-navigation-color: var(--blue-dark); /* Đổi màu nút theo theme */
+  user-select: none;
+
+}
+
+.main-swiper img {
+  width: 100%;
+  max-height: 450px;
+  object-fit: contain;
+  border-radius: 8px;
+  display: block;
+}
+
+.main-swiper .swiper-button-next,
+.main-swiper .swiper-button-prev {
+  background: rgba(255, 255, 255, 0.85);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: 0.3s;
+}
+
+.main-swiper .swiper-button-next:hover,
+.main-swiper .swiper-button-prev:hover {
+  background: var(--blue-dark);
+  color: var(--white);
+}
+
+.main-swiper .swiper-button-next:after,
+.main-swiper .swiper-button-prev:after {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Slider Ảnh Nhỏ (Thumbs) */
+.thumb-swiper {
+  padding: 5px 0;
+  box-sizing: border-box;
+  user-select: none; 
+
+}
+
+.thumb-swiper .swiper-slide {
+  width: 80px;
+  height: 80px;
+  opacity: 0.5;
+  cursor: pointer;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.thumb-swiper .swiper-slide-thumb-active,
+.thumb-swiper .swiper-slide:hover {
+  opacity: 1;
+  border-color: var(--blue-dark);
+}
+
+.thumb-swiper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* --- HÌNH ẢNH SẢN PHẨM --- */
@@ -2230,11 +2312,11 @@ textarea.form-control {
     grid-template-columns: 1fr;
   }
 
-  .gallery-main {
-    height: 250px;
+  .main-swiper img {
+    max-height: 250px;
   }
-  .gallery-thumbs img {
-    height: 70px;
+  .thumb-swiper .swiper-slide {
+    height: 70px; 
   }
   .detail-card {
     padding: 20px;
