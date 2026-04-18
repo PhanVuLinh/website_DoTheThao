@@ -4,76 +4,88 @@ block main
   section.cart-page
     .container
       .cart-container
+        if(cartDetail.products.length > 0)
         
-        // --- KHỐI 1: DANH SÁCH SẢN PHẨM & TÍNH TIỀN ---
-        .cart-box
-          .cart-box__header
-            h2.title Giỏ Hàng
-            a.continue-link(href="/") Quay lại mua hàng <i class="fa-solid fa-angle-right"></i>
-          
-          .cart-list
-            // Item 1
-            .cart-item
-              .cart-item__checkbox
-                input(type="checkbox" checked)
-              img.cart-item__img(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop" alt="Nike Air Zoom")
-              
-              .cart-item__info
-                h3.name Giày Chạy Bộ Nike Air Zoom Pegasus 40 Đỏ
-                p.variant Phân loại: Size 41
-              
-              .cart-item__action
-                .qty-control
-                  button.btn-qty.minus -
-                  input(type="number" value="1" min="1")
-                  button.btn-qty.plus +
-                .item-price 3.800.000 đ
-
-          // Khối Nhập Mã Giảm Giá
-          .cart-discount-row
-            .discount-input-wrap
-              input(type="text" placeholder="Nhập mã giảm giá")
-              button.btn-apply Dùng Mã
-
-          // Tổng kết tiền
-          .cart-summary
-            .summary-row
-              span Tạm tính:
-              .inner-price
-                span(cart-sub-total) 0 
-            .summary-row
-              span Giảm:
-              span - 0 đ
-            .summary-row.total
-              span Thanh toán:
-              strong.price-red
-                span(cart-total) 0
-
-        // --- KHỐI 2: THÔNG TIN KHÁCH HÀNG & THANH TOÁN ---
-        .cart-box.checkout-box
-          h2.title Thông Tin Giao Hàng
-          
-          form.checkout-form(action="/checkout" method="POST")
-            .form-grid
-              .form-group
-                input.form-control(type="text" placeholder="Họ và tên *" required)
-              .form-group
-                input.form-control(type="text" placeholder="Số điện thoại *" required)
-            .form-group
-              input.form-control(type="text" placeholder="Địa chỉ nhận hàng chi tiết *" required)
-            .form-group
-              textarea.form-control(placeholder="Ghi chú thêm (Tùy chọn)" rows="3")
+          // --- KHỐI 1: DANH SÁCH SẢN PHẨM & TÍNH TIỀN ---
+          .cart-box
+            .cart-box__header
+              h2.title Giỏ Hàng
+              a.continue-link(href="/") Quay lại mua hàng <i class="fa-solid fa-angle-right"></i>
             
-            h3.subtitle Chọn phương thức thanh toán
-            .payment-methods
-              label.payment-option
-                input(type="radio" name="payment" value="cod" checked)
-                span Thanh toán tiền mặt khi nhận hàng (COD)
-              label.payment-option
-                input(type="radio" name="payment" value="momo")
-                span Ví MoMo
-              label.payment-option
-                input(type="radio" name="payment" value="bank")
-                span Chuyển khoản ngân hàng
+            .cart-list
+              each item in cartDetail.products
+                .cart-item(data-price-new=item.productInfo.priceNew style="position: relative;")
+                  a.btn-delete(
+                    href=`/cart/delete/${item.product_id}`
+                    style="position: absolute; top: 10px; right: 10px; color: #999; text-decoration: none; font-size: 1.2rem;"
+                  ) 
+                    i.fa-solid.fa-xmark
+                  .cart-item__checkbox
+                    input(type="checkbox" checked)
+                  a(href=`/product/detail/${item.productInfo.slug}`)
+                    img.cart-item__img(src=item.productInfo.thumbnail alt=item.productInfo.title)
+                  
+                  .cart-item__info
+                    a(href=`/product/detail/${item.productInfo.slug}`)
+                      h3.name #{item.productInfo.title}
+                    p.variant Phân loại: #{item.size}
 
-            button.btn-submit-order(type="submit") ĐẶT HÀNG
+                  
+                  .cart-item__action
+                    .qty-control
+                      button.btn-qty.minus -
+                      input.qty-input(type="number" name="quantity" value=item.quantity product-id=item.product_id min="1")
+                      button.btn-qty.plus +
+                    .item-price #{item.totalPrice.toLocaleString('vi-VN')} đ
+
+            // Khối Nhập Mã Giảm Giá
+            .cart-discount-row
+              .discount-input-wrap
+                input(type="text" placeholder="Nhập mã giảm giá")
+                button.btn-apply Dùng Mã
+
+            // Tổng kết tiền
+            .cart-summary
+              .summary-row
+                span Tạm tính:
+                .inner-price
+                  span.cart-total #{cartDetail.totalPrice.toLocaleString('vi-VN')} đ
+              .summary-row
+                span Giảm:
+                span - 0 đ
+              .summary-row.total
+                span Thanh toán:
+                strong.price-red
+                  span.cart-total #{cartDetail.totalPrice.toLocaleString('vi-VN')} đ
+
+          // --- KHỐI 2: THÔNG TIN KHÁCH HÀNG & THANH TOÁN ---
+          .cart-box.checkout-box
+            h2.title Thông Tin Giao Hàng
+            
+            form.checkout-form(action="/checkout" method="POST")
+              .form-grid
+                .form-group
+                  input.form-control(type="text" placeholder="Họ và tên *" required)
+                .form-group
+                  input.form-control(type="text" placeholder="Số điện thoại *" required)
+              .form-group
+                input.form-control(type="text" placeholder="Địa chỉ nhận hàng chi tiết *" required)
+              .form-group
+                textarea.form-control(placeholder="Ghi chú thêm (Tùy chọn)" rows="3")
+              
+              h3.subtitle Chọn phương thức thanh toán
+              .payment-methods
+                label.payment-option
+                  input(type="radio" name="payment" value="cod" checked)
+                  span Thanh toán tiền mặt khi nhận hàng (COD)
+                label.payment-option
+                  input(type="radio" name="payment" value="momo")
+                  span Ví MoMo
+                label.payment-option
+                  input(type="radio" name="payment" value="bank")
+                  span Chuyển khoản ngân hàng
+
+              button.btn-submit-order(type="submit") ĐẶT HÀNG
+        else 
+          p Chưa có sản phẩm trong giỏ hàng 
+  script(src="/client/assets/js/cart.js") 

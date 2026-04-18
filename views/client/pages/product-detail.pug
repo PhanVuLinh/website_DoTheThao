@@ -3,13 +3,9 @@ include ../mixins/box-breadcrumb.pug
 
 block main 
   +box-breadcrumb(breadcrumb)
-
-  // SECTION: CHI TIẾT SẢN PHẨM
   section.product-detail-page
     .container
       .detail-grid
-        
-        // --- CỘT TRÁI: HÌNH ẢNH & THÔNG TIN ---
         .detail-left
           .detail-card.product-image-card
             .swiper.main-swiper
@@ -24,8 +20,6 @@ block main
                 each img in productDetail.images
                   .swiper-slide
                     img(src=img, alt=productDetail.title)
-
-          //- Thông tin mô tả
           .detail-card.info-card
             h3.card-title
               i.fa-solid.fa-circle-info
@@ -34,80 +28,84 @@ block main
 
         // --- CỘT PHẢI: FORM ĐẶT HÀNG ---
         .detail-right
-          .booking-card
-            
-            .product-header
-              h1.product-title= productDetail.title
+          form(
+            action=`/cart/add/${productDetail.id}`
+            method="POST"
+          )
+            .booking-card
               
-              .product-meta-top
-                .stars
-                  i.fa-solid.fa-star
-                  i.fa-solid.fa-star
-                  i.fa-solid.fa-star
-                  i.fa-solid.fa-star
-                  i.fa-solid.fa-star
-                  span (Chưa có đánh giá)
-                span.divider |
-                .status
-                  i.fa-solid.fa-check-circle
-                  | Còn hàng
-
-            .price-wrap(data-base-price=productDetail.price data-base-price-new=(productDetail.priceNew || productDetail.price))
-              if productDetail.discountPercentage > 0
-                span.price-old #{productDetail.price.toLocaleString('vi-VN')}đ
-                span.price-new #{productDetail.priceNew.toLocaleString('vi-VN')}đ
-                span.discount-tag -#{productDetail.discountPercentage}%
-              else
-                span.price-new #{productDetail.price.toLocaleString('vi-VN')}đ
-
-            .form-group.size-selection
-              label Kích Thước (Size)
-              .filter-grid-size
-                if productDetail.sizes && productDetail.sizes.length > 0
-                  each item, index in productDetail.sizes
-                    div.size-item
-                      input(
-                        type="radio", 
-                        id=`size-${item.size}`, 
-                        name="size", 
-                        value=item.size, 
-                        checked=(index === 0), 
-                        data-stock=item.stock
-                      )
-                      label.size-btn(for=`size-${item.size}`) #{item.size}
-                else 
-                  p.text-danger Sản phẩm tạm hết hàng.
-
-            .form-group.qty-selection
-              label Số lượng
-              
-              - var initialStock = productDetail.sizes && productDetail.sizes.length > 0 ? productDetail.sizes[0].stock : 1;
-              
-              .qty-control-wrapper
-                .qty-custom
-                  button.btn-qty-custom.minus(type="button") -
-                  input#quantity(type="text", value="1", readonly)
-                  button.btn-qty-custom.plus(type="button") +
+              .product-header
+                h1.product-title= productDetail.title
                 
-                span.stock-info
-                  | Còn <strong id="current-stock">#{initialStock}</strong> sản phẩm
+                .product-meta-top
+                  .stars
+                    i.fa-solid.fa-star
+                    i.fa-solid.fa-star
+                    i.fa-solid.fa-star
+                    i.fa-solid.fa-star
+                    i.fa-solid.fa-star
+                    span (Chưa có đánh giá)
+                  span.divider |
+                  .status
+                    i.fa-solid.fa-check-circle
+                    | Còn hàng
 
-            button.btn-submit-cart(product-id=productDetail.id)
-              i.fa-solid.fa-cart-plus
-              | Thêm Vào Giỏ Hàng
+              .price-wrap(data-base-price=productDetail.price data-base-price-new=(productDetail.priceNew || productDetail.price))
+                if productDetail.discountPercentage > 0
+                  span.price-old #{productDetail.price.toLocaleString('vi-VN')}đ
+                  span.price-new #{productDetail.priceNew.toLocaleString('vi-VN')}đ
+                  span.discount-tag -#{productDetail.discountPercentage}%
+                else
+                  span.price-new #{productDetail.price.toLocaleString('vi-VN')}đ
 
-            .trust-badges
-              .trust-item
-                .icon-box
-                  i.fa-solid.fa-shield-halved
-                span Cam kết 100% chính hãng
-              
-              .trust-item
-                .icon-box
-                  i.fa-solid.fa-rotate-left
-                span Đổi trả miễn phí trong 7 ngày
-              
-              .trust-item
-                .icon-box
-                  i.fa-solid.fa-truck-fast
-                span Miễn phí vận chuyển toàn quốc
+              .form-group.size-selection
+                label Kích Thước (Size)
+                .filter-grid-size
+                  if productDetail.sizes && productDetail.sizes.length > 0
+                    each item, index in productDetail.sizes
+                      div.size-item
+                        input(
+                          type="radio", 
+                          id=`size-${item.size}`, 
+                          name="size", 
+                          value=item.size, 
+                          checked=(index === 0), 
+                          data-stock=item.stock
+                        )
+                        label.size-btn(for=`size-${item.size}`) #{item.size}
+                  else 
+                    p.text-danger Sản phẩm tạm hết hàng.
+
+              .form-group.qty-selection
+                label Số lượng
+                
+                - var initialStock = productDetail.sizes && productDetail.sizes.length > 0 ? productDetail.sizes[0].stock : 1;
+                
+                .qty-control-wrapper
+                  .qty-custom
+                    button.btn-qty-custom.minus(type="button") -
+                    input#quantity(type="text",name="quantity", value="1", readonly)
+                    button.btn-qty-custom.plus(type="button") +
+                  
+                  span.stock-info
+                    | Còn <strong id="current-stock">#{initialStock}</strong> sản phẩm
+
+              button.btn-submit-cart(type="submit")
+                i.fa-solid.fa-cart-plus
+                | Thêm Vào Giỏ Hàng
+
+              .trust-badges
+                .trust-item
+                  .icon-box
+                    i.fa-solid.fa-shield-halved
+                  span Cam kết 100% chính hãng
+                
+                .trust-item
+                  .icon-box
+                    i.fa-solid.fa-rotate-left
+                  span Đổi trả miễn phí trong 7 ngày
+                
+                .trust-item
+                  .icon-box
+                    i.fa-solid.fa-truck-fast
+                  span Miễn phí vận chuyển toàn quốc

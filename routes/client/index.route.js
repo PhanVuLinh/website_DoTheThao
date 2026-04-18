@@ -8,9 +8,11 @@ const categoryRoutes = require("../client/category.route");
 
 const settingMiddleware = require("../../middlewares/client/setting.middleware");
 const categoryMiddleware = require("../../middlewares/client/category.middleware");
+const cartMiddleware = require("../../middlewares/client/cart.middleware");
 
 router.use(settingMiddleware.websiteInfo);
 router.use(categoryMiddleware.list);
+router.use(cartMiddleware.cartId);
 
 router.use("/", homeRoutes);
 

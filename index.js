@@ -9,7 +9,6 @@ const variableCongfig = require("./config/variable");
 
 const alertMiddleware = require("./middlewares/alert.middleware");
 
-
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("express-flash");
@@ -17,7 +16,7 @@ const flash = require("express-flash");
 const app = express();
 const port = process.env.PORT;
 app.use(methodOverride("_method"));
-app.use(express.json()); 
+app.use(express.json());
 
 //Kết nối database
 database.connect();
