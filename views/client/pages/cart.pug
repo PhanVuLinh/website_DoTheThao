@@ -61,31 +61,30 @@ block main
           // --- KHỐI 2: THÔNG TIN KHÁCH HÀNG & THANH TOÁN ---
           .cart-box.checkout-box
             h2.title Thông Tin Giao Hàng
-            
-            form.checkout-form(action="/checkout" method="POST")
+            form.checkout-form(action="/order/create" method="POST")
               .form-grid
                 .form-group
-                  input.form-control(type="text" placeholder="Họ và tên *" required)
+                  input.form-control(type="text" name="fullName" placeholder="Họ và tên *" required)
                 .form-group
-                  input.form-control(type="text" placeholder="Số điện thoại *" required)
+                  input.form-control(type="text" name="phone" placeholder="Số điện thoại *" required)
               .form-group
-                input.form-control(type="text" placeholder="Địa chỉ nhận hàng chi tiết *" required)
+                input.form-control(type="text" name="address" placeholder="Địa chỉ nhận hàng chi tiết *" required)
               .form-group
-                textarea.form-control(placeholder="Ghi chú thêm (Tùy chọn)" rows="3")
+                textarea.form-control(name="note" placeholder="Ghi chú thêm (Tùy chọn)" rows="3")
               
               h3.subtitle Chọn phương thức thanh toán
               .payment-methods
                 label.payment-option
-                  input(type="radio" name="payment" value="cod" checked)
+                  input(type="radio" name="paymentMethod" value="cod" checked)
                   span Thanh toán tiền mặt khi nhận hàng (COD)
                 label.payment-option
-                  input(type="radio" name="payment" value="momo")
+                  input(type="radio" name="paymentMethod" value="momo")
                   span Ví MoMo
                 label.payment-option
-                  input(type="radio" name="payment" value="bank")
+                  input(type="radio" name="paymentMethod" value="bank")
                   span Chuyển khoản ngân hàng
 
               button.btn-submit-order(type="submit") ĐẶT HÀNG
         else 
           p Chưa có sản phẩm trong giỏ hàng 
-  script(src="/client/assets/js/cart.js") 
+  script(src="/client/assets/js/cart.js")

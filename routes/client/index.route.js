@@ -5,6 +5,7 @@ const productRoutes = require("../client/product.route");
 const cartRoutes = require("../client/cart.route");
 const contactRoutes = require("../client/contact.route");
 const categoryRoutes = require("../client/category.route");
+const orderRoutes = require("../client/order.route");
 
 const settingMiddleware = require("../../middlewares/client/setting.middleware");
 const categoryMiddleware = require("../../middlewares/client/category.middleware");
@@ -23,5 +24,7 @@ router.use("/cart", cartRoutes);
 router.use("/contact", contactRoutes);
 
 router.use("/category", categoryRoutes);
+
+router.use("/order", orderRoutes);
 
 module.exports = router;
