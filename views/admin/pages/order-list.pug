@@ -80,7 +80,7 @@ block main
                   span TTTT: #{orderDetail.paymentStatusName}
               td
                 - var statusClass = orderDetail.status ? `badge-${orderDetail.status}` : 'badge-pending'
-                span.badge-status(class=statusClass)= orderDetail.statusName
+                span.badge-status(class=statusClass)  #{orderDetail.statusName}
               td
                 .user-date
                   span.name #{orderDetail.createdAtTime}
