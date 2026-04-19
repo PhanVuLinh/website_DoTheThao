@@ -2,10 +2,7 @@ extends ../layouts/default.pug
 
 block main
   h1.page-title Quản lý đơn hàng
-
-  //- 1. KHỐI BỘ LỌC VÀ TÌM KIẾM
   .filter-action-card
-    //- Hàng trên: Các bộ lọc
     .filter-row
       .filter-label
         i.fa-solid.fa-filter
@@ -36,14 +33,10 @@ block main
       button.btn-clear
         i.fa-solid.fa-rotate-right
         | Xóa bộ lọc
-
-    //- Hàng dưới: Chỉ có thanh tìm kiếm (Không có nút Tạo mới)
     .action-row
       .search-box-large(style="max-width: 500px;")
         i.fa-solid.fa-magnifying-glass
         input(type="text" placeholder="Tìm kiếm theo Mã đơn, Tên khách hàng, SĐT...")
-
-  //- 2. BẢNG DỮ LIỆU ĐƠN HÀNG
   .table-section
     .table-responsive
       table.admin-table.table-hover
@@ -58,77 +51,46 @@ block main
             th Hành động
         
         tbody
-          //- Đơn hàng 1
-          tr
-            td.order-code OD000001
-            td
-              .customer-info
-                span.font-weight-600 Lê Văn A
-                span.phone SĐT: 0987654321
-                span.phone Địa chỉ: 123 Lê Lợi, Quận 1, TP.HCM
-                span.phone(style="color: var(--red-main)") Ghi chú: Giao giờ hành chính
-            td
-              .order-products-list
-                .product-mini-item
-                  img(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=100&auto=format&fit=crop" alt="Giày")
-                  .prod-info
-                    span.prod-name Nike Air Zoom Pegasus 39
-                    span.prod-meta Size 40 | SL: 1 | 2.450.000đ
-                .product-mini-item
-                  img(src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=100&auto=format&fit=crop" alt="Giày")
-                  .prod-info
-                    span.prod-name Adidas Ultraboost 22
-                    span.prod-meta Size 41 | SL: 1 | 3.400.000đ
-            td
-              .payment-summary
-                span Tổng tiền: 5.850.000đ
-                span Phí ship: 30.000đ
-                span Giảm giá: -100.000đ
-                span.total-pay Thanh toán: 5.780.000đ
-                span PTTT: Chuyển khoản
-                span TTTT: Đã thanh toán
-            td: span.badge-status.badge-pending Khởi tạo
-            td: .user-date
-                span.name 16:20
-                span.time 01/11/2026
-            td: .action-btns
-                a.btn-edit(href=`/${pathAdmin}/order/edit` title="Cập nhật")
-                  i.fa-regular.fa-pen-to-square
-                button.btn-delete(title="Hủy đơn"): i.fa-regular.fa-trash-can
+          each orderDetail in orderList
+            tr
+              td.order-code #{orderDetail.orderCode}
+              td
+                .customer-info
+                  span.font-weight-600 #{orderDetail.fullName}
+                  span.phone SĐT: #{orderDetail.phone}
+                  span.phone Địa chỉ: #{orderDetail.address}
+                  if(orderDetail.note)
+                    span.phone(style="color: var(--red-main)") Ghi chú: #{orderDetail.note}
+              td
+                .order-products-list
+                  each item in orderDetail.products
+                    .product-mini-item
+                      img(src=item.thumbnail alt=item.title)
+                      .prod-info
+                        span.prod-name #{item.title}
+                        span.prod-meta #{item.size} | SL: #{item.quantity} | #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
+              td
+                .payment-summary
+                  span Tạm tính: #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
+                  //- span Phí ship: 30.000đ
+                  span Giảm giá: #{orderDetail.discount.toLocaleString('vi-VN')} đ
+                  //- span Mã giảm: TTNNSASD12
+                  span.total-pay Thanh toán: #{orderDetail.total.toLocaleString('vi-VN')} đ
+                  span PTTT: #{orderDetail.paymentMethodName}
+                  span TTTT: #{orderDetail.paymentStatusName}
+              td
+                - var statusClass = orderDetail.status ? `badge-${orderDetail.status}` : 'badge-pending'
+                span.badge-status(class=statusClass)= orderDetail.statusName
+              td
+                .user-date
+                  span.name #{orderDetail.createdAtTime}
+                  span.time #{orderDetail.createdAtDate}
+              td: .action-btns
+                  a.btn-edit(href=`/${pathAdmin}/order/edit/${orderDetail.id}` title="Cập nhật")
+                    i.fa-regular.fa-pen-to-square
+                  button.btn-delete(title="Hủy đơn"): i.fa-regular.fa-trash-can
 
-          //- Đơn hàng 2
-          tr
-            td.order-code OD000002
-            td
-              .customer-info
-                span.font-weight-600 Nguyễn Thị B
-                span.phone SĐT: 0912345678
-                span.phone Địa chỉ: 456 Nguyễn Trãi, Ba Đình, HN
-            td
-              .order-products-list
-                .product-mini-item
-                  img(src="https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=100&auto=format&fit=crop" alt="Giày")
-                  .prod-info
-                    span.prod-name Puma Nitefox Crossin
-                    span.prod-meta Size 39 | SL: 2 | 1.800.000đ
-            td
-              .payment-summary
-                span Tổng tiền: 3.600.000đ
-                span Phí ship: 40.000đ
-                span Giảm giá: 0đ
-                span.total-pay Thanh toán: 3.640.000đ
-                span PTTT: COD
-                span TTTT: Chưa thanh toán
-            td: span.badge-status.badge-active Đã xác nhận
-            td: .user-date
-                span.name 09:15
-                span.time 02/11/2026
-            td: .action-btns
-                a.btn-edit(href=`/${pathAdmin}/order/edit`)
-                  i.fa-regular.fa-pen-to-square
-                button.btn-delete(title="Hủy đơn"): i.fa-regular.fa-trash-can
 
-    //- 3. PHÂN TRANG
     .admin-pagination
       ul.pagination-list
         li.page-item.disabled: a.page-link(href="#"): i.fa-solid.fa-angle-left

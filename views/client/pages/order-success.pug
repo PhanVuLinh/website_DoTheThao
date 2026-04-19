@@ -57,8 +57,6 @@ block main
               li.total-row
                 span.label Tổng thanh toán:
                 span.value.price-red #{orderDetail.total.toLocaleString('vi-VN')} đ
-
-        //- Phần 3: DANH SÁCH SẢN PHẨM ĐÃ MUA (MỚI THÊM)
         if orderDetail.products && orderDetail.products.length > 0
           .success-products-section
             h3.success-card__title.text-center

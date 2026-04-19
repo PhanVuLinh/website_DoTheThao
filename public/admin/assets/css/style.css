@@ -825,6 +825,24 @@ body.admin-body {
   color: #20c997;
 }
 
+/* Order status specific badges */
+.badge-initial {
+  background: #eef2ff; /* light indigo */
+  color: #4f46e5;
+}
+.badge-shipping {
+  background: #fff7ed; /* light orange */
+  color: #f97316;
+}
+.badge-done {
+  background: #ecfdf5; /* light green */
+  color: #16a34a;
+}
+.badge-cancel {
+  background: #fff1f2; /* light red */
+  color: #dc2626;
+}
+
 /* Pagination */
 .admin-pagination {
   display: flex;
