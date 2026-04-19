@@ -36,6 +36,5 @@ mixin productItem(item)
           
         else
           span.new-price #{item.price.toLocaleString('vi-VN')}đ
-      
-      button.btn-cart
+      a(href=`/product/detail/${item.slug}`).btn-cart
         i.fa-solid.fa-cart-plus

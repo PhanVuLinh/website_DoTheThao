@@ -30,28 +30,18 @@ block main
           select.form-control(name="status")
             option(value="active") Hoạt động
             option(value="inactive") Tạm dừng
+   
       .form-group
         label Ảnh đại diện
-        .upload-image-wrapper
-          input#file-upload.hidden-input(type="file" name="thumbnail" accept="image/*" onchange="previewImage(event)")
-          label.upload-box(for="file-upload" id="upload-label")
+        .upload-image-wrapper(upload-image-wrapper)
+          input#thumbnail-category-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
+          label.upload-box(for="thumbnail-category-upload" upload-image-label)
             i.fa-solid.fa-plus
-          .image-preview-container.hidden#preview-container
-            img#image-preview(src="" alt="Preview")
-            button.btn-remove-image(type="button" onclick="removeImage()" title="Xóa ảnh")
+            
+          .image-preview-container.hidden(upload-image-preview-container)
+            img(upload-image-preview src="" alt="Preview")
+            button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
               i.fa-solid.fa-xmark
-      
-        .form-group
-          label Ảnh đại diện
-          .upload-image-wrapper(upload-image-wrapper)
-            input#thumbnail-category-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
-            label.upload-box(for="thumbnail-category-upload" upload-image-label)
-              i.fa-solid.fa-plus
-              
-            .image-preview-container.hidden(upload-image-preview-container)
-              img(upload-image-preview src="" alt="Preview")
-              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
-                i.fa-solid.fa-xmark
       .form-group
         label Mô tả
         textarea.form-control(name="description" rows="6" placeholder="Nhập mô tả cho danh mục này...")

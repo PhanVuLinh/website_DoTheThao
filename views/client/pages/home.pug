@@ -51,29 +51,12 @@ block main
           i.fa-solid.fa-arrow-right-long
 
       .categories__grid
-        a.category-card(href="#")
-          .category-card__img-wrap
-            img(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop", alt="Giày Thể Thao")
-          h3.category-card__title Giày Thể Thao
-          span.category-card__count 245 Sản phẩm
-
-        a.category-card(href="#")
-          .category-card__img-wrap
-            img(src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1000&auto=format&fit=crop", alt="Quần Áo")
-          h3.category-card__title Quần Áo
-          span.category-card__count 189 Sản phẩm
-
-        a.category-card(href="#")
-          .category-card__img-wrap
-            img(src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000&auto=format&fit=crop", alt="Phụ Kiện")
-          h3.category-card__title Phụ Kiện
-          span.category-card__count 542 Sản phẩm
-
-        a.category-card(href="#")
-          .category-card__img-wrap
-            img(src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?q=80&w=1000&auto=format&fit=crop", alt="Dụng Cụ Tập")
-          h3.category-card__title Dụng Cụ Tập
-          span.category-card__count 76 Sản phẩm
+        if categoryChildren && categoryChildren.length > 0
+          each cat in categoryChildren
+            a.category-card(href=`/category/${cat.slug}`)
+              .category-card__img-wrap
+                img(src=cat.thumbnail, alt=cat.title)
+              h3.category-card__title= cat.title
   // END SECTION 2: CATEGORIES
 
   // SECTION 3: FLASH DEALS

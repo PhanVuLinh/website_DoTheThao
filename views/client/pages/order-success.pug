@@ -1,0 +1,84 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+
+block main
+  +alert-success(3000)
+  .cart-page
+    .container
+      .success-wrapper
+        .success-hero
+          .success-icon-wrap
+            i.fa-solid.fa-check
+          h1.success-title Đặt hàng thành công!
+          p.success-subtitle 
+            | Cảm ơn bạn đã mua sắm tại 
+            strong #{settingWebsiteInfo.websiteName}
+            | . Đơn hàng của bạn đã được ghi nhận và đang được xử lý.
+          .order-code-box
+            span Mã đơn hàng:
+            strong.highlight-text #{orderDetail.orderCode}
+        .success-details-grid
+          .success-card
+            h3.success-card__title
+              i.fa-solid.fa-location-dot
+              | Thông tin giao hàng
+            ul.success-info-list
+              li
+                span.label Tên người nhận:
+                span.value #{orderDetail.fullName}
+              li
+                span.label Số điện thoại:
+                span.value #{orderDetail.phone}
+              li
+                span.label Địa chỉ:
+                span.value #{orderDetail.address}
+              if (orderDetail.note)
+                li
+                  span.label Ghi chú:
+                  span.value #{orderDetail.note}
+
+          .success-card
+            h3.success-card__title
+              i.fa-solid.fa-wallet
+              | Thông tin thanh toán
+            ul.success-info-list
+              li
+                span.label Phương thức thanh toán:
+                span.value #{orderDetail.paymentMethodName}
+              li
+                span.label Trạng thái thanh toán:
+                span.value.status-badge.pending #{orderDetail.paymentStatusName}
+              li
+                span.label Trạng thái đơn hàng:
+                span.value #{orderDetail.statusName}
+              li
+                span.label Ngày đặt:
+                span.value #{orderDetail.createdAtFormat}
+              li.total-row
+                span.label Tổng thanh toán:
+                span.value.price-red #{orderDetail.total.toLocaleString('vi-VN')} đ
+
+        //- Phần 3: DANH SÁCH SẢN PHẨM ĐÃ MUA (MỚI THÊM)
+        if orderDetail.products && orderDetail.products.length > 0
+          .success-products-section
+            h3.success-card__title.text-center
+              i.fa-solid.fa-box-open
+              | Sản phẩm đã mua
+              
+            .success-products-list
+              each item in orderDetail.products
+                .success-product-item
+                  .product-img
+                    a(href=`/product/detail/${item.slug}`)
+                      img(src=item.thumbnail alt=item.title)
+                  .product-info
+                    a(href=`/product/detail/${item.slug}`)
+                      h4.product-name #{item.title}
+                    if item.size
+                      p.product-variant Phân loại: #{item.size}
+                    p.product-qty Số lượng: x#{item.quantity}
+                  .product-price
+                    strong.price-red #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
+        .success-actions
+          a.btn-submit-cart(href="/" style="width: auto; padding: 12px 35px; border-radius: 50px;") 
+            | Tiếp tục mua sắm

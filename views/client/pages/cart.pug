@@ -5,8 +5,6 @@ block main
     .container
       .cart-container
         if(cartDetail.products.length > 0)
-        
-          // --- KHỐI 1: DANH SÁCH SẢN PHẨM & TÍNH TIỀN ---
           .cart-box
             .cart-box__header
               h2.title Giỏ Hàng
@@ -37,14 +35,10 @@ block main
                       input.qty-input(type="number" name="quantity" value=item.quantity product-id=item.product_id min="1")
                       button.btn-qty.plus +
                     .item-price #{item.totalPrice.toLocaleString('vi-VN')} đ
-
-            // Khối Nhập Mã Giảm Giá
             .cart-discount-row
               .discount-input-wrap
                 input(type="text" placeholder="Nhập mã giảm giá")
                 button.btn-apply Dùng Mã
-
-            // Tổng kết tiền
             .cart-summary
               .summary-row
                 span Tạm tính:
@@ -56,9 +50,7 @@ block main
               .summary-row.total
                 span Thanh toán:
                 strong.price-red
-                  span.cart-total #{cartDetail.totalPrice.toLocaleString('vi-VN')} đ
-
-          // --- KHỐI 2: THÔNG TIN KHÁCH HÀNG & THANH TOÁN ---
+                  span.cart-total #{cartDetail.totalPrice.toLocaleString('vi-VN')} 
           .cart-box.checkout-box
             h2.title Thông Tin Giao Hàng
             form.checkout-form(action="/order/create" method="POST")

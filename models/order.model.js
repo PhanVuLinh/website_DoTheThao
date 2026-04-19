@@ -4,6 +4,7 @@ const orderSchema = new mongoose.Schema(
   {
     user_id: String, //chua cần vì chưa làm đăng ký
     cartId: String,
+    orderCode: String,
     fullName: String,
     phone: String,
     address: String,
@@ -17,6 +18,7 @@ const orderSchema = new mongoose.Schema(
     total: Number,
     paymentMethod: String,
     paymentStatus: String,
+    status: String,
     updatedBy: String,
     deleted: {
       type: Boolean,

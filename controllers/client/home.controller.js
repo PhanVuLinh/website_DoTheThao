@@ -1,7 +1,16 @@
 const Product = require("../../models/product.model");
+const Category = require("../../models/category.model");
 
 const productPriceHelper = require("../../helpers/getPriceNew.helper.js");
 module.exports.index = async (req, res) => {
+  // section
+  const categoryChildren = await Category.find({
+    deleted: false,
+    parent_id: { $ne: "" },
+  })
+    .sort({ position: "desc" })
+    .limit(4);
+  // End section 2
   //section 3
   const productListSection3 = await Product.find({
     deleted: false,
@@ -10,7 +19,7 @@ module.exports.index = async (req, res) => {
     .sort({
       position: "desc",
     })
-    .limit(6)
+    .limit(6);
   const newProductListSection3 =
     productPriceHelper.priceNewProduct(productListSection3);
   //End section 3
@@ -24,7 +33,7 @@ module.exports.index = async (req, res) => {
     .sort({
       position: "desc",
     })
-    .limit(8)
+    .limit(8);
 
   const newProductFeaturedSection5 = productPriceHelper.priceNewProduct(
     productFeaturedSection5,
@@ -39,7 +48,7 @@ module.exports.index = async (req, res) => {
     .sort({
       position: "desc",
     })
-    .limit(8)
+    .limit(8);
 
   const newProductListSection7 =
     productPriceHelper.priceNewProduct(productListSection7);
@@ -49,5 +58,6 @@ module.exports.index = async (req, res) => {
     productListSection3: newProductListSection3,
     productFeaturedSection5: newProductFeaturedSection5,
     productListSection7: newProductListSection7,
+    categoryChildren: categoryChildren,
   });
 };
