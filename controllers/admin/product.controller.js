@@ -1,18 +1,65 @@
 const moment = require("moment");
+const slugify = require("slugify");
 const Product = require("../../models/product.model");
 const Category = require("../../models/category.model");
 const Account = require("../../models/account.model");
 const variableCongfig = require("../../config/variable");
 
 const categoryHelper = require("../../helpers/category.helper");
+const paginationHelper = require("../../helpers/pagination.helper");
 
 module.exports.list = async (req, res) => {
   let find = {
     deleted: false,
   };
-  const productList = await Product.find(find).sort({
-    position: "desc",
-  });
+  //lọc theo trạng thái
+  if (req.query.status) {
+    find.status = req.query.status;
+  }
+  //lọc theo người tạo
+  if (req.query.createdBy) {
+    find.createdBy = req.query.createdBy;
+  }
+
+  //lọc theo ngày tạo
+  const dateFilter = {};
+  if (req.query.startDate) {
+    const startDate = moment(req.query.startDate).startOf("date").toDate();
+    dateFilter.$gte = startDate;
+  }
+  if (req.query.endDate) {
+    const endDate = moment(req.query.endDate).endOf("date").toDate();
+    dateFilter.$lte = endDate;
+  }
+  if (Object.keys(dateFilter).length > 0) {
+    find.createdAt = dateFilter;
+  }
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = slugify(req.query.keyword, {
+      lower: true,
+      locale: "vi",
+      strict: true,
+    });
+    const keywordRegex = new RegExp(keyword);
+    find.slug = keywordRegex;
+  }
+
+  //Phân trang
+  const countProduct = await Product.countDocuments(find);
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countProduct,
+  );
+  //hết Phân trang
+  const productList = await Product.find(find)
+    .sort({ position: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
 
   for (const item of productList) {
     if (item.createdBy) {
@@ -30,9 +77,16 @@ module.exports.list = async (req, res) => {
     item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
     item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY");
   }
+  //List ADMIN
+  const accountAdminList = await Account.find({
+    deleted: false,
+  }).select("id fullName");
+
   res.render("admin/pages/product-list.pug", {
     title: "Danh sách sản phẩm",
     productList: productList,
+    accountAdminList: accountAdminList,
+    pagination: objectPagination,
   });
 };
 
@@ -58,7 +112,9 @@ module.exports.createPost = async (req, res) => {
   req.body.createdBy = req.account.id;
   req.body.updatedBy = req.account.id;
   req.body.thumbnail =
-    req.files && req.files.thumbnail ? req.files.thumbnail[0].path : delete req.body.thumbnail;
+    req.files && req.files.thumbnail
+      ? req.files.thumbnail[0].path
+      : delete req.body.thumbnail;
   req.body.price = req.body.price ? parseInt(req.body.price) : 0;
   req.body.discountPercentage = req.body.discountPercentage
     ? parseInt(req.body.discountPercentage)

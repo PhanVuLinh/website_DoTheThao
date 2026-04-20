@@ -1,48 +1,43 @@
 extends ../layouts/default.pug
+include ../mixins/alert.pug
+include ../mixins/filter-status.pug
+include ../mixins/filter-created-by.pug
+include ../mixins/filter-date-range.pug
+
+include ../mixins/pagination.pug
 
 block main
+  +alert-success(3000)
+  +alert-error(3000)
   h1.page-title Quản lý sản phẩm
 
-  //- 1. KHỐI BỘ LỌC VÀ HÀNH ĐỘNG
   .filter-action-card
     .filter-row
       .filter-label
         i.fa-solid.fa-filter
         span Bộ lọc
       
-      select.form-select
-        option(value="") Trạng thái
-        option(value="active") Hoạt động
-        option(value="inactive") Tạm dừng
+      +filter-status()
         
-      select.form-select
-        option(value="") Người tạo
-        option Lê Văn A
-        option Lê Văn B
+      +filter-created-by(accountAdminList)
         
-      .date-range-picker
-        input(type="text" placeholder="dd/mm/yyyy")
-        span -
-        input(type="text" placeholder="dd/mm/yyyy")
+      +filter-date-range()
         
-      //- Thêm lọc theo Danh mục
       select.form-select
         option(value="") Danh mục
         option Giày Chạy Bộ
         option Quần Áo
         
-      //- Thêm lọc theo Mức giá
       select.form-select
         option(value="") Mức giá
         option Dưới 1 triệu
         option 1 - 3 triệu
         option Trên 3 triệu
         
-      button.btn-clear
+      button.btn-clear(filter-reset)
         i.fa-solid.fa-rotate-right
         | Xóa bộ lọc
 
-    //- Hàng dưới: Hành động, Tìm kiếm, Tạo mới & Thùng rác
     .action-row
       .bulk-action
         select.form-select
@@ -53,7 +48,7 @@ block main
         
       .search-box-large
         i.fa-solid.fa-magnifying-glass
-        input(type="text" placeholder="Tìm kiếm sản phẩm...")
+        input(type="text" placeholder="Tìm kiếm sản phẩm..." search)
         
       .action-buttons-right
         a(href=`/${pathAdmin}/product/create`).btn-create
@@ -63,7 +58,6 @@ block main
           i.fa-regular.fa-trash-can
           | Thùng rác
 
-  //- 2. BẢNG DỮ LIỆU
   .table-section
     .table-responsive
       table.admin-table.table-hover
@@ -121,23 +115,7 @@ block main
 
     //- 3. PHÂN TRANG (PAGINATION)
     .admin-pagination
-      ul.pagination-list
-        li.page-item.disabled
-          a.page-link(href="#")
-            i.fa-solid.fa-angle-left
-        li.page-item.active
-          a.page-link(href="#") 1
-        li.page-item
-          a.page-link(href="#") 2
-        li.page-item
-          a.page-link(href="#") 3
-        li.page-item.dots
-          span ...
-        li.page-item
-          a.page-link(href="#") 10
-        li.page-item
-          a.page-link(href="#")
-            i.fa-solid.fa-angle-right
+      +pagination(pagination)
 
   form(
       action=""
