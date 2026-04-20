@@ -5,11 +5,9 @@ block main
   +alert-success(3000)
   +alert-error(3000)
   
-  h1.page-title Tài khoản quản trị
+  h1.page-title Danh sách tài khoản quản trị
 
-  //- 1. KHỐI BỘ LỌC VÀ TÌM KIẾM
   .filter-action-card
-    //- Hàng trên: Bộ lọc
     .filter-row
       .filter-label
         i.fa-solid.fa-filter
@@ -35,7 +33,6 @@ block main
         i.fa-solid.fa-rotate-right
         | Xóa bộ lọc
 
-    //- Hàng dưới: Hành động, Tìm kiếm, Tạo mới
     .action-row
       .bulk-action
         select.form-select
@@ -53,7 +50,6 @@ block main
           i.fa-solid.fa-plus
           | Tạo mới
 
-  //- 2. BẢNG DỮ LIỆU TÀI KHOẢN
   .table-section
     .table-responsive
       table.admin-table.table-hover
@@ -71,63 +67,29 @@ block main
             th Hành động
         
         tbody
-          //- Tài khoản 1
-          tr
-            td.text-center
-              input(type="checkbox")
-            td.font-weight-600 Lê Văn A
-            td.text-center
-              //- Class td-avatar đã được setup bo góc 8px ở bài trước, tái sử dụng luôn
-              img.td-avatar(src="https://ui-avatars.com/api/?name=Le+Van+A&background=0D8ABC&color=fff" alt="Avatar")
-            td.text-email levana@gmail.com
-            td.text-phone 01234567890
-            td Quản trị viên
-            td Giám đốc
-            td: span.badge-status.badge-active Hoạt động
-            td
-              .action-btns
-                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
-                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+          each item in accountList
+            tr
+              td.text-center
+                input(type="checkbox")
+              td.font-weight-600 #{item.name}
+              td.text-center
+                img.td-avatar(src=item.avatar alt=item.name)
+              td.text-email #{item.email}
+              td.text-phone #{item.phone}
+              td Quản trị viên
+              td #{item.jobTitle}
+              td
+                span.badge-status(class= `${item.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{item.status == "active" ? "Hoạt động" : "Tạm dừng"}
+              td
+                .action-btns
+                  button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
+                  button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
 
-          //- Tài khoản 2
-          tr
-            td.text-center
-              input(type="checkbox")
-            td.font-weight-600 Trần Thị B
-            td.text-center
-              img.td-avatar(src="https://ui-avatars.com/api/?name=Tran+Thi+B&background=EF4444&color=fff" alt="Avatar")
-            td.text-email tranthib@gmail.com
-            td.text-phone 09876543210
-            td Nhân viên Sale
-            td Trưởng phòng
-            td: span.badge-status.badge-inactive Tạm dừng
-            td
-              .action-btns
-                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
-                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
-                
-          //- Tài khoản 3
-          tr
-            td.text-center
-              input(type="checkbox")
-            td.font-weight-600 Nguyễn Văn C
-            td.text-center
-              img.td-avatar(src="https://ui-avatars.com/api/?name=Nguyen+Van+C&background=10B981&color=fff" alt="Avatar")
-            td.text-email nguyenvanc@gmail.com
-            td.text-phone 03456789012
-            td Kế toán
-            td Nhân viên
-            td: span.badge-status.badge-active Hoạt động
-            td
-              .action-btns
-                button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
-                button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
-
-  //- 3. PHÂN TRANG
-  .admin-pagination
-    ul.pagination-list
-      li.page-item.disabled: a.page-link(href="#"): i.fa-solid.fa-angle-left
-      li.page-item.active: a.page-link(href="#") 1
-      li.page-item: a.page-link(href="#") 2
-      li.page-item.dots: span ...
-      li.page-item: a.page-link(href="#"): i.fa-solid.fa-angle-right
+    //- 3. PHÂN TRANG
+    .admin-pagination
+      ul.pagination-list
+        li.page-item.disabled: a.page-link(href="#"): i.fa-solid.fa-angle-left
+        li.page-item.active: a.page-link(href="#") 1
+        li.page-item: a.page-link(href="#") 2
+        li.page-item.dots: span ...
+        li.page-item: a.page-link(href="#"): i.fa-solid.fa-angle-right

@@ -46,9 +46,17 @@ module.exports.websiteInfoPatch = async (req, res) => {
   res.redirect(req.get("Referer"));
 };
 
-module.exports.accountAdminList = (req, res) => {
+module.exports.accountAdminList = async (req, res) => {
+  const find = {
+    deleted: false,
+  };
+
+  const accountList = await Account.find(find);
+
   res.render("admin/pages/setting-account-admin-list.pug", {
-    title: "Danh sách tài khoản admin",
+    title: "Tài khoản quản trị",
+    accountList: accountList,
+
   });
 };
 
