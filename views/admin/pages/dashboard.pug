@@ -3,30 +3,34 @@ extends ../layouts/default.pug
 block main
   h1.page-title Tổng quan
 
-  //- 1. KHỐI THỐNG KÊ (WIDGETS)
   .stat-widgets
     .widget-card
       .widget-icon.bg-purple
         i.fa-solid.fa-user-group
       .widget-info
+        span.label Quản trị viên
+        h3.value #{section1.totalAdmin}
+    .widget-card
+      .widget-icon.bg-purple
+        i.fa-solid.fa-user-group
+      .widget-info
         span.label Người dùng
-        h3.value 1.200
+        h3.value #{section1.totalUser}
 
     .widget-card
       .widget-icon.bg-yellow
         i.fa-solid.fa-box
       .widget-info
         span.label Đơn hàng
-        h3.value 3.600
+        h3.value #{section1.totalOrder}
 
     .widget-card
       .widget-icon.bg-green
         i.fa-solid.fa-money-bill-trend-up
       .widget-info
         span.label Doanh thu
-        h3.value 300.000.000đ
+        h3.value #{section1.totalPrice.toLocaleString('vi-VN')} đ
 
-  //- 2. BIỂU ĐỒ DOANH THU
   .chart-section
     .section-header
       h2.section-title Biểu đồ doanh thu
@@ -38,7 +42,6 @@ block main
     .chart-container
       canvas#revenueChart
 
-  //- 3. BẢNG ĐƠN HÀNG MỚI (ĐÃ CHUẨN HÓA CSS)
   .table-section
     h2.section-title Đơn hàng mới
     .table-responsive
@@ -54,39 +57,24 @@ block main
         
         tbody
           //- Đơn hàng 1
-          tr
-            td
-              span.order-code #DH1002
-            td
-              .customer-info
-                span.font-weight-600 Nguyễn Văn B
-                span.phone 0901234567
-            td
-              .product-mini-item
-                img(src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=100&auto=format&fit=crop" alt="Nike Pegasus")
-                .prod-info
-                  span.prod-name Giày Nike Pegasus 39
-            td
-              span.text-price 2.450.000đ
-            td
-              span.badge-status.badge-pending Chờ xử lý
-            td 01/11/2026
-          
-          //- Đơn hàng 2
-          tr
-            td
-              span.order-code #DH1001
-            td
-              .customer-info
-                span.font-weight-600 Trần Thị C
-                span.phone 0987654321
-            td
-              .product-mini-item
-                img(src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=100&auto=format&fit=crop" alt="Adidas Ultraboost")
-                .prod-info
-                  span.prod-name Adidas Ultraboost 22
-            td
-              span.text-price 3.400.000đ
-            td
-              span.badge-status.badge-success Đã giao
-            td 30/10/2026
+          each orderDetail in orderList
+            tr
+              td
+                span.order-code #{orderDetail.orderCode}
+              td
+                .customer-info
+                  span.font-weight-600 #{orderDetail.fullName}
+                  span.phone #{orderDetail.phone}
+              td 
+                each item in orderDetail.products
+                  .product-mini-item
+                    img(src=item.thumbnail alt=item.title)
+                    .prod-info
+                      span.prod-name #{item.title}
+              td
+                span.text-price #{orderDetail.total.toLocaleString('vi-VN')} đ
+              td
+                - var statusClass = orderDetail.status ? `badge-${orderDetail.status}` : 'badge-pending'
+                span.badge-status(class=statusClass)  #{orderDetail.statusName}
+              td #{orderDetail.createdAtFormat}
+            

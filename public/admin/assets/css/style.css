@@ -408,7 +408,7 @@ body.admin-body {
    ========================================= */
 .stat-widgets {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 25px;
   margin-bottom: 30px;
 }
@@ -458,6 +458,9 @@ body.admin-body {
 /* =========================================
    5. BỘ LỌC VÀ BẢNG DỮ LIỆU & BIỂU ĐỒ
    ========================================= */
+.section-title {
+  margin-bottom: 15px;
+}
 .filter-action-card,
 .chart-section,
 .table-section {

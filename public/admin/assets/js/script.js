@@ -310,74 +310,118 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // --- B. KHỞI TẠO BIỂU ĐỒ DOANH THU (Dùng cho trang Dashboard) ---
   const ctx = document.getElementById("revenueChart");
-  if (ctx && typeof Chart !== "undefined") {
-    const daysInMonth = Array.from({ length: 30 }, (_, i) => "Ngày " + (i + 1));
-    const revenueData = [
-      500000, 1200000, 800000, 2500000, 1800000, 4000000, 3500000, 5200000,
-      4800000, 6000000, 4500000, 7200000, 8500000, 6800000, 5500000, 7800000,
-      9000000, 10000000, 8200000, 6500000, 5000000, 4200000, 5800000, 7000000,
-      8500000, 7500000, 9200000, 8800000, 9800000, 10000000,
-    ];
+if (ctx && typeof Chart !== "undefined") {
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
 
-    new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: daysInMonth,
-        datasets: [
-          {
-            label: "Doanh thu",
-            data: revenueData,
-            borderColor: "#466BD6",
-            backgroundColor: "rgba(70, 107, 214, 0.1)",
-            borderWidth: 2,
-            pointBackgroundColor: "#466BD6",
-            pointBorderColor: "#fff",
-            pointBorderWidth: 2,
-            pointRadius: 3,
-            tension: 0.4,
-            fill: true,
+  // Tính tháng trước
+  const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+  const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+
+  // Số ngày của từng tháng
+  const daysInCurrentMonth = new Date(currentYear, currentMonth, 0).getDate();
+  const daysInPrevMonth = new Date(prevYear, prevMonth, 0).getDate();
+  const maxDays = Math.max(daysInCurrentMonth, daysInPrevMonth);
+
+  // Labels theo số ngày lớn nhất
+  const labels = Array.from({ length: maxDays }, (_, i) => `Ngày ${i + 1}`);
+
+  // Dữ liệu tháng hiện tại (chỉ đến ngày hiện tại, còn lại null)
+  const today = now.getDate();
+  const currentMonthData = Array.from({ length: maxDays }, (_, i) => {
+    if (i >= daysInCurrentMonth) return null;
+    if (i >= today) return null; // Ngày chưa tới thì bỏ trống
+    return Math.floor(Math.random() * 9500000) + 500000; // Thay bằng data thật từ server
+  });
+
+  // Dữ liệu tháng trước (đủ cả tháng)
+  const prevMonthData = Array.from({ length: maxDays }, (_, i) => {
+    if (i >= daysInPrevMonth) return null;
+    return Math.floor(Math.random() * 9500000) + 500000; // Thay bằng data thật từ server
+  });
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: `Tháng ${currentMonth}/${currentYear}`,
+          data: currentMonthData,
+          borderColor: "#466BD6",
+          backgroundColor: "rgba(70, 107, 214, 0.1)",
+          borderWidth: 2,
+          pointBackgroundColor: "#466BD6",
+          pointBorderColor: "#fff",
+          pointBorderWidth: 2,
+          pointRadius: 3,
+          tension: 0.4,
+          fill: true,
+          spanGaps: false,
+        },
+        {
+          label: `Tháng ${prevMonth}/${prevYear}`,
+          data: prevMonthData,
+          borderColor: "#eb5438",
+          backgroundColor: "rgba(235, 84, 56, 0.08)",
+          borderWidth: 2,
+          pointBackgroundColor: "#eb5438",
+          pointBorderColor: "#fff",
+          pointBorderWidth: 2,
+          pointRadius: 3,
+          tension: 0.4,
+          fill: true,
+          spanGaps: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: "top",
+          labels: {
+            usePointStyle: true,
+            pointStyle: "circle",
+            padding: 20,
+            font: { size: 13, weight: "600" },
           },
-        ],
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              if (context.parsed.y === null) return null;
+              return `${context.dataset.label}: ${context.parsed.y.toLocaleString("vi-VN")} đ`;
+            },
+          },
+        },
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: function (context) {
-                let value = context.parsed.y;
-                return "Doanh thu: " + value.toLocaleString("vi-VN") + " đ";
-              },
+      scales: {
+        y: {
+          beginAtZero: true,
+          suggestedMin: 500000,
+          suggestedMax: 10000000,
+          ticks: {
+            callback: function (value) {
+              return value.toLocaleString("vi-VN") + " đ";
             },
           },
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            suggestedMin: 500000,
-            suggestedMax: 10000000,
-            ticks: {
-              callback: function (value) {
-                return value.toLocaleString("vi-VN") + " đ";
-              },
-            },
-          },
-          x: {
-            grid: { display: false },
-            ticks: {
-              maxTicksLimit: 15,
-            },
-          },
-        },
-        interaction: {
-          intersect: false,
-          mode: "index",
+        x: {
+          grid: { display: false },
+          ticks: { maxTicksLimit: 15 },
         },
       },
-    });
-  }
+      interaction: {
+        intersect: false,
+        mode: "index",
+      },
+    },
+  });
+}
 
   // --- C. SWEET ALERT FLASH MESSAGE ---
   const alertItems = document.querySelectorAll("[data-alert]");
