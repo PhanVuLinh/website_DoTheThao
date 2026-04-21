@@ -53,16 +53,28 @@ module.exports.accountAdminList = async (req, res) => {
 
   const accountList = await Account.find(find);
 
+  for (const account of accountList) {
+    const role = await Role.findOne({
+      deleted: false,
+      _id: account.role_id,
+    });
+    account.role_name = role.name;
+  }
+
   res.render("admin/pages/setting-account-admin-list.pug", {
     title: "Tài khoản quản trị",
     accountList: accountList,
-
   });
 };
 
-module.exports.accountAdminCreate = (req, res) => {
+module.exports.accountAdminCreate = async (req, res) => {
+  const roles = await Role.find({
+    deleted: false,
+  }).select("_id  name");
+
   res.render("admin/pages/setting-account-admin-create.pug", {
     title: "Tạo tài khoản admin",
+    roles: roles,
   });
 };
 
@@ -84,20 +96,82 @@ module.exports.accountAdminCreatePost = async (req, res) => {
   }
 };
 
+module.exports.accountAdminEdit = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const accountDetail = await Account.findOne({
+      _id: id,
+      deleted: false,
+    });
+
+    const roles = await Role.find({
+      deleted: false,
+    }).select("_id  name");
+
+    res.render("admin/pages/setting-account-admin-edit.pug", {
+      title: "Chỉnh sửa tài khoản",
+      roles: roles,
+      accountDetail: accountDetail,
+    });
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/setting/account-admin/list`);
+  }
+};
+
+module.exports.accountAdminEditPatch = async (req, res) => {
+  try {
+    const emailExist = await Account.findOne({
+      email: req.body.email,
+      _id: { $ne: req.params.id },
+      deleted: false,
+    });
+
+    if (emailExist) {
+      req.flash("error", "Email đã tồn tại");
+      res.redirect(req.get("Referer"));
+    }
+
+    if (req.body.password) req.body.password = md5(req.body.password);
+    else delete req.body.password;
+
+    await Account.updateOne({ _id: req.params.id }, req.body);
+
+    req.flash("success", "Cập nhật tài khoản thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tại hoặc đã có lỗi xảy ra");
+    res.redirect(`/${variableCongfig.pathAdmin}/setting/account-admin/list`);
+  }
+};
+
+module.exports.accountAdminDelete = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await Account.updateOne({ _id: id }, { deleted: true });
+    req.flash("success", "Xóa tài khoản thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/setting/account-admin/list`);
+  }
+};
+
 module.exports.roleList = async (req, res) => {
   const roleList = await Role.find({
     deleted: false,
   });
 
   res.render("admin/pages/setting-role-list.pug", {
-    title: "Danh sách vai trò",
+    title: "Danh sách nhóm quyền",
     roleList: roleList,
   });
 };
 
 module.exports.roleCreate = (req, res) => {
   res.render("admin/pages/setting-role-create.pug", {
-    title: "Tạo vai trò",
+    title: "Tạo nhóm quyền",
     permissionList: permissonConfig.permissionList,
   });
 };
@@ -150,5 +224,18 @@ module.exports.roleEditPatch = async (req, res) => {
   } catch (error) {
     req.flash("error", "Không tồn tài");
     res.redirect(`/${variableCongfig.pathAdmin}/setting/role/list`);
+  }
+};
+
+module.exports.roleDelete = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await Role.updateOne({ _id: id }, { deleted: true });
+    req.flash("success", "Xóa nhóm quyền thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/setting/account-admin/list`);
   }
 };

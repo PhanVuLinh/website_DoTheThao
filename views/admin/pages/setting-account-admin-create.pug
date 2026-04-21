@@ -3,7 +3,6 @@ include ../mixins/alert.pug
 
 block main
   +alert-error(3000)
-  //- Tiêu đề & Nút Quay lại
   .page-header
     h1.page-title Tạo tài khoản quản trị
     a.btn-back(href=`/${pathAdmin}/setting/account-admin/list`) 
@@ -12,8 +11,6 @@ block main
 
   .form-card
     form(action=`/${pathAdmin}/setting/account-admin/create` method="POST" enctype="multipart/form-data")
-      
-      //- Hàng 1: Họ tên & Email
       .form-row-2
         .form-group
           label Họ tên
@@ -22,8 +19,6 @@ block main
         .form-group
           label Email
           input.form-control(type="email" name="email" placeholder="Nhập email" required)
-      
-      //- Hàng 2: Số điện thoại & Nhóm quyền
       .form-row-2
         .form-group
           label Số điện thoại
@@ -33,11 +28,9 @@ block main
           label Nhóm quyền
           select.form-control(name="role_id" required)
             option(value="" disabled selected) -- Chọn nhóm quyền --
-            option(value="") Quản trị viên
-            option(value="") Kế toán
-            option(value="") Nhân viên Sale
+            each item in roles
+              option(value=item.id) #{item.name}
 
-      //- Hàng 3: Chức vụ & Trạng thái
       .form-row-2
         .form-group
           label Chức vụ
@@ -49,7 +42,6 @@ block main
             option(value="active" selected) Hoạt động
             option(value="inactive") Tạm dừng
 
-      //- Hàng 4: Mật khẩu (Nằm một mình ở cột trái)
       .form-row-2
         .form-group
           label Mật khẩu
@@ -57,7 +49,6 @@ block main
         
         .form-group 
 
-      //- Hàng 5: Upload Ảnh đại diện
       .form-group(style="margin-top: 10px;")
         label Ảnh đại diện
         .upload-image-wrapper

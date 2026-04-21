@@ -1,0 +1,64 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+
+block main
+  +alert-error(3000)
+  +alert-success(3000)
+  .page-header
+    h1.page-title Chỉnh sửa tài khoản quản trị
+    a.btn-back(href=`/${pathAdmin}/setting/account-admin/list`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  .form-card
+    form(action=`/${pathAdmin}/setting/account-admin/edit/${accountDetail.id}?_method=PATCH` method="POST" enctype="multipart/form-data")
+      .form-row-2
+        .form-group
+          label Họ tên
+          input.form-control(type="text" name="fullName" value=accountDetail.fullName required)
+        
+        .form-group
+          label Email
+          input.form-control(type="email" name="email" value=accountDetail.email required)
+      .form-row-2
+        .form-group
+          label Số điện thoại
+          input.form-control(type="text" name="phone" value=accountDetail.phone)
+        
+        .form-group
+          label Nhóm quyền
+          select.form-control(name="role_id" required)
+            each item in roles
+              option(
+                value=item.id
+                selected= (item.id == accountDetail.role_id ? true : false)
+              ) #{item.name}
+
+      .form-row-2
+        .form-group
+          label Chức vụ
+          input.form-control(type="text" name="jobTitle" value=accountDetail.jobTitle)
+        
+        .form-group
+          label Trạng thái
+          select.form-control(name="status")
+            option(value="active" selected=(accountDetail.status == "active" ? true : false)) Hoạt động
+            option(value="inactive" selected=(accountDetail.status == "inactive" ? true : false)) Tạm dừng
+
+      .form-row-2
+        .form-group
+          label Mật khẩu
+          input.form-control(type="password" name="password" placeholder="Không cần nhập nếu không đổi mật khẩu")
+        
+        .form-group
+          label Ảnh đại diện
+          .upload-image-wrapper(upload-image-wrapper)
+            input#avatar-account-upload.hidden-input(upload-image-input type="file" name="avatar" accept="image/*")
+            label.upload-box(for="avatar-account-upload" upload-image-label class=(accountDetail.avatar ? "hidden" : ""))
+              i.fa-solid.fa-plus
+            .image-preview-container(upload-image-preview-container class=(accountDetail.avatar ? "" : "hidden"))
+              img(upload-image-preview src=(accountDetail.avatar ? accountDetail.avatar : "") alt="Preview")
+              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                i.fa-solid.fa-xmark
+      .form-actions-stacked
+        button.btn-submit.btn-submit-large(type="submit") Cập nhật

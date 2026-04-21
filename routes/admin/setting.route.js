@@ -33,9 +33,22 @@ router.post(
   settingController.accountAdminCreatePost,
 );
 
+router.get("/account-admin/edit/:id", settingController.accountAdminEdit);
+
+router.patch(
+  "/account-admin/edit/:id",
+  upload.single("avatar"),
+  // validate.createPost,
+  settingController.accountAdminEditPatch,
+);
+
+router.delete("/account-admin/delete/:id", settingController.accountAdminDelete);
+
+
 router.get("/role/list", settingController.roleList);
 
 router.get("/role/create", settingController.roleCreate);
+
 
 router.post(
   "/role/create",
@@ -45,10 +58,14 @@ router.post(
 
 router.get("/role/edit/:id", settingController.roleEdit);
 
+
 router.patch(
   "/role/edit/:id",
   validate.createPost,
   settingController.roleEditPatch,
 );
+
+router.delete("/role/delete/:id", settingController.roleDelete);
+
 
 module.exports = router;

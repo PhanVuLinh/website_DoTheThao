@@ -71,19 +71,21 @@ block main
             tr
               td.text-center
                 input(type="checkbox")
-              td.font-weight-600 #{item.name}
+              td.font-weight-600 #{item.fullName}
               td.text-center
-                img.td-avatar(src=item.avatar alt=item.name)
+                img.td-avatar(src=item.avatar alt=item.fullName)
               td.text-email #{item.email}
               td.text-phone #{item.phone}
-              td Quản trị viên
+              td #{item.role_name}
               td #{item.jobTitle}
               td
                 span.badge-status(class= `${item.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{item.status == "active" ? "Hoạt động" : "Tạm dừng"}
               td
                 .action-btns
-                  button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
-                  button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
+                  a(href=`/${pathAdmin}/setting/account-admin/edit/${item.id}`).btn-edit(title="Sửa")
+                    i.fa-regular.fa-pen-to-square
+                  button.btn-delete(button-delete data-id=item.id)
+                    i.fa-regular.fa-trash-can
 
     //- 3. PHÂN TRANG
     .admin-pagination
@@ -93,3 +95,10 @@ block main
         li.page-item: a.page-link(href="#") 2
         li.page-item.dots: span ...
         li.page-item: a.page-link(href="#"): i.fa-solid.fa-angle-right
+
+  form(
+      action=""
+      method="POST"
+      id="form-delete-item"
+      data-path=`/${pathAdmin}/setting/account-admin/delete`
+    )
