@@ -25,15 +25,20 @@ block main
         .form-group
           label Phân quyền
           .permissions-box
-            each item in permissionList
-              .check-item
-                input(
-                  type="checkbox" 
-                  name="permissions" 
-                  value=item.value
-                  checked=roleDetail.permissions.includes(item.value)
-                )
-                label(for="perm-overview") #{item.label}
+            each group in permissionList
+              .permission-group
+                h4.permission-title #{group.group}
+
+                each item in group.permissions
+                  .check-item
+                    input(
+                      type="checkbox"
+                      name="permissions"
+                      value=item.value
+                      id=item.value
+                      checked=roleDetail.permissions.includes(item.value)
+                    )
+                    label(for=item.value) #{item.label}
                 
         .form-group
       .form-actions-stacked

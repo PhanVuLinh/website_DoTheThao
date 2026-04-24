@@ -1,0 +1,32 @@
+extends ../layouts/default.pug
+
+block main
+  .auth-page
+    .container
+      .auth-box
+        h2.auth-title Tạo Tài Khoản
+        p.auth-subtitle Mua sắm dễ dàng và nhận nhiều ưu đãi hơn.
+        
+        form(action="/user/register" method="POST")
+          .form-group
+            label(for="fullName") Họ và Tên
+            input#fullName.form-control(type="text" name="fullName" placeholder="Nhập họ và tên" )
+
+          .form-group
+            label(for="email") Email
+            input#email.form-control(type="email" name="email" placeholder="Nhập email" )
+            
+          .form-group
+            label(for="password") Mật khẩu
+            input#password.form-control(type="password" name="password" placeholder="Tạo mật khẩu" )
+
+          .form-group
+            label(for="confirmPassword") Xác nhận mật khẩu
+            input#confirmPassword.form-control(type="password" name="confirmPassword" placeholder="Nhập lại mật khẩu" )
+            
+          button.btn-auth(type="submit") 
+            | Đăng Ký
+            
+        .auth-redirect
+          | Đã có tài khoản? 
+          a(href="/user/login") Đăng nhập

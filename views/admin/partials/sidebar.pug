@@ -8,37 +8,45 @@ aside.admin-sidebar
       a(href=`/${pathAdmin}/dashboard`)
         i.fa-solid.fa-chart-pie
         span Tổng quan
-    li
-      a(href=`/${pathAdmin}/category/list`)
-        i.fa-solid.fa-table-cells-large
-        span Quản lý danh mục
-    li
-      a(href=`/${pathAdmin}/product/list`)
-        i.fa-solid.fa-box-open
-        span Quản lý sản phẩm
-    li
-      a(href=`/${pathAdmin}/order/list`)
-        i.fa-solid.fa-cart-shopping
-        span Quản lý đơn hàng
-    li
-      a(href=`/${pathAdmin}/user/list`)
-        i.fa-solid.fa-users
-        span Quản lý người dùng
-    li
-      a(href=`/${pathAdmin}/contact/list`)
-        i.fa-solid.fa-address-book
-        span Thông tin liên hệ
+    if(role.permissions.includes("category_view"))
+      li
+        a(href=`/${pathAdmin}/category/list`)
+          i.fa-solid.fa-table-cells-large
+          span Quản lý danh mục
+    if(role.permissions.includes("product_view"))
+      li
+        a(href=`/${pathAdmin}/product/list`)
+          i.fa-solid.fa-box-open
+          span Quản lý sản phẩm
+    
+    if(role.permissions.includes("order_view"))
+      li
+        a(href=`/${pathAdmin}/order/list`)
+          i.fa-solid.fa-cart-shopping
+          span Quản lý đơn hàng
+    if(role.permissions.includes("user_view"))
+      li
+        a(href=`/${pathAdmin}/user/list`)
+          i.fa-solid.fa-users
+          span Quản lý người dùng
+    if(role.permissions.includes("contact_view"))
+      li
+        a(href=`/${pathAdmin}/contact/list`)
+          i.fa-solid.fa-address-book
+          span Thông tin liên hệ
 
   .sidebar-footer
     ul.sidebar-menu.bottom-menu
-      li
-        a(href=`/${pathAdmin}/setting/list`)
-          i.fa-solid.fa-gear
-          span Cài đặt chung
-      li
-        a(href=`/${pathAdmin}/profile/edit`)
-          i.fa-regular.fa-user
-          span Thông tin cá nhân
+      if(role.permissions.includes("setting_view"))
+        li
+          a(href=`/${pathAdmin}/setting/list`)
+            i.fa-solid.fa-gear
+            span Cài đặt chung
+      if(role.permissions.includes("profile_view"))
+        li
+          a(href=`/${pathAdmin}/profile/edit`)
+            i.fa-regular.fa-user
+            span Thông tin cá nhân
     
     a(href=`/${pathAdmin}/auth/logout`).logout-btn
       i.fa-solid.fa-arrow-right-from-bracket

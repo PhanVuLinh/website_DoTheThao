@@ -31,6 +31,60 @@ a {
   color: inherit;
 }
 
+///////////
+.access-denied-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  text-align: center;
+  padding: 20px;
+}
+
+.access-denied-content {
+  max-width: 500px;
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.icon-box {
+  font-size: 80px;
+  color: #e74c3c; /* Màu đỏ cảnh báo */
+  margin-bottom: 20px;
+}
+
+.access-denied-content .title {
+  font-size: 24px;
+  color: #2c3e50;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.access-denied-content .message {
+  color: #7f8c8d;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.btn-home {
+  display: inline-block;
+  padding: 12px 25px;
+  background-color: #3498db;
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-home:hover {
+  background-color: #2980b9;
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+  color: white;
+}
+
 /* =========================================
    2. GIAO DIỆN ĐĂNG NHẬP (AUTH)
    ========================================= */
@@ -1522,32 +1576,101 @@ textarea.form-control {
 /* =========================================
    12. TRANG NHÓM QUYỀN (ROLES)
    ========================================= */
-.permissions-box {
-  background-color: var(--bg-input);
+.permissions-grid {
+  display: grid;
+  /* Tự động chia cột, mỗi cột tối thiểu 280px */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.permission-card {
+  background-color: var(--white);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 20px 25px;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.permission-card:hover {
+  border-color: var(--blue-active);
+  box-shadow: 0 5px 15px rgba(70, 107, 214, 0.08);
+  transform: translateY(-2px);
+}
+
+.permission-card-header {
+  background-color: #fafbfe;
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.permission-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--blue-dark);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.permission-title i {
+  color: var(--blue-active);
+  font-size: 14px;
+}
+
+.permission-card-body {
+  padding: 15px 20px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 14px;
 }
+
 .check-item {
   display: flex;
   align-items: center;
   gap: 10px;
+  position: relative;
 }
+
 .check-item input[type="checkbox"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
   accent-color: var(--blue-active);
+  border-radius: 4px;
+  transition: 0.2s;
 }
+
+.check-item input[type="checkbox"]:hover {
+  transform: scale(1.1);
+}
+
 .check-item label {
   margin-bottom: 0;
   font-weight: 500;
   cursor: pointer;
   font-size: 14px;
   color: var(--text-dark);
+  user-select: none; 
+  transition: color 0.2s;
+}
+
+.check-item input[type="checkbox"]:checked + label {
+  color: var(--blue-active);
+  font-weight: 600;
+}
+
+.check-all-wrapper span {
+  font-size: 13px;
+  color: var(--text-gray);
+  font-weight: 600;
+  user-select: none;
+  cursor: pointer;
 }
 
 /* =========================================

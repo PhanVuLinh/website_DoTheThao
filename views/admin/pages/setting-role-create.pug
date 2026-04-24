@@ -13,21 +13,39 @@ block main
       .form-row-2
         .form-group
           label Tên nhóm quyền
-          input.form-control(type="text" name="name" placeholder="Ví dụ: Quản trị viên")
+          input.form-control(type="text" name="name" placeholder="Ví dụ: Quản trị viên" required)
         
         .form-group
           label Mô tả ngắn
           input.form-control(type="text" name="description" placeholder="Ví dụ: Có đầy đủ các quyền")
 
-      .form-row-2
-        .form-group
-          label Phân quyền
-          .permissions-box
-            each item in permissionList
-              .check-item
-                input(type="checkbox" name="permissions" value=item.value)
-                label(for="perm-overview") #{item.label}
+      .form-group
+        label Phân quyền chi tiết
+        .permissions-grid
+          each group in permissionList
+            .permission-card
+              .permission-card-header
+                h4.permission-title 
+                  i.fa-solid.fa-shield-halved
+                  | #{group.group}
                 
-        .form-group
+                label.check-item.check-all-wrapper
+                  input(type="checkbox" class="check-all-group")
+                  span Tất cả
+              
+              .permission-card-body
+                each item in group.permissions
+                  .check-item
+                    input(
+                      type="checkbox"
+                      name="permissions"
+                      value=item.value
+                      id=item.value
+                      class="check-item-input"
+                    )
+                    label(for=item.value) #{item.label}
+                
       .form-actions-stacked
-        button.btn-submit.btn-submit-large(type="submit") Tạo mới
+        button.btn-submit.btn-submit-large(type="submit") 
+          i.fa-solid.fa-plus(style="margin-right: 8px;")
+          | Tạo mới nhóm quyền

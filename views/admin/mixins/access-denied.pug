@@ -1,0 +1,14 @@
+mixin access-denied()
+  .access-denied-wrapper
+    .access-denied-content
+      .icon-box
+        i.fa-solid.fa-user-lock.fa-bounce
+      h2.title Rất tiếc! Bạn không có quyền truy cập
+      p.message 
+        | Khu vực này chỉ dành cho tài khoản có quyền hạn phù hợp. 
+        br
+        | Vui lòng liên hệ quản trị viên hoặc quay lại trang chủ.
+      .actions
+        a.btn-home(href=`/${pathAdmin}/dashboard`) 
+          i.fa-solid.fa-house.me-2
+          | Quay về trang tổng quan
