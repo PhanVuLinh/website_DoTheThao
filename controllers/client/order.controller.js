@@ -8,6 +8,11 @@ const variableCongfig = require("../../config/variable");
 
 module.exports.createPost = async (req, res) => {
   try {
+    if (!req.cookies.token) {
+      req.session.returnTo = "/cart";
+      req.flash("error", "Vui lòng đăng nhập để đặt hàng!");
+      return res.redirect("/user/login");
+    }
     req.body.orderCode = "DH" + generateHelper.generateOrderCode(10);
     const cartId = req.cookies.cartId;
     const cart = await Cart.findOne({
