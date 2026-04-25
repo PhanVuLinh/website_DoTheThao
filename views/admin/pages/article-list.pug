@@ -1,0 +1,117 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+include ../mixins/pagination.pug
+
+block main
+  +alert-success(3000)
+  +alert-error(3000)
+  h1.page-title Quản lý bài viết 
+
+  //- 1. KHỐI BỘ LỌC VÀ HÀNH ĐỘNG
+  .filter-action-card
+    .filter-row
+      .filter-label
+        i.fa-solid.fa-filter
+        span Bộ lọc
+      
+      //- Lọc theo trạng thái
+      select.form-select(name="status")
+        option(value="") Tất cả trạng thái
+        option(value="active") Đang hoạt động
+        option(value="inactive") Tạm dừng
+        
+      button.btn-clear(filter-reset)
+        i.fa-solid.fa-rotate-right
+        | Xóa bộ lọc
+
+    .action-row
+      .bulk-action
+        select.form-select(name="type")
+          option(value="") -- Hành động nhiều --
+          option(value="active") Chuyển thành Hoạt động
+          option(value="inactive") Chuyển thành Tạm dừng
+          option(value="delete-all") Xóa tất cả
+        button.btn-apply(type="button") Áp dụng
+        
+      .search-box-large
+        i.fa-solid.fa-magnifying-glass
+        input(type="text" placeholder="Tìm kiếm tiêu đề bài viết..." search)
+        
+      .action-buttons-right
+        a(href=`/${pathAdmin}/article/create`).btn-create
+          i.fa-solid.fa-plus
+          | Tạo mới
+        a(href=`/${pathAdmin}/article/trash`).btn-trash
+          i.fa-regular.fa-trash-can
+          | Thùng rác
+
+  //- 2. KHỐI BẢNG DANH SÁCH BLOG
+  .table-section
+    .table-responsive
+      table.admin-table.table-hover
+        thead
+          tr
+            th.text-center(width="50px")
+              input(type="checkbox" name="checkall")
+            th Tiêu đề 
+            th Hình ảnh
+            th Vị trí
+            th Trạng thái
+            th Tạo bởi
+            th Cập nhật bởi
+            th Hành động
+        
+        tbody
+          if articleList && articleList.length > 0
+            each item in articleList
+              tr
+                td.text-center
+                  input(type="checkbox" name="id" value=item.id)
+                
+                td.font-weight-600 #{item.title}
+                
+                td
+                  img.td-thumbnail(src=item.thumbnail alt=item.title)
+                
+                td #{item.position}
+                
+                td
+                  span(class=`badge-status ${item.status == "active" ? "badge-active" : "badge-inactive"}`) #{item.status == "active" ? "Hoạt động" : "Tạm dừng" }
+                
+                td
+                  .user-date
+                    span.name #{item.createdByFullName}
+                    span.time #{item.createdAtFormat}
+                td
+                  .user-date
+                    span.name #{item.updatedByFullName}
+                    span.time #{item.updatedAtFormat}
+
+                td
+                  .action-btns
+                    a(href=`/${pathAdmin}/article/edit/${item.id}`).btn-edit
+                      i.fa-regular.fa-pen-to-square
+                    button.btn-delete(button-delete data-id=item.id)
+                      i.fa-regular.fa-trash-can
+          else 
+            tr
+              td(colspan="7" class="text-center" style="padding: 30px; color: #777;") Chưa có bài viết nào. Hãy bấm "Tạo mới" để thêm bài viết!
+
+    //- 3. PHÂN TRANG (PAGINATION)
+    if pagination
+      .admin-pagination
+        +pagination(pagination)
+
+  form(
+    action=""
+    method="POST"
+    id="form-change-status"
+    data-path=`/${pathAdmin}/blog/change-status`
+  )
+  
+  form(
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`/${pathAdmin}/article/delete`
+  )

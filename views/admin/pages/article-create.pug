@@ -1,0 +1,54 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+
+block main
+  +alert-error(3000)
+  +alert-success(3000)
+  
+  .page-header
+    h1.page-title Tạo bài viết
+    a.btn-back(href=`/${pathAdmin}/article/list`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  .form-card
+    form(action=`/${pathAdmin}/article/create` method="POST" enctype="multipart/form-data")
+      
+      .form-group
+        label Tiêu đề bài viết
+        input.form-control(type="text" name="title" placeholder="Ví dụ: Top 5 đôi giày chạy bộ tốt nhất 2026...")
+            
+      .form-row-2
+        .form-group
+          label Vị trí
+          input.form-control(type="number" name="position" placeholder="Tự động tăng")
+        
+        .form-group
+          label Trạng thái
+          select.form-control(name="status")
+            option(value="active") Hoạt động
+            option(value="inactive") Tạm dừng
+
+      .form-group
+        label Ảnh đại diện (Thumbnail)
+        .upload-image-wrapper(upload-image-wrapper)
+          input#thumbnail-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
+          label.upload-box(for="thumbnail-upload" upload-image-label)
+            i.fa-solid.fa-plus
+          .image-preview-container.hidden(upload-image-preview-container)
+            img(upload-image-preview src="" alt="Preview")
+            button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+              i.fa-solid.fa-xmark
+
+      .form-group
+        label Mô tả ngắn gọn
+        textarea.form-control(name="description" rows="3" placeholder="Nhập đoạn mô tả ngắn hiển thị bên ngoài danh sách bài viết...")
+
+      .form-group
+        label Nội dung chi tiết
+        textarea.form-control.textarea-mce(name="content" rows="15" placeholder="Viết nội dung chi tiết của bài viết tại đây...")
+
+      .form-actions
+        button.btn-submit(type="submit") 
+          i.fa-solid.fa-floppy-disk
+          |  Tạo bài viết

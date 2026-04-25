@@ -6,7 +6,6 @@ block main
   +alert-error(3000)
   +alert-success(3000)
   
-  //- Phần Header của trang
   .page-header
     h1.page-title Tạo sản phẩm
     a.btn-back(href=`/${pathAdmin}/product/list`) 
@@ -16,7 +15,6 @@ block main
   .form-card
     form(action=`/${pathAdmin}/product/create` method="POST" enctype="multipart/form-data")
       
-      //- Hàng 1: Tên & Danh mục
       .form-row-2
         .form-group
           label Tên sản phẩm
@@ -28,7 +26,6 @@ block main
             option(value="") -- Chọn danh mục --
             +options(categoryList,0)
         
-      //- Hàng 2: Vị trí & Trạng thái
       .form-row-2
         .form-group
           label Vị trí
@@ -41,7 +38,6 @@ block main
             option(value="inactive") Tạm dừng
 
       .form-row-2 
-        //- Hàng 3: Khối Upload Ảnh
         .form-group
           label Ảnh đại diện
           .upload-image-wrapper(upload-image-wrapper)

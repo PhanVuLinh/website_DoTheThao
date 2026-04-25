@@ -7,6 +7,7 @@ const contactRoutes = require("../client/contact.route");
 const categoryRoutes = require("../client/category.route");
 const orderRoutes = require("../client/order.route");
 const userRoutes = require("../client/user.route");
+const articleRoutes = require("../client/article.route");
 
 const settingMiddleware = require("../../middlewares/client/setting.middleware");
 const categoryMiddleware = require("../../middlewares/client/category.middleware");
@@ -31,5 +32,7 @@ router.use("/category", categoryRoutes);
 router.use("/order", orderRoutes);
 
 router.use("/user", userRoutes);
+
+router.use("/article", articleRoutes);
 
 module.exports = router;

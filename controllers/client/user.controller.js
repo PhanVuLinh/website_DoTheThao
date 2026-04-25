@@ -83,6 +83,10 @@ module.exports.registerPost = async (req, res) => {
 };
 
 module.exports.logout = async (req, res) => {
+  await Cart.updateOne(
+    { _id: req.cookies.cartId },
+    { $unset: { user_id: "" } },
+  );
   res.clearCookie("token");
   res.redirect("/");
 };

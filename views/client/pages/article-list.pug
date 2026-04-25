@@ -1,0 +1,43 @@
+extends ../layouts/default.pug
+include ../mixins/box-breadcrumb.pug
+
+block main
+  +box-breadcrumb(breadcrumb)
+
+  .article-list-page
+    .container
+      .article-grid
+        if articles && articles.length > 0
+          each item in articles
+            article.article-card
+              a.article-card__img(href=`/article/${item.slug}`)
+                img(src=item.thumbnail, alt=item.title)
+              
+              .article-card__content
+                .article-card__meta
+                  span.date
+                    i.fa-regular.fa-calendar-days
+                    |  #{item.createdAt ? moment(item.createdAt).format('DD/MM/YYYY') : 'Đang cập nhật'}
+                
+                h3.article-card__title
+                  a(href=`/article/${item.slug}`) #{item.title}
+                
+                p.article-card__desc #{item.description}
+                
+                a.article-card__readmore(href=`/article/${item.slug}`) 
+                  | Xem chi tiết 
+                  i.fa-solid.fa-arrow-right-long
+        else
+          .empty-state
+            p Nội dung đang được cập nhật. Vui lòng quay lại sau!
+
+      if pagination && pagination.totalPage > 1
+        .box-pagination
+          ul.pagination-list
+            //- Ví dụ các nút phân trang
+            li.pagination-item.active
+              a(href="#") 1
+            li.pagination-item
+              a(href="#") 2
+            li.pagination-item
+              a(href="#") 3

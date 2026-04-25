@@ -35,6 +35,11 @@ aside.admin-sidebar
           i.fa-solid.fa-address-book
           span Thông tin liên hệ
 
+      li
+        a(href=`/${pathAdmin}/article/list`)
+          i.fa-solid.fa-newspaper
+          span Quản lý bài viết
+
   .sidebar-footer
     ul.sidebar-menu.bottom-menu
       if(role.permissions.includes("setting_view"))

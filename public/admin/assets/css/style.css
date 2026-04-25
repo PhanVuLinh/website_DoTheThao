@@ -1616,6 +1616,7 @@ textarea.form-control {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding-bottom: 5px;
 }
 
 .permission-title i {
@@ -1635,6 +1636,7 @@ textarea.form-control {
   align-items: center;
   gap: 10px;
   position: relative;
+  padding-bottom: 5px;
 }
 
 .check-item input[type="checkbox"] {
