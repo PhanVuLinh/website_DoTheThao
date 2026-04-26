@@ -78,3 +78,52 @@ module.exports.delete = async (req, res) => {
     res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
   }
 };
+
+module.exports.edit = async (req, res) => {
+  try {
+    const articleDetail = await Article.findOne({
+      _id: req.params.id,
+      deleted: false,
+    });
+
+    res.render("admin/pages/article-edit.pug", {
+      title: "Chỉnh sửa bài viết",
+      articleDetail: articleDetail,
+    });
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
+  }
+};
+
+module.exports.editPatch = async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (req.body.position) {
+      req.body.position = parseInt(req.body.position);
+    } else {
+      const totalArticles = await Article.countDocuments({});
+      req.body.position = totalArticles + 1;
+    }
+    req.body.updatedBy = req.account.id;
+    if (req.file) {
+      req.body.thumbnail = req.file.path;
+    } else {
+      delete req.body.thumbnail;
+    }
+
+    await Article.updateOne(
+      {
+        _id: id,
+        deleted: false,
+      },
+      req.body,
+    );
+
+    req.flash("success", "Chinh sửa bài viết thành công");
+    res.redirect(`/${variableCongfig.pathAdmin}/article/edit/${id}`);
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
+  }
+};

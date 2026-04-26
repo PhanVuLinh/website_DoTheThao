@@ -23,4 +23,13 @@ router.post(
 
 router.delete("/delete/:id", articleController.delete);
 
+router.get("/edit/:id", articleController.edit);
+
+router.patch(
+  "/edit/:id",
+  upload.single("thumbnail"),
+  validate.editPost,
+  articleController.editPatch,
+);
+
 module.exports = router;
