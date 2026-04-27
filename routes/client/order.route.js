@@ -6,4 +6,11 @@ router.post("/create", orderController.createPost);
 
 router.get("/success/:orderId", orderController.orderSuccess);
 
+router.get("/payment-zalopay/:orderId", orderController.paymentZalopay);
+
+router.post(
+  "/payment-zalopay-result/:orderId",
+  orderController.paymentZalopayResult,
+);
+
 module.exports = router;
