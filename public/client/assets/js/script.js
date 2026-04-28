@@ -264,3 +264,20 @@ if (qtyInput && btnPlus && btnMinus) {
   });
 }
 // end product quantity and size
+
+//form search
+const formSearch = document.querySelector("[form-search]");
+if (formSearch) {
+  const url = new URL(`${window.location.origin}/search`);
+  formSearch.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const keyword = formSearch.querySelector('input[name="keyword"]').value;
+    if (keyword) {
+      url.searchParams.set("keyword", keyword);
+    } else {
+      url.searchParams.delete("keyword");
+    }
+    window.location.href = url.href;
+  });
+}
+//End form search

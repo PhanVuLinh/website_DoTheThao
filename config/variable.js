@@ -10,6 +10,10 @@ module.exports.paymentMethod = [
     value: "momo",
   },
   {
+    label: "Ví ZaloPay",
+    value: "zaloPay",
+  },
+  {
     label: "Chuyển khoản ngân hàng",
     value: "bank",
   },

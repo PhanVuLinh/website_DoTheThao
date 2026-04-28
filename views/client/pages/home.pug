@@ -22,21 +22,10 @@ block main
           | vượt trội, thiết kế tối ưu cho mọi chuyển động.
         
         .hero__search-box
-          form.hero-search-form
+          form.hero-search-form(form-search)
             i.fa-solid.fa-magnifying-glass.icon-search
-            input(placeholder="Bạn muốn tìm gì hôm nay?" type="text")
+            input(placeholder="Bạn muốn tìm gì hôm nay?" type="text" name="keyword" keyword)
             button(type="submit") Tìm Kiếm
-        //- .hero__suggestions
-        //-   span.suggestion-label Gợi ý:
-        //-   a.suggestion-pill(href="#")
-        //-     i.fa-solid.fa-shoe-prints
-        //-     span Giày
-        //-   a.suggestion-pill(href="#")
-        //-     i.fa-solid.fa-shirt
-        //-     span Quần áo
-        //-   a.suggestion-pill(href="#")
-        //-     i.fa-solid.fa-volleyball
-        //-     span Phụ kiện
   // END SECTION 1: HERO
 
   // SECTION 2: CATEGORIES

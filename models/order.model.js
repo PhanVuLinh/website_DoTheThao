@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
   {
-    user_id: String, //chua cần vì chưa làm đăng ký
+    user_id: String, 
     cartId: String,
     orderCode: String,
     fullName: String,

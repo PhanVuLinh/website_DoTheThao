@@ -1,0 +1,93 @@
+extends ../layouts/default.pug
+include ../mixins/product-item.pug
+
+block main
+  section.product-list-page.search-result-page
+    .container
+      .product-list-page__inner
+
+        aside.product-filter
+          form(action="/search" method="GET")
+            //- Cực kỳ quan trọng: Phải giữ lại keyword ẩn để khi bấm Lọc không bị mất từ khóa tìm kiếm
+            if keyword
+              input(type="hidden" name="keyword" value=keyword)
+
+            .product-filter__header
+              i.fa-solid.fa-filter
+              h3.filter-title Bộ Lọc
+              
+            .filter-group
+              h4.filter-group-title Khoảng Giá
+              ul.filter-list
+                li
+                  label
+                    input(type="radio" name="price" value="under-1m" checked=(queryPrice === "under-1m"))
+                    |  Dưới 1 Triệu
+                li
+                  label
+                    input(type="radio" name="price" value="1m-to-3m" checked=(queryPrice === "1m-to-3m"))
+                    |  1 Triệu - 3 Triệu
+                li
+                  label
+                    input(type="radio" name="price" value="over-3m" checked=(queryPrice === "over-3m"))
+                    |  Trên 3 Triệu
+
+            .filter-group
+              h4.filter-group-title Thương Hiệu
+              ul.filter-list
+                li
+                  label
+                    input(type="checkbox" name="brand" value="nike" checked=(queryBrand && queryBrand.includes("nike")))
+                    |  Nike
+                li
+                  label
+                    input(type="checkbox" name="brand" value="adidas" checked=(queryBrand && queryBrand.includes("adidas")))
+                    |  Adidas
+
+            button.btn-apply-filter(type="submit") Áp Dụng Lọc
+
+        main.product-content
+          
+          .search-header
+            h1.search-title 
+              | Kết quả tìm kiếm cho: 
+              span.keyword "#{keyword}"
+            p.search-count 
+              | Tìm thấy 
+              strong #{productList ? productList.length : 0} 
+              | sản phẩm phù hợp
+
+          if productList && productList.length > 0
+            
+            //- Thanh sắp xếp (Ghi đè bằng CSS)
+            .product-content__header.search-sort-header
+              .header-sort
+                span Sắp xếp:
+                select.sort-select
+                  option(value="newest") Mới Nhất
+                  option(value="price-asc") Giá tăng dần
+                  option(value="price-desc") Giá giảm dần
+            
+            .product-content__grid
+              each item in productList
+                +productItem(item)
+
+            if pagination
+              .box-pagination
+                ul.pagination-list
+                  li.pagination-item.prev.disabled: a(href="#"): i.fa-solid.fa-angle-left
+                  li.pagination-item.active: a(href="#") 1
+                  li.pagination-item: a(href="#") 2
+                  li.pagination-item: a(href="#") 3
+                  li.pagination-item.dot ...
+                  li.pagination-item.next: a(href="#"): i.fa-solid.fa-angle-right
+          
+          else
+            .empty-search
+              .empty-icon
+                i.fa-solid.fa-magnifying-glass-minus
+              h3 Không tìm thấy kết quả nào!
+              p Rất tiếc, chúng tôi không tìm thấy sản phẩm nào phù hợp với từ khóa <strong>"#{keyword}"</strong>.
+              a.btn-view-all-outline(href="/products") 
+                i.fa-solid.fa-shop
+                | Tiếp tục mua sắm

@@ -171,7 +171,7 @@ module.exports.paymentZalopay = async (req, res) => {
     };
 
     const embed_data = {
-      redirecturl: `${process.env.DOMAIN_WEBSITE}/order/success/${orderDetail.id}`,
+      redirecturl: `${process.env.DOMAIN_WEBSITE}/order/payment-zalopay-result/${orderDetail.id}`,
     };
     const items = [];
     const transID = Math.floor(Math.random() * 1000000);
@@ -183,7 +183,7 @@ module.exports.paymentZalopay = async (req, res) => {
       app_time: Date.now(),
       item: JSON.stringify(items),
       embed_data: JSON.stringify(embed_data),
-      amount: orderDetail.total,
+      amount: Math.round(Number(orderDetail.total)),
       description: `Thanh toán đơn hàng: ${orderDetail.orderCode}`,
       bank_code: "",
       callback_url: `${process.env.DOMAIN_WEBSITE}/order/payment-zalopay-result/${orderDetail.id}`,
