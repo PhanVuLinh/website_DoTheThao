@@ -425,7 +425,7 @@ ul {
 .hero-search-form button:hover {
   background: #c63f26;
 }
-.hero__suggestions {
+/* .hero__suggestions {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -452,7 +452,7 @@ ul {
   background: rgba(255, 255, 255, 0.2);
   border-color: var(--white);
   transform: translateY(-2px);
-}
+} */
 
 /* =========================================
    5. SECTIONS COMPONENTS (CÁC KHỐI TRANG CHỦ)

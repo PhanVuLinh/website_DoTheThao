@@ -1,5 +1,7 @@
+const moment = require("moment");
 const Product = require("../../models/product.model");
 const Category = require("../../models/category.model");
+const Article = require("../../models/article.model");
 
 const productPriceHelper = require("../../helpers/getPriceNew.helper.js");
 module.exports.index = async (req, res) => {
@@ -53,11 +55,32 @@ module.exports.index = async (req, res) => {
   const newProductListSection7 =
     productPriceHelper.priceNewProduct(productListSection7);
   //End section 7
+
+  //section 9
+  const articleListSection9 = await Article.find({
+    deleted: false,
+    status: "active",
+  })
+    .sort({ createdAt: "desc" })
+    .limit(5);
+
+  for (const item of articleListSection9) {
+    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+  }
+
+  const newsCenter = articleListSection9[0] || null;
+  const newsLeft = articleListSection9.slice(1, 3);
+  const newsRight = articleListSection9.slice(3, 5);
+
+  //End section 9
   res.render("client/pages/home.pug", {
     title: "Trang chủ",
     productListSection3: newProductListSection3,
     productFeaturedSection5: newProductFeaturedSection5,
     productListSection7: newProductListSection7,
     categoryChildren: categoryChildren,
+    newsCenter: newsCenter,
+    newsLeft: newsLeft,
+    newsRight: newsRight,
   });
 };

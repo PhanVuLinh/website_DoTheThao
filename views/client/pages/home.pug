@@ -26,17 +26,17 @@ block main
             i.fa-solid.fa-magnifying-glass.icon-search
             input(placeholder="Bạn muốn tìm gì hôm nay?" type="text")
             button(type="submit") Tìm Kiếm
-        .hero__suggestions
-          span.suggestion-label Gợi ý:
-          a.suggestion-pill(href="#")
-            i.fa-solid.fa-shoe-prints
-            span Giày
-          a.suggestion-pill(href="#")
-            i.fa-solid.fa-shirt
-            span Quần áo
-          a.suggestion-pill(href="#")
-            i.fa-solid.fa-volleyball
-            span Phụ kiện
+        //- .hero__suggestions
+        //-   span.suggestion-label Gợi ý:
+        //-   a.suggestion-pill(href="#")
+        //-     i.fa-solid.fa-shoe-prints
+        //-     span Giày
+        //-   a.suggestion-pill(href="#")
+        //-     i.fa-solid.fa-shirt
+        //-     span Quần áo
+        //-   a.suggestion-pill(href="#")
+        //-     i.fa-solid.fa-volleyball
+        //-     span Phụ kiện
   // END SECTION 1: HERO
 
   // SECTION 2: CATEGORIES
@@ -95,39 +95,6 @@ block main
           i.fa-solid.fa-chevron-right
   // END SECTION 3: FLASH DEALS
 
-  // SECTION 4: KHUYẾN MẠI THỂ THAO
-  section.promotions
-    .promotions__container
-      h2.promotions__title Siêu Sale Thể Thao - Bứt Phá Giới Hạn
-      .promotions__slider
-        .promotions__list#promo-track
-          .promotions__item
-            a(href="#")
-              img(src="https://images.unsplash.com/photo-1556906781-9a412961c28c?q=80&w=800&auto=format&fit=crop", alt="Sale Giày Chạy Bộ")
-          .promotions__item
-            a(href="#")
-              img(src="https://images.unsplash.com/photo-1511886929837-354d827aae26?q=80&w=800&auto=format&fit=crop", alt="Bộ Sưu Tập Bóng Đá Mùa Giải Mới")
-          .promotions__item
-            a(href="#")
-              img(src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop", alt="Thời trang Gym & Training")
-          .promotions__item
-            a(href="#")
-              img(src="https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=800&auto=format&fit=crop", alt="Đồ Bóng Rổ & Phụ Kiện")
-          .promotions__item
-            a(href="#")
-              img(src="https://images.unsplash.com/photo-1483721310020-03333e577078?q=80&w=800&auto=format&fit=crop", alt="Quần Áo Thể Thao Nữ")
-          .promotions__item
-            a(href="#")
-              img(src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?q=80&w=800&auto=format&fit=crop", alt="Vợt & Phụ kiện Cầu Lông")
-
-      //- Khối chấm tròn (Pagination dots)
-      .promotions__dots#promo-dots
-        span.dot.active(data-index="0")
-        span.dot(data-index="1")
-        span.dot(data-index="2")
-        span.dot(data-index="3")
-  // END SECTION 4
-
   // SECTION 5: SẢN PHẨM NỔI BẬT
   section.featured-products
     .featured-products__container
@@ -164,43 +131,9 @@ block main
         a.btn-view-all-outline(href="#") 
           | Xem Tất Cả 
           i.fa-solid.fa-arrow-right-long
-    // END SECTION 7
+  // END SECTION 7
 
-    // SECTION 9: TIN TỨC MỚI (CHỦ ĐỀ BÓNG ĐÁ & BÓNG CHUYỀN)
-  -
-    var newsCenter = {
-      image: "https://images.unsplash.com/photo-1614632537197-38a17061c2bd?q=80&w=800&auto=format&fit=crop", // Ảnh giày đá bóng đinh
-      date: "28/03/2026",
-      title: "Top 5 Mẫu Giày Đá Bóng Sân Cỏ Nhân Tạo Đáng Mua Nhất 2026",
-      desc: "Khám phá những siêu phẩm giày bóng đá đinh dăm (TF) từ Nike, Adidas, Puma giúp bạn bứt tốc, bám sân và kiểm soát bóng cực đỉnh trên mặt sân nhân tạo..."
-    }
-    
-    var newsLeft = [
-      {
-        image: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=500&auto=format&fit=crop", // Ảnh đập bóng chuyền
-        date: "25/03/2026",
-        title: "Bí Quyết Chọn Bóng Chuyền Hơi & Da Chuẩn Cảm Giác Thi Đấu"
-      },
-      {
-        image: "https://images.unsplash.com/photo-1508344928928-7165b67de128?q=80&w=500&auto=format&fit=crop", // Ảnh áo bóng đá
-        date: "22/03/2026",
-        title: "Hướng Dẫn Chọn Quần Áo Bóng Đá Thoáng Khí Cho Mùa Hè Oi Bức"
-      }
-    ]
-    
-    var newsRight = [
-      {
-        image: "https://images.unsplash.com/photo-1592656094267-764a45160876?q=80&w=500&auto=format&fit=crop", // Ảnh sân bóng chuyền
-        date: "20/03/2026",
-        title: "Các Loại Bó Gối, Phụ Kiện Không Thể Thiếu Cho Dân Đập Bóng"
-      },
-      {
-        image: "https://images.unsplash.com/photo-1553775282-20af80779df7?q=80&w=500&auto=format&fit=crop", // Ảnh găng tay thủ môn
-        date: "18/03/2026",
-        title: "Đánh Giá Chi Tiết Dòng Găng Tay Thủ Môn Predator Cực Dính"
-      }
-    ]
-
+  // SECTION 9: TIN TỨC MỚI 
   section.news-section(data-aos="fade-up" data-aos-duration="800")
     .news-section__container
       h2.section-title Tin Tức Mới
@@ -209,30 +142,30 @@ block main
         // Cột Trái (2 bài nhỏ)
         .news-col.news-col--side
           each item in newsLeft
-            a.news-card-small(href="#")
-              img(src=item.image, alt=item.title)
+            a.news-card-small(href=`/article/${item.slug}`)
+              img(src=item.thumbnail, alt=item.title)
               .news-card-small__overlay
-                span.date= item.date
+                span.date= item.createdAtFormat
                 h4.title= item.title
 
         // Cột Giữa (1 bài lớn)
         .news-col.news-col--center
           article.news-card-large
-            a.news-card-large__img(href="#")
-              img(src=newsCenter.image, alt=newsCenter.title)
+            a.news-card-large__img(href=`/article/${newsCenter.slug}`)
+              img(src=newsCenter.thumbnail, alt=newsCenter.title)
             .news-card-large__content
-              span.date= newsCenter.date
+              span.date= newsCenter.createdAtFormat
               h3.title
-                a(href="#")= newsCenter.title
-              p.desc= newsCenter.desc
+                a(href=`/article/${newsCenter.slug}`)= newsCenter.title
+              p.desc= newsCenter.description
 
         // Cột Phải (2 bài nhỏ)
         .news-col.news-col--side
           each item in newsRight
-            a.news-card-small(href="#")
-              img(src=item.image, alt=item.title)
+            a.news-card-small(href=`/article/${item.slug}`)
+              img(src=item.thumbnail, alt=item.title)
               .news-card-small__overlay
-                span.date= item.date
+                span.date= item.createdAtFormat
                 h4.title= item.title
   // END SECTION 9
     

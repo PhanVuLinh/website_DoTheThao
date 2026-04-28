@@ -4,6 +4,7 @@ const CryptoJS = require("crypto-js");
 const Cart = require("../../models/cart.model");
 const Product = require("../../models/product.model");
 const Order = require("../../models/order.model");
+const User = require("../../models/user.model");
 
 const generateHelper = require("../../helpers/generate.helper");
 const variableCongfig = require("../../config/variable");
@@ -15,6 +16,16 @@ module.exports.createPost = async (req, res) => {
       req.flash("error", "Vui lòng đăng nhập để đặt hàng!");
       return res.redirect("/user/login");
     }
+    const user = await User.findOne({
+      token: req.cookies.token,
+      deleted: false,
+    });
+    if (!user) {
+      req.flash("error", "Tài khoản không tồn tại!");
+      return res.redirect("/user/login");
+    }
+    req.body.user_id = user.id;
+
     req.body.orderCode = "DH" + generateHelper.generateOrderCode(10);
     const cartId = req.cookies.cartId;
     const cart = await Cart.findOne({
