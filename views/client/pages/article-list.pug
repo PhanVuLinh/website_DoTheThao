@@ -7,29 +7,25 @@ block main
   .article-list-page
     .container
       .article-grid
-        if articles && articles.length > 0
-          each item in articles
-            article.article-card
-              a.article-card__img(href=`/article/${item.slug}`)
-                img(src=item.thumbnail, alt=item.title)
+        each item in articles
+          article.article-card
+            a.article-card__img(href=`/article/detail/${item.slug}`)
+              img(src=item.thumbnail, alt=item.title)
+            
+            .article-card__content
+              .article-card__meta
+                span.date
+                  i.fa-regular.fa-calendar-days
+                  |  #{item.createdAtFormat}
               
-              .article-card__content
-                .article-card__meta
-                  span.date
-                    i.fa-regular.fa-calendar-days
-                    |  #{item.createdAt ? moment(item.createdAt).format('DD/MM/YYYY') : 'Đang cập nhật'}
-                
-                h3.article-card__title
-                  a(href=`/article/${item.slug}`) #{item.title}
-                
-                p.article-card__desc #{item.description}
-                
-                a.article-card__readmore(href=`/article/${item.slug}`) 
-                  | Xem chi tiết 
-                  i.fa-solid.fa-arrow-right-long
-        else
-          .empty-state
-            p Nội dung đang được cập nhật. Vui lòng quay lại sau!
+              h3.article-card__title
+                a(href=`/article/detail/${item.slug}`) #{item.title}
+              
+              p.article-card__desc #{item.description}
+              
+              a.article-card__readmore(href=`/article/detail/${item.slug}`) 
+                | Xem chi tiết 
+                i.fa-solid.fa-arrow-right-long
 
       if pagination && pagination.totalPage > 1
         .box-pagination

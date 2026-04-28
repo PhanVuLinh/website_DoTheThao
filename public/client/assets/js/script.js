@@ -307,3 +307,47 @@ document.querySelectorAll(".nav-links li").forEach((li) => {
     });
   }
 });
+
+
+/* =========================================
+   BỘ ĐẾM THỜI GIAN (FLASH DEALS TỚI CUỐI NGÀY)
+   ========================================= */
+const countdownBox = document.querySelector(".flash-promo__countdown");
+
+if (countdownBox) {
+  const nums = countdownBox.querySelectorAll(".num");
+
+  if (nums.length === 3) {
+    const timer = setInterval(() => {
+      const now = new Date(); // Lấy thời gian hiện tại
+
+      // Cài đặt thời gian kết thúc là 23:59:59 của ngày hôm nay
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
+
+      // Tính khoảng cách từ bây giờ đến cuối ngày (đơn vị: mili giây)
+      const distance = endOfDay.getTime() - now.getTime();
+
+      // Nếu hết thời gian (qua ngày mới) thì dừng đếm
+      if (distance <= 0) {
+        clearInterval(timer);
+        nums[0].innerText = "00";
+        nums[1].innerText = "00";
+        nums[2].innerText = "00";
+        return;
+      }
+
+      // Quy đổi mili giây ra Giờ, Phút, Giây
+      // 1 giờ = 1000ms * 60s * 60m
+      const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+      // In ra màn hình (thêm "0" nếu số bé hơn 10)
+      nums[0].innerText = h < 10 ? "0" + h : h;
+      nums[1].innerText = m < 10 ? "0" + m : m;
+      nums[2].innerText = s < 10 ? "0" + s : s;
+      
+    }, 1000); // Cập nhật lại mỗi 1 giây
+  }
+}

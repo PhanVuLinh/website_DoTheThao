@@ -1,0 +1,50 @@
+extends ../layouts/default.pug
+include ../mixins/box-breadcrumb.pug
+
+block main
+  +box-breadcrumb(breadcrumb)
+
+  section.product-detail-page
+    .container
+      .detail-grid
+        
+        .detail-left
+          .detail-card(style="padding: 40px;") 
+            h1.article-title #{article.title}
+            
+            .article-meta
+              span.meta-item
+                i.fa-regular.fa-calendar-days
+                |  Đăng ngày: #{article.createdAtFormat}
+            .article-content
+              | !{article.content}
+              
+            .article-share
+              span.share-label Chia sẻ bài viết:
+              .share-buttons
+                a.share-btn.btn-fb(href="#")
+                  i.fa-brands.fa-facebook-f
+                a.share-btn.btn-tw(href="#")
+                  i.fa-brands.fa-twitter
+                button.share-btn.btn-link
+                  i.fa-solid.fa-link
+
+        .detail-right
+          aside.detail-card.article-sidebar
+            h3.subtitle(style="margin-top: 0; padding-top: 0; border: none; border-bottom: 2px solid var(--red-main); padding-bottom: 10px; display: inline-block;") Bài Viết Mới
+            
+            .widget-content.mt-4
+              if newArticles && newArticles.length > 0
+                ul.recent-post-list
+                  each item in newArticles
+                    li.recent-post-item
+                      a.post-thumb(href=`/article/detail/${item.slug}`)
+                        img(src=item.thumbnail, alt=item.title)
+                      .post-info
+                        h4.post-title
+                          a(href=`/article/detail/${item.slug}`) #{item.title}
+                        span.post-date
+                          i.fa-regular.fa-clock
+                          |  #{item.createdAtFormat}
+              else
+                p.empty-text Chưa có bài viết nào khác.

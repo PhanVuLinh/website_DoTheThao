@@ -62,15 +62,15 @@ block main
         p.flash-promo__countdown-label Kết thúc sau:
         .flash-promo__countdown
           .countdown-box
-            span.num 12
+            span.num 
             span.label GIỜ
           span.colon :
           .countdown-box
-            span.num 20
+            span.num 
             span.label PHÚT
           span.colon :
           .countdown-box
-            span.num 30
+            span.num 
             span.label GIÂY
 
       .flash-products-wrapper
@@ -131,7 +131,7 @@ block main
         // Cột Trái (2 bài nhỏ)
         .news-col.news-col--side
           each item in newsLeft
-            a.news-card-small(href=`/article/${item.slug}`)
+            a.news-card-small(href=`/article/detail/${item.slug}`)
               img(src=item.thumbnail, alt=item.title)
               .news-card-small__overlay
                 span.date= item.createdAtFormat
@@ -140,18 +140,18 @@ block main
         // Cột Giữa (1 bài lớn)
         .news-col.news-col--center
           article.news-card-large
-            a.news-card-large__img(href=`/article/${newsCenter.slug}`)
+            a.news-card-large__img(href=`/article/detail${newsCenter.slug}`)
               img(src=newsCenter.thumbnail, alt=newsCenter.title)
             .news-card-large__content
               span.date= newsCenter.createdAtFormat
               h3.title
-                a(href=`/article/${newsCenter.slug}`)= newsCenter.title
+                a(href=`/article/detail/${newsCenter.slug}`)= newsCenter.title
               p.desc= newsCenter.description
 
         // Cột Phải (2 bài nhỏ)
         .news-col.news-col--side
           each item in newsRight
-            a.news-card-small(href=`/article/${item.slug}`)
+            a.news-card-small(href=`/article/detail/${item.slug}`)
               img(src=item.thumbnail, alt=item.title)
               .news-card-small__overlay
                 span.date= item.createdAtFormat
