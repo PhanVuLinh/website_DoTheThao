@@ -281,3 +281,29 @@ if (formSearch) {
   });
 }
 //End form search
+
+//sắp xếp sản phẩm
+const sortSelect = document.getElementById("sort-select");
+
+if (sortSelect) {
+  sortSelect.addEventListener("change", (e) => {
+    const value = e.target.value;
+    const url = new URL(window.location.href);
+    url.searchParams.set("sort", value);
+    window.location.href = url.href;
+  });
+}
+//End sắp xếp sản phẩm
+
+//Chặn click danh mục cha
+document.querySelectorAll(".nav-links li").forEach((li) => {
+  const link = li.querySelector("a");
+  const dropdown = li.querySelector(".dropdown");
+
+  if (dropdown && link) {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      li.classList.toggle("open");
+    });
+  }
+});

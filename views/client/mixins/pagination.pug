@@ -1,0 +1,17 @@
+mixin pagination(pagination)
+  if pagination.totalPage > 1
+    .box-pagination.mt-5
+      ul.pagination-list
+        if pagination.currentPage > 1
+          li.pagination-item.prev
+            button.btn-pagination(button-pagination=pagination.currentPage - 1)
+              i.fa-solid.fa-angle-left
+        
+        - for (var i = 1; i <= pagination.totalPage; i++)
+          li.pagination-item(class=(pagination.currentPage == i ? "active" : ""))
+            button.btn-pagination(button-pagination=i) #{i}
+
+        if pagination.currentPage < pagination.totalPage
+          li.pagination-item.next
+            button.btn-pagination(button-pagination=pagination.currentPage + 1)
+              i.fa-solid.fa-angle-right

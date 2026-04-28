@@ -26,12 +26,8 @@ block main
             .permission-card
               .permission-card-header
                 h4.permission-title 
-                  i.fa-solid.fa-shield-halved
                   | #{group.group}
-                
-                label.check-item.check-all-wrapper
-                  input(type="checkbox" class="check-all-group")
-                  span Tất cả
+              
               
               .permission-card-body
                 each item in group.permissions

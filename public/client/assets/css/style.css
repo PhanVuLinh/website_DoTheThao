@@ -1128,27 +1128,56 @@ ul {
 }
 
 /* 4. Nút Áp dụng bộ lọc */
+.filter-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
 .btn-apply-filter {
-  width: 100%;
+  flex: 1;
   background: var(--blue-dark);
   color: var(--white);
   border: none;
   border-radius: 8px;
-  padding: 14px 0;
-  font-size: 15px;
+  padding: 12px 0;
+  font-size: 14.5px;
   font-weight: 700;
   cursor: pointer;
-  margin-top: 15px;
   transition: 0.3s ease;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 6px;
 }
 
 .btn-apply-filter:hover {
   background: var(--red-main);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(235, 84, 56, 0.2);
+}
+
+.btn-clear-filter {
+  flex: 1;
+  background: #e5e7eb;
+  color: #4b5563;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 0;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-clear-filter:hover {
+  background: #d1d5db;
+  color: var(--red-main);
+  transform: translateY(-2px);
 }
 
 .product-content__header {

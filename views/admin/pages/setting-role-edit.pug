@@ -21,14 +21,15 @@ block main
           label Mô tả ngắn
           input.form-control(type="text" name="description" value=roleDetail.description)
 
-      .form-row-2
-        .form-group
-          label Phân quyền
-          .permissions-box
-            each group in permissionList
-              .permission-group
+      .form-group
+        label Phân quyền chi tiết
+        .permissions-grid
+          each group in permissionList
+            .permission-card
+              .permission-card-header
                 h4.permission-title #{group.group}
 
+              .permission-card-body
                 each item in group.permissions
                   .check-item
                     input(
