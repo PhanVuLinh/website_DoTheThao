@@ -13,4 +13,8 @@ router.post(
   orderController.paymentZalopayResult,
 );
 
+router.get("/payment-vnpay/:orderId", orderController.paymentVnpay);
+
+router.get("/payment-vnpay-result", orderController.paymentVnpayResult);
+
 module.exports = router;
