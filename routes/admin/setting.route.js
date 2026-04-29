@@ -42,13 +42,26 @@ router.patch(
   settingController.accountAdminEditPatch,
 );
 
-router.delete("/account-admin/delete/:id", settingController.accountAdminDelete);
+router.delete(
+  "/account-admin/delete/:id",
+  settingController.accountAdminDelete,
+);
 
+router.get("/account-admin/trash", settingController.accountAdminTrash);
+
+router.patch(
+  "/account-admin/restore/:id",
+  settingController.accountAdminRestore,
+);
+
+router.delete(
+  "/account-admin/delete-destroy/:id",
+  settingController.accountAdmindeleteDestroy,
+);
 
 router.get("/role/list", settingController.roleList);
 
 router.get("/role/create", settingController.roleCreate);
-
 
 router.post(
   "/role/create",
@@ -58,7 +71,6 @@ router.post(
 
 router.get("/role/edit/:id", settingController.roleEdit);
 
-
 router.patch(
   "/role/edit/:id",
   validate.createPost,
@@ -66,6 +78,5 @@ router.patch(
 );
 
 router.delete("/role/delete/:id", settingController.roleDelete);
-
 
 module.exports = router;

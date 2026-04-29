@@ -1,4 +1,5 @@
 const md5 = require("md5");
+const moment = require("moment");
 const Account = require("../../models/account.model");
 const Role = require("../../models/role.model");
 const SettingWebsiteInfo = require("../../models/setting-website-info.model");
@@ -149,12 +150,70 @@ module.exports.accountAdminDelete = async (req, res) => {
   try {
     const id = req.params.id;
 
-    await Account.updateOne({ _id: id }, { deleted: true });
+    await Account.updateOne(
+      { _id: id },
+      {
+        deleted: true,
+        deletedBy: req.account.id,
+        deletedAt: Date.now(),
+      },
+    );
     req.flash("success", "Xóa tài khoản thành công");
     res.redirect(req.get("Referer"));
   } catch (error) {
     req.flash("error", "Không tồn tài");
     res.redirect(`/${variableCongfig.pathAdmin}/setting/account-admin/list`);
+  }
+};
+
+module.exports.accountAdminTrash = async (req, res) => {
+  const find = {
+    deleted: true,
+  };
+  const accountList = await Account.find(find).sort({
+    deletedAt: "desc",
+  });
+
+  for (const item of accountList) {
+    const role = await Role.findOne({
+      _id: item.role_id,
+      deleted: false,
+    });
+    item.role_name = role.name;
+    item.deletedAtFormat = moment(item.deletedAt).format("HH:mm - DD/MM/YYYY");
+  }
+  res.render("admin/pages/setting-account-admin-trash.pug", {
+    title: "Thùng rác tài khoản",
+    accountList: accountList,
+  });
+};
+
+module.exports.accountAdminRestore = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Account.updateOne(
+      { _id: id },
+      {
+        deleted: false,
+      },
+    );
+    req.flash("success", "Khôi phục tài khoản thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/trash`);
+  }
+};
+
+module.exports.accountAdmindeleteDestroy = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Account.deleteOne({ _id: id });
+    req.flash("success", "Đã xóa vĩnh viễn tai khoản thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/trash`);
   }
 };
 

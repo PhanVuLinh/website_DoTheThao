@@ -1,0 +1,91 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+include ../mixins/pagination.pug
+
+block main
+  +alert-success(3000)
+  +alert-error(3000)
+  
+  .page-header
+    h1.page-title Thùng rác tài khoản quản trị
+    a.btn-back(href=`/${pathAdmin}/setting/account-admin/list`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  //- KHỐI HÀNH ĐỘNG HÀNG LOẠT VÀ TÌM KIẾM
+  .filter-action-card
+    .action-row
+      .bulk-action
+        select.form-select(change-multi)
+          option(value="") -- Hành động --
+          option(value="restore") Khôi phục
+          option(value="delete-permanent") Xóa vĩnh viễn
+        button.btn-apply(type="button") Áp dụng
+        
+      .search-box-large
+        i.fa-solid.fa-magnifying-glass
+        input(type="text" placeholder="Tìm kiếm tài khoản đã xóa..." search)
+
+  //- KHỐI BẢNG DANH SÁCH TÀI KHOẢN ĐÃ XÓA
+  .table-section
+    .table-responsive
+      table.admin-table.table-hover
+        thead
+          tr
+            th.text-center(width="50px")
+              input(type="checkbox" check-all)
+            th Họ tên
+            th.text-center Ảnh đại diện
+            th Email
+            th Nhóm quyền
+            th Xóa ngày
+            th Hành động
+        
+        tbody
+          if accountList && accountList.length > 0
+            each item in accountList
+              tr
+                td.text-center
+                  input(type="checkbox" name="id" value=item.id check-item)
+                
+                td.font-weight-600 #{item.fullName}
+                
+                td.text-center
+                  img.td-avatar(src=(item.avatar || '/images/avatar-default.png') alt=item.fullName)
+                
+                td.text-email #{item.email}
+                
+                td #{item.role_name }
+                
+                td
+                    span.time #{item.deletedAtFormat}
+                
+                td
+                  .action-btns
+                    button.btn-restore(button-restore data-id=item.id title="Khôi phục")
+                      i.fa-solid.fa-rotate-left
+                    button.btn-delete(button-delete data-id=item.id title="Xóa vĩnh viễn")
+                      i.fa-regular.fa-trash-can
+          else
+            tr
+              td.text-center(colspan="7" style="padding: 30px; color: #777;") Thùng rác trống. Không có tài khoản nào bị xóa!
+
+  //- PHÂN TRANG (Nếu có truyền data pagination)
+  if pagination
+    .admin-pagination
+      +pagination(pagination)
+
+  form(
+    action=""
+    method="POST"
+    id="form-restore-item"
+    data-path=`/${pathAdmin}/setting/account-admin/restore`
+  )
+  
+  form(
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`/${pathAdmin}/setting/account-admin/delete-destroy`
+  )
+

@@ -51,7 +51,7 @@ block main
             each item in contactList
               tr
                 td.text-center
-                  input(type="checkbox")
+                  input(type="checkbox" check-item=item.id)
                 
                 td.font-weight-600 #{item.email}
                 

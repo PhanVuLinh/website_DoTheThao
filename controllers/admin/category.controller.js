@@ -91,6 +91,49 @@ module.exports.list = async (req, res) => {
   });
 };
 
+module.exports.changeMulti = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "active":
+      case "inactive":
+        await Category.updateMany(
+          { _id: { $in: ids } },
+          {
+            status: type,
+            updatedBy: updatedBy,
+            updatedAt: new Date(),
+          },
+        );
+        req.flash("success", `Đã cập nhật trạng thái ${ids.length} danh mục!`);
+        break;
+
+      case "delete-all":
+        await Category.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: updatedBy,
+            deletedAt: new Date(),
+          },
+        );
+        req.flash("success", `Đã chuyển ${ids.length} danh mục vào thùng rác!`);
+        break;
+
+      default:
+        break;
+    }
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/category/list`);
+    res.redirect(req.get("Referer"));
+  }
+};
+
 module.exports.create = async (req, res) => {
   const categoryList = await Category.find({
     deleted: false,

@@ -27,10 +27,10 @@ block main
     .action-row
       .bulk-action
         select.form-select(chang-multi)
-          option(value="") -- Hành động --
-          option(value="delete") Xóa nhiều
-          option(value="active") Đổi trạng thái
-          option(value="active") Xóa
+          option(value="" selected disable) -- Hành động --
+          option(value="delete-all") xóa
+          option(value="active") Hoạt động
+          option(value="inactive") Dừng hoạt động
         button.btn-apply Áp dụng
         
       .search-box-large
@@ -63,7 +63,7 @@ block main
           each item in categoryList
             tr
               td.text-center
-                input(type="checkbox" check-item=item.id)
+                input(type="checkbox" value=item.id name="id" check-item)
               td.font-weight-600 #{item.title}
               td
                 img.td-thumbnail(src=item.thumbnail alt=item.title)
@@ -93,3 +93,11 @@ block main
       data-path=`/${pathAdmin}/category/delete`
     )
             
+  form(
+      action=""
+      method="POST"
+      id="form-change-multi"
+      data-path=`/${pathAdmin}/category/change-multi`
+    )
+      input(type="hidden" name="type")
+      input(type="hidden" name="ids")

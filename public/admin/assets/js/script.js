@@ -29,10 +29,12 @@ if (uploadImageWrappers.length > 0) {
   uploadImageWrappers.forEach((wrapper) => {
     const input = wrapper.querySelector("[upload-image-input]");
     const label = wrapper.querySelector("[upload-image-label]");
-    const previewContainer = wrapper.querySelector("[upload-image-preview-container]");
+    const previewContainer = wrapper.querySelector(
+      "[upload-image-preview-container]",
+    );
     const previewImage = wrapper.querySelector("[upload-image-preview]");
     const btnRemove = wrapper.querySelector("[button-remove-image]");
-    
+
     if (input && previewImage) {
       input.addEventListener("change", (e) => {
         const file = e.target.files[0];
@@ -57,17 +59,19 @@ if (uploadImageWrappers.length > 0) {
 
 // 2. Upload thư viện ảnh (Multiple Images)
 const uploadImagesInput = document.querySelector("[upload-images-input]");
-const uploadImagesPreviewContainer = document.querySelector("[upload-images-preview-container]");
+const uploadImagesPreviewContainer = document.querySelector(
+  "[upload-images-preview-container]",
+);
 
 if (uploadImagesInput && uploadImagesPreviewContainer) {
-  let dataTransfer = new DataTransfer(); 
+  let dataTransfer = new DataTransfer();
 
   uploadImagesInput.addEventListener("change", (e) => {
     const files = e.target.files;
     if (files.length > 0) {
       for (let file of files) {
-        dataTransfer.items.add(file); 
-        
+        dataTransfer.items.add(file);
+
         const src = URL.createObjectURL(file);
         const div = document.createElement("div");
         div.classList.add("image-preview-item");
@@ -87,7 +91,7 @@ if (uploadImagesInput && uploadImagesPreviewContainer) {
     const btnRemove = e.target.closest(".btn-remove-image-multi");
     if (btnRemove) {
       const item = btnRemove.closest(".image-preview-item");
-      
+
       // NẾU LÀ ẢNH MỚI (có class btn-remove-new)
       if (btnRemove.classList.contains("btn-remove-new")) {
         const fileName = btnRemove.getAttribute("data-file-name");
@@ -99,7 +103,7 @@ if (uploadImagesInput && uploadImagesPreviewContainer) {
         }
         uploadImagesInput.files = dataTransfer.files;
       }
-      
+
       // Xóa khối hiển thị ảnh khỏi giao diện
       item.remove();
     }
@@ -229,6 +233,50 @@ if (checkAll) {
 }
 //end Check ALL
 
+//change-multi
+const formChangeMulti = document.querySelector("#form-change-multi");
+if (formChangeMulti) {
+  const btnApply = document.querySelector(".btn-apply");
+  const selectChangeMulti = document.querySelector("[chang-multi]");
+
+  if (btnApply && selectChangeMulti) {
+    btnApply.addEventListener("click", () => {
+      const type = selectChangeMulti.value;
+      if (!type) {
+        alert("Vui lòng chọn một hành động!");
+        return;
+      }
+
+      const listCheckItemChecked = document.querySelectorAll(
+        "input[check-item]:checked",
+      );
+      if (listCheckItemChecked.length > 0) {
+        const isConfirm = confirm(
+          `Bạn có chắc muốn áp dụng hành động này cho ${listCheckItemChecked.length} bản ghi?`,
+        );
+
+        if (isConfirm) {
+          let ids = [];
+          listCheckItemChecked.forEach((input) => {
+            ids.push(input.value);
+          });
+
+          formChangeMulti.querySelector("input[name='type']").value = type;
+          formChangeMulti.querySelector("input[name='ids']").value =
+            ids.join(", ");
+
+          const path = formChangeMulti.getAttribute("data-path");
+          formChangeMulti.action = `${path}?_method=PATCH`;
+          formChangeMulti.submit();
+        }
+      } else {
+        alert("Vui lòng chọn ít nhất 1 bản ghi để áp dụng!");
+      }
+    });
+  }
+}
+//End change-multi
+
 //Search
 const search = document.querySelector("[search]");
 if (search) {
@@ -310,118 +358,118 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // --- B. KHỞI TẠO BIỂU ĐỒ DOANH THU (Dùng cho trang Dashboard) ---
   const ctx = document.getElementById("revenueChart");
-if (ctx && typeof Chart !== "undefined") {
-  const now = new Date();
-  const currentMonth = now.getMonth() + 1;
-  const currentYear = now.getFullYear();
+  if (ctx && typeof Chart !== "undefined") {
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
 
-  // Tính tháng trước
-  const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
-  const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+    // Tính tháng trước
+    const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+    const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
 
-  // Số ngày của từng tháng
-  const daysInCurrentMonth = new Date(currentYear, currentMonth, 0).getDate();
-  const daysInPrevMonth = new Date(prevYear, prevMonth, 0).getDate();
-  const maxDays = Math.max(daysInCurrentMonth, daysInPrevMonth);
+    // Số ngày của từng tháng
+    const daysInCurrentMonth = new Date(currentYear, currentMonth, 0).getDate();
+    const daysInPrevMonth = new Date(prevYear, prevMonth, 0).getDate();
+    const maxDays = Math.max(daysInCurrentMonth, daysInPrevMonth);
 
-  // Labels theo số ngày lớn nhất
-  const labels = Array.from({ length: maxDays }, (_, i) => `Ngày ${i + 1}`);
+    // Labels theo số ngày lớn nhất
+    const labels = Array.from({ length: maxDays }, (_, i) => `Ngày ${i + 1}`);
 
-  // Dữ liệu tháng hiện tại (chỉ đến ngày hiện tại, còn lại null)
-  const today = now.getDate();
-  const currentMonthData = Array.from({ length: maxDays }, (_, i) => {
-    if (i >= daysInCurrentMonth) return null;
-    if (i >= today) return null; // Ngày chưa tới thì bỏ trống
-    return Math.floor(Math.random() * 9500000) + 500000; // Thay bằng data thật từ server
-  });
+    // Dữ liệu tháng hiện tại (chỉ đến ngày hiện tại, còn lại null)
+    const today = now.getDate();
+    const currentMonthData = Array.from({ length: maxDays }, (_, i) => {
+      if (i >= daysInCurrentMonth) return null;
+      if (i >= today) return null; // Ngày chưa tới thì bỏ trống
+      return Math.floor(Math.random() * 9500000) + 500000; // Thay bằng data thật từ server
+    });
 
-  // Dữ liệu tháng trước (đủ cả tháng)
-  const prevMonthData = Array.from({ length: maxDays }, (_, i) => {
-    if (i >= daysInPrevMonth) return null;
-    return Math.floor(Math.random() * 9500000) + 500000; // Thay bằng data thật từ server
-  });
+    // Dữ liệu tháng trước (đủ cả tháng)
+    const prevMonthData = Array.from({ length: maxDays }, (_, i) => {
+      if (i >= daysInPrevMonth) return null;
+      return Math.floor(Math.random() * 9500000) + 500000; // Thay bằng data thật từ server
+    });
 
-  new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: `Tháng ${currentMonth}/${currentYear}`,
-          data: currentMonthData,
-          borderColor: "#466BD6",
-          backgroundColor: "rgba(70, 107, 214, 0.1)",
-          borderWidth: 2,
-          pointBackgroundColor: "#466BD6",
-          pointBorderColor: "#fff",
-          pointBorderWidth: 2,
-          pointRadius: 3,
-          tension: 0.4,
-          fill: true,
-          spanGaps: false,
-        },
-        {
-          label: `Tháng ${prevMonth}/${prevYear}`,
-          data: prevMonthData,
-          borderColor: "#eb5438",
-          backgroundColor: "rgba(235, 84, 56, 0.08)",
-          borderWidth: 2,
-          pointBackgroundColor: "#eb5438",
-          pointBorderColor: "#fff",
-          pointBorderWidth: 2,
-          pointRadius: 3,
-          tension: 0.4,
-          fill: true,
-          spanGaps: false,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: true,
-          position: "top",
-          labels: {
-            usePointStyle: true,
-            pointStyle: "circle",
-            padding: 20,
-            font: { size: 13, weight: "600" },
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: `Tháng ${currentMonth}/${currentYear}`,
+            data: currentMonthData,
+            borderColor: "#466BD6",
+            backgroundColor: "rgba(70, 107, 214, 0.1)",
+            borderWidth: 2,
+            pointBackgroundColor: "#466BD6",
+            pointBorderColor: "#fff",
+            pointBorderWidth: 2,
+            pointRadius: 3,
+            tension: 0.4,
+            fill: true,
+            spanGaps: false,
           },
-        },
-        tooltip: {
-          callbacks: {
-            label: function (context) {
-              if (context.parsed.y === null) return null;
-              return `${context.dataset.label}: ${context.parsed.y.toLocaleString("vi-VN")} đ`;
+          {
+            label: `Tháng ${prevMonth}/${prevYear}`,
+            data: prevMonthData,
+            borderColor: "#eb5438",
+            backgroundColor: "rgba(235, 84, 56, 0.08)",
+            borderWidth: 2,
+            pointBackgroundColor: "#eb5438",
+            pointBorderColor: "#fff",
+            pointBorderWidth: 2,
+            pointRadius: 3,
+            tension: 0.4,
+            fill: true,
+            spanGaps: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: "top",
+            labels: {
+              usePointStyle: true,
+              pointStyle: "circle",
+              padding: 20,
+              font: { size: 13, weight: "600" },
+            },
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                if (context.parsed.y === null) return null;
+                return `${context.dataset.label}: ${context.parsed.y.toLocaleString("vi-VN")} đ`;
+              },
             },
           },
         },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          suggestedMin: 500000,
-          suggestedMax: 10000000,
-          ticks: {
-            callback: function (value) {
-              return value.toLocaleString("vi-VN") + " đ";
+        scales: {
+          y: {
+            beginAtZero: true,
+            suggestedMin: 500000,
+            suggestedMax: 10000000,
+            ticks: {
+              callback: function (value) {
+                return value.toLocaleString("vi-VN") + " đ";
+              },
             },
           },
+          x: {
+            grid: { display: false },
+            ticks: { maxTicksLimit: 15 },
+          },
         },
-        x: {
-          grid: { display: false },
-          ticks: { maxTicksLimit: 15 },
+        interaction: {
+          intersect: false,
+          mode: "index",
         },
       },
-      interaction: {
-        intersect: false,
-        mode: "index",
-      },
-    },
-  });
-}
+    });
+  }
 
   // --- C. SWEET ALERT FLASH MESSAGE ---
   const alertItems = document.querySelectorAll("[data-alert]");

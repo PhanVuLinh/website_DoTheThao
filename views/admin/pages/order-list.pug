@@ -46,6 +46,8 @@ block main
       table.admin-table.table-hover
         thead
           tr
+            th.text-center(width="50px")
+              input(type="checkbox" check-all)
             th Mã ĐH
             th Thông tin khách
             th(width="300px") Danh sách sản phẩm
@@ -57,6 +59,8 @@ block main
         tbody
           each orderDetail in orderList
             tr
+              td.text-center
+                input(type="checkbox" check-item=orderDetail.id)
               td.order-code #{orderDetail.orderCode}
               td
                 .customer-info
