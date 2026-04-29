@@ -32,4 +32,10 @@ router.patch(
   articleController.editPatch,
 );
 
+router.get("/trash", articleController.trash);
+
+router.patch("/restore/:id", articleController.restore);
+
+router.delete("/delete-destroy/:id", articleController.deleteDestroy);
+
 module.exports = router;

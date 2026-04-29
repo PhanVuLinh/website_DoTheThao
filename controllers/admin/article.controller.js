@@ -127,3 +127,62 @@ module.exports.editPatch = async (req, res) => {
     res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
   }
 };
+
+module.exports.trash = async (req, res) => {
+  const find = {
+    deleted: true,
+  };
+  const articleList = await Article.find(find).sort({
+    deletedAt: "desc",
+  });
+
+  for (const item of articleList) {
+    if (item.createdBy) {
+      const infoAccountCreated = await Account.findOne({
+        _id: item.createdBy,
+      });
+      item.createdByFullName = infoAccountCreated.fullName;
+    }
+    if (item.deletedBy) {
+      const infoAccountDeleted = await Account.findOne({
+        _id: item.deletedBy,
+      });
+      item.deletedByFullName = infoAccountDeleted.fullName;
+    }
+    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+    item.deletedAtFormat = moment(item.deletedAt).format("HH:mm - DD/MM/YYYY");
+  }
+  res.render("admin/pages/article-trash.pug", {
+    title: "Thùng rác bài viết",
+    articleList: articleList,
+  });
+};
+
+module.exports.restore = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Article.updateOne(
+      { _id: id },
+      {
+        deleted: false,
+      },
+    );
+    req.flash("success", "Khôi phục bài viết thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/trash`);
+  }
+};
+
+module.exports.deleteDestroy = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Article.deleteOne({ _id: id });
+    req.flash("success", "Đã xóa vĩnh viễn bài viết thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/trash`);
+  }
+};

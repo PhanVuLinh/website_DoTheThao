@@ -1,0 +1,95 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+//- include ../mixins/pagination.pug
+
+block main
+  +alert-success(3000)
+  +alert-error(3000)
+
+  //- Tiêu đề & Nút Quay lại
+  .page-header
+    h1.page-title Thùng rác bài viết
+    a.btn-back(href=`/${pathAdmin}/article/list`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  //- KHỐI HÀNH ĐỘNG HÀNG LOẠT VÀ TÌM KIẾM
+  .filter-action-card
+    .action-row
+      .bulk-action
+        select.form-select(change-multi)
+          option(value="") -- Hành động --
+          option(value="restore") Khôi phục
+          option(value="delete-permanent") Xóa vĩnh viễn
+        button.btn-apply(type="button") Áp dụng
+        
+      .search-box-large
+        i.fa-solid.fa-magnifying-glass
+        input(type="text" placeholder="Tìm kiếm tiêu đề bài viết đã xóa..." search)
+
+  //- KHỐI BẢNG DANH SÁCH BÀI VIẾT ĐÃ XÓA
+  .table-section
+    .table-responsive
+      table.admin-table.table-hover
+        thead
+          tr
+            th.text-center(width="50px")
+              input(type="checkbox" check-all)
+            th Tiêu đề 
+            th Hình ảnh
+            th Vị trí
+            th Trạng thái
+            th Xóa bởi
+            th Hành động
+        
+        tbody
+          if articleList && articleList.length > 0
+            each item in articleList
+              tr
+                td.text-center
+                  input(type="checkbox" name="id" value=item.id check-item)
+                
+                td.font-weight-600 #{item.title}
+                
+                td
+                  img.td-thumbnail(src=(item.thumbnail || '/images/no-image.png') alt=item.title)
+                
+                td #{item.position}
+                
+                td
+                  span.badge-status.badge-inactive Đã xóa
+                
+                td
+                  .user-date
+                    span.name #{item.deletedByFullName || 'Hệ thống'}
+                    span.time #{item.deletedAtFormat}
+
+                td
+                  .action-btns
+                    button.btn-restore(button-restore data-id=item.id title="Khôi phục")
+                      i.fa-solid.fa-rotate-left
+                    button.btn-delete(button-delete data-id=item.id title="Xóa vĩnh viễn")
+                      i.fa-regular.fa-trash-can
+          else 
+            tr
+              td(colspan="7" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có bài viết nào bị xóa!
+
+    //- PHÂN TRANG (PAGINATION)
+    //- if pagination
+    //-   .admin-pagination
+    //-     +pagination(pagination)
+
+  form(
+    action=""
+    method="POST"
+    id="form-restore-item"
+    data-path=`/${pathAdmin}/article/restore`
+  )
+  
+  form(
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`/${pathAdmin}/article/delete-destroy`
+  )
+
