@@ -34,6 +34,26 @@ module.exports.list = async (req, res) => {
   if (Object.keys(dateFilter).length > 0) {
     find.createdAt = dateFilter;
   }
+  // Xử lý lọc giá
+  if (req.query.price) {
+    const priceRange = req.query.price.split("-");
+    const minPrice = parseInt(priceRange[0]);
+    const maxPrice = priceRange[1] ? parseInt(priceRange[1]) : null;
+
+    if (maxPrice) {
+      find.price = { $gte: minPrice, $lte: maxPrice };
+    } else find.price = { $gte: minPrice };
+  }
+
+  // Xử lý lọc danh mục
+  if (req.query.category) {
+    find.product_category_id = req.query.category;
+  }
+  const categoryList = await Category.find({
+    parent_id: { $ne: "" },
+    deleted: false,
+  });
+
   //Tìm kiếm
   if (req.query.keyword) {
     const keyword = slugify(req.query.keyword, {
@@ -87,7 +107,53 @@ module.exports.list = async (req, res) => {
     productList: productList,
     accountAdminList: accountAdminList,
     pagination: objectPagination,
+    categoryList: categoryList,
+    categoryId: req.query.category,
+    price: req.query.price,
   });
+};
+
+module.exports.changeMulti = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "active":
+      case "inactive":
+        await Product.updateMany(
+          { _id: { $in: ids } },
+          {
+            status: type,
+            updatedBy: updatedBy,
+            updatedAt: new Date(),
+          },
+        );
+        req.flash("success", `Đã cập nhật trạng thái ${ids.length} sản phẩm!`);
+        break;
+
+      case "delete-all":
+        await Product.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: updatedBy,
+            deletedAt: new Date(),
+          },
+        );
+        req.flash("success", `Đã chuyển ${ids.length} sản phẩm vào thùng rác!`);
+        break;
+
+      default:
+        break;
+    }
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/product/list`);
+    res.redirect(req.get("Referer"));
+  }
 };
 
 module.exports.create = async (req, res) => {

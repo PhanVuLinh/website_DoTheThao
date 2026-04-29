@@ -237,7 +237,7 @@ if (checkAll) {
 const formChangeMulti = document.querySelector("#form-change-multi");
 if (formChangeMulti) {
   const btnApply = document.querySelector(".btn-apply");
-  const selectChangeMulti = document.querySelector("[chang-multi]");
+  const selectChangeMulti = document.querySelector("[change-multi]");
 
   if (btnApply && selectChangeMulti) {
     btnApply.addEventListener("click", () => {
@@ -316,6 +316,52 @@ if (buttonsPagination) {
   });
 }
 //End Pagination
+
+// Bộ lọc danh mục
+const filterCategory = document.querySelector("[filter-category]");
+if (filterCategory) {
+  const url = new URL(window.location.href);
+
+  filterCategory.addEventListener("change", () => {
+    const id = filterCategory.value; 
+
+    if (id) {
+      url.searchParams.set("category", id); 
+    } else {
+      url.searchParams.delete("category");
+    }
+    
+    url.searchParams.delete("page");
+    window.location.href = url.href;
+  });
+
+  const currentId = url.searchParams.get("category");
+  if (currentId) {
+    filterCategory.value = currentId;
+  }
+}
+
+// Bộ lọc giá
+const filterPrice = document.querySelector("[filter-price]");
+if (filterPrice) {
+  const url = new URL(window.location.href);
+
+  filterPrice.addEventListener("change", () => {
+    const value = filterPrice.value;
+    if (value) {
+      url.searchParams.set("price", value);
+    } else {
+      url.searchParams.delete("price");
+    }
+    url.searchParams.delete("page");
+    window.location.href = url.href;
+  });
+
+  const currentPrice = url.searchParams.get("price");
+  if (currentPrice) {
+    filterPrice.value = currentPrice;
+  }
+}
 
 //button restore
 const listButtonRestore = document.querySelectorAll("[button-restore]");

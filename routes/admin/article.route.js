@@ -12,6 +12,8 @@ const upload = multer({ storage: cloudinaryHelper.storage });
 
 router.get("/list", articleController.list);
 
+router.patch("/change-multi", articleController.changeMulti);
+
 router.get("/create", articleController.create);
 
 router.post(

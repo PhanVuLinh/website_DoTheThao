@@ -9,6 +9,8 @@ const validate = require("../../validates/admin/product.validate");
 
 router.get("/list", productController.list);
 
+router.patch("/change-multi", productController.changeMulti);
+
 router.get("/create", productController.create);
 
 router.post(

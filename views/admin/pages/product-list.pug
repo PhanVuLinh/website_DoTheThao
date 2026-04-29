@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/bulk-action.pug
 include ../mixins/filter-status.pug
 include ../mixins/filter-created-by.pug
 include ../mixins/filter-date-range.pug
@@ -23,28 +24,31 @@ block main
         
       +filter-date-range()
         
-      select.form-select
+      select.form-select(filter-category)
         option(value="") Danh mục
-        option Giày Chạy Bộ
-        option Quần Áo
+        if categoryList
+          each item in categoryList
+            option(
+              value=item.id 
+              selected=(categoryId == item.id ? true : false)
+            ) #{item.title}
         
-      select.form-select
+      select.form-select(filter-price)
         option(value="") Mức giá
-        option Dưới 1 triệu
-        option 1 - 3 triệu
-        option Trên 3 triệu
-        
+        option(value="0-1000000" selected=(price == "0-1000000")) Dưới 1 triệu
+        option(value="1000000-3000000" selected=(price == "1000000-3000000")) 1 - 3 triệu
+        option(value="3000000-" selected=(price == "3000000-")) Trên 3 triệu
+              
       button.btn-clear(filter-reset)
         i.fa-solid.fa-rotate-right
         | Xóa bộ lọc
 
     .action-row
-      .bulk-action
-        select.form-select
-          option(value="") -- Hành động --
-          option(value="delete") Xóa nhiều
-          option(value="active") Đổi trạng thái
-        button.btn-apply Áp dụng
+      +bulk-action([
+        { value: "delete-all", label: "xóa" },
+        { value: "active", label: "Hoạt động" },
+        { value: "inactive", label: "Dừng hoạt động" }
+      ])
         
       .search-box-large
         i.fa-solid.fa-magnifying-glass
@@ -64,7 +68,7 @@ block main
         thead
           tr
             th.text-center(width="50px")
-              input(type="checkbox")
+              input(type="checkbox" check-all)
             th Tên sản phẩm
             th Ảnh đại diện
             th Giá (VNĐ)
@@ -79,7 +83,7 @@ block main
           each item in productList
             tr
               td.text-center
-                input(type="checkbox")
+                input(type="checkbox" value=item.id name="id" check-item)
               td.font-weight-600 #{item.title}
               td
                 img.td-thumbnail(src=item.thumbnail alt=item.title)
@@ -124,3 +128,11 @@ block main
       data-path=`/${pathAdmin}/product/delete`
     )
             
+  form(
+      action=""
+      method="POST"
+      id="form-change-multi"
+      data-path=`/${pathAdmin}/product/change-multi`
+    )
+      input(type="hidden" name="type")
+      input(type="hidden" name="ids")

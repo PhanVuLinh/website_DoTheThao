@@ -1,0 +1,7 @@
+mixin bulk-action(options)
+  .bulk-action
+    select.form-select(change-multi)
+      option(value="" selected disabled) -- Hành động --
+      each opt in options
+        option(value=opt.value) #{opt.label}
+    button.btn-apply(type="button") Áp dụng

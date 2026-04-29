@@ -37,6 +37,49 @@ module.exports.list = async (req, res) => {
   });
 };
 
+module.exports.changeMulti = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "active":
+      case "inactive":
+        await Article.updateMany(
+          { _id: { $in: ids } },
+          {
+            status: type,
+            updatedBy: updatedBy,
+            updatedAt: new Date(),
+          },
+        );
+        req.flash("success", `Đã cập nhật trạng thái ${ids.length} bài viết!`);
+        break;
+
+      case "delete-all":
+        await Article.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: updatedBy,
+            deletedAt: new Date(),
+          },
+        );
+        req.flash("success", `Đã chuyển ${ids.length} bài viết vào thùng rác!`);
+        break;
+
+      default:
+        break;
+    }
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
+    res.redirect(req.get("Referer"));
+  }
+};
+
 module.exports.create = (req, res) => {
   res.render("admin/pages/article-create.pug", {
     title: "Tạo mới bài viết",

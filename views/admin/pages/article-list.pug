@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
 
 block main
@@ -25,13 +26,12 @@ block main
         | Xóa bộ lọc
 
     .action-row
-      .bulk-action
-        select.form-select(name="type")
-          option(value="") -- Hành động nhiều --
-          option(value="active") Chuyển thành Hoạt động
-          option(value="inactive") Chuyển thành Tạm dừng
-          option(value="delete-all") Xóa tất cả
-        button.btn-apply(type="button") Áp dụng
+      .action-row
+        +bulk-action([
+          { value: "delete-all", label: "xóa" },
+          { value: "active", label: "Hoạt động" },
+          { value: "inactive", label: "Dừng hoạt động" }
+        ])
         
       .search-box-large
         i.fa-solid.fa-magnifying-glass
@@ -44,8 +44,7 @@ block main
         a(href=`/${pathAdmin}/article/trash`).btn-trash
           i.fa-regular.fa-trash-can
           | Thùng rác
-
-  //- 2. KHỐI BẢNG DANH SÁCH BLOG
+          
   .table-section
     .table-responsive
       table.admin-table.table-hover
@@ -66,7 +65,7 @@ block main
             each item in articleList
               tr
                 td.text-center
-                  input(type="checkbox" name="id" check-item=item.id)
+                  input(type="checkbox" value=item.id name="id" check-item)
                 
                 td.font-weight-600 #{item.title}
                 
@@ -115,3 +114,12 @@ block main
     id="form-delete-item"
     data-path=`/${pathAdmin}/article/delete`
   )
+
+  form(
+      action=""
+      method="POST"
+      id="form-change-multi"
+      data-path=`/${pathAdmin}/category/change-multi`
+    )
+      input(type="hidden" name="type")
+      input(type="hidden" name="ids")
