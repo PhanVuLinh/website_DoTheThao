@@ -8,9 +8,14 @@ router.get("/success/:orderId", orderController.orderSuccess);
 
 router.get("/payment-zalopay/:orderId", orderController.paymentZalopay);
 
+router.get(
+  "/payment-zalopay-return/:orderId",
+  orderController.paymentZalopayReturn,
+);
+
 router.post(
-  "/payment-zalopay-result/:orderId",
-  orderController.paymentZalopayResult,
+  "/payment-zalopay-callback",
+  orderController.paymentZalopayCallback,
 );
 
 router.get("/payment-vnpay/:orderId", orderController.paymentVnpay);
