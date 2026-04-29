@@ -29,6 +29,12 @@ app.use(session({ cookie: { maxAge: 60000 } }));
 app.use(flash());
 app.use(alertMiddleware.alert);
 
+//TinyMCE
+app.use(
+  "/tinymce",
+  express.static(path.join(__dirname, "node_modules", "tinymce"))
+);
+
 //Thiết lập views
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
