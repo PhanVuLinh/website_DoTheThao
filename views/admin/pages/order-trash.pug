@@ -1,0 +1,118 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+include ../mixins/pagination.pug
+
+block main
+  +alert-success(3000)
+  +alert-error(3000)
+
+  .page-header
+    h1.page-title Thùng rác đơn hàng
+    a.btn-back(href=`/${pathAdmin}/order/list`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  .filter-action-card
+    .action-row
+      .bulk-action
+        select.form-select(change-multi)
+          option(value="") -- Hành động --
+          option(value="restore") Khôi phục
+          option(value="delete-permanent") Xóa vĩnh viễn
+        button.btn-apply Áp dụng
+        
+      .search-box-large(style="max-width: 500px;")
+        i.fa-solid.fa-magnifying-glass
+        input(
+          type="text"
+          placeholder="Tìm kiếm theo Mã đơn, Tên khách hàng, SĐT..."
+          name="keyword"
+          search
+        )
+
+  .table-section
+    .table-responsive
+      table.admin-table.table-hover
+        thead
+          tr
+            th.text-center(width="50px")
+              input(type="checkbox" check-all)
+            th Mã ĐH
+            th Thông tin khách
+            th(width="300px") Danh sách sản phẩm
+            th Thanh toán
+            th Trạng thái
+            th Xóa bởi
+            th Hành động
+            
+        tbody
+          if orderList && orderList.length > 0
+            each orderDetail in orderList
+              tr
+                td.text-center
+                  input(type="checkbox" name="id" value=orderDetail.id check-item)
+                
+                td.order-code #{orderDetail.orderCode}
+                
+                td
+                  .customer-info
+                    span.font-weight-600 #{orderDetail.fullName}
+                    span.phone SĐT: #{orderDetail.phone}
+                    span.phone Địa chỉ: #{orderDetail.address}
+                    if(orderDetail.note)
+                      span.phone(style="color: var(--red-main)") Ghi chú: #{orderDetail.note}
+                
+                td
+                  .order-products-list
+                    each item in orderDetail.products
+                      .product-mini-item
+                        img(src=(item.thumbnail || '/images/no-image.png') alt=item.title)
+                        .prod-info
+                          span.prod-name #{item.title}
+                          span.prod-meta 
+                            | #{item.size || '-'} | SL: #{item.quantity} 
+                            if item.priceNewQuantity
+                              | | #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
+                
+                td
+                  .payment-summary
+                    span Tạm tính: #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
+                    span Giảm giá: #{orderDetail.discount.toLocaleString('vi-VN')} đ
+                    span.total-pay Thanh toán: #{orderDetail.total.toLocaleString('vi-VN')} đ
+                    span PTTT: #{orderDetail.paymentMethodName }
+                    span TTTT: #{orderDetail.paymentStatusName }
+                
+                td
+                  - var statusClass = orderDetail.status ? `badge-${orderDetail.status}` : 'badge-pending'
+                  span.badge-status(class=statusClass) #{orderDetail.statusName}
+                
+                td
+                  .user-date
+                    span.name #{orderDetail.deletedByFullName}
+                    span.time #{orderDetail.deletedAtFormat}
+                
+                td
+                  .action-btns
+                    button.btn-restore(button-restore data-id=orderDetail.id title="Khôi phục")
+                      i.fa-solid.fa-rotate-left
+                    button.btn-delete(button-delete data-id=orderDetail.id title="Xóa vĩnh viễn")
+                      i.fa-regular.fa-trash-can
+          else
+            tr
+              td.text-center(colspan="8") Không có đơn hàng nào trong thùng rác.
+
+  //- .admin-pagination
+  //-   if pagination
+  //-     +pagination(pagination)
+
+  form(
+    method="POST"
+    id="form-restore-item"
+    data-path=`/${pathAdmin}/order/restore`
+  )
+
+  form(
+    method="POST"
+    id="form-delete-item"
+    data-path=`/${pathAdmin}/order/delete-destroy`
+  )

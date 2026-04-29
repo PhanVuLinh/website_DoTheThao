@@ -37,6 +37,10 @@ block main
       .search-box-large(style="max-width: 500px;")
         i.fa-solid.fa-magnifying-glass
         input(type="text" placeholder="Tìm kiếm theo Mã đơn, Tên khách hàng, SĐT...")
+      .action-buttons-right
+        a(href=`/${pathAdmin}/order/trash`).btn-trash
+          i.fa-regular.fa-trash-can
+          | Thùng rác
   .table-section
     .table-responsive
       table.admin-table.table-hover
@@ -88,7 +92,8 @@ block main
               td: .action-btns
                   a.btn-edit(href=`/${pathAdmin}/order/edit/${orderDetail.id}` title="Cập nhật")
                     i.fa-regular.fa-pen-to-square
-                  button.btn-delete(title="Hủy đơn"): i.fa-regular.fa-trash-can
+                  button.btn-delete(title="Hủy đơn")(button-delete data-id=orderDetail.id)
+                    i.fa-regular.fa-trash-can
 
 
     .admin-pagination
@@ -99,3 +104,11 @@ block main
         li.page-item: a.page-link(href="#") 3
         li.page-item.dots: span ...
         li.page-item: a.page-link(href="#"): i.fa-solid.fa-angle-right
+
+  form(
+      action=""
+      method="POST"
+      id="form-delete-item"
+      data-path=`/${pathAdmin}/order/delete`
+    )
+            
