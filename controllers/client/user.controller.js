@@ -72,7 +72,6 @@ module.exports.registerPost = async (req, res) => {
 
     const newUser = new User(req.body);
     await newUser.save();
-    console.log(newUser);
     req.flash("success", "Tạo tài khoản thành công");
     res.redirect("/user/login");
   } catch (error) {

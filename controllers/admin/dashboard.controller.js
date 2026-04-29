@@ -61,7 +61,6 @@ module.exports.dashboard = async (req, res) => {
       order.createdAtFormat = moment(order.createdAt).format("HH:mm - DD/MM/YYYY");
     }
   }
-  console.log(orderList);
   //End section 3
 
   res.render("admin/pages/dashboard.pug", {

@@ -32,4 +32,10 @@ router.patch(
 
 router.delete("/delete/:id", categoryController.delete);
 
+router.get("/trash", categoryController.trash);
+
+router.patch("/restore/:id", categoryController.restore);
+
+router.delete("/delete-destroy/:id", categoryController.deleteDestroy);
+
 module.exports = router;

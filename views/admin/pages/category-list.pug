@@ -36,10 +36,14 @@ block main
       .search-box-large
         i.fa-solid.fa-magnifying-glass
         input(type="text" placeholder="Tìm kiếm danh mục..." search)
-        
-      a(href=`/${pathAdmin}/category/create`).btn-create
-        i.fa-solid.fa-plus
-        | Tạo mới
+      
+      .action-buttons-right
+        a(href=`/${pathAdmin}/category/create`).btn-create
+          i.fa-solid.fa-plus
+          | Tạo mới
+        a(href=`/${pathAdmin}/category/trash`).btn-trash
+          i.fa-regular.fa-trash-can
+          | Thùng rác
 
   .table-section
     .table-responsive

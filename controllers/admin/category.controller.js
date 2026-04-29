@@ -45,7 +45,7 @@ module.exports.list = async (req, res) => {
   }
 
   //Phân trang
-  
+
   const countCategory = await Category.countDocuments(find);
   let objectPagination = paginationHelper(
     {
@@ -190,5 +190,65 @@ module.exports.delete = async (req, res) => {
   } catch (error) {
     req.flash("error", "Không tồn tài");
     res.redirect(`/${variableCongfig.pathAdmin}/category/list`);
+  }
+};
+
+module.exports.trash = async (req, res) => {
+  const find = {
+    deleted: true,
+  };
+
+  const categoryList = await Category.find(find).sort({
+    deletedAt: "desc",
+  });
+
+  for (const item of categoryList) {
+    if (item.createdBy) {
+      const infoAccountCreated = await Account.findOne({
+        _id: item.createdBy,
+      });
+      item.createdByFullName = infoAccountCreated.fullName;
+    }
+    if (item.deletedBy) {
+      const infoAccountDeleted = await Account.findOne({
+        _id: item.deletedBy,
+      });
+      item.deletedByFullName = infoAccountDeleted.fullName;
+    }
+    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+    item.deletedAtFormat = moment(item.deletedAt).format("HH:mm - DD/MM/YYYY");
+  }
+  res.render("admin/pages/category-trash.pug", {
+    title: "Thùng rác danh mục",
+    categoryList: categoryList,
+  });
+};
+
+module.exports.restore = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Category.updateOne(
+      { _id: id },
+      {
+        deleted: false,
+      },
+    );
+    req.flash("success", "Khôi phục danh mucj thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/trash`);
+  }
+};
+
+module.exports.deleteDestroy = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Category.deleteOne({ _id: id });
+    req.flash("success", "Đã xóa vĩnh viễn danh mục thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/trash`);
   }
 };

@@ -1,0 +1,85 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+//- include ../mixins/pagination.pug
+
+block main
+  +alert-success(3000)
+  +alert-error(3000)
+
+  .page-header
+    h1.page-title Thùng rác danh mục
+    a.btn-back(href=`/${pathAdmin}/category/list`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  //- Khối hành động hàng loạt và tìm kiếm
+  .filter-action-card
+    .action-row
+      .bulk-action
+        select.form-select(chang-multi)
+          option(value="") -- Hành động --
+          option(value="restore") Khôi phục
+          option(value="delete-permanent") Xóa vĩnh viễn
+        button.btn-apply Áp dụng
+        
+      .search-box-large
+        i.fa-solid.fa-magnifying-glass
+        input(type="text" placeholder="Tìm kiếm danh mục đã xóa..." search)
+
+  //- Bảng dữ liệu thùng rác
+  .table-section
+    .table-responsive
+      table.admin-table.table-hover
+        thead
+          tr
+            th.text-center(width="50px")
+              input(type="checkbox" check-all)
+            th Tên danh mục
+            th Ảnh đại diện
+            th Vị trí
+            th Trạng thái
+            th Xóa bởi
+            th Hành động
+            
+        tbody
+          if categoryList && categoryList.length > 0
+            each item in categoryList
+              tr
+                td.text-center
+                  input(type="checkbox" name="id" value=item.id check-item)
+                td.font-weight-600 #{item.title}
+                td
+                  img.td-thumbnail(src=item.thumbnail alt=item.title)
+                td #{item.position}
+                td
+                  span.badge-status.badge-inactive Đã xóa
+                td
+                  .user-date
+                    span.name #{item.deletedByFullName}
+                    span.time #{item.deletedAtFormat}
+                td
+                  .action-btns
+                    button.btn-restore(button-restore data-id=item.id title="Khôi phục")
+                      i.fa-solid.fa-rotate-left
+                    button.btn-delete(button-delete data-id=item.id title="Xóa vĩnh viễn")
+                      i.fa-regular.fa-trash-can
+          else
+            tr
+              td.text-center(colspan="7") Không có danh mục nào trong thùng rác.
+
+  //- Phân trang
+  //- .admin-pagination
+  //-   +pagination(pagination)
+
+  form(
+    action=""
+    method="POST"
+    id="form-restore-item"
+    data-path=`/${pathAdmin}/category/restore`
+  )
+  form(
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`/${pathAdmin}/category/delete-destroy`
+  )

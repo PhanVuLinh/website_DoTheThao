@@ -1,6 +1,7 @@
 const moment = require("moment");
 const axios = require("axios");
 const CryptoJS = require("crypto-js");
+const crypto = require("crypto");
 const Cart = require("../../models/cart.model");
 const Product = require("../../models/product.model");
 const Order = require("../../models/order.model");
@@ -93,6 +94,9 @@ module.exports.createPost = async (req, res) => {
         break;
       case "vnPay":
         res.redirect(`/order/payment-vnpay/${newRecord.id}`);
+        break;
+      case "momo":
+        res.redirect(`/order/payment-momo/${newRecord.id}`);
         break;
       default:
         res.redirect("/cart");
@@ -399,7 +403,7 @@ module.exports.paymentVnpayResult = async (req, res) => {
         vnp_Params["vnp_TransactionStatus"] === "00"
       ) {
         const [orderId, date] = vnp_Params["vnp_TxnRef"].split("-");
-        const oderDetail = await Order.findOne({
+        const orderDetail = await Order.findOne({
           _id: orderId,
           deleted: false,
         });
