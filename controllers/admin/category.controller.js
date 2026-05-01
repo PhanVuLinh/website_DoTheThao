@@ -5,7 +5,6 @@ const Category = require("../../models/category.model");
 const Account = require("../../models/account.model");
 
 const categoryHelper = require("../../helpers/category.helper");
-const paginationHelper = require("../../helpers/pagination.helper");
 
 module.exports.list = async (req, res) => {
   const find = {
@@ -44,40 +43,39 @@ module.exports.list = async (req, res) => {
     find.slug = keywordRegex;
   }
 
-  //Phân trang
+  const allCategoryList = await Category.find(find).sort({ position: "asc" });
 
-  const countCategory = await Category.countDocuments(find);
-  let objectPagination = paginationHelper(
-    {
-      currentPage: 1,
-      limitItems: 5,
-    },
-    req.query,
-    countCategory,
-  );
-  //hết Phân trang
+  // Tạo cây danh mục
+  const fullCategoryTree = categoryHelper.buildCategoryTree(allCategoryList);
+  const getAccountInfo = async (tree) => {
+    for (const item of tree) {
+      if (item.createdBy) {
+        const infoAccountCreated = await Account.findOne({
+          _id: item.createdBy,
+        });
+        item.createdByFullName = infoAccountCreated?.fullName;
+      }
+      if (item.updatedBy) {
+        const infoAccountUpdated = await Account.findOne({
+          _id: item.updatedBy,
+        });
+        item.updatedByFullName = infoAccountUpdated?.fullName;
+      }
+      item.createdAtFormat = moment(item.createdAt).format(
+        "HH:mm - DD/MM/YYYY",
+      );
+      item.updatedAtFormat = moment(item.updatedAt).format(
+        "HH:mm - DD/MM/YYYY",
+      );
 
-  const categoryList = await Category.find(find)
-    .sort({ position: "asc" })
-    .limit(objectPagination.limitItems)
-    .skip(objectPagination.skip);
-
-  for (const item of categoryList) {
-    if (item.createdBy) {
-      const infoAccountCreated = await Account.findOne({
-        _id: item.createdBy,
-      });
-      item.createdByFullName = infoAccountCreated.fullName;
+      if (item.children && item.children.length > 0) {
+        await getAccountInfo(item.children);
+      }
     }
-    if (item.updatedBy) {
-      const infoAccountUpdated = await Account.findOne({
-        _id: item.updatedBy,
-      });
-      item.updatedByFullName = infoAccountUpdated.fullName;
-    }
-    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
-    item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY");
-  }
+  };
+
+  await getAccountInfo(fullCategoryTree);
+
   //List ADMIN
   const accountAdminList = await Account.find({
     deleted: false,
@@ -85,9 +83,8 @@ module.exports.list = async (req, res) => {
 
   res.render("admin/pages/category-list.pug", {
     title: "Danh sách danh mục",
-    categoryList: categoryList,
+    categoryList: fullCategoryTree,
     accountAdminList: accountAdminList,
-    pagination: objectPagination,
   });
 };
 

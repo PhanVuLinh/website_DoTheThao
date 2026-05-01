@@ -6,6 +6,13 @@ const buildCategoryTree = (categories, parentId = "") => {
         id: item.id,
         title: item.title,
         slug: item.slug,
+        thumbnail: item.thumbnail,
+        position: item.position,
+        status: item.status,
+        createdBy: item.createdBy,
+        updatedBy: item.updatedBy,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
         children: buildCategoryTree(categories, item.id),
       });
     }

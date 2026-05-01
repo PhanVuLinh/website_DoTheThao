@@ -4,7 +4,7 @@ include ../mixins/bulk-action.pug
 include ../mixins/filter-status.pug
 include ../mixins/filter-created-by.pug
 include ../mixins/filter-date-range.pug
-include ../mixins/pagination.pug
+include ../mixins/category-tree.pug
 
 block main
   +alert-success(3000)
@@ -60,32 +60,7 @@ block main
             th Cập nhật bởi
             th Hành động
         tbody
-          each item in categoryList
-            tr
-              td.text-center
-                input(type="checkbox" value=item.id name="id" check-item)
-              td.font-weight-600 #{item.title}
-              td
-                img.td-thumbnail(src=item.thumbnail alt=item.title)
-              td #{item.position}
-              td
-                span(class=`badge-status ${item.status == "active" ? "badge-active" : "badge-inactive"}`) #{item.status == "active" ? "Hoạt động" : "Tạm dừng" }
-              td
-                .user-date
-                  span.name #{item.createdByFullName}
-                  span.time #{item.createdAtFormat}
-              td
-                .user-date
-                  span.name #{item.updatedByFullName}
-                  span.time #{item.updatedAtFormat}
-              td
-                .action-btns
-                  a(href=`/${pathAdmin}/category/edit/${item.id}`).btn-edit
-                    i.fa-regular.fa-pen-to-square
-                  button.btn-delete(button-delete data-id=item.id)
-                    i.fa-regular.fa-trash-can
-    .admin-pagination
-      +pagination(pagination)
+          +category-tree(categoryList)
   form(
       action=""
       method="POST"
