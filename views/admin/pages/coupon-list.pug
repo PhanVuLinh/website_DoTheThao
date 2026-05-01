@@ -1,0 +1,63 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+include ../mixins/pagination.pug
+
+block main
+  +alert-success(3000)
+  +alert-error(3000)
+
+  h1.page-title Danh sách Mã giảm giá
+
+  .filter-action-card
+    .action-row(style="justify-content: flex-end;")
+      .action-buttons-right
+        a(href=`/${pathAdmin}/coupon/create`).btn-create
+          i.fa-solid.fa-plus
+          | Thêm mã giảm giá
+        a(href=`/${pathAdmin}/coupon/trash`).btn-trash
+          i.fa-regular.fa-trash-can
+          | Thùng rác
+
+  .table-section
+    .table-responsive
+      table.admin-table.table-hover
+        thead
+          tr
+            th Mã coupon
+            th Tên sự kiện
+            th % Giảm giá
+            th Giảm tối đa
+            th Số lượng còn lại
+            th Ngày hết hạn
+            th Hành động
+        
+        tbody
+          if couponList && couponList.length > 0
+            each item in couponList
+              tr
+                td.font-weight-600.text-uppercase #{item.code}
+                td #{item.title}
+                td #{item.discountPercentage}%
+                td #{item.maxDiscountAmount.toLocaleString('vi-VN')} đ
+                td #{item.quantity}
+                td #{item.expirationDateFormat}
+                td
+                  .action-btns
+                    a.btn-edit(href=`/${pathAdmin}/coupon/edit/${item.id}` title="Sửa")
+                      i.fa-regular.fa-pen-to-square
+                    button.btn-delete(button-delete data-id=item.id title="Xóa")
+                      i.fa-regular.fa-trash-can
+          else
+            tr
+              td.text-center(colspan="7" style="padding: 30px;") Chưa có mã giảm giá nào.
+
+  .admin-pagination
+    if pagination
+      +pagination(pagination)
+
+  form(
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`/${pathAdmin}/coupon/delete`
+  )

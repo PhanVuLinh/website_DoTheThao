@@ -1,0 +1,64 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+
+block main
+  +alert-success(3000)
+  +alert-error(3000)
+
+  .page-header
+    h1.page-title Thùng rác mã giảm giá
+    a.btn-back(href=`/${pathAdmin}/coupon/list`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  .table-section
+    .table-responsive
+      table.admin-table.table-hover
+        thead
+          tr
+            th Mã coupon
+            th Tên sự kiện
+            th % Giảm giá
+            th Giảm tối đa
+            th Số lượng còn lại
+            th Ngày hết hạn
+            th Xóa bởi
+            th Hành động
+        
+        tbody
+          if couponList && couponList.length > 0
+            each item in couponList
+              tr
+                td.font-weight-600.text-uppercase #{item.code}
+                td #{item.title}
+                td #{item.discountPercentage}%
+                td #{item.maxDiscountAmount.toLocaleString('vi-VN')} đ
+                td #{item.quantity}
+                td #{item.expirationDateFormat}
+                td
+                  .user-date
+                    span.name #{item.deletedByFullName}
+                    span.time #{item.deletedAtFormat}
+                td
+                  .action-btns
+                    button.btn-edit(button-restore data-id=item.id title="Khôi phục")
+                      i.fa-solid.fa-rotate-left
+                    button.btn-delete(button-delete data-id=item.id title="Xóa vĩnh viễn")
+                      i.fa-regular.fa-trash-can
+          else
+            tr
+              td.text-center(colspan="5" style="padding: 30px;") Thùng rác trống.
+
+  form(
+    action=""
+    method="POST"
+    id="form-restore-item"
+    data-path=`/${pathAdmin}/coupon/restore`
+  )
+  
+  form(
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`/${pathAdmin}/coupon/delete-destroy`
+  )

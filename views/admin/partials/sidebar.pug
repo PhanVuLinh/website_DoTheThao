@@ -18,7 +18,11 @@ aside.admin-sidebar
         a(href=`/${pathAdmin}/product/list`)
           i.fa-solid.fa-box-open
           span Quản lý sản phẩm
-    
+    li
+      a(href=`/${pathAdmin}/coupon/list`)
+        i.fa-solid.fa-ticket
+        span Quản lý mã giảm giá
+        
     if(role.permissions.includes("order_view"))
       li
         a(href=`/${pathAdmin}/order/list`)
