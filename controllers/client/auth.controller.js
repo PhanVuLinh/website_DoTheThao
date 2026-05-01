@@ -73,7 +73,7 @@ module.exports.registerPost = async (req, res) => {
     const newUser = new User(req.body);
     await newUser.save();
     req.flash("success", "Tạo tài khoản thành công");
-    res.redirect("/user/login");
+    res.redirect("/auth/login");
   } catch (error) {
     console.error(error);
     req.flash("error", "Có lỗi xảy ra!");
@@ -177,7 +177,7 @@ module.exports.forgotPasswordPost = async (req, res) => {
       `;
     sendMailHelper.sendMail(email, subject, html);
 
-    res.redirect(`/user/otp-password?email=${email}`);
+    res.redirect(`/auth/otp-password?email=${email}`);
   } catch (error) {
     req.flash("error", "Có lỗi xảy ra!");
     res.redirect(req.get("Referer"));
@@ -214,7 +214,7 @@ module.exports.otpPasswordPost = async (req, res) => {
       status: "active",
     });
     req.session.emailReset = email;
-    res.redirect(`/user/reset-password`);
+    res.redirect(`/auth/reset-password`);
   } catch (error) {
     req.flash("error", "Có lỗi xảy ra!");
     res.redirect(req.get("Referer"));
@@ -233,13 +233,13 @@ module.exports.resetPasswordPost = async (req, res) => {
     const email = req.session.emailReset;
     if (!email) {
       req.flash("error", "Có lỗi xảy ra!");
-      return res.redirect("/user/forgot-password");
+      return res.redirect("/auth/forgot-password");
     }
 
     await User.updateOne({ email: email }, { password: md5(password) });
     delete req.session.emailReset;
     req.flash("success", "Đổi mật khẩu thành công");
-    res.redirect("/user/login");
+    res.redirect("/auth/login");
   } catch (error) {
     req.flash("error", "Có lỗi xảy ra!");
     res.redirect(req.get("Referer"));

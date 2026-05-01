@@ -7,7 +7,7 @@ block main
         h2.auth-title Tạo Tài Khoản
         p.auth-subtitle Mua sắm dễ dàng và nhận nhiều ưu đãi hơn.
         
-        form(action="/user/register" method="POST")
+        form(action="/auth/register" method="POST")
           .form-group
             label(for="fullName") Họ và Tên
             input#fullName.form-control(type="text" name="fullName" placeholder="Nhập họ và tên" )
@@ -29,4 +29,4 @@ block main
             
         .auth-redirect
           | Đã có tài khoản? 
-          a(href="/user/login") Đăng nhập
+          a(href="/auth/login") Đăng nhập

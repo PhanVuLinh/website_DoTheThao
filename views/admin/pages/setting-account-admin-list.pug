@@ -4,8 +4,11 @@ include ../mixins/alert.pug
 block main
   +alert-success(3000)
   +alert-error(3000)
-  
-  h1.page-title Danh sách tài khoản quản trị
+  .page-header
+    h1.page-title Danh sách tài khoản quản trị
+    a.btn-back(href=`/${pathAdmin}/setting/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại cài đặt chung
 
   .filter-action-card
     .filter-row

@@ -7,7 +7,7 @@ block main
         h2.auth-title Đăng Nhập
         p.auth-subtitle Chào mừng bạn trở lại với #{settingWebsiteInfo.websiteName}
         
-        form(action="/user/login" method="POST")
+        form(action="/auth/login" method="POST")
           .form-group
             label(for="email") Email
             input#email.form-control(type="email" name="email" placeholder="Nhập email của bạn" required)
@@ -20,11 +20,11 @@ block main
             label.remember-me
               input(type="checkbox" name="remember") 
               | Ghi nhớ đăng nhập
-            a.forgot-link(href="/user/forgot-password") Quên mật khẩu?
+            a.forgot-link(href="/auth/forgot-password") Quên mật khẩu?
             
           button.btn-auth(type="submit") 
             | Đăng Nhập
             
         .auth-redirect
           | Bạn chưa có tài khoản? 
-          a(href="/user/register") Đăng ký ngay
+          a(href="/auth/register") Đăng ký ngay

@@ -6,7 +6,7 @@ const cartRoutes = require("../client/cart.route");
 const contactRoutes = require("../client/contact.route");
 const categoryRoutes = require("../client/category.route");
 const orderRoutes = require("../client/order.route");
-const userRoutes = require("../client/user.route");
+const authRoutes = require("./auth.route");
 const articleRoutes = require("../client/article.route");
 const searchRoutes = require("../client/search.route");
 
@@ -32,7 +32,7 @@ router.use("/category", categoryRoutes);
 
 router.use("/order", orderRoutes);
 
-router.use("/user", userRoutes);
+router.use("/auth", authRoutes);
 
 router.use("/article", articleRoutes);
 
