@@ -1,6 +1,11 @@
 extends ../layouts/default.pug
+include ../mixins/alert.pug
+include ../mixins/bulk-action.pug
+include ../mixins/pagination.pug
 
 block main
+  +alert-success(3000)
+  +alert-error(3000)
   h1.page-title Quản lý đơn hàng
   .filter-action-card
     .filter-row
@@ -34,9 +39,14 @@ block main
         i.fa-solid.fa-rotate-right
         | Xóa bộ lọc
     .action-row
-      .search-box-large(style="max-width: 500px;")
+      +bulk-action([
+        { value: "cancel", label: "Hủy đơn" },
+        { value: "shipping", label: "Đang giao hàng" },
+        { value: "done", label: "Hoàn thành" }
+      ])
+      .search-box-large
         i.fa-solid.fa-magnifying-glass
-        input(type="text" placeholder="Tìm kiếm theo Mã đơn, Tên khách hàng, SĐT...")
+        input(type="text" placeholder="Tìm kiếm theo Mã đơn, Tên khách hàng, SĐT..." search)
       .action-buttons-right
         a(href=`/${pathAdmin}/order/trash`).btn-trash
           i.fa-regular.fa-trash-can
@@ -60,7 +70,7 @@ block main
           each orderDetail in orderList
             tr
               td.text-center
-                input(type="checkbox" check-item=orderDetail.id)
+                input(type="checkbox" value=orderDetail.id name="id" check-item)
               td.order-code #{orderDetail.orderCode}
               td
                 .customer-info
@@ -101,18 +111,21 @@ block main
 
 
     .admin-pagination
-      ul.pagination-list
-        li.page-item.disabled: a.page-link(href="#"): i.fa-solid.fa-angle-left
-        li.page-item.active: a.page-link(href="#") 1
-        li.page-item: a.page-link(href="#") 2
-        li.page-item: a.page-link(href="#") 3
-        li.page-item.dots: span ...
-        li.page-item: a.page-link(href="#"): i.fa-solid.fa-angle-right
+      +pagination(pagination)
 
   form(
-      action=""
-      method="POST"
-      id="form-delete-item"
-      data-path=`/${pathAdmin}/order/delete`
-    )
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`/${pathAdmin}/order/delete`
+  )
+
+  form(
+    action=""
+    method="POST"
+    id="form-change-multi"
+    data-path=`/${pathAdmin}/order/change-multi`
+  )
+    input(type="hidden" name="type")
+    input(type="hidden" name="ids")
             

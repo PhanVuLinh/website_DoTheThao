@@ -1,15 +1,64 @@
 const moment = require("moment");
+const slugify = require("slugify");
 const Article = require("../../models/article.model");
 const Account = require("../../models/account.model");
 
 const variableCongfig = require("../../config/variable");
+const paginationHelper = require("../../helpers/pagination.helper");
 
 module.exports.list = async (req, res) => {
   const find = {
     deleted: false,
   };
-  const articleList = await Article.find(find).sort({ createdAt: "desc" });
+  //lọc theo trạng thái
+  if (req.query.status) {
+    find.status = req.query.status;
+  }
+  //lọc theo người tạo
+  if (req.query.createdBy) {
+    find.createdBy = req.query.createdBy;
+  }
+  //lọc theo ngày tạo
+  const dateFilter = {};
+  if (req.query.startDate) {
+    const startDate = moment(req.query.startDate).startOf("date").toDate();
+    dateFilter.$gte = startDate;
+  }
+  if (req.query.endDate) {
+    const endDate = moment(req.query.endDate).endOf("date").toDate();
+    dateFilter.$lte = endDate;
+  }
+  if (Object.keys(dateFilter).length > 0) {
+    find.createdAt = dateFilter;
+  }
 
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = slugify(req.query.keyword, {
+      lower: true,
+      locale: "vi",
+      strict: true,
+    });
+    const keywordRegex = new RegExp(keyword);
+    find.slug = keywordRegex;
+  }
+
+  //Phân trang
+    const countArticle = await Article.countDocuments(find);
+    let objectPagination = paginationHelper(
+      {
+        currentPage: 1,
+        limitItems: 5,
+      },
+      req.query,
+      countArticle,
+    );
+    //hết Phân trang
+
+  const articleList = await Article.find(find)
+    .sort({ createdAt: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
   for (const item of articleList) {
     if (item.createdBy) {
       const infoAccountCreated = await Account.findOne({
@@ -34,6 +83,7 @@ module.exports.list = async (req, res) => {
     title: "Danh sách bài viết",
     articleList: articleList,
     accountAdminList: accountAdminList,
+    pagination: objectPagination,
   });
 };
 

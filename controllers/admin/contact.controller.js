@@ -1,12 +1,37 @@
 const moment = require("moment");
 const Contact = require("../../models/Contact.model");
 const Account = require("../../models/account.model");
+
 const variableCongfig = require("../../config/variable");
+const paginationHelper = require("../../helpers/pagination.helper");
+
 module.exports.list = async (req, res) => {
   const find = {
     deleted: false,
   };
-  const contactList = await Contact.find(find).sort({ createdAt: "desc" });
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = req.query.keyword.trim();
+    const regexKeyword = new RegExp(keyword, "i");
+    find.$or = [{ email: regexKeyword }];
+  }
+
+  //Phân trang
+  const countContact = await Contact.countDocuments(find);
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countContact,
+  );
+  //hết Phân trang
+
+  const contactList = await Contact.find(find)
+    .sort({ createdAt: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
 
   for (const item of contactList) {
     item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
@@ -14,7 +39,41 @@ module.exports.list = async (req, res) => {
   res.render(`admin/pages/contact-list.pug`, {
     title: "Danh sách liên hệ",
     contactList: contactList,
+    pagination: objectPagination,
   });
+};
+
+module.exports.changeMulti = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "delete-all":
+        await Contact.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: updatedBy,
+            deletedAt: new Date(),
+          },
+        );
+        req.flash(
+          "success",
+          `Đã chuyển ${ids.length} liên hệ vào thùng rác!`,
+        );
+        break;
+
+      default:
+        break;
+    }
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/contact/list`);
+    res.redirect(req.get("Referer"));
+  }
 };
 
 module.exports.delete = async (req, res) => {

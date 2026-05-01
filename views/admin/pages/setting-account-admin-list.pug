@@ -84,7 +84,7 @@ block main
                 span.badge-status(class= `${item.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{item.status == "active" ? "Hoạt động" : "Tạm dừng"}
               td
                 .action-btns
-                  a(href=`/${pathAdmin}/setting/account-admin/edit/${item.id}`).btn-edit(title="Sửa")
+                  a(href=`/${pathAdmin}/setting/account-admin/edit/${item.id}`).btn-edit
                     i.fa-regular.fa-pen-to-square
                   button.btn-delete(button-delete data-id=item.id)
                     i.fa-regular.fa-trash-can

@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
 
 block main
@@ -9,7 +10,16 @@ block main
   h1.page-title Danh sách Mã giảm giá
 
   .filter-action-card
-    .action-row(style="justify-content: flex-end;")
+    .action-row
+      +bulk-action([
+        { value: "delete-all", label: "xóa" },
+        { value: "active", label: "Hoạt động" },
+        { value: "inactive", label: "Dừng hoạt động" }
+      ])
+      .search-box-large
+        i.fa-solid.fa-magnifying-glass
+        input(type="text" placeholder="Tìm kiếm mã giảm giá..." search)
+
       .action-buttons-right
         a(href=`/${pathAdmin}/coupon/create`).btn-create
           i.fa-solid.fa-plus
@@ -23,8 +33,11 @@ block main
       table.admin-table.table-hover
         thead
           tr
+            th.text-center(width="50px")
+              input(type="checkbox" check-all)
             th Mã coupon
             th Tên sự kiện
+            th Trạng thái
             th % Giảm giá
             th Giảm tối đa
             th Số lượng còn lại
@@ -35,8 +48,12 @@ block main
           if couponList && couponList.length > 0
             each item in couponList
               tr
+                td.text-center
+                  input(type="checkbox" value=item.id name="id" check-item)
                 td.font-weight-600.text-uppercase #{item.code}
                 td #{item.title}
+                td 
+                  span(class=`badge-status ${item.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{item.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}
                 td #{item.discountPercentage}%
                 td #{item.maxDiscountAmount.toLocaleString('vi-VN')} đ
                 td #{item.quantity}
@@ -52,8 +69,7 @@ block main
               td.text-center(colspan="7" style="padding: 30px;") Chưa có mã giảm giá nào.
 
   .admin-pagination
-    if pagination
-      +pagination(pagination)
+    +pagination(pagination)
 
   form(
     action=""
@@ -61,3 +77,12 @@ block main
     id="form-delete-item"
     data-path=`/${pathAdmin}/coupon/delete`
   )
+
+  form(
+    action=""
+    method="POST"
+    id="form-change-multi"
+    data-path=`/${pathAdmin}/coupon/change-multi`
+  )
+    input(type="hidden" name="type")
+    input(type="hidden" name="ids")

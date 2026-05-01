@@ -1,5 +1,7 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/bulk-action.pug
+include ../mixins/pagination.pug
 
 block main
   +alert-success(3000)
@@ -21,12 +23,9 @@ block main
         i.fa-solid.fa-rotate-right
         | Xóa bộ lọc
     .action-row
-      .bulk-action
-        select.form-select(chang-multi)
-          option(value="") -- Hành động --
-          option(value="delete") Xóa nhiều
-        button.btn-apply Áp dụng
-        
+      +bulk-action([
+        { value: "delete-all", label: "xóa" },
+      ])
       .search-box-large
         i.fa-solid.fa-magnifying-glass
         input(type="text" placeholder="Tìm kiếm theo email..." search)
@@ -51,14 +50,11 @@ block main
             each item in contactList
               tr
                 td.text-center
-                  input(type="checkbox" check-item=item.id)
-                
+                  input(type="checkbox" value=item.id name="id" check-item)
                 td.font-weight-600 #{item.email}
-                
                 td
                   .user-date
                     span.time #{item.createdAtFormat}
-                
                 td
                   .action-btns
                     button.btn-delete(button-delete data-id=item.id title="Xóa email này")
@@ -66,10 +62,21 @@ block main
           else 
             tr
               td(colspan="4" class="text-center") Chưa có email đăng ký nào.
+  .admin-pagination
+    +pagination(pagination)
 
   form(
-      action=""
-      method="POST"
-      id="form-delete-item"
-      data-path=`/${pathAdmin}/contact/delete`
-    )
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`/${pathAdmin}/contact/delete`
+  )
+
+  form(
+    action=""
+    method="POST"
+    id="form-change-multi"
+    data-path=`/${pathAdmin}/contact/change-multi`
+  )
+    input(type="hidden" name="type")
+    input(type="hidden" name="ids")

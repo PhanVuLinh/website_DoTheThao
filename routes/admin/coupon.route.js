@@ -6,6 +6,8 @@ const validate = require("../../validates/admin/coupon.validate");
 
 router.get("/list", couponController.list);
 
+router.patch("/change-multi", couponController.changeMulti);
+
 router.get("/create", couponController.create);
 
 router.post("/create", validate.createPost, couponController.createPost);

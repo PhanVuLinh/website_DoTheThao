@@ -4,12 +4,39 @@ const Product = require("../../models/product.model");
 const Account = require("../../models/account.model");
 
 const variableCongfig = require("../../config/variable");
+const paginationHelper = require("../../helpers/pagination.helper");
 
 module.exports.list = async (req, res) => {
   const find = {
     deleted: false,
   };
-  const orderList = await Order.find(find).sort({ createdAt: "desc" });
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = req.query.keyword.trim();
+    const regexKeyword = new RegExp(keyword, "i");
+    find.$or = [
+      { orderCode: regexKeyword },
+      { fullName: regexKeyword },
+      { phone: regexKeyword },
+    ];
+  }
+
+  //Phân trang
+  const countOrder = await Order.countDocuments(find);
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countOrder,
+  );
+  //hết Phân trang
+
+  const orderList = await Order.find(find)
+    .sort({ createdAt: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
 
   for (const order of orderList) {
     if (order.products && order.products.length > 0) {
@@ -45,7 +72,53 @@ module.exports.list = async (req, res) => {
   res.render("admin/pages/order-list.pug", {
     title: "Danh sách đơn hàng",
     orderList: orderList,
+    pagination: objectPagination,
   });
+};
+
+module.exports.changeMulti = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(",").map((id) => id.trim());
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "shipping":
+      case "done":
+        await Order.updateMany(
+          { _id: { $in: ids } },
+          {
+            status: type,
+            updatedBy: updatedBy,
+            updatedAt: new Date(),
+          },
+        );
+        req.flash("success", `Đã cập nhật ${ids.length} đơn hàng!`);
+        break;
+
+      case "cancel":
+        await Order.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: updatedBy,
+            deletedAt: new Date(),
+          },
+        );
+        req.flash("success", `Đã hủy ${ids.length} đơn hàng!`);
+        break;
+
+      default:
+        req.flash("error", "Hành động không hợp lệ!");
+        break;
+    }
+
+    return res.redirect(req.get("Referer"));
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "Có lỗi xảy ra!");
+    return res.redirect(req.get("Referer"));
+  }
 };
 
 module.exports.edit = async (req, res) => {

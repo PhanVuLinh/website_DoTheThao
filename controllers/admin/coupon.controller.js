@@ -3,12 +3,34 @@ const Coupon = require("../../models/coupon.model");
 const Account = require("../../models/account.model");
 
 const variableCongfig = require("../../config/variable");
+const paginationHelper = require("../../helpers/pagination.helper");
 
 module.exports.list = async (req, res) => {
   const find = {
     deleted: false,
   };
-  const couponList = await Coupon.find(find).sort({ createdAt: "desc" });
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = req.query.keyword.trim();
+    const regexKeyword = new RegExp(keyword, "i");
+    find.$or = [{ title: regexKeyword }, { code: regexKeyword }];
+  }
+
+  //Phân trang
+  const countCoupon = await Coupon.countDocuments(find);
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countCoupon,
+  );
+  //hết Phân trang
+  const couponList = await Coupon.find(find)
+    .sort({ createdAt: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
 
   for (const item of couponList) {
     item.expirationDateFormat = moment(item.expirationDate).format(
@@ -18,7 +40,57 @@ module.exports.list = async (req, res) => {
   res.render("admin/pages/coupon-list.pug", {
     title: "Danh sách mã giảm giá",
     couponList: couponList,
+    pagination: objectPagination,
   });
+};
+
+module.exports.changeMulti = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "active":
+      case "inactive":
+        await Coupon.updateMany(
+          { _id: { $in: ids } },
+          {
+            status: type,
+            updatedBy: updatedBy,
+            updatedAt: new Date(),
+          },
+        );
+        req.flash(
+          "success",
+          `Đã cập nhật trạng thái ${ids.length} mã giảm giá!`,
+        );
+        break;
+
+      case "delete-all":
+        await Coupon.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: updatedBy,
+            deletedAt: new Date(),
+          },
+        );
+        req.flash(
+          "success",
+          `Đã chuyển ${ids.length} mã giảm giá vào thùng rác!`,
+        );
+        break;
+
+      default:
+        break;
+    }
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/coupon/list`);
+    res.redirect(req.get("Referer"));
+  }
 };
 
 module.exports.create = (req, res) => {
