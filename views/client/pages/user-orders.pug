@@ -1,0 +1,71 @@
+extends ../layouts/default.pug
+
+block main
+  //- Gọi file CSS riêng biệt vào đây
+  link(rel="stylesheet", href="/css/user.css")
+
+  .profile-page
+    .container
+      .profile-grid
+        //- CỘT TRÁI: SIDEBAR MENU
+        .detail-card
+          .profile-user-info
+            .profile-avatar
+              i.fa-regular.fa-user
+            h3.profile-name #{user.fullName}
+            
+          ul.profile-nav-list
+            li: a(href="/user/info")
+              i.fa-regular.fa-id-card
+              | Thông tin cá nhân
+            li: a.active(href="/user/orders")
+              i.fa-solid.fa-box-open
+              | Đơn hàng của tôi
+            li: a(href="/user/change-password")
+              i.fa-solid.fa-lock
+              | Đổi mật khẩu
+            li: a.text-danger(href="/user/logout")
+              i.fa-solid.fa-arrow-right-from-bracket
+              | Đăng xuất
+
+        //- CỘT PHẢI: NỘI DUNG CHÍNH
+        .detail-card(style="background: transparent; box-shadow: none; padding: 0;")
+          h2.subtitle(style="margin-top: 0; padding-top: 0; border-top: none; margin-bottom: 25px;") Lịch Sử Đơn Hàng
+          
+          if orders && orders.length > 0
+            each order in orders
+              .order-card
+                .order-header
+                  .order-id
+                    | Mã đơn: ##{order.id}
+                    span.order-date Đặt ngày: #{order.createdAtFormat}
+                  
+                  if order.status == "pending"
+                    .order-status.status-pending Chờ xác nhận
+                  else if order.status == "shipping"
+                    .order-status.status-shipping Đang giao hàng
+                  else if order.status == "success"
+                    .order-status.status-success Đã giao thành công
+                  else if order.status == "cancelled"
+                    .order-status.status-cancelled Đã hủy
+                
+                .order-body
+                  img(src=order.products[0].thumbnail alt=order.products[0].title)
+                  .product-info
+                    .product-name #{order.products[0].title}
+                    .product-more 
+                      span Số lượng: x#{order.products[0].quantity}
+                      if order.products.length > 1
+                        |  (và #{order.products.length - 1} sản phẩm khác...)
+                
+                .order-footer
+                  .total
+                    span.order-total-label Tổng tiền: 
+                    span.order-total-price #{order.totalPriceFormat}đ
+                  a.btn-view-all-outline(href=`/user/order/detail/${order.id}` style="padding: 8px 25px; font-size: 14px;") Xem Chi Tiết
+          else
+            .empty-state(style="text-align: center; padding: 60px 20px; background: #fff; border-radius: 12px; border: 1px dashed #ccc;")
+              i.fa-solid.fa-clipboard-list(style="font-size: 50px; color: #ddd; margin-bottom: 20px;")
+              h3(style="font-size: 18px; color: var(--blue-dark); margin-bottom: 10px;") Bạn chưa có đơn hàng nào
+              p(style="color: #666; margin-bottom: 25px; font-size: 14.5px;") Hãy khám phá các sản phẩm thể thao cực chất tại TitiSport nhé!
+              a.btn-submit-cart(href="/products" style="display: inline-flex; width: auto; padding: 12px 30px; font-size: 15px;") Mua Sắm Ngay

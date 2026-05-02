@@ -9,6 +9,7 @@ const orderRoutes = require("../client/order.route");
 const authRoutes = require("./auth.route");
 const articleRoutes = require("../client/article.route");
 const searchRoutes = require("../client/search.route");
+const userRoutes = require("../client/user.route");
 
 const settingMiddleware = require("../../middlewares/client/setting.middleware");
 const categoryMiddleware = require("../../middlewares/client/category.middleware");
@@ -37,5 +38,7 @@ router.use("/auth", authRoutes);
 router.use("/article", articleRoutes);
 
 router.use("/search", searchRoutes);
+
+router.use("/user", userRoutes);
 
 module.exports = router;

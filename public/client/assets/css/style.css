@@ -2990,7 +2990,167 @@ textarea.form-control {
   padding: 10px 25px;
   font-size: 14px;
 }
+/* =========================================
+   TRANG THÔNG TIN TÀI KHOẢN & ĐƠN HÀNG
+   ========================================= */
+.profile-page {
+  padding: 40px 0 80px 0;
+  background: #f5f6f8;
+}
 
+.profile-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+/* Sidebar Navigation */
+.profile-user-info {
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eaeaea;
+}
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  background: var(--blue-dark);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 10px;
+}
+.profile-name {
+  font-size: 18px;
+  color: var(--blue-dark);
+  font-weight: 800;
+}
+.profile-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.profile-nav-list a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  color: #555;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.profile-nav-list a i {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+}
+.profile-nav-list a:hover {
+  background: #f9fbfc;
+  color: var(--blue-dark);
+  transform: translateX(5px);
+}
+.profile-nav-list a.active {
+  background: rgba(235, 84, 56, 0.08);
+  color: var(--red-main);
+  font-weight: 700;
+}
+.profile-nav-list a.text-danger:hover {
+  color: #dc3545;
+  background: rgba(220, 53, 69, 0.08);
+}
+
+/* Thẻ Đơn Hàng */
+.order-card {
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: var(--white);
+  transition: 0.3s;
+}
+.order-card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 77, 0.05);
+  border-color: #ddd;
+}
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #eaeaea;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+.order-header .order-id {
+  color: var(--blue-dark);
+  font-weight: 800;
+}
+.order-header .order-date {
+  color: #777;
+  font-size: 13px;
+  margin-left: 10px;
+}
+.order-status {
+  font-weight: 700;
+  font-size: 14.5px;
+}
+
+/* Các màu trạng thái đơn hàng */
+.status-pending {
+  color: #fa9b32;
+}
+.status-shipping {
+  color: #1da1f2;
+}
+.status-success {
+  color: #28a745;
+}
+.status-cancelled {
+  color: #dc3545;
+}
+
+.order-body {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.order-body img {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #eee;
+}
+.order-body .product-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+.order-body .product-more {
+  font-size: 13px;
+  color: #777;
+}
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eaeaea;
+}
+.order-total-label {
+  color: #666;
+  font-size: 14.5px;
+}
+.order-total-price {
+  color: var(--blue-dark);
+  font-weight: 800;
+  font-size: 18px;
+}
 /* TABLET PORTRAIT */
 @media (max-width: 992px) {
   :root {
@@ -3183,6 +3343,9 @@ textarea.form-control {
   .article-grid {
     grid-template-columns: repeat(2, 1fr); /* Giảm xuống 2 cột */
   }
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* MOBILE LANDSCAPE & PHONES */
@@ -3323,7 +3486,7 @@ textarea.form-control {
   }
 
   .article-grid {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
     gap: 25px;
   }
 

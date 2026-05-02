@@ -1,0 +1,56 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+
+block main
+  
+  +alert-success(3000)
+  +alert-error(3000)
+  
+  .profile-page
+    .container
+      .profile-grid
+        .detail-card
+          .profile-user-info
+            .profile-avatar
+              i.fa-regular.fa-user
+            h3.profile-name #{user.fullName}
+            
+          ul.profile-nav-list
+            li: a.active(href="/user/info")
+              i.fa-regular.fa-id-card
+              | Thông tin cá nhân
+            li: a(href="/user/orders")
+              i.fa-solid.fa-box-open
+              | Đơn hàng của tôi
+            li: a(href="/user/change-password")
+              i.fa-solid.fa-lock
+              | Đổi mật khẩu
+            li: a.text-danger(href="/user/logout")
+              i.fa-solid.fa-arrow-right-from-bracket
+              | Đăng xuất
+
+        .detail-card
+          h2.subtitle(style="margin-top: 0; padding-top: 0; border-top: none;") Hồ Sơ Của Tôi
+          p(style="color: #666; margin-bottom: 25px; font-size: 14.5px;") Quản lý thông tin hồ sơ để bảo mật tài khoản
+          
+          form(action="/user/info/edit?_method=PATCH" method="POST")
+            .form-grid
+              .form-group
+                label(for="fullName") Họ và tên
+                input#fullName.form-control(type="text" name="fullName" value=user.fullName required)
+              
+              .form-group
+                label(for="email") Email
+                input#email.form-control(type="email" name="email" value=user.email readonly )
+                
+              //- .form-group
+              //-   label(for="phone") Số điện thoại
+              //-   input#phone.form-control(type="text" name="phone" value=user.phone placeholder="Nhập số điện thoại của bạn")
+                
+              //- .form-group
+              //-   label(for="address") Địa chỉ giao hàng
+              //-   input#address.form-control(type="text" name="address" value=user.address placeholder="Nhập địa chỉ nhận hàng mặc định")
+                
+            .form-grou
+              button.btn-submit-cart(type="submit" style="width: max-content; padding: 14px 40px; font-size: 16px;") 
+                | Lưu Thay Đổi
