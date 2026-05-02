@@ -6,14 +6,12 @@ block main
   +alert-success(3000)
   +alert-error(3000)
 
-  //- Tiêu đề & Nút Quay lại
   .page-header
     h1.page-title Thùng rác bài viết
     a.btn-back(href=`/${pathAdmin}/article/list`) 
       i.fa-solid.fa-arrow-left
       | Quay lại danh sách
 
-  //- KHỐI HÀNH ĐỘNG HÀNG LOẠT VÀ TÌM KIẾM
   .filter-action-card
     .action-row
       .bulk-action
@@ -27,7 +25,6 @@ block main
         i.fa-solid.fa-magnifying-glass
         input(type="text" placeholder="Tìm kiếm tiêu đề bài viết đã xóa..." search)
 
-  //- KHỐI BẢNG DANH SÁCH BÀI VIẾT ĐÃ XÓA
   .table-section
     .table-responsive
       table.admin-table.table-hover

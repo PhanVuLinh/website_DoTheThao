@@ -5,7 +5,6 @@ include ../mixins/alert.pug
 block main
   +alert-error(3000)
   +alert-success(3000)
-  //- Phần Header của trang
   .page-header
     h1.page-title Chỉnh sửa sản phẩm
     a.btn-back(href=`/${pathAdmin}/product/list`) 
@@ -14,8 +13,6 @@ block main
 
   .form-card
     form(action=`/${pathAdmin}/product/edit/${productDetail.id}?_method=PATCH` method="POST" enctype="multipart/form-data")
-      
-      //- Hàng 1: Tên & Danh mục
       .form-row-2
         .form-group
           label Tên sản phẩm
@@ -26,8 +23,6 @@ block main
           select.form-control(name="category_id")
             option(value="") -- Chọn danh mục --
             +options(categoryList,0,productDetail.category_id)
-        
-      //- Hàng 2: Vị trí & Trạng thái
       .form-row-2
         .form-group
           label Vị trí
@@ -37,9 +32,7 @@ block main
           label Trạng thái
           select.form-control(name="status")
             option(value="active" selected=(productDetail.status === "active" ? true : false)) Hoạt động
-            option(value="inactive" selected=(productDetail.status === "inactive" ? true : false)) Tạm dừng
-
-      //- Hàng 3: Khối Upload Ảnh
+            option(value="inactive" selected=(productDetail.status === "inactive" ? true : false)) Tạm dừn
       .form-row-2
         .form-group
           label Ảnh đại diện
@@ -52,7 +45,6 @@ block main
               button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
                 i.fa-solid.fa-xmark
                 
-        //- Đã dùng class .featured-radios thay vì style inline
         .form-group
             label Sản phẩm nổi bật
             .featured-radios
@@ -63,18 +55,15 @@ block main
                 input(type="radio" name="featured" value="0" checked=(productDetail.featured === "0" ? true : false)) 
                 | Không nổi bật
 
-      //- Hàng 3.5: Khối Upload Danh sách ảnh (Thư viện ảnh)
       .form-group
         label Danh sách ảnh (Thư viện ảnh)
         .upload-images-wrapper(upload-images-wrapper)
           input#images-upload.hidden-input(upload-images-input type="file" name="images" accept="image/*" multiple)
-          
-          //- Đã thêm class .btn-add-images
+        
           label.btn-view-all-outline.btn-add-images(for="images-upload")
             i.fa-solid.fa-images
             |  Thêm nhiều ảnh
-          
-          //- Đã chuyển sang dùng class .images-preview-grid
+      
           .images-preview-grid(upload-images-preview-container)
             if productDetail.images && productDetail.images.length > 0
               each img in productDetail.images
@@ -83,8 +72,6 @@ block main
                   button.btn-remove-image-multi(type="button" title="Xóa ảnh")
                     i.fa-solid.fa-xmark
                   input(type="hidden" name="old_images" value=img)
-
-      //- Hàng 4: Giá bán & Phần trăm giảm giá
       .form-row-2
         .form-group
           label Giá bán (VNĐ)
@@ -94,7 +81,6 @@ block main
           label Giảm giá (%)
           input.form-control(type="number" name="discountPercentage" placeholder="Ví dụ: 15" min="0" max="100" value=productDetail.discountPercentage)
 
-      //- Hàng 5: Quản lý tồn kho theo Size
       .form-group
         label Kho hàng theo size / kích cỡ
         #dynamic-size-list
@@ -103,12 +89,10 @@ block main
           i.fa-solid.fa-plus
           |  Thêm size khác
 
-      //- Hàng 6: Mô tả
       .form-group
         label Mô tả sản phẩm
         textarea.textarea-mce.form-control(name="description" rows="6" placeholder="Nhập mô tả chi tiết cho sản phẩm này...")= productDetail.description
 
-      //- Nút Submit
       .form-actions
         button.btn-submit(type="submit") Cập nhật
 

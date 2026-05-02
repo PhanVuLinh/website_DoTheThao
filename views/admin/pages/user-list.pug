@@ -2,10 +2,7 @@ extends ../layouts/default.pug
 
 block main
   h1.page-title Quản lý người dùng
-
-  //- 1. KHỐI BỘ LỌC VÀ TÌM KIẾM
   .filter-action-card
-    //- Hàng trên: Bộ lọc (Đã được thu gọn theo thiết kế)
     .filter-row
       .filter-label
         i.fa-solid.fa-filter
@@ -25,7 +22,6 @@ block main
         i.fa-solid.fa-rotate-right
         | Xóa bộ lọc
 
-    //- Hàng dưới: Hành động, Tìm kiếm
     .action-row
       .bulk-action
         select.form-select
@@ -38,7 +34,6 @@ block main
         i.fa-solid.fa-magnifying-glass
         input(type="text" placeholder="Tìm kiếm theo Tên, Email, SĐT...")
 
-  //- 2. BẢNG DỮ LIỆU NGƯỜI DÙNG
   .table-section
     .table-responsive
       table.admin-table.table-hover
@@ -55,7 +50,6 @@ block main
             th Hành động
         
         tbody
-          //- Người dùng 1
           tr
             td.text-center
               input(type="checkbox")
@@ -71,7 +65,6 @@ block main
                 button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
                 button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
 
-          //- Người dùng 2
           tr
             td.text-center
               input(type="checkbox")
@@ -87,7 +80,6 @@ block main
                 button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
                 button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
                 
-          //- Người dùng 3
           tr
             td.text-center
               input(type="checkbox")
@@ -103,7 +95,6 @@ block main
                 button.btn-edit(title="Sửa"): i.fa-regular.fa-pen-to-square
                 button.btn-delete(title="Xóa"): i.fa-regular.fa-trash-can
 
-    //- 3. PHÂN TRANG
     .admin-pagination
       ul.pagination-list
         li.page-item.disabled

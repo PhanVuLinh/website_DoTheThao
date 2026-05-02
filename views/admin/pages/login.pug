@@ -6,20 +6,17 @@ block main
   //- THÊM CLASS NÀY ĐỂ BAO TRỌN TOÀN MÀN HÌNH
   .auth-page
   
-    //- Vòng tròn trang trí nền
     .auth-bg-shape.auth-shape-1
     .auth-bg-shape.auth-shape-2
 
     .auth-form-wrapper
       .auth-form-container
-        //- Tiêu đề & Logo
         .auth-header
           .auth-logo-icon
             i.fa-solid.fa-shield-halved
           h2.auth-title TitiSport Admin
           p.auth-desc Đăng nhập hệ thống quản trị viên
         
-        //- Form Đăng Nhập
         form.auth-form#login-form(action=`/${pathAdmin}/auth/login` method="POST")
           
           .auth-group

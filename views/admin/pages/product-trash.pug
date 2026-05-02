@@ -1,14 +1,12 @@
 extends ../layouts/default.pug
 
 block main
-  //- Tiêu đề & Nút Quay lại
   .page-header
     h1.page-title Thùng rác sản phẩm
     a.btn-back(href=`/${pathAdmin}/product/list`) 
       i.fa-solid.fa-arrow-left
       | Quay lại danh sách
 
-  //- 1. KHỐI HÀNH ĐỘNG VÀ TÌM KIẾM (Rút gọn)
   .filter-action-card
     .action-row
       .bulk-action
@@ -21,8 +19,6 @@ block main
       .search-box-large
         i.fa-solid.fa-magnifying-glass
         input(type="text" placeholder="Tìm kiếm sản phẩm trong thùng rác...")
-
-  //- 2. BẢNG DỮ LIỆU THÙNG RÁC
   .table-section
     .table-responsive
       table.admin-table.table-hover
@@ -39,8 +35,7 @@ block main
             th Xóa bởi
             th Hành động
         
-        tbody
-          //- Dòng 1
+        tbod
           each item in productList
             tr
               td.text-center
@@ -78,7 +73,6 @@ block main
                     i.fa-regular.fa-trash-can
 
 
-    //- 3. PHÂN TRANG (PAGINATION)
     .admin-pagination
       ul.pagination-list
         li.page-item.disabled: a.page-link(href="#"): i.fa-solid.fa-angle-left
