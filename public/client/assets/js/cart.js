@@ -1,4 +1,6 @@
-// tăng / giảm số lượng
+// ==========================================
+// 1. TĂNG / GIẢM SỐ LƯỢNG (Giữ nguyên logic của bạn)
+// ==========================================
 const handleQtyButtons = () => {
   document.querySelectorAll(".btn-qty.minus").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -25,10 +27,12 @@ const handleQtyButtons = () => {
 
 handleQtyButtons();
 
-// cập nhật tổng tiền
+// ==========================================
+// 2. CẬP NHẬT TỔNG TIỀN
+// ==========================================
 const updateCartTotal = () => {
   const cartItems = document.querySelectorAll(".cart-item");
-  let total = 0;
+  let subtotal = 0;
 
   cartItems.forEach((item) => {
     const price = item
@@ -36,15 +40,36 @@ const updateCartTotal = () => {
       .innerText.replace(/\./g, "")
       .replace(" đ", "");
 
-    total += parseInt(price);
+    subtotal += parseInt(price);
   });
 
-  document.querySelectorAll(".cart-total").forEach((el) => {
-    el.innerText = total.toLocaleString("vi-VN") + " đ";
-  });
+  // TÍNH LẠI GIẢM GIÁ NẾU CÓ MÃ
+  let discount = 0;
+  const discountRow = document.querySelector("#discount-row");
+  if (discountRow && discountRow.style.display !== "none") {
+    const percent = parseInt(discountRow.getAttribute("data-percent")) || 0;
+    const max = parseInt(discountRow.getAttribute("data-max")) || 0;
+
+    discount = (subtotal * percent) / 100;
+    if (discount > max) discount = max;
+
+    document.querySelector("#discount-val").innerText =
+      "- " + discount.toLocaleString("vi-VN") + " đ";
+  }
+
+  let total = subtotal - discount;
+  if (total < 0) total = 0;
+
+  const cartTotals = document.querySelectorAll(".cart-total");
+  if (cartTotals.length >= 2) {
+    cartTotals[0].innerText = subtotal.toLocaleString("vi-VN") + " đ"; 
+    cartTotals[1].innerText = total.toLocaleString("vi-VN") + " đ"; 
+  }
 };
 
-// cập nhật số lượng
+// ==========================================
+// 3. CẬP NHẬT SỐ LƯỢNG (Bổ sung Size vào Fetch)
+// ==========================================
 const handleQtyChange = () => {
   const inputsQuantity = document.querySelectorAll("input[name='quantity']");
 
@@ -53,12 +78,18 @@ const handleQtyChange = () => {
       const productId = input.getAttribute("product-id");
       const quantity = parseInt(input.value);
 
+      if (isNaN(quantity) || quantity < 1) {
+        quantity = 1;
+        input.value = 1;
+      }
+
       const cartItem = input.closest(".cart-item");
       const priceNew = parseInt(cartItem.getAttribute("data-price-new"));
 
       const itemPrice = cartItem.querySelector(".item-price");
       const total = priceNew * quantity;
       itemPrice.innerText = total.toLocaleString("vi-VN") + " đ";
+
       updateCartTotal();
 
       fetch(`/cart/update/${productId}/${quantity}`).catch((err) =>
@@ -69,3 +100,56 @@ const handleQtyChange = () => {
 };
 
 handleQtyChange();
+
+// ==========================================
+// 4. ÁP DỤNG VÀ HỦY MÃ GIẢM GIÁ
+// ==========================================
+
+// Áp dụng mã
+const btnApplyCoupon = document.querySelector("#btn-apply-coupon");
+if (btnApplyCoupon) {
+  btnApplyCoupon.addEventListener("click", async () => {
+    const codeInput = document.querySelector("#coupon-input");
+    const code = codeInput.value.trim();
+
+    if (!code) {
+      alert("Vui lòng nhập mã giảm giá!");
+      return;
+    }
+
+    try {
+      const response = await fetch("/cart/apply-coupon", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: code }),
+      });
+
+      const data = await response.json();
+
+      if (data.code === 200) {
+        window.location.reload(); // Ép load lại trang để nhận dữ liệu từ Database
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("Lỗi áp dụng mã:", error);
+    }
+  });
+}
+
+// Hủy mã
+const btnCancelCoupon = document.querySelector("#btn-cancel-coupon");
+if (btnCancelCoupon) {
+  btnCancelCoupon.addEventListener("click", async () => {
+    try {
+      const response = await fetch("/cart/remove-coupon", { method: "POST" });
+      const data = await response.json();
+
+      if (data.code === 200) {
+        window.location.reload(); // Load lại trang để reset Giao diện về giá gốc
+      }
+    } catch (error) {
+      console.error("Lỗi gỡ mã:", error);
+    }
+  });
+}

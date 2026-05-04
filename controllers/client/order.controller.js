@@ -6,6 +6,7 @@ const Cart = require("../../models/cart.model");
 const Product = require("../../models/product.model");
 const Order = require("../../models/order.model");
 const User = require("../../models/user.model");
+const Coupon = require("../../models/coupon.model");
 
 const generateHelper = require("../../helpers/generate.helper");
 const variableCongfig = require("../../config/variable");
@@ -71,10 +72,45 @@ module.exports.createPost = async (req, res) => {
     req.body.products = products;
     //tạm tính
     req.body.subtotal = subtotalValue;
-    //giảm giá
-    req.body.discount = 0;
-    ///thanh toán
+    
+    let discountValue = 0;
+    let couponRecord = null;
+
+    if (cart.coupon && cart.coupon.code) {
+      couponRecord  = await Coupon.findOne({
+        code: cart.coupon.code,
+        deleted: false,
+        status: "active",
+      });
+
+      // Kiểm tra xem khách đã dùng chưa (Bảo vệ an toàn)
+      const isUsed =
+        couponRecord &&
+        couponRecord.usedBy &&
+        couponRecord.usedBy.includes(user.id);
+
+      // Nếu mã hợp lệ VÀ chưa dùng
+      if (couponRecord && couponRecord.quantity > 0 && !isUsed) {
+        let calculatedDiscount = (subtotalValue * couponRecord.discountPercentage) / 100;
+        
+        // 2. So sánh: Chỉ khi nào vượt quá mức tối đa thì mới lấy Max
+        if (calculatedDiscount > couponRecord.maxDiscountAmount) {
+          discountValue = couponRecord.maxDiscountAmount;
+        } else {
+          discountValue = calculatedDiscount; // Còn không thì cứ lấy đúng số tiền %
+        }
+
+        // 3. Đẩy tên mã vào req.body để Mongoose lưu xuống Database
+        req.body.couponCode = couponRecord.code;
+      } else {
+        discountValue = 0;
+      }
+    }
+    //đã thanh toán đc chỉ còn xử lý lưu code, discount, total và coupee tài khoảng đã dùng 
+    
+    req.body.discount = discountValue;
     req.body.total = req.body.subtotal - req.body.discount;
+    if (req.body.total < 0) req.body.total = 0;
     //trạng thái thanh toán
     req.body.paymentStatus = "unpaid";
     //trạng thái đơn hàng
@@ -83,9 +119,22 @@ module.exports.createPost = async (req, res) => {
     const newRecord = new Order(req.body);
     await newRecord.save();
 
+    if (couponRecord && discountValue > 0) {
+      await Coupon.updateOne(
+        { _id: couponRecord.id },
+        {
+          $inc: { quantity: -1 },
+          $push: { usedBy: user.id },
+        },
+      );
+    }
+
     switch (req.body.paymentMethod) {
       case "cod":
-        await Cart.updateOne({ _id: cartId }, { products: [] });
+        await Cart.updateOne(
+          { _id: cartId },
+          { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
+        );
         req.flash("success", "Đặt hàng thành công");
         res.redirect(`/order/success/${newRecord.id}`);
         break;
@@ -254,7 +303,10 @@ module.exports.paymentZalopayReturn = async (req, res) => {
           { _id: orderId, deleted: false },
           { paymentStatus: "paid", status: "initial" },
         );
-        await Cart.updateOne({ _id: orderDetail.cartId }, { products: [] });
+        await Cart.updateOne(
+          { _id: orderDetail.cartId },
+          { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
+        );
       }
 
       return res.redirect(`/order/success/${orderId}`);
@@ -295,7 +347,7 @@ module.exports.paymentZalopayCallback = async (req, res) => {
       if (orderUpdate) {
         await Cart.updateOne(
           { _id: orderUpdate.cartId },
-          { $set: { products: [] } },
+          { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
         );
       }
 
@@ -412,7 +464,10 @@ module.exports.paymentVnpayResult = async (req, res) => {
           { _id: orderId, deleted: false },
           { paymentStatus: "paid" },
         );
-        await Cart.updateOne({ _id: orderDetail.cartId }, { products: [] });
+        await Cart.updateOne(
+          { _id: orderDetail.cartId },
+          { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
+        );
         return res.redirect(`/order/success/${orderId}`);
       }
 

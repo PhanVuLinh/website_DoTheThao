@@ -37,20 +37,34 @@ block main
                     .item-price #{item.totalPrice.toLocaleString('vi-VN')} đ
             .cart-discount-row
               .discount-input-wrap
-                input(type="text" placeholder="Nhập mã giảm giá")
-                button.btn-apply Dùng Mã
-            .cart-summary
+                if cartDetail.coupon && cartDetail.coupon.code
+                  input#coupon-input(type="text" value=cartDetail.coupon.code readonly)
+                  button.btn-apply#btn-apply-coupon(type="button" style="display: none;") Dùng Mã
+                  button#btn-cancel-coupon(type="button" style="display: block; background: #dc3545; color: white; border: none; padding: 0 20px; border-radius: 0 6px 6px 0; font-weight: 700; cursor: pointer;") Hủy
+                else
+                  input#coupon-input(type="text" placeholder="Nhập mã giảm giá")
+                  button.btn-apply#btn-apply-coupon(type="button" style="display: block;") Dùng Mã
+                  button#btn-cancel-coupon(type="button" style="display: none; background: #dc3545; color: white; border: none; padding: 0 20px; border-radius: 0 6px 6px 0; font-weight: 700; cursor: pointer;") Hủy
+            .cart-summary 
+              input#subtotal-raw(type="hidden" value=cartDetail.totalPrice)
               .summary-row
                 span Tạm tính:
                 .inner-price
                   span.cart-total #{cartDetail.totalPrice.toLocaleString('vi-VN')} đ
-              .summary-row
+              
+              //- ĐÃ SỬA: Bổ sung data-percent, data-max và logic tự động hiện nếu có mã
+              .summary-row#discount-row(
+                style=(cartDetail.discountAmount > 0 ? "display: flex;" : "display: none;")
+                data-percent=(cartDetail.couponInfo ? cartDetail.couponInfo.discountPercentage : 0)
+                data-max=(cartDetail.couponInfo ? cartDetail.couponInfo.maxDiscountAmount : 0)
+              )
                 span Giảm:
-                span - 0 đ
+                span#discount-val(style="color: red;") - #{cartDetail.discountAmount ? cartDetail.discountAmount.toLocaleString('vi-VN') : 0} đ
+              
               .summary-row.total
                 span Thanh toán:
                 strong.price-red
-                  span.cart-total #{cartDetail.totalPrice.toLocaleString('vi-VN')} 
+                  span#total-val.cart-total #{cartDetail.totalPayment ? cartDetail.totalPayment.toLocaleString('vi-VN') : cartDetail.totalPrice.toLocaleString('vi-VN')} đ
           .cart-box.checkout-box
             h2.title Thông Tin Giao Hàng
             form.checkout-form(action="/order/create" method="POST")

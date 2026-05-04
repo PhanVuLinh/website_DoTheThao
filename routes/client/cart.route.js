@@ -10,4 +10,8 @@ router.get("/delete/:productId", cartController.deleteProduct);
 
 router.get("/update/:productId/:quantity", cartController.updateQuantity);
 
+router.post("/apply-coupon", cartController.applyCoupon);
+
+router.post("/remove-coupon", cartController.removeCoupon);
+
 module.exports = router;

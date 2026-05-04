@@ -11,6 +11,7 @@ const orderSchema = new mongoose.Schema(
     note: String,
     products: Array,
     subtotal: Number,
+    couponCode: String,
     discount: {
       type: Number,
       default: 0,

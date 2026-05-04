@@ -54,6 +54,18 @@ block main
               li
                 span.label Ngày đặt:
                 span.value #{orderDetail.createdAtFormat}
+              li
+                span.label Tạm tính:
+                span.value #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
+
+              if orderDetail.discount > 0
+                li
+                  span.label 
+                    | Giảm giá 
+                    if orderDetail.couponCode
+                      strong (Mã: #{orderDetail.couponCode})
+                    | :
+                  span.value - #{orderDetail.discount.toLocaleString('vi-VN')} đ
               li.total-row
                 span.label Tổng thanh toán:
                 span.value.price-red #{orderDetail.total.toLocaleString('vi-VN')} đ

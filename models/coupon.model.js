@@ -17,6 +17,7 @@ const couponSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    usedBy: Array,
     deletedAt: Date,
     createdBy: String,
     updatedBy: String,
