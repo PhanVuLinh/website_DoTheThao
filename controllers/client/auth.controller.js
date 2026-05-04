@@ -9,6 +9,7 @@ const sendMailHelper = require("../../helpers/sendMail.helper");
 module.exports.login = async (req, res) => {
   res.render("client/pages/user-login.pug", {
     title: "Đăng nhập",
+    oldData: req.flash("oldData")[0] || {},
   });
 };
 

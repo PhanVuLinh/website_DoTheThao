@@ -17,7 +17,7 @@ module.exports.createPost = async (req, res) => {
     if (!req.cookies.token) {
       req.session.returnTo = "/cart";
       req.flash("error", "Vui lòng đăng nhập để đặt hàng!");
-      return res.redirect("/user/login");
+      return res.redirect("/auth/login");
     }
     const user = await User.findOne({
       token: req.cookies.token,
@@ -25,7 +25,7 @@ module.exports.createPost = async (req, res) => {
     });
     if (!user) {
       req.flash("error", "Tài khoản không tồn tại!");
-      return res.redirect("/user/login");
+      return res.redirect("/auth/login");
     }
     req.body.user_id = user.id;
 

@@ -76,11 +76,11 @@ block main
             form.checkout-form(action="/order/create" method="POST")
               .form-grid
                 .form-group
-                  input.form-control(type="text" name="fullName" placeholder="Họ và tên *")
+                  input.form-control(type="text" name="fullName" placeholder="Họ và tên *" value=oldData.fullName || "")
                 .form-group
-                  input.form-control(type="text" name="phone" placeholder="Số điện thoại *")
+                  input.form-control(type="text" name="phone" placeholder="Số điện thoại *" value=oldData.phone || "")
               .form-group
-                input.form-control(type="text" name="address" placeholder="Địa chỉ nhận hàng chi tiết *")
+                input.form-control(type="text" name="address" placeholder="Địa chỉ nhận hàng chi tiết *" value=oldData.address || "")
               .form-group
                 textarea.form-control(name="note" placeholder="Ghi chú thêm (Tùy chọn)" rows="3")
               
@@ -90,13 +90,13 @@ block main
                   input(type="radio" name="paymentMethod" value="cod" checked)
                   span Thanh toán tiền mặt khi nhận hàng (COD)
                 label.payment-option
-                  input(type="radio" name="paymentMethod" value="zaloPay")
+                  input(type="radio" name="paymentMethod" value="zaloPay" checked=(oldData.paymentMethod === "zaloPay"))
                   span ZaloPay
                 label.payment-option
-                  input(type="radio" name="paymentMethod" value="vnPay")
+                  input(type="radio" name="paymentMethod" value="vnPay" checked=(oldData.paymentMethod === "vnPay"))
                   span VNPay
                 label.payment-option
-                  input(type="radio" name="paymentMethod" value="momo")
+                  input(type="radio" name="paymentMethod" value="momo" checked=(oldData.paymentMethod === "momo"))
                   span Ví MoMo
 
               button.btn-submit-order(type="submit") ĐẶT HÀNG

@@ -62,6 +62,7 @@ module.exports.cart = async (req, res) => {
   res.render("client/pages/cart.pug", {
     title: "Giỏ hàng",
     cartDetail: cart,
+    oldData: req.flash("oldData")[0] || {},
   });
 };
 
