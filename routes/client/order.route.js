@@ -1,8 +1,9 @@
 const router = require("express").Router();
 
 const orderController = require("../../controllers/client/order.controller");
+const validate = require("../../validates/client/order.validate");
 
-router.post("/create", orderController.createPost);
+router.post("/create", validate.orderPost, orderController.createPost);
 
 router.get("/success/:orderId", orderController.orderSuccess);
 
