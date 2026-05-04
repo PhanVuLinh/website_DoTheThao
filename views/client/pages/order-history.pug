@@ -1,0 +1,55 @@
+extends ../layouts/default.pug
+include ../mixins/profile-sidebar.pug
+
+block main
+  .profile-page
+    .container
+      .profile-grid
+        +profileSidebar(user, 'order-history')
+
+        .detail-card
+          h2.subtitle Lịch Sử Đơn Hàng
+          
+          if orders && orders.length > 0
+            each order in orders
+              .order-card
+                .order-header
+                  .order-id
+                    | Mã đơn: #{order.orderCode}
+                    span.order-date Đặt ngày: #{order.createdAtFormat}
+                  
+                  if order.status == "initial"
+                    .order-status.status-pending Chờ xác nhận
+                  else if order.status == "shipping"
+                    .order-status.status-shipping Đang giao hàng
+                  else if order.status == "done"
+                    .order-status.status-success Đã giao thành công
+                  else if order.status == "cancel"
+                    .order-status.status-cancelled Đã hủy
+
+                - const product = order.products[0]
+                .order-body
+                  a(href=`/product/detail/${product.productInfo.slug}`)
+                    img.cart-item__img(src=product.productInfo.thumbnail alt=product.productInfo.title)
+                  .product-info
+                    .product-name #{product.productInfo.title}
+                    .product-more 
+                      span Phân Loại: #{product.size}
+                    .product-more 
+                      span Số lượng: x#{product.quantity}
+                    
+                if (order.products.length > 1)
+                  .order-more-items
+                    i.fa-solid.fa-layer-group(style="margin-right: 6px; color: #ccc;")
+                    | Đơn hàng còn 
+                    strong(style="color: #333;") #{order.products.length - 1}
+                    |  sản phẩm khác (Vui lòng xem chi tiết)
+                
+                .order-footer
+                  .total
+                    span.order-total-label Tổng tiền: 
+                    span.order-total-price #{order.totalPriceFormat}đ
+                  a.btn-view-all-outline(href=`/user/order/detail/${order.id}` style="padding: 8px 25px; font-size: 14px;") Xem Chi Tiết
+          else
+            span chưa có đơn hàng nào
+             

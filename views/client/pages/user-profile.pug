@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/profile-sidebar.pug
 
 block main
   
@@ -9,35 +10,16 @@ block main
   .profile-page
     .container
       .profile-grid
-        .detail-card
-          .profile-user-info
-            .profile-avatar
-              i.fa-regular.fa-user
-            h3.profile-name #{user.fullName}
-            
-          ul.profile-nav-list
-            li: a.active(href="/user/info")
-              i.fa-regular.fa-id-card
-              | Thông tin cá nhân
-            li: a(href="/user/orders")
-              i.fa-solid.fa-box-open
-              | Đơn hàng của tôi
-            li: a(href="/user/change-password")
-              i.fa-solid.fa-lock
-              | Đổi mật khẩu
-            li: a.text-danger(href="/user/logout")
-              i.fa-solid.fa-arrow-right-from-bracket
-              | Đăng xuất
+        +profileSidebar(user, 'profile')
 
         .detail-card
-          h2.subtitle(style="margin-top: 0; padding-top: 0; border-top: none;") Hồ Sơ Của Tôi
-          p(style="color: #666; margin-bottom: 25px; font-size: 14.5px;") Quản lý thông tin hồ sơ để bảo mật tài khoản
+          h2.subtitle Hồ Sơ Của Tôi
           
-          form(action="/user/info/edit?_method=PATCH" method="POST")
+          form(action="/user/profile?_method=PATCH" method="POST")
             .form-grid
               .form-group
                 label(for="fullName") Họ và tên
-                input#fullName.form-control(type="text" name="fullName" value=user.fullName required)
+                input#fullName.form-control(type="text" name="fullName" value=user.fullName )
               
               .form-group
                 label(for="email") Email

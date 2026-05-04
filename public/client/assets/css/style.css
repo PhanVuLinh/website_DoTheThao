@@ -1665,6 +1665,9 @@ textarea.form-control {
   margin: 25px 0 15px 0;
   padding-top: 20px;
   border-top: 1px solid #eee;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
 }
 
 .payment-methods {
@@ -1912,12 +1915,12 @@ textarea.form-control {
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
-.subtitle {
+/* .subtitle {
   font-size: 16px;
   color: var(--blue-dark);
   font-weight: 700;
   margin: 15px 0;
-}
+} */
 .payment-methods {
   display: flex;
   flex-direction: column;
@@ -3065,6 +3068,14 @@ textarea.form-control {
 }
 
 /* Thẻ Đơn Hàng */
+.order-more-items {
+  padding: 12px 0 0 0; 
+  margin-top: 12px; 
+  border-top: 1px dashed #eee; 
+  text-align: center; 
+  font-size: 13.5px; 
+  color: #777;"
+}
 .order-card {
   border: 1px solid #eaeaea;
   border-radius: 12px;

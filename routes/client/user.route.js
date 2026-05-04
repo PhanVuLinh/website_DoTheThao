@@ -1,9 +1,14 @@
 const router = require("express").Router();
 
 const userController = require("../../controllers/client/user.controller");
+const validate = require("../../validates/client/user.validate");
 
 router.get("/profile", userController.profile);
 
-router.get("/orders", userController.orders);
+router.patch("/profile", userController.profilePatch);
+
+router.get("/order-history", userController.orderHistory);
+
+router.get("/change-password", userController.changePassword);
 
 module.exports = router;

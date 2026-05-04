@@ -1,0 +1,27 @@
+mixin profileSidebar(user, active)
+  .detail-card
+    .profile-user-info
+      .profile-avatar
+        i.fa-regular.fa-user
+      h3.profile-name #{user.fullName}
+      
+    ul.profile-nav-list
+      li
+        a(class=active === 'profile' ? 'active' : '', href="/user/profile")
+          i.fa-regular.fa-id-card
+          | Thông tin cá nhân
+
+      li
+        a(class=active === 'order-history' ? 'active' : '', href="/user/order-history")
+          i.fa-solid.fa-box-open
+          | Đơn hàng của tôi
+
+      li
+        a(class=active === 'password' ? 'active' : '', href="/user/change-password")
+          i.fa-solid.fa-lock
+          | Đổi mật khẩu
+
+      li
+        a.text-danger(href="/auth/logout")
+          i.fa-solid.fa-arrow-right-from-bracket
+          | Đăng xuất

@@ -2,7 +2,7 @@ const router = require("express").Router();
 
 const authController = require("../../controllers/client/auth.controller");
 
-const validate = require("../../validates/client/user.validate");
+const validate = require("../../validates/client/auth.validate");
 
 router.get("/login", authController.login);
 
