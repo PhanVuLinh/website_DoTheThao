@@ -32,7 +32,14 @@ block main
                   .cart-item__action
                     .qty-control
                       button.btn-qty.minus -
-                      input.qty-input(type="number" name="quantity" value=item.quantity product-id=item.product_id min="1")
+                      input.qty-input(
+                        type="number" 
+                        name="quantity" 
+                        value=item.quantity 
+                        product-id=item.product_id 
+                        min="1"
+                        data-old=item.quantity
+                      )
                       button.btn-qty.plus +
                     .item-price #{item.totalPrice.toLocaleString('vi-VN')} đ
             .cart-discount-row
@@ -52,7 +59,6 @@ block main
                 .inner-price
                   span.cart-total #{cartDetail.totalPrice.toLocaleString('vi-VN')} đ
               
-              //- ĐÃ SỬA: Bổ sung data-percent, data-max và logic tự động hiện nếu có mã
               .summary-row#discount-row(
                 style=(cartDetail.discountAmount > 0 ? "display: flex;" : "display: none;")
                 data-percent=(cartDetail.couponInfo ? cartDetail.couponInfo.discountPercentage : 0)

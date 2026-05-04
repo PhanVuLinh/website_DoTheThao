@@ -62,8 +62,8 @@ const updateCartTotal = () => {
 
   const cartTotals = document.querySelectorAll(".cart-total");
   if (cartTotals.length >= 2) {
-    cartTotals[0].innerText = subtotal.toLocaleString("vi-VN") + " đ"; 
-    cartTotals[1].innerText = total.toLocaleString("vi-VN") + " đ"; 
+    cartTotals[0].innerText = subtotal.toLocaleString("vi-VN") + " đ";
+    cartTotals[1].innerText = total.toLocaleString("vi-VN") + " đ";
   }
 };
 
@@ -92,9 +92,27 @@ const handleQtyChange = () => {
 
       updateCartTotal();
 
-      fetch(`/cart/update/${productId}/${quantity}`).catch((err) =>
-        console.log(err),
-      );
+      fetch(`/cart/update/${productId}/${quantity}`);
+      fetch(`/cart/update/${productId}/${quantity}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.success) {
+            alert(data.message);
+            const oldValue = input.getAttribute("data-old");
+            input.value = oldValue;
+            const total = priceNew * oldValue;
+            itemPrice.innerText = total.toLocaleString("vi-VN") + " đ";
+
+            cartItem.querySelector(".item-price").innerText =
+              total.toLocaleString("vi-VN") + " đ";
+
+            updateCartTotal();
+            return;
+          }
+
+          input.setAttribute("data-old", input.value);
+        })
+        .catch((err) => console.log(err));
     });
   });
 };
