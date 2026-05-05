@@ -1,0 +1,93 @@
+extends ../layouts/default.pug
+include ../mixins/profile-sidebar.pug
+
+block main
+  .profile-page
+    .container
+      .profile-grid
+        +profileSidebar(user, 'order-history')
+
+        .detail-card
+          .order-detail-header
+            h2.subtitle.order-detail-title Chi Tiết Đơn Hàng
+            a.btn-view-all-outline.btn-back-sm(href="/user/order-history") 
+              i.fa-solid.fa-angle-left
+              | Quay lại
+
+          .order-card.order-detail-card
+            .order-header.no-border
+              .order-id Mã đơn hàng: #{order.orderCode}
+                .order-date Ngày đặt: #{order.createdAtFormat}
+            
+              if order.status == "initial"
+                .order-status.status-pending Chờ xác nhận
+              else if order.status == "shipping"
+                .order-status.status-shipping Đang giao hàng
+              else if order.status == "done"
+                .order-status.status-success Đã giao thành công
+              else if order.status == "cancel"
+                .order-status.status-cancelled Đã hủy
+                
+
+          //- Thông tin nhận hàng
+          .receiver-info-box
+            h3.receiver-title Thông Tin Nhận Hàng
+            .receiver-content
+              .receiver-name #{order.fullName}
+              .receiver-row Điện thoại: #{order.phone}
+              .receiver-row Địa chỉ: #{order.address}
+              if order.note
+                .receiver-note Ghi chú: #{order.note}
+
+          //- Danh sách sản phẩm (tận dụng class cart-item)
+          h3.product-list-title Danh Sách Sản Phẩm
+          .product-list-container
+            each item in order.products
+              .cart-item.order-detail-item
+                a(href=`/product/detail/${item.productInfo.slug}`)
+                  img.cart-item__img.small-img(src=item.productInfo.thumbnail alt=item.productInfo.title)
+                .cart-item__info
+                  a(href=`/product/detail/${item.productInfo.slug}`)
+                    .name.hover-name #{item.productInfo.title}
+                  if item.size
+                    .variant Phân loại: #{item.size}
+                  .variant Số lượng: x#{item.quantity}
+                .item-price #{(item.priceNew * item.quantity).toLocaleString("vi-VN")} đ
+
+          //- Tổng kết tiền (tận dụng class cart-summary)
+          .order-summary-wrapper
+            .cart-summary.order-summary-box
+              .summary-row
+                span Tạm tính:
+                span #{order.subtotal.toLocaleString("vi-VN")} đ
+              
+              if order.discount > 0
+                .summary-row
+                  span Giảm giá:
+                  span.discount-amount - #{order.discount.toLocaleString("vi-VN")} đ
+                if order.couponCode
+                  .summary-row.coupon-row
+                    span (Mã: #{order.couponCode})
+                    span
+              
+              .summary-row.total
+                span Tổng cộng:
+                span.price-red #{order.total.toLocaleString("vi-VN")} đ
+              
+              .payment-info-box
+                .payment-info-row
+                  span Thanh toán:
+                  span.font-weight-500
+                    if order.paymentMethod == "cod"
+                      | Khi nhận hàng
+                    else if order.paymentMethod == "zaloPay"
+                      | ZaloPay
+                    else if order.paymentMethod == "vnPay"
+                      | VNPay
+                
+                .payment-info-row
+                  span Trạng thái:
+                  if order.paymentStatus == "paid"
+                    span.text-success Đã thanh toán
+                  else
+                    span.text-warning Chưa thanh toán

@@ -9,6 +9,8 @@ router.patch("/profile", userController.profilePatch);
 
 router.get("/order-history", userController.orderHistory);
 
+router.get("/order-history/detail/:orderId", userController.orderHistoryDetail);
+
 router.get("/change-password", userController.changePassword);
 
 module.exports = router;

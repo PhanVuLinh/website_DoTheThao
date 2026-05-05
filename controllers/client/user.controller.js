@@ -70,6 +70,54 @@ module.exports.orderHistory = async (req, res) => {
   }
 };
 
+module.exports.orderHistoryDetail = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const user = await User.findOne({
+      token: req.cookies.token,
+      deleted: false,
+    });
+    if (!user) return res.redirect("/user/login");
+    const order = await Order.findOne({
+      _id: orderId,
+      user_id: user.id,
+      deleted: false,
+    });
+    if (!order) {
+      req.flash("error", "Đơn hàng không tồn tại!");
+      return res.redirect("/user/order/history");
+    }
+    order.createdAtFormat = moment(order.createdAt).format(
+      "HH:mm - DD/MM/YYYY",
+    );
+    for (const item of order.products) {
+      const infoProduct = await Product.findOne({
+        _id: item.product_id,
+        deleted: false,
+      }).select("title thumbnail slug");
+
+      if (infoProduct) {
+        item.productInfo = infoProduct;
+      } else {
+        item.productInfo = {
+          title: "Sản phẩm không còn tồn tại",
+          thumbnail: "/images/default-product.png",
+          slug: "",
+        };
+      }
+    }
+    res.render("client/pages/order-history-detail.pug", {
+      title: "Chi tiết lịch sử đơn hàng",
+      user: user,
+      order: order,
+    });
+  } catch (error) {
+    console.log("Lỗi load lịch sử đơn hàng:", error);
+    req.flash("error", "Lỗi hệ thống khi tải lịch sử đơn hàng");
+    res.redirect("/");
+  }
+};
+
 module.exports.changePassword = (req, res) => {
   res.render("client/pages/user-change-password.pug", {
     title: "Đổi mật cá nhân",

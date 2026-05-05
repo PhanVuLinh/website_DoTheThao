@@ -3102,7 +3102,6 @@ textarea.form-control {
 .order-header .order-date {
   color: #777;
   font-size: 13px;
-  margin-left: 10px;
 }
 .order-status {
   font-weight: 700;
@@ -3161,6 +3160,137 @@ textarea.form-control {
   color: var(--blue-dark);
   font-weight: 800;
   font-size: 18px;
+}
+/* =========================================
+   CHI TIẾT ĐƠN HÀNG (BỔ SUNG)
+   ========================================= */
+.order-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+.order-detail-title {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.btn-back-sm {
+  padding: 8px 20px;
+  font-size: 14px;
+}
+.order-detail-card .no-border {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+/* Thông tin người nhận */
+.receiver-info-box {
+  background: #f9fbfc;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+.receiver-title {
+  font-size: 16px;
+  color: var(--blue-dark);
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+.receiver-content {
+  font-size: 14.5px;
+  color: #555;
+}
+.receiver-name {
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+.receiver-row {
+  margin-bottom: 5px;
+}
+.receiver-note {
+  color: var(--red-main);
+}
+
+/* Danh sách sản phẩm chi tiết */
+.product-list-title {
+  font-size: 16px;
+  color: var(--blue-dark);
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+.product-list-container {
+  border-top: 1px solid #eee;
+}
+.order-detail-item .small-img {
+  width: 80px;
+  height: 80px;
+}
+.order-detail-item a {
+  text-decoration: none;
+}
+.order-detail-item .hover-name {
+  transition: 0.3s;
+}
+.order-detail-item .hover-name:hover {
+  color: var(--red-main);
+}
+
+/* Khối tổng kết tiền */
+.order-summary-wrapper {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px dashed #eaeaea;
+  display: flex;
+  justify-content: flex-end;
+}
+.order-summary-box {
+  width: 350px;
+}
+.discount-amount {
+  color: var(--red-main);
+}
+.coupon-row {
+  margin-top: -5px;
+}
+.coupon-row span:first-child {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Trạng thái thanh toán */
+.payment-info-box {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+.payment-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #444;
+}
+.payment-info-row:last-child {
+  margin-bottom: 0;
+}
+.font-weight-500 {
+  font-weight: 500;
+}
+.text-success {
+  color: #28a745;
+  font-weight: 700;
+}
+.text-warning {
+  color: #ffca28;
+  font-weight: 700;
 }
 /* TABLET PORTRAIT */
 @media (max-width: 992px) {
