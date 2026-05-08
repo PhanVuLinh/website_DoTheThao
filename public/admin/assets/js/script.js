@@ -358,6 +358,24 @@ if (filterCategory) {
     filterCategory.value = currentId;
   }
 }
+// filter reset danh mục
+const filterResetCategory = document.querySelector("[filter-reset-category]");
+if (filterResetCategory) {
+  const url = new URL(window.location.href);
+  filterResetCategory.addEventListener("click", () => {
+    const filterCategory = document.querySelector("[filter-category]");
+
+    url.search = "";
+
+    if (filterCategory && filterCategory.options.length > 0) {
+      const firstCategoryValue = filterCategory.options[0].value;
+      url.searchParams.set("category", firstCategoryValue);
+    }
+
+    window.location.href = url.href;
+  });
+}
+// endfilter reset danh mục
 
 // Bộ lọc giá
 const filterPrice = document.querySelector("[filter-price]");

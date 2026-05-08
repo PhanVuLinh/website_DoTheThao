@@ -46,27 +46,47 @@ module.exports.list = async (req, res) => {
   const allCategoryList = await Category.find(find).sort({ position: "asc" });
 
   // Tạo cây danh mục
-  const fullCategoryTree = categoryHelper.buildCategoryTree(allCategoryList);
+  let fullCategoryTree = categoryHelper.buildCategoryTree(allCategoryList);
+  // LẤY DANH MỤC CHA TRƯỚC ĐỂ LÀM MẶC ĐỊNH
+  const parentCategoryList = await Category.find({
+    parent_id: "",
+    deleted: false,
+  }).select("id title");
+  let currentCategoryId = req.query.category;
+  if (!currentCategoryId && parentCategoryList.length > 0) {
+    currentCategoryId = parentCategoryList[0].id;
+  }
+  // lọc theo danh mục
+  if (currentCategoryId) {
+    const findCategoryInTree = (tree, id) => {
+      for (const item of tree) {
+        if (item.id == id) return item;
+        if (item.children && item.children.length > 0) {
+          const found = findCategoryInTree(item.children, id);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    const selectedBranch = findCategoryInTree(
+      fullCategoryTree,
+      currentCategoryId,
+    );
+    fullCategoryTree = selectedBranch ? [selectedBranch] : [];
+  }
   const getAccountInfo = async (tree) => {
     for (const item of tree) {
       if (item.createdBy) {
-        const infoAccountCreated = await Account.findOne({
-          _id: item.createdBy,
-        });
+        const infoAccountCreated = await Account.findOne({ _id: item.createdBy });
         item.createdByFullName = infoAccountCreated?.fullName;
       }
       if (item.updatedBy) {
-        const infoAccountUpdated = await Account.findOne({
-          _id: item.updatedBy,
-        });
+        const infoAccountUpdated = await Account.findOne({ _id: item.updatedBy });
         item.updatedByFullName = infoAccountUpdated?.fullName;
       }
-      item.createdAtFormat = moment(item.createdAt).format(
-        "HH:mm - DD/MM/YYYY",
-      );
-      item.updatedAtFormat = moment(item.updatedAt).format(
-        "HH:mm - DD/MM/YYYY",
-      );
+      item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+      item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY");
 
       if (item.children && item.children.length > 0) {
         await getAccountInfo(item.children);
@@ -85,6 +105,8 @@ module.exports.list = async (req, res) => {
     title: "Danh sách danh mục",
     categoryList: fullCategoryTree,
     accountAdminList: accountAdminList,
+    parentCategoryList: parentCategoryList,
+    categoryId: req.query.category,
   });
 };
 

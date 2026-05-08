@@ -16,16 +16,31 @@ block main
       .filter-label
         i.fa-solid.fa-filter
         span Bộ lọc
-      
+
       +filter-status()
         
       +filter-created-by(accountAdminList)
         
       +filter-date-range()
-        
-      button.btn-clear(filter-reset)
+      
+      button.btn-clear(filter-reset-category)
         i.fa-solid.fa-rotate-right
         | Xóa bộ lọc
+
+
+    .filter-row
+      .filter-label
+        i.fa-solid.fa-folder-tree
+        span Danh mục
+
+      select.form-select(filter-category style="border: 2px solid #466BD6; font-weight: 600; color: #466BD6;")
+        if parentCategoryList
+          each item in parentCategoryList
+            option(
+              value=item.id 
+              selected=(categoryId == item.id ? true : false)
+            ) #{item.title}
+
     .action-row
       +bulk-action([
         { value: "delete-all", label: "xóa" },
@@ -61,6 +76,7 @@ block main
             th Hành động
         tbody
           +category-tree(categoryList)
+          
   form(
       action=""
       method="POST"
