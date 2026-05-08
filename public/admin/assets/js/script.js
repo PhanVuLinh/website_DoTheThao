@@ -173,10 +173,18 @@ if (filterCreatedBy) {
 
 ///filter start Date
 const filterStartDate = document.querySelector("[filter-start-date]");
+const filterEndDate = document.querySelector("[filter-end-date]");
 if (filterStartDate) {
   const url = new URL(window.location.href);
   filterStartDate.addEventListener("change", () => {
     const value = filterStartDate.value;
+    if (value && filterEndDate && filterEndDate.value) {
+      if (value > filterEndDate.value) {
+        alert("Lỗi: Ngày bắt đầu không được lớn hơn ngày kết thúc!");
+        filterStartDate.value = url.searchParams.get("startDate") || "";
+        return;
+      }
+    }
     if (value) {
       url.searchParams.set("startDate", value);
     } else {
@@ -193,11 +201,17 @@ if (filterStartDate) {
 ///end filter start Date lọc
 
 ///filter end Date
-const filterEndDate = document.querySelector("[filter-end-date]");
 if (filterEndDate) {
   const url = new URL(window.location.href);
   filterEndDate.addEventListener("change", () => {
     const value = filterEndDate.value;
+    if (value && filterStartDate && filterStartDate.value) {
+      if (value < filterStartDate.value) {
+        alert("Lỗi: Ngày kết thúc không được nhỏ hơn ngày bắt đầu!");
+        filterEndDate.value = url.searchParams.get("endDate") || "";
+        return;
+      }
+    }
     if (value) {
       url.searchParams.set("endDate", value);
     } else {
@@ -327,14 +341,14 @@ if (filterCategory) {
   const url = new URL(window.location.href);
 
   filterCategory.addEventListener("change", () => {
-    const id = filterCategory.value; 
+    const id = filterCategory.value;
 
     if (id) {
-      url.searchParams.set("category", id); 
+      url.searchParams.set("category", id);
     } else {
       url.searchParams.delete("category");
     }
-    
+
     url.searchParams.delete("page");
     window.location.href = url.href;
   });

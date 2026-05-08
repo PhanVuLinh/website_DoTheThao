@@ -15,6 +15,19 @@ module.exports.list = async (req, res) => {
     const regexKeyword = new RegExp(keyword, "i");
     find.$or = [{ email: regexKeyword }];
   }
+  //lọc theo ngày tạo
+  const dateFilter = {};
+  if (req.query.startDate) {
+    const startDate = moment(req.query.startDate).startOf("date").toDate();
+    dateFilter.$gte = startDate;
+  }
+  if (req.query.endDate) {
+    const endDate = moment(req.query.endDate).endOf("date").toDate();
+    dateFilter.$lte = endDate;
+  }
+  if (Object.keys(dateFilter).length > 0) {
+    find.createdAt = dateFilter;
+  }
 
   //Phân trang
   const countContact = await Contact.countDocuments(find);
@@ -59,10 +72,7 @@ module.exports.changeMulti = async (req, res) => {
             deletedAt: new Date(),
           },
         );
-        req.flash(
-          "success",
-          `Đã chuyển ${ids.length} liên hệ vào thùng rác!`,
-        );
+        req.flash("success", `Đã chuyển ${ids.length} liên hệ vào thùng rác!`);
         break;
 
       default:
