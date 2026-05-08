@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/filter-status.pug
 include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
 
@@ -15,10 +16,7 @@ block main
         i.fa-solid.fa-filter
         span Bộ lọc
         
-      select.form-select(filter-status)
-        option(value="") Tất cả trạng thái
-        option(value="active") Hoạt động
-        option(value="inactive") Dừng hoạt động
+      +filter-status()
         
       button.btn-clear(filter-reset)
         i.fa-solid.fa-rotate-right

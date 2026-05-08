@@ -1,5 +1,7 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/filter-status.pug
+include ../mixins/filter-date-range.pug
 include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
 
@@ -13,29 +15,15 @@ block main
         i.fa-solid.fa-filter
         span Bộ lọc
       
-      select.form-select
-        option(value="") Trạng thái đơn
-        option(value="pending") Khởi tạo
-        option(value="processing") Đang xử lý
-        option(value="completed") Hoàn thành
+      +filter-orderStatus()
         
-      .date-range-picker
-        input(type="text" placeholder="dd/mm/yyyy")
-        span -
-        input(type="text" placeholder="dd/mm/yyyy")
+      +filter-date-range()
         
-      select.form-select
-        option(value="") Phương thức thanh toán
-        option COD (Nhận hàng thanh toán)
-        option Chuyển khoản VNPay
-        option Ví MoMo
+      +filter-paymentMethod()
         
-      select.form-select
-        option(value="") Trạng thái thanh toán
-        option Chưa thanh toán
-        option Đã thanh toán
-        
-      button.btn-clear
+      +filter-paymentStatus()
+
+      button.btn-clear(filter-reset)
         i.fa-solid.fa-rotate-right
         | Xóa bộ lọc
     .action-row
@@ -90,9 +78,9 @@ block main
               td
                 .payment-summary
                   span Tạm tính: #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
-                  //- span Phí ship: 30.000đ
                   span Giảm giá: #{orderDetail.discount.toLocaleString('vi-VN')} đ
-                  //- span Mã giảm: TTNNSASD12
+                  if(orderDetail.couponCode)
+                    span Mã giảm: #{orderDetail.couponCode}
                   span.total-pay Thanh toán: #{orderDetail.total.toLocaleString('vi-VN')} đ
                   span PTTT: #{orderDetail.paymentMethodName}
                   span TTTT: #{orderDetail.paymentStatusName}

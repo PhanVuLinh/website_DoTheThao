@@ -47,7 +47,8 @@ module.exports.list = async (req, res) => {
 
   // Xử lý lọc danh mục
   if (req.query.category) {
-    find.product_category_id = req.query.category;
+    find.category_id = req.query.category;
+    
   }
   const categoryList = await Category.find({
     parent_id: { $ne: "" },

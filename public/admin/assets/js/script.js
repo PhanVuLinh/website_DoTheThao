@@ -104,7 +104,6 @@ if (uploadImagesInput && uploadImagesPreviewContainer) {
         uploadImagesInput.files = dataTransfer.files;
       }
 
-      // Xóa khối hiển thị ảnh khỏi giao diện
       item.remove();
     }
   });
@@ -378,6 +377,47 @@ if (listButtonRestore.length > 0) {
   });
 }
 //End button restore
+
+///filter-payment-status lọc đơn hàng
+const filtePaymentStatus = document.querySelector("[filter-payment-status]");
+if (filtePaymentStatus) {
+  const url = new URL(window.location.href);
+  filtePaymentStatus.addEventListener("change", () => {
+    const value = filtePaymentStatus.value;
+    if (value) {
+      url.searchParams.set("payment_status", value);
+    } else {
+      url.searchParams.delete("payment_status");
+    }
+    window.location.href = url.href;
+  });
+  const valueCurrent = url.searchParams.get("payment_status");
+  if (valueCurrent) {
+    filtePaymentStatus.value = valueCurrent;
+  }
+}
+///end filter-status lọc
+
+///filter-payment-method lọc đơn hàng
+const filtePaymentMethod = document.querySelector("[filter-payment-method]");
+if (filtePaymentMethod) {
+  const url = new URL(window.location.href);
+  filtePaymentMethod.addEventListener("change", () => {
+    const value = filtePaymentMethod.value;
+    if (value) {
+      url.searchParams.set("payment_method", value);
+    } else {
+      url.searchParams.delete("payment_method");
+    }
+    window.location.href = url.href;
+  });
+  const valueCurrent = url.searchParams.get("payment_method");
+  if (valueCurrent) {
+    filtePaymentMethod.value = valueCurrent;
+  }
+}
+///end filter-payment-method lọc
+
 // =========================================
 // 2. KHỞI TẠO KHI TRANG ĐÃ TẢI XONG (DOM Ready)
 // =========================================

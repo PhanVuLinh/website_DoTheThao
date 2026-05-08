@@ -1,6 +1,5 @@
 footer.footer
   div(class="footer__container")
-    // NEWSLETTER
     div(class="footer__newsletter")
       div(class="newsletter-info")
         h3 Đừng bỏ lỡ ưu đãi
@@ -11,12 +10,11 @@ footer.footer
           | Đăng Ký 
           i.fa-regular.fa-paper-plane
 
-    // MAIN FOOTER CONTENT
     div(class="footer__main")
       // Col 1: Brand Info
       div(class="footer__col brand-col")
         a.logo(href="/")
-          img(src="./client/assets/images/logo-footer.png", alt="TitiSport")
+          img(src=settingWebsiteInfo.logo, alt=settingWebsiteInfo.websiteName)
         p Điểm đến số 1 cho những người đam mê thể thao. Cam kết hàng chính hãng 100%, chất lượng đỉnh cao, dịch vụ tận tâm.
         div(class="footer__social")
           a(href="#"): i.fa-brands.fa-facebook-f
@@ -51,14 +49,20 @@ footer.footer
         h4 Liên Hệ
         ul.footer__contact
           li
-            div.icon-wrapper: i.fa-solid.fa-location-dot
-            span 123 Sport Street, Quận Hoàn Kiếm, Hà Nội
+            if(settingWebsiteInfo.address)
+              div.icon-wrapper
+                i.fa-solid.fa-location-dot
+              span #{settingWebsiteInfo.address}
           li
-            div.icon-wrapper: i.fa-solid.fa-phone
-            span 0987 654 321
+            if(settingWebsiteInfo.phone)
+              div.icon-wrapper
+                i.fa-solid.fa-phone
+              span #{settingWebsiteInfo.phone}
           li
-            div.icon-wrapper: i.fa-solid.fa-envelope
-            span contact@titisport.vn
+            if(settingWebsiteInfo.email)
+              div.icon-wrapper
+                i.fa-solid.fa-envelope
+              span #{settingWebsiteInfo.email}
 
   // BOTTOM
   div(class="footer__bottom")

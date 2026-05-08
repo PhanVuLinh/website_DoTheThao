@@ -9,6 +9,10 @@ module.exports.list = async (req, res) => {
   const find = {
     deleted: false,
   };
+  //lọc theo trạng thái
+  if (req.query.status) {
+    find.status = req.query.status;
+  }
   //Tìm kiếm
   if (req.query.keyword) {
     const keyword = req.query.keyword.trim();

@@ -3,3 +3,27 @@ mixin filter-status()
     option(value="") Trạng thái
     option(value="active") Hoạt động
     option(value="inactive") Tạm dừng
+
+
+mixin filter-orderStatus()
+  select.form-select(filter-status)
+    option(value="") Trạng thái đơn 
+    option(value="initial") Khởi tạo
+    option(value="shipping") Đang giao hàng
+    option(value="done") Hoàn thành
+    option(value="cancel") Đơn hủy
+
+
+mixin filter-paymentStatus()
+  select.form-select(filter-payment-status)
+    option(value="") Trạng thái thanh toán
+    option(value="unpaid") Chưa thanh toán
+    option(value="paid") Đã thanh toán
+
+mixin filter-paymentMethod()
+  select.form-select(filter-payment-method)
+    option(value="") Phương thức thanh toán
+    option(value="cod") Thanh toán khi nhân hàng
+    option(value="zaloPay") Thanh toán ZaloPay
+    option(value="vnPay") Thanh toán VNPay
+    option(value="momo") Thanh toán MoMo

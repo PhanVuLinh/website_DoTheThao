@@ -10,6 +10,31 @@ module.exports.list = async (req, res) => {
   const find = {
     deleted: false,
   };
+  //lọc theo trạng thái
+  if (req.query.status) {
+    find.status = req.query.status;
+  }
+  //lọc theo ngày tạo
+  const dateFilter = {};
+  if (req.query.startDate) {
+    const startDate = moment(req.query.startDate).startOf("date").toDate();
+    dateFilter.$gte = startDate;
+  }
+  if (req.query.endDate) {
+    const endDate = moment(req.query.endDate).endOf("date").toDate();
+    dateFilter.$lte = endDate;
+  }
+  if (Object.keys(dateFilter).length > 0) {
+    find.createdAt = dateFilter;
+  }
+  //lọc theo trạng thái thanh toán
+  if (req.query.payment_status) {
+    find.paymentStatus = req.query.payment_status;
+  }
+  //lọc theo phương thức thanh toán
+  if (req.query.payment_method) {
+    find.paymentMethod = req.query.payment_method;
+  }
   //Tìm kiếm
   if (req.query.keyword) {
     const keyword = req.query.keyword.trim();
