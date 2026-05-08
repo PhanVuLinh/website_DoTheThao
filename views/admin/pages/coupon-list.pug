@@ -10,6 +10,19 @@ block main
   h1.page-title Danh sách Mã giảm giá
 
   .filter-action-card
+    .filter-row
+      .filter-label
+        i.fa-solid.fa-filter
+        span Bộ lọc
+        
+      select.form-select(filter-status)
+        option(value="") Tất cả trạng thái
+        option(value="active") Hoạt động
+        option(value="inactive") Dừng hoạt động
+        
+      button.btn-clear(filter-reset)
+        i.fa-solid.fa-rotate-right
+        | Xóa bộ lọc
     .action-row
       +bulk-action([
         { value: "delete-all", label: "xóa" },

@@ -5,13 +5,9 @@ include ../mixins/pagination.pug
 
 block main
   +box-breadcrumb(breadcrumb)
-
-  // SECTION 9: DANH SÁCH SẢN PHẨM & BỘ LỌC
   section.product-list-page
     .container
       .product-list-page__inner
-        
-        // --- 1. SIDEBAR BỘ LỌC (BÊN TRÁI) ---
         aside.product-filter
           form(action=`/category/${category.slug}` method="GET" id="form-filter")
             .product-filter__header
@@ -43,18 +39,6 @@ block main
                   label
                     input(type="radio" name="price" value="over-3m" checked=(queryPrice === "over-3m"))
                     |  Trên 3 Triệu
-
-            .filter-group
-              h4.filter-group-title Thương Hiệu
-              ul.filter-list
-                li
-                  label
-                    input(type="checkbox" name="brand" value="nike" checked=(queryBrand && queryBrand.includes("nike")))
-                    |  Nike
-                li
-                  label
-                    input(type="checkbox" name="brand" value="adidas" checked=(queryBrand && queryBrand.includes("adidas")))
-                    |  Adidas
 
             .filter-actions
               button.btn-apply-filter(type="submit") 

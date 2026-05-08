@@ -8,7 +8,6 @@ block main
 
         aside.product-filter
           form(action="/search" method="GET")
-            //- Cực kỳ quan trọng: Phải giữ lại keyword ẩn để khi bấm Lọc không bị mất từ khóa tìm kiếm
             if keyword
               input(type="hidden" name="keyword" value=keyword)
 
@@ -32,18 +31,6 @@ block main
                     input(type="radio" name="price" value="over-3m" checked=(queryPrice === "over-3m"))
                     |  Trên 3 Triệu
 
-            .filter-group
-              h4.filter-group-title Thương Hiệu
-              ul.filter-list
-                li
-                  label
-                    input(type="checkbox" name="brand" value="nike" checked=(queryBrand && queryBrand.includes("nike")))
-                    |  Nike
-                li
-                  label
-                    input(type="checkbox" name="brand" value="adidas" checked=(queryBrand && queryBrand.includes("adidas")))
-                    |  Adidas
-
             button.btn-apply-filter(type="submit") Áp Dụng Lọc
 
         main.product-content
@@ -58,8 +45,6 @@ block main
               | sản phẩm phù hợp
 
           if productList && productList.length > 0
-            
-            //- Thanh sắp xếp (Ghi đè bằng CSS)
             .product-content__header.search-sort-header
               .header-sort
                 span Sắp xếp:

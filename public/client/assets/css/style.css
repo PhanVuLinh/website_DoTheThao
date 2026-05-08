@@ -3096,10 +3096,14 @@ textarea.form-control {
   margin-bottom: 15px;
 }
 .order-header .order-id {
+  display: flex;
+  gap: 10px;
   color: var(--blue-dark);
   font-weight: 800;
 }
 .order-header .order-date {
+  display:flex;
+  align-items: center;
   color: #777;
   font-size: 13px;
 }
