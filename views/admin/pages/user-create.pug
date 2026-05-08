@@ -1,0 +1,40 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+
+block main
+  +alert-error(3000)
+  +alert-success(3000)
+  
+  .page-header
+    h1.page-title Thêm mới Khách hàng
+    a.btn-back(href=`/${pathAdmin}/user/list`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
+
+  .form-card
+    form(action=`/${pathAdmin}/user/create` method="POST")
+      
+      .form-row-2
+        .form-group
+          label Họ và tên 
+          input.form-control(type="text" name="fullName" placeholder="Ví dụ: Nguyễn Văn A")
+        
+        .form-group
+          label Email
+          input.form-control(type="email" name="email" placeholder="Ví dụ: nguyenvana@gmail.com")
+
+      .form-row-2
+        .form-group
+          label Mật khẩu
+          input.form-control(type="password" name="password" placeholder="Nhập mật khẩu cho khách...")
+        
+        .form-group
+          label Trạng thái
+          select.form-control(name="status")
+            option(value="active" selected) Hoạt động
+            option(value="inactive") Tạm dừng
+
+      .form-actions
+        button.btn-submit(type="submit") 
+          i.fa-solid.fa-user-plus
+          |  Tạo tài khoản

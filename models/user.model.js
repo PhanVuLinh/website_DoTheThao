@@ -10,17 +10,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: () => generate.generateRandomString(32),
     },
-    phone: String,
-    avatar: String,
-    jobTitle: String,
-    status: {
-      type: String,
-      default: "active",
-    },
+    status: String,
     deleted: {
       type: Boolean,
       default: false,
     },
+    createdBy: String,
+    updatedBy: String,
+    deletedBy: String,
     deletedAt: Date,
   },
   {

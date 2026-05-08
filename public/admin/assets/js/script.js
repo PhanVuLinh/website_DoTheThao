@@ -140,6 +140,7 @@ if (filterStatus) {
     } else {
       url.searchParams.delete("status");
     }
+    url.searchParams.delete("page");
     window.location.href = url.href;
   });
   const valueCurrent = url.searchParams.get("status");
@@ -160,6 +161,7 @@ if (filterCreatedBy) {
     } else {
       url.searchParams.delete("createdBy");
     }
+    url.searchParams.delete("page");
     window.location.href = url.href;
   });
   const valueCurrent = url.searchParams.get("createdBy");
@@ -180,6 +182,7 @@ if (filterStartDate) {
     } else {
       url.searchParams.delete("startDate");
     }
+    url.searchParams.delete("page");
     window.location.href = url.href;
   });
   const valueCurrent = url.searchParams.get("startDate");
@@ -200,6 +203,7 @@ if (filterEndDate) {
     } else {
       url.searchParams.delete("endDate");
     }
+    url.searchParams.delete("page");
     window.location.href = url.href;
   });
   const valueCurrent = url.searchParams.get("endDate");
@@ -288,6 +292,7 @@ if (search) {
       } else {
         url.searchParams.delete("keyword");
       }
+      url.searchParams.delete("page");
       window.location.href = url.href;
     }
   });

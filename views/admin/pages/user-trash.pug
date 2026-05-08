@@ -7,7 +7,11 @@ include ../mixins/pagination.pug
 block main
   +alert-success(3000)
   +alert-error(3000)
-  h1.page-title Danh sách khách hàng
+  .page-header
+    h1.page-title Thùng rác tài khoản khách hàng
+    a.btn-back(href=`/${pathAdmin}/user/list`) 
+      i.fa-solid.fa-arrow-left
+      | Quay lại danh sách
 
   .filter-action-card
     .filter-row
@@ -25,20 +29,12 @@ block main
       +bulk-action([
         { value: "delete-all", label: "Xóa nhiều" },
         { value: "active", label: "Hoạt động" },
-        { value: "inactive", label: "Tạm dừng" }
+        { value: "inactive", label: "Khóa tài khoản" }
       ])
         
       .search-box-large
         i.fa-solid.fa-magnifying-glass
         input(type="text" placeholder="Tìm kiếm theo tên, email..." search)
-        
-      .action-buttons-right
-        a(href=`/${pathAdmin}/user/create`).btn-create
-          i.fa-solid.fa-plus
-          | Tạo mới
-        a(href=`/${pathAdmin}/user/trash`).btn-trash
-          i.fa-regular.fa-trash-can
-          | Thùng rác
 
   .table-section
     .table-responsive
@@ -50,8 +46,7 @@ block main
             th Họ và tên
             th Email
             th Trạng thái
-            th Người tạo
-            th Cập nhật bởi
+            th Xóa bởi
             th Hành động
         
         tbody
@@ -71,39 +66,34 @@ block main
                 
                 td
                   .user-date
-                    span.name #{item.createdByFullName ? item.createdByFullName : 'Khách Hàng'}
-                    span.time #{item.createdAtFormat}
-
-                td
-                  .user-date
-                    span.name #{item.updatedByFullName ? item.updatedByFullName : ''}
-                    span.time #{item.updatedByFullName ? item.updatedAtFormat : ''}
+                    span.name #{item.deletedByFullName}
+                    span.time #{item.deletedAtFormat}
                 
                 td
                   .action-btns
-                    a(href=`/${pathAdmin}/user/edit/${item.id}`).btn-edit
-                      i.fa-regular.fa-pen-to-square
-                    button.btn-delete(button-delete data-id=item.id)
+                    button.btn-restore(button-restore data-id=item.id title="Khôi phục")
+                      i.fa-solid.fa-rotate-left
+                    button.btn-delete(button-delete data-id=item.id title="Xóa vĩnh viễn")
                       i.fa-regular.fa-trash-can
           else
             tr
-              td(colspan="7" class="text-center") Không có dữ liệu khách hàng nào.
+              td(colspan="7" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có tài khoản nào bị xóa!
       
-  .admin-pagination
-    +pagination(pagination)
+  //- PHÂN TRANG (PAGINATION)
+  //- .admin-pagination
+  //-   +pagination(pagination)
 
+  //- Các Form ẩn dùng để gửi request khi thực hiện Hành động (Xóa, Đổi trạng thái)
   form(
-      action=""
-      method="POST"
-      id="form-delete-item"
-      data-path=`/${pathAdmin}/user/delete`
-    )
-          
+    action=""
+    method="POST"
+    id="form-restore-item"
+    data-path=`/${pathAdmin}/user/restore`
+  )
+  
   form(
-      action=""
-      method="POST"
-      id="form-change-multi"
-      data-path=`/${pathAdmin}/user/change-multi`
-    )
-      input(type="hidden" name="type")
-      input(type="hidden" name="ids")
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`/${pathAdmin}/user/delete-destroy`
+  )
