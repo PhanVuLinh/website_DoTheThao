@@ -503,44 +503,44 @@ document.addEventListener("DOMContentLoaded", function () {
   // --- B. KHỞI TẠO BIỂU ĐỒ DOANH THU (Dùng cho trang Dashboard) ---
   const ctx = document.getElementById("revenueChart");
   if (ctx && typeof Chart !== "undefined") {
-    const now = new Date();
-    const currentMonth = now.getMonth() + 1;
-    const currentYear = now.getFullYear();
+    const container = ctx.closest(".chart-container");
 
-    // Tính tháng trước
-    const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
-    const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+    const currentMonth = container.dataset.currentMonth;
+    const currentYear = container.dataset.currentYear;
+    const prevMonth = container.dataset.prevMonth;
+    const prevYear = container.dataset.prevYear;
 
-    // Số ngày của từng tháng
-    const daysInCurrentMonth = new Date(currentYear, currentMonth, 0).getDate();
-    const daysInPrevMonth = new Date(prevYear, prevMonth, 0).getDate();
-    const maxDays = Math.max(daysInCurrentMonth, daysInPrevMonth);
+    // Parse dữ liệu thật từ server
+    const currentMonthData = JSON.parse(container.dataset.currentRevenue);
+    const prevMonthData = JSON.parse(container.dataset.prevRevenue);
 
-    // Labels theo số ngày lớn nhất
+    // Số ngày lớn nhất để tạo labels
+    const maxDays = Math.max(currentMonthData.length, prevMonthData.length);
     const labels = Array.from({ length: maxDays }, (_, i) => `Ngày ${i + 1}`);
 
-    // Dữ liệu tháng hiện tại (chỉ đến ngày hiện tại, còn lại null)
-    const today = now.getDate();
-    const currentMonthData = Array.from({ length: maxDays }, (_, i) => {
-      if (i >= daysInCurrentMonth) return null;
-      if (i >= today) return null; // Ngày chưa tới thì bỏ trống
-      return Math.floor(Math.random() * 9500000) + 500000; // Thay bằng data thật từ server
+    // Nếu là tháng hiện tại: ẩn các ngày chưa tới (đặt null)
+    const now = new Date();
+    const isCurrentMonth =
+      parseInt(currentMonth) === now.getMonth() + 1 &&
+      parseInt(currentYear) === now.getFullYear();
+
+    const processedCurrentData = currentMonthData.map((val, i) => {
+      if (isCurrentMonth && i >= now.getDate()) return null;
+      return val === 0 ? null : val; // Bỏ ngày 0 để chart đẹp hơn (tuỳ chọn)
     });
 
-    // Dữ liệu tháng trước (đủ cả tháng)
-    const prevMonthData = Array.from({ length: maxDays }, (_, i) => {
-      if (i >= daysInPrevMonth) return null;
-      return Math.floor(Math.random() * 9500000) + 500000; // Thay bằng data thật từ server
-    });
+    const processedPrevData = prevMonthData.map((val) =>
+      val === 0 ? null : val,
+    );
 
     new Chart(ctx, {
       type: "line",
       data: {
-        labels: labels,
+        labels,
         datasets: [
           {
             label: `Tháng ${currentMonth}/${currentYear}`,
-            data: currentMonthData,
+            data: processedCurrentData,
             borderColor: "#466BD6",
             backgroundColor: "rgba(70, 107, 214, 0.1)",
             borderWidth: 2,
@@ -554,7 +554,7 @@ document.addEventListener("DOMContentLoaded", function () {
           },
           {
             label: `Tháng ${prevMonth}/${prevYear}`,
-            data: prevMonthData,
+            data: processedPrevData,
             borderColor: "#eb5438",
             backgroundColor: "rgba(235, 84, 56, 0.08)",
             borderWidth: 2,
@@ -594,10 +594,10 @@ document.addEventListener("DOMContentLoaded", function () {
         scales: {
           y: {
             beginAtZero: true,
-            suggestedMin: 500000,
-            suggestedMax: 10000000,
             ticks: {
               callback: function (value) {
+                if (value >= 1_000_000)
+                  return (value / 1_000_000).toLocaleString("vi-VN") + " tr";
                 return value.toLocaleString("vi-VN") + " đ";
               },
             },
@@ -607,12 +607,21 @@ document.addEventListener("DOMContentLoaded", function () {
             ticks: { maxTicksLimit: 15 },
           },
         },
-        interaction: {
-          intersect: false,
-          mode: "index",
-        },
+        interaction: { intersect: false, mode: "index" },
       },
     });
+
+    // Xử lý đổi tháng qua dropdown → reload trang với query
+    const chartMonthSelect = document.getElementById("chartMonthSelect");
+    if (chartMonthSelect) {
+      chartMonthSelect.addEventListener("change", () => {
+        const [month, year] = chartMonthSelect.value.split("-");
+        const url = new URL(window.location.href);
+        url.searchParams.set("chartMonth", month);
+        url.searchParams.set("chartYear", year);
+        window.location.href = url.href;
+      });
+    }
   }
 
   // --- C. SWEET ALERT FLASH MESSAGE ---

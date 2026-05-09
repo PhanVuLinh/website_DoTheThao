@@ -34,12 +34,22 @@ block main
   .chart-section
     .section-header
       h2.section-title Biểu đồ doanh thu
-      select.filter-select
-        option 11/2026
-        option 10/2026
-        option 09/2026
-    
-    .chart-container
+      select.filter-select(id="chartMonthSelect")
+        each opt in monthOptions
+          - var selected = (opt.month === chart.currentMonth && opt.year === chart.currentYear)
+          option(
+            value=`${opt.month}-${opt.year}`
+            selected=selected
+          ) #{opt.label}
+
+    .chart-container(
+      data-current-month=chart.currentMonth
+      data-current-year=chart.currentYear
+      data-prev-month=chart.prevMonth
+      data-prev-year=chart.prevYear
+      data-current-revenue=chart.currentMonthRevenue
+      data-prev-revenue=chart.prevMonthRevenue
+    )
       canvas#revenueChart
 
   .table-section
