@@ -25,6 +25,11 @@ router.patch(
 
 router.get("/account-admin/list", settingController.accountAdminList);
 
+router.patch(
+  "/account-admin/change-multi",
+  settingController.accountAdminChangeMulti,
+);
+
 router.get("/account-admin/create", settingController.accountAdminCreate);
 
 router.post(
@@ -48,6 +53,11 @@ router.delete(
 );
 
 router.get("/account-admin/trash", settingController.accountAdminTrash);
+
+router.patch(
+  "/account-admin/change-multi-trash",
+  settingController.accountAdminChangeMultiTrash,
+);
 
 router.patch(
   "/account-admin/restore/:id",
@@ -87,6 +97,9 @@ router.patch("/role/restore/:id", settingController.roleRestore);
 
 router.delete("/role/delete-destroy/:id", settingController.roleDeleteDestroy);
 
-router.patch("/role/change-multi-trash", settingController.roleChangeMultiTrash);
+router.patch(
+  "/role/change-multi-trash",
+  settingController.roleChangeMultiTrash,
+);
 
 module.exports = router;

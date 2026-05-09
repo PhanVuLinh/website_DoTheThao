@@ -52,8 +52,43 @@ module.exports.accountAdminList = async (req, res) => {
   const find = {
     deleted: false,
   };
+  //lọc theo trạng thái
+  if (req.query.status) {
+    find.status = req.query.status;
+  }
 
-  const accountList = await Account.find(find);
+  //lọc theo nhóm quyền
+  if (req.query.role) {
+    find.role_id = req.query.role;
+  }
+
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = req.query.keyword.trim();
+    const regexKeyword = new RegExp(keyword, "i");
+    find.$or = [
+      { fullName: regexKeyword },
+      { email: regexKeyword },
+      { phone: regexKeyword },
+    ];
+  }
+
+  //Phân trang
+  const countAccount = await Account.countDocuments(find);
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countAccount,
+  );
+  //hết Phân trang
+
+  const accountList = await Account.find(find)
+    .sort({ createdAt: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
 
   for (const account of accountList) {
     const role = await Role.findOne({
@@ -63,10 +98,62 @@ module.exports.accountAdminList = async (req, res) => {
     account.role_name = role.name;
   }
 
+  const roleList = await Role.find({
+    deleted: false,
+  }).select("id name");
+
   res.render("admin/pages/setting-account-admin-list.pug", {
     title: "Tài khoản quản trị",
+    roleList: roleList,
     accountList: accountList,
+    pagination: objectPagination,
   });
+};
+
+module.exports.accountAdminChangeMulti = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "active":
+      case "inactive":
+        await Account.updateMany(
+          { _id: { $in: ids } },
+          {
+            status: type,
+            updatedBy: updatedBy,
+            updatedAt: new Date(),
+          },
+        );
+        req.flash("success", `Đã cập nhật trạng thái ${ids.length} tài khoản!`);
+        break;
+
+      case "delete-all":
+        await Account.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: updatedBy,
+            deletedAt: new Date(),
+          },
+        );
+        req.flash(
+          "success",
+          `Đã chuyển ${ids.length} tài khoản vào thùng rác!`,
+        );
+        break;
+
+      default:
+        break;
+    }
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
+    res.redirect(req.get("Referer"));
+  }
 };
 
 module.exports.accountAdminCreate = async (req, res) => {
@@ -171,9 +258,32 @@ module.exports.accountAdminTrash = async (req, res) => {
   const find = {
     deleted: true,
   };
-  const accountList = await Account.find(find).sort({
-    deletedAt: "desc",
-  });
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = req.query.keyword.trim();
+    const regexKeyword = new RegExp(keyword, "i");
+    find.$or = [
+      { fullName: regexKeyword },
+      { email: regexKeyword },
+      { phone: regexKeyword },
+    ];
+  }
+
+  //Phân trang
+  const countAccount = await Account.countDocuments(find);
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countAccount,
+  );
+  //hết Phân trang
+  const accountList = await Account.find(find)
+    .sort({ deletedAt: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
 
   for (const item of accountList) {
     const role = await Role.findOne({
@@ -186,6 +296,7 @@ module.exports.accountAdminTrash = async (req, res) => {
   res.render("admin/pages/setting-account-admin-trash.pug", {
     title: "Thùng rác tài khoản",
     accountList: accountList,
+    pagination: objectPagination,
   });
 };
 
@@ -215,6 +326,49 @@ module.exports.accountAdmindeleteDestroy = async (req, res) => {
   } catch (error) {
     req.flash("error", "Không tồn tài");
     res.redirect(`/${variableCongfig.pathAdmin}/trash`);
+  }
+};
+
+module.exports.accountAdminChangeMultiTrash = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "restore-all":
+        await Account.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: false,
+          },
+        );
+        req.flash("success", `Đã khôi phục ${ids.length} tài khoản!`);
+        break;
+
+      case "delete-all":
+        await Account.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: updatedBy,
+            deletedAt: new Date(),
+          },
+        );
+        req.flash(
+          "success",
+          `Đã chuyển ${ids.length} tài khoản vào thùng rác!`,
+        );
+        break;
+
+      default:
+        break;
+    }
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
+    res.redirect(req.get("Referer"));
   }
 };
 

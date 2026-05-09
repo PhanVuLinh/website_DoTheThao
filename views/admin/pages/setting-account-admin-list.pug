@@ -1,6 +1,9 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
-
+include ../mixins/bulk-action.pug
+include ../mixins/filter-status.pug
+include ../mixins/filter-date-range.pug
+include ../mixins/pagination.pug
 block main
   +alert-success(3000)
   +alert-error(3000)
@@ -16,37 +19,28 @@ block main
         i.fa-solid.fa-filter
         span Bộ lọc
       
-      select.form-select
-        option(value="") Trạng thái
-        option(value="active") Hoạt động
-        option(value="inactive") Tạm dừng
+      +filter-status()
         
-      .date-range-picker
-        input(type="text" placeholder="dd/mm/yyyy")
-        span -
-        input(type="text" placeholder="dd/mm/yyyy")
         
-      select.form-select
+      select.form-select(filter-role)
         option(value="") Nhóm quyền
-        option Quản trị viên
-        option Kế toán
-        option Nhân viên Sale
+        each item in roleList
+          option(value=item.id) #{item.name}
         
-      button.btn-clear
+      button.btn-clear(filter-reset)
         i.fa-solid.fa-rotate-right
         | Xóa bộ lọc
 
     .action-row
-      .bulk-action
-        select.form-select
-          option(value="") -- Hành động --
-          option(value="active") Đổi trạng thái
-          option(value="delete") Xóa
-        button.btn-apply Áp dụng
+      +bulk-action([
+        { value: "delete-all", label: "xóa" },
+        { value: "active", label: "Hoạt động" },
+        { value: "inactive", label: "Dừng hoạt động" }
+      ])
         
       .search-box-large
         i.fa-solid.fa-magnifying-glass
-        input(type="text" placeholder="Tìm kiếm tài khoản...")
+        input(type="text" placeholder="Tìm kiếm tài khoản..." search)
         
       .action-buttons-right
         a.btn-create(href=`/${pathAdmin}/setting/account-admin/create`)
@@ -61,7 +55,7 @@ block main
         thead
           tr
             th.text-center(width="50px")
-              input(type="checkbox")
+              input(type="checkbox" check-all)
             th Họ tên
             th.text-center Ảnh đại diện
             th Email
@@ -75,7 +69,7 @@ block main
           each item in accountList
             tr
               td.text-center
-                input(type="checkbox")
+                input(type="checkbox" value=item.id name="id" check-item)
               td.font-weight-600 #{item.fullName}
               td.text-center
                 img.td-avatar(src=item.avatar alt=item.fullName)
@@ -92,18 +86,20 @@ block main
                   button.btn-delete(button-delete data-id=item.id)
                     i.fa-regular.fa-trash-can
 
-    //- 3. PHÂN TRANG
     .admin-pagination
-      ul.pagination-list
-        li.page-item.disabled: a.page-link(href="#"): i.fa-solid.fa-angle-left
-        li.page-item.active: a.page-link(href="#") 1
-        li.page-item: a.page-link(href="#") 2
-        li.page-item.dots: span ...
-        li.page-item: a.page-link(href="#"): i.fa-solid.fa-angle-right
+      +pagination(pagination)
 
   form(
-      action=""
-      method="POST"
-      id="form-delete-item"
-      data-path=`/${pathAdmin}/setting/account-admin/delete`
-    )
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`/${pathAdmin}/setting/account-admin/delete`
+  )
+  form(
+    action=""
+    method="POST"
+    id="form-change-multi"
+    data-path=`/${pathAdmin}/setting/account-admin/change-multi`
+  )
+    input(type="hidden" name="type")
+    input(type="hidden" name="ids")

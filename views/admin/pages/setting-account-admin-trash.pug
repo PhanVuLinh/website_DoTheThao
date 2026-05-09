@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
 
 block main
@@ -12,21 +13,17 @@ block main
       i.fa-solid.fa-arrow-left
       | Quay lại danh sách
 
-  //- KHỐI HÀNH ĐỘNG HÀNG LOẠT VÀ TÌM KIẾM
   .filter-action-card
     .action-row
-      .bulk-action
-        select.form-select(change-multi)
-          option(value="") -- Hành động --
-          option(value="restore") Khôi phục
-          option(value="delete-permanent") Xóa vĩnh viễn
-        button.btn-apply(type="button") Áp dụng
+      +bulk-action([
+        { value: "restore-all", label: "Khôi phục" },
+        { value: "delete-all", label: "Xóa vĩnh viễn" }
+      ])
         
       .search-box-large
         i.fa-solid.fa-magnifying-glass
         input(type="text" placeholder="Tìm kiếm tài khoản đã xóa..." search)
 
-  //- KHỐI BẢNG DANH SÁCH TÀI KHOẢN ĐÃ XÓA
   .table-section
     .table-responsive
       table.admin-table.table-hover
@@ -36,6 +33,7 @@ block main
               input(type="checkbox" check-all)
             th Họ tên
             th.text-center Ảnh đại diện
+            th SĐT
             th Email
             th Nhóm quyền
             th Xóa ngày
@@ -52,6 +50,8 @@ block main
                 
                 td.text-center
                   img.td-avatar(src=(item.avatar || '/images/avatar-default.png') alt=item.fullName)
+                
+                td #{item.phone}
                 
                 td.text-email #{item.email}
                 
@@ -70,7 +70,6 @@ block main
             tr
               td.text-center(colspan="7" style="padding: 30px; color: #777;") Thùng rác trống. Không có tài khoản nào bị xóa!
 
-  //- PHÂN TRANG (Nếu có truyền data pagination)
   if pagination
     .admin-pagination
       +pagination(pagination)
@@ -88,4 +87,12 @@ block main
     id="form-delete-item"
     data-path=`/${pathAdmin}/setting/account-admin/delete-destroy`
   )
+  form(
+    action=""
+    method="POST"
+    id="form-change-multi"
+    data-path=`/${pathAdmin}/setting/account-admin/change-multi-trash`
+  )
+    input(type="hidden" name="type")
+    input(type="hidden" name="ids")
 

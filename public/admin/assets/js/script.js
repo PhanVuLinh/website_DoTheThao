@@ -171,6 +171,27 @@ if (filterCreatedBy) {
 }
 ///end filter-created-by lọc
 
+///filter-role lọc
+const filterRole = document.querySelector("[filter-role]");
+if (filterRole) {
+  const url = new URL(window.location.href);
+  filterRole.addEventListener("change", () => {
+    const value = filterRole.value;
+    if (value) {
+      url.searchParams.set("role", value);
+    } else {
+      url.searchParams.delete("role");
+    }
+    url.searchParams.delete("page");
+    window.location.href = url.href;
+  });
+  const valueCurrent = url.searchParams.get("role");
+  if (valueCurrent) {
+    filterRole.value = valueCurrent;
+  }
+}
+///end filter-role lọc
+
 ///filter start Date
 const filterStartDate = document.querySelector("[filter-start-date]");
 const filterEndDate = document.querySelector("[filter-end-date]");
