@@ -1,5 +1,7 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/bulk-action.pug
+include ../mixins/pagination.pug
 block main
   +alert-success(3000)
   +alert-error(3000)
@@ -11,20 +13,21 @@ block main
 
   .filter-action-card
     .action-row
-      .bulk-action 
-        select.form-select
-          option(value="") -- Hành động --
-          option(value="delete") Xóa nhiều
-        button.btn-apply Áp dụng
+      +bulk-action([
+        { value: "delete-all", label: "xóa nhóm quyền" },
+      ])
         
       .search-box-large
         i.fa-solid.fa-magnifying-glass
-        input(type="text" placeholder="Tìm kiếm nhóm quyền...")
+        input(type="text" placeholder="Tìm kiếm nhóm quyền..." search)
         
       .action-buttons-right
         a.btn-create(href=`/${pathAdmin}/setting/role/create`)
           i.fa-solid.fa-plus
           | Tạo mới
+        a(href=`/${pathAdmin}/setting/role/trash`).btn-trash
+          i.fa-regular.fa-trash-can
+          | Thùng rác
 
   .table-section
     .table-responsive
@@ -32,29 +35,47 @@ block main
         thead
           tr
             th.text-center(width="50px")
-              input(type="checkbox")
+              input(type="checkbox" check-all)
             th Tên nhóm quyền
             th Mô tả ngắn
+            th Tạo bởi
+            th Cập nhật bởi
             th Hành động
         
         tbody
           each item in roleList
             tr
               td.text-center
-                input(type="checkbox")
+                input(type="checkbox" value=item.id name="id" check-item)
               td.font-weight-600 #{item.name}
               td #{item.description}
+              td
+                .user-date
+                  span.name #{item.createdByFullName}
+                  span.time #{item.createdAtFormat}
+              td
+                .user-date
+                  span.name #{item.updatedByFullName}
+                  span.time #{item.updatedAtFormat}
               td
                 .action-btns
                   a(href=`/${pathAdmin}/setting/role/edit/${item.id}`).btn-edit
                     i.fa-regular.fa-pen-to-square
                   button.btn-delete(button-delete data-id=item.id)
                     i.fa-regular.fa-trash-can
-
+    .admin-pagination
+      +pagination(pagination)
   form(
     action=""
     method="POST"
     id="form-delete-item"
     data-path=`/${pathAdmin}/setting/role/delete`
   )
-          
+  form(
+    action=""
+    method="POST"
+    id="form-change-multi"
+    data-path=`/${pathAdmin}/setting/role/change-multi`
+  )
+    input(type="hidden" name="type")
+    input(type="hidden" name="ids")

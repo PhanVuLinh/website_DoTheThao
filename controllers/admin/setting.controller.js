@@ -4,8 +4,9 @@ const Account = require("../../models/account.model");
 const Role = require("../../models/role.model");
 const SettingWebsiteInfo = require("../../models/setting-website-info.model");
 const variableCongfig = require("../../config/variable");
-
 const permissonConfig = require("../../config/permission");
+
+const paginationHelper = require("../../helpers/pagination.helper");
 
 module.exports.list = (req, res) => {
   res.render("admin/pages/setting-list.pug", {
@@ -218,14 +219,87 @@ module.exports.accountAdmindeleteDestroy = async (req, res) => {
 };
 
 module.exports.roleList = async (req, res) => {
-  const roleList = await Role.find({
+  const find = {
     deleted: false,
-  });
+  };
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = req.query.keyword.trim();
+    const regexKeyword = new RegExp(keyword, "i");
+    find.$or = [{ name: regexKeyword }];
+  }
+
+  //Phân trang
+  const countRole = await Role.countDocuments(find);
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countRole,
+  );
+  //hết Phân trang
+  const roleList = await Role.find(find)
+    .sort({ createdAt: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
+
+  for (const item of roleList) {
+    if (item.createdBy) {
+      const infoAccountCreated = await Account.findOne({
+        _id: item.createdBy,
+      });
+      item.createdByFullName = infoAccountCreated.fullName;
+    }
+    if (item.updatedBy) {
+      const infoAccountUpdated = await Account.findOne({
+        _id: item.updatedBy,
+      });
+      item.updatedByFullName = infoAccountUpdated.fullName;
+    }
+    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+    item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY");
+  }
 
   res.render("admin/pages/setting-role-list.pug", {
     title: "Danh sách nhóm quyền",
     roleList: roleList,
+    pagination: objectPagination,
   });
+};
+
+module.exports.roleChangeMulti = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "delete-all":
+        await Role.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: updatedBy,
+            deletedAt: new Date(),
+          },
+        );
+        req.flash(
+          "success",
+          `Đã chuyển ${ids.length} nhóm quyền vào thùng rác!`,
+        );
+        break;
+
+      default:
+        break;
+    }
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
+    res.redirect(req.get("Referer"));
+  }
 };
 
 module.exports.roleCreate = (req, res) => {
@@ -290,11 +364,141 @@ module.exports.roleDelete = async (req, res) => {
   try {
     const id = req.params.id;
 
-    await Role.updateOne({ _id: id }, { deleted: true });
+    await Role.updateOne(
+      { _id: id },
+      {
+        deleted: true,
+        deletedBy: req.account.id,
+        deletedAt: Date.now(),
+      },
+    );
     req.flash("success", "Xóa nhóm quyền thành công");
     res.redirect(req.get("Referer"));
   } catch (error) {
     req.flash("error", "Không tồn tài");
     res.redirect(`/${variableCongfig.pathAdmin}/setting/account-admin/list`);
+  }
+};
+
+module.exports.roleTrash = async (req, res) => {
+  const find = {
+    deleted: true,
+  };
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = req.query.keyword.trim();
+    const regexKeyword = new RegExp(keyword, "i");
+    find.$or = [{ name: regexKeyword }];
+  }
+
+  //Phân trang
+  const countRole = await Role.countDocuments(find);
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countRole,
+  );
+  //hết Phân trang
+  const roleList = await Role.find(find)
+    .sort({ deletedAt: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
+
+  for (const item of roleList) {
+    if (item.createdBy) {
+      const infoAccountCreated = await Account.findOne({
+        _id: item.createdBy,
+      });
+      item.createdByFullName = infoAccountCreated.fullName;
+    }
+    if (item.deletedBy) {
+      const infoAccountDeleted = await Account.findOne({
+        _id: item.deletedBy,
+      });
+      item.deletedByFullName = infoAccountDeleted.fullName;
+    }
+    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+    item.deletedAtFormat = moment(item.deletedAt).format("HH:mm - DD/MM/YYYY");
+  }
+  res.render("admin/pages/setting-role-trash.pug", {
+    title: "Thùng rác nhóm quyền",
+    roleList: roleList,
+    pagination: objectPagination,
+  });
+};
+
+module.exports.roleRestore = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Role.updateOne(
+      { _id: id },
+      {
+        deleted: false,
+      },
+    );
+    req.flash("success", "Khôi phục nhóm quyền thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/setting/role/trash`);
+  }
+};
+
+module.exports.roleDeleteDestroy = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Role.deleteOne({ _id: id });
+    s;
+    req.flash("success", "Đã xóa vĩnh viễn nhóm quyền thành công");
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/setting/role/trash`);
+  }
+};
+
+module.exports.roleChangeMultiTrash = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "restore-all":
+        await Role.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: false,
+          },
+        );
+        req.flash("success", `Đã khôi phục ${ids.length} nhóm quyền!`);
+        break;
+
+      case "delete-all":
+        await Role.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: updatedBy,
+            deletedAt: new Date(),
+          },
+        );
+        req.flash(
+          "success",
+          `Đã chuyển ${ids.length} nhóm quyền vào thùng rác!`,
+        );
+        break;
+
+      default:
+        break;
+    }
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
+    res.redirect(req.get("Referer"));
   }
 };
