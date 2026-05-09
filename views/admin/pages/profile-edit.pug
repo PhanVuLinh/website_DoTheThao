@@ -1,46 +1,50 @@
 extends ../layouts/default.pug
+include ../mixins/alert.pug
 
 block main
+  +alert-success(3000)
+  +alert-error(3000)
+
   .page-header
     h1.page-title Thông tin cá nhân
+
   .form-card
     form(action=`/${pathAdmin}/profile/edit?_method=PATCH` method="POST" enctype="multipart/form-data")
       .form-row-2
         .form-group
           label Họ tên
-          input.form-control(type="text" name="fullName" value="Lê Văn A" required)
+          input.form-control(type="text" name="fullName" value=account.fullName)
         
         .form-group
           label Email
-          input.form-control(type="email" name="email" value="levana@gmail.com" readonly)
+          input.form-control(type="email" name="email" value=account.email readonly)
+          
       .form-row-2
         .form-group
           label Số điện thoại
-          input.form-control(type="text" name="phone" value="0123456789")
+          input.form-control(type="text" name="phone" value=account.phone)
         
-        .form-group
-          label Chức vụ
-          input.form-control(type="text" name="position" value="Giám đốc" readonly)
-      .form-row-2
         .form-group
           label Nhóm quyền
-          input.form-control(type="text" value="Quản trị viên" readonly)
-        
-        .form-group
+          input.form-control(type="text" value=(role ? role.title : "Chưa phân quyền") readonly)
 
       .form-group(style="margin-top: 10px;")
         label Ảnh đại diện
-        .upload-image-wrapper
-          input#avatar-upload.hidden-input(type="file" name="avatar" accept="image/*" onchange="previewImage(event, 'preview-avatar', 'avatar-container', 'avatar-label')")
+        .upload-image-wrapper(upload-image-wrapper)
+          input#avatar-upload.hidden-input(upload-image-input type="file" name="avatar" accept="image/*")
           
-          label.upload-box(for="avatar-upload" id="avatar-label")
+          label.upload-box(for="avatar-upload" upload-image-label class=(account.avatar ? "hidden" : ""))
             i.fa-solid.fa-plus
             
-          .image-preview-container.hidden#avatar-container
-            img#preview-avatar(src="" alt="Preview")
-            button.btn-remove-image(type="button" onclick="removeImage('avatar-upload', 'preview-avatar', 'avatar-container', 'avatar-label')" title="Xóa ảnh")
+          .image-preview-container(upload-image-preview-container class=(account.avatar ? "" : "hidden"))
+            img(upload-image-preview src=(account.avatar ? account.avatar : "") alt="Preview")
+            button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
               i.fa-solid.fa-xmark
 
       .form-actions-stacked
-        button.btn-submit.btn-submit-large(type="submit") Cập nhật
-        a.link-back-underline(href=`/${pathAdmin}/profile/change-password`) Đổi mật khẩu
+        button.btn-submit.btn-submit-large(type="submit") 
+          i.fa-solid.fa-floppy-disk
+          |  Cập nhật
+        a.link-back-underline(href=`/${pathAdmin}/profile/change-password`) 
+          i.fa-solid.fa-key
+          |  Đổi mật khẩu

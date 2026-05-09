@@ -406,6 +406,7 @@ body.admin-body {
 .admin-profile img {
   width: 40px;
   height: 40px;
+  object-fit:cover;
   border-radius: 50%;
 }
 .admin-profile .info {

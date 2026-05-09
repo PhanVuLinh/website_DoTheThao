@@ -9,7 +9,7 @@ header.admin-header
       span.badge 6
     
     .admin-profile
-      img(src="https://ui-avatars.com/api/?name=Admin&background=00004d&color=fff" alt=account.fullName)
+      img(src=(account.avatar ? account.avatar : "https://ui-avatars.com/api/?name=Admin&background=00004d&color=fff") alt=account.fullName)
       .info
         span.name #{account.fullName}
         span.role Admin
