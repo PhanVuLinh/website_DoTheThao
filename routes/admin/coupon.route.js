@@ -24,4 +24,6 @@ router.patch("/restore/:id", couponController.restore);
 
 router.delete("/delete-destroy/:id", couponController.deleteDestroy);
 
+router.patch("/change-multi-trash", couponController.changeMultiTrash);
+
 module.exports = router;

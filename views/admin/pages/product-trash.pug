@@ -1,6 +1,11 @@
 extends ../layouts/default.pug
+include ../mixins/alert.pug
+include ../mixins/bulk-action.pug
+include ../mixins/pagination.pug
 
 block main
+  +alert-success(3000)
+  +alert-error(3000)
   .page-header
     h1.page-title Thùng rác sản phẩm
     a.btn-back(href=`/${pathAdmin}/product/list`) 
@@ -9,22 +14,21 @@ block main
 
   .filter-action-card
     .action-row
-      .bulk-action
-        select.form-select
-          option(value="") -- Hành động --
-          option(value="restore") Khôi phục
-          option(value="delete-permanent") Xóa vĩnh viễn
-        button.btn-apply Áp dụng
+      +bulk-action([
+        { value: "restore-all", label: "Khôi phục" },
+        { value: "delete-all", label: "Xóa vĩnh viễn" }
+      ])
         
       .search-box-large
         i.fa-solid.fa-magnifying-glass
-        input(type="text" placeholder="Tìm kiếm sản phẩm trong thùng rác...")
+        input(type="text" placeholder="Tìm kiếm sản phẩm trong thùng rác..." search)
   .table-section
     .table-responsive
       table.admin-table.table-hover
         thead
           tr
-            th.text-center(width="50px"): input(type="checkbox")
+            th.text-center(width="50px")
+              input(type="checkbox" check-all)
             th Tên sản phẩm
             th Ảnh đại diện
             th Giá (VNĐ)
@@ -35,51 +39,49 @@ block main
             th Xóa bởi
             th Hành động
         
-        tbod
-          each item in productList
-            tr
-              td.text-center
-                input(type="checkbox")
-              td.font-weight-600 #{item.title}
-              td
-                img.td-thumbnail(src=item.thumbnail alt=item.title)
-              
-              td.text-price #{item.price.toLocaleString('vi-VN')}đ
-              
-              td
-                .inventory-list
-                  each size in item.sizes
-                    .inventory-item
-                      span #{size.size}
-                      span #{size.stock}
+        tbody
+          if productList && productList.length > 0
+            each item in productList
+              tr
+                td.text-center
+                  input(type="checkbox" namse="id" value=item.id check-item)
+                td.font-weight-600 #{item.title}
+                td
+                  img.td-thumbnail(src=item.thumbnail alt=item.title)
+                
+                td.text-price #{item.price.toLocaleString('vi-VN')}đ
+                
+                td
+                  .inventory-list
+                    each size in item.sizes
+                      .inventory-item
+                        span #{size.size}
+                        span #{size.stock}
+                      
+                td #{item.position}
+                td 
+                    span.badge-status.badge-inactive Tạm dừng
+                td
+                  .user-date
+                    span.name #{item.createdByFullName}
+                    span.time #{item.createdAtFormat}
+                
+                td
+                  .user-date
+                    span.name #{item.deletedByFullName}
+                    span.time #{item.deletedAtFormat}
                     
-              td #{item.position}
-              td 
-                  span.badge-status.badge-inactive Tạm dừng
-              td
-                .user-date
-                  span.name #{item.createdByFullName}
-                  span.time #{item.createdAtFormat}
-              
-              td
-                .user-date
-                  span.name #{item.deletedByFullName}
-                  span.time #{item.deletedAtFormat}
-                  
-              td: .action-btns
-                  button.btn-restore(button-restore data-id=item.id)
-                    i.fa-solid.fa-rotate-left
-                  button.btn-delete( title="Xóa vĩnh viễn" button-delete data-id=item.id)
-                    i.fa-regular.fa-trash-can
-
+                td: .action-btns
+                    button.btn-restore(button-restore data-id=item.id)
+                      i.fa-solid.fa-rotate-left
+                    button.btn-delete( title="Xóa vĩnh viễn" button-delete data-id=item.id)
+                      i.fa-regular.fa-trash-can
+          else 
+            tr
+              td(colspan="10" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có sản phẩm nào bị xóa!
 
     .admin-pagination
-      ul.pagination-list
-        li.page-item.disabled: a.page-link(href="#"): i.fa-solid.fa-angle-left
-        li.page-item.active: a.page-link(href="#") 1
-        li.page-item: a.page-link(href="#") 2
-        li.page-item.dots: span ...
-        li.page-item: a.page-link(href="#"): i.fa-solid.fa-angle-right
+      +pagination(pagination)
 
   form(
     action=""
@@ -93,3 +95,13 @@ block main
       id="form-delete-item"
       data-path=`/${pathAdmin}/product/delete-destroy`
   )
+
+  form(
+    action=""
+    method="POST"
+    id="form-change-multi"
+    data-path=`/${pathAdmin}/product/change-multi-trash`
+  )
+    input(type="hidden" name="type")
+    input(type="hidden" name="ids")
+          

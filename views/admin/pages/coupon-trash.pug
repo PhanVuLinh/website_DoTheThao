@@ -1,5 +1,7 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/bulk-action.pug
+include ../mixins/pagination.pug
 
 block main
   +alert-success(3000)
@@ -10,12 +12,23 @@ block main
     a.btn-back(href=`/${pathAdmin}/coupon/list`) 
       i.fa-solid.fa-arrow-left
       | Quay lại danh sách
+  .filter-action-card
+    .action-row
+      +bulk-action([
+          { value: "restore-all", label: "Khôi phục" },
+          { value: "delete-all", label: "Xóa vĩnh viễn" }
+        ])
+      .search-box-large
+        i.fa-solid.fa-magnifying-glass
+        input(type="text" placeholder="Tìm kiếm mã giảm giá..." search)
 
   .table-section
     .table-responsive
       table.admin-table.table-hover
         thead
           tr
+            th.text-center(width="50px")
+                input(type="checkbox" check-all)
             th Mã coupon
             th Tên sự kiện
             th % Giảm giá
@@ -29,6 +42,8 @@ block main
           if couponList && couponList.length > 0
             each item in couponList
               tr
+                td.text-center
+                  input(type="checkbox" name="id" value=item.id check-item)
                 td.font-weight-600.text-uppercase #{item.code}
                 td #{item.title}
                 td #{item.discountPercentage}%
@@ -47,8 +62,9 @@ block main
                       i.fa-regular.fa-trash-can
           else
             tr
-              td.text-center(colspan="5" style="padding: 30px;") Thùng rác trống.
-
+              td(colspan="9" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có mã giảm giá nào bị xóa!
+    .admin-pagination
+      +pagination(pagination)
   form(
     action=""
     method="POST"
@@ -62,3 +78,12 @@ block main
     id="form-delete-item"
     data-path=`/${pathAdmin}/coupon/delete-destroy`
   )
+  form(
+    action=""
+    method="POST"
+    id="form-change-multi"
+    data-path=`/${pathAdmin}/coupon/change-multi-trash`
+  )
+    input(type="hidden" name="type")
+    input(type="hidden" name="ids")
+          

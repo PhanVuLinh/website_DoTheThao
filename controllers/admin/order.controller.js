@@ -125,6 +125,18 @@ module.exports.changeMulti = async (req, res) => {
         await Order.updateMany(
           { _id: { $in: ids } },
           {
+            status: type,
+            updatedBy: updatedBy,
+            updatedAt: new Date(),
+          },
+        );
+        req.flash("success", `Đã cập nhật ${ids.length} đơn hàng!`);
+        break;
+
+      case "delete-all":
+        await Order.updateMany(
+          { _id: { $in: ids } },
+          {
             deleted: true,
             deletedBy: updatedBy,
             deletedAt: new Date(),
@@ -237,9 +249,33 @@ module.exports.trash = async (req, res) => {
     deleted: true,
   };
 
-  const orderList = await Order.find(find).sort({
-    deletedAt: "desc",
-  });
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = req.query.keyword.trim();
+    const regexKeyword = new RegExp(keyword, "i");
+    find.$or = [
+      { orderCode: regexKeyword },
+      { fullName: regexKeyword },
+      { phone: regexKeyword },
+    ];
+  }
+
+  //Phân trang
+  const countOrder = await Order.countDocuments(find);
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countOrder,
+  );
+  //hết Phân trang
+
+  const orderList = await Order.find(find)
+    .sort({ deletedAt: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
 
   for (const order of orderList) {
     for (const item of order.products) {
@@ -279,7 +315,8 @@ module.exports.trash = async (req, res) => {
 
   res.render("admin/pages/order-trash.pug", {
     title: "Thùng rác đơn hàng",
-    orderList,
+    orderList: orderList,
+    pagination: objectPagination,
   });
 };
 
@@ -309,5 +346,40 @@ module.exports.deleteDestroy = async (req, res) => {
   } catch (error) {
     req.flash("error", "Không tồn tài");
     res.redirect(`/${variableCongfig.pathAdmin}/trash`);
+  }
+};
+
+module.exports.changeMultiTrash = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "restore-all":
+        await Order.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: false,
+          },
+        );
+        req.flash("success", `Đã khôi phục ${ids.length} đơn hàng!`);
+        break;
+
+      case "delete-all":
+        await Order.deleteMany({
+          _id: { $in: ids },
+        });
+        req.flash("success", `Đã xóa ${ids.length} vĩnh viễn đơn hàng`);
+        break;
+
+      default:
+        break;
+    }
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
+    res.redirect(req.get("Referer"));
   }
 };

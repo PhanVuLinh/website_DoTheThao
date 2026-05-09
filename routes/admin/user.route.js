@@ -24,4 +24,6 @@ router.patch("/restore/:id", userController.restore);
 
 router.delete("/delete-destroy/:id", userController.deleteDestroy);
 
+router.patch("/change-multi-trash", userController.changeMultiTrash);
+
 module.exports = router;

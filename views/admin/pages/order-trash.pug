@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
 
 block main
@@ -14,12 +15,10 @@ block main
 
   .filter-action-card
     .action-row
-      .bulk-action
-        select.form-select(change-multi)
-          option(value="") -- Hành động --
-          option(value="restore") Khôi phục
-          option(value="delete-permanent") Xóa vĩnh viễn
-        button.btn-apply Áp dụng
+      +bulk-action([
+        { value: "restore-all", label: "Khôi phục" },
+        { value: "delete-all", label: "Xóa vĩnh viễn" }
+      ])
         
       .search-box-large(style="max-width: 500px;")
         i.fa-solid.fa-magnifying-glass
@@ -101,9 +100,9 @@ block main
             tr
               td.text-center(colspan="8") Không có đơn hàng nào trong thùng rác.
 
-  //- .admin-pagination
-  //-   if pagination
-  //-     +pagination(pagination)
+  .admin-pagination
+    if pagination
+      +pagination(pagination)
 
   form(
     method="POST"
@@ -116,3 +115,13 @@ block main
     id="form-delete-item"
     data-path=`/${pathAdmin}/order/delete-destroy`
   )
+
+  form(
+    action=""
+    method="POST"
+    id="form-change-multi"
+    data-path=`/${pathAdmin}/order/change-multi-trash`
+  )
+    input(type="hidden" name="type")
+    input(type="hidden" name="ids")
+          

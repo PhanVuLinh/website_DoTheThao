@@ -40,5 +40,8 @@ router.patch("/restore/:id", categoryController.restore);
 
 router.delete("/delete-destroy/:id", categoryController.deleteDestroy);
 
+router.patch("/change-multi-trash", categoryController.changeMultiTrash);
+
+
 
 module.exports = router;

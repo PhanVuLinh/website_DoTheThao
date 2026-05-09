@@ -5,6 +5,7 @@ const Category = require("../../models/category.model");
 const Account = require("../../models/account.model");
 
 const categoryHelper = require("../../helpers/category.helper");
+const paginationHelper = require("../../helpers/pagination.helper");
 
 module.exports.list = async (req, res) => {
   const find = {
@@ -53,7 +54,13 @@ module.exports.list = async (req, res) => {
     deleted: false,
   }).select("id title");
   let currentCategoryId = req.query.category;
-  if (!currentCategoryId && parentCategoryList.length > 0) {
+  const isValidCategory = parentCategoryList.some(
+    (item) => item.id == currentCategoryId,
+  );
+  if (
+    (!currentCategoryId || !isValidCategory) &&
+    parentCategoryList.length > 0
+  ) {
     currentCategoryId = parentCategoryList[0].id;
   }
   // lọc theo danh mục
@@ -78,15 +85,23 @@ module.exports.list = async (req, res) => {
   const getAccountInfo = async (tree) => {
     for (const item of tree) {
       if (item.createdBy) {
-        const infoAccountCreated = await Account.findOne({ _id: item.createdBy });
+        const infoAccountCreated = await Account.findOne({
+          _id: item.createdBy,
+        });
         item.createdByFullName = infoAccountCreated?.fullName;
       }
       if (item.updatedBy) {
-        const infoAccountUpdated = await Account.findOne({ _id: item.updatedBy });
+        const infoAccountUpdated = await Account.findOne({
+          _id: item.updatedBy,
+        });
         item.updatedByFullName = infoAccountUpdated?.fullName;
       }
-      item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
-      item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY");
+      item.createdAtFormat = moment(item.createdAt).format(
+        "HH:mm - DD/MM/YYYY",
+      );
+      item.updatedAtFormat = moment(item.updatedAt).format(
+        "HH:mm - DD/MM/YYYY",
+      );
 
       if (item.children && item.children.length > 0) {
         await getAccountInfo(item.children);
@@ -239,6 +254,15 @@ module.exports.editPatch = async (req, res) => {
 module.exports.delete = async (req, res) => {
   try {
     const id = req.params.id;
+    const childCategory = await Category.findOne({
+      parent_id: id,
+      deleted: false,
+    });
+    if (childCategory) {
+      req.flash("error", "Không thể xóa! Danh mục này đang chứa danh mục con.");
+      res.redirect(req.get("Referer"));
+      return;
+    }
     await Category.updateOne(
       { _id: id },
       {
@@ -259,10 +283,31 @@ module.exports.trash = async (req, res) => {
   const find = {
     deleted: true,
   };
-
-  const categoryList = await Category.find(find).sort({
-    deletedAt: "desc",
-  });
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = slugify(req.query.keyword, {
+      lower: true,
+      locale: "vi",
+      strict: true,
+    });
+    const keywordRegex = new RegExp(keyword);
+    find.slug = keywordRegex;
+  }
+  //Phân trang
+  const countCategory = await Category.countDocuments(find);
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countCategory,
+  );
+  //hết Phân trang
+  const categoryList = await Category.find(find)
+    .sort({ deletedAt: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
 
   for (const item of categoryList) {
     if (item.createdBy) {
@@ -283,6 +328,7 @@ module.exports.trash = async (req, res) => {
   res.render("admin/pages/category-trash.pug", {
     title: "Thùng rác danh mục",
     categoryList: categoryList,
+    pagination: objectPagination,
   });
 };
 
@@ -312,5 +358,40 @@ module.exports.deleteDestroy = async (req, res) => {
   } catch (error) {
     req.flash("error", "Không tồn tài");
     res.redirect(`/${variableCongfig.pathAdmin}/trash`);
+  }
+};
+
+module.exports.changeMultiTrash = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "restore-all":
+        await Category.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: false,
+          },
+        );
+        req.flash("success", `Đã khôi phục ${ids.length} danh mục!`);
+        break;
+
+      case "delete-all":
+        await Category.deleteMany({
+          _id: { $in: ids },
+        });
+        req.flash("success", `Đã xóa ${ids.length} vĩnh viễn danh mục`);
+        break;
+
+      default:
+        break;
+    }
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
+    res.redirect(req.get("Referer"));
   }
 };

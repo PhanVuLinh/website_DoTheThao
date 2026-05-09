@@ -18,4 +18,6 @@ router.patch("/restore/:id", orderController.restore);
 
 router.delete("/delete-destroy/:id", orderController.deleteDestroy);
 
+router.patch("/change-multi-trash", orderController.changeMultiTrash);
+
 module.exports = router;

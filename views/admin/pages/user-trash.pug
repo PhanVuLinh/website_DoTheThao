@@ -14,22 +14,10 @@ block main
       | Quay lại danh sách
 
   .filter-action-card
-    .filter-row
-      .filter-label
-        i.fa-solid.fa-filter
-        span Bộ lọc
-      
-      +filter-status()
-              
-      button.btn-clear(filter-reset)
-        i.fa-solid.fa-rotate-right
-        | Xóa bộ lọc
-
     .action-row
       +bulk-action([
-        { value: "delete-all", label: "Xóa nhiều" },
-        { value: "active", label: "Hoạt động" },
-        { value: "inactive", label: "Khóa tài khoản" }
+        { value: "restore-all", label: "Khôi phục" },
+        { value: "delete-all", label: "Xóa vĩnh viễn" }
       ])
         
       .search-box-large
@@ -79,11 +67,9 @@ block main
             tr
               td(colspan="7" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có tài khoản nào bị xóa!
       
-  //- PHÂN TRANG (PAGINATION)
-  //- .admin-pagination
-  //-   +pagination(pagination)
+    .admin-pagination
+      +pagination(pagination)
 
-  //- Các Form ẩn dùng để gửi request khi thực hiện Hành động (Xóa, Đổi trạng thái)
   form(
     action=""
     method="POST"
@@ -97,3 +83,12 @@ block main
     id="form-delete-item"
     data-path=`/${pathAdmin}/user/delete-destroy`
   )
+  form(
+    action=""
+    method="POST"
+    id="form-change-multi"
+    data-path=`/${pathAdmin}/user/change-multi-trash`
+  )
+    input(type="hidden" name="type")
+    input(type="hidden" name="ids")
+          

@@ -15,11 +15,10 @@ block main
 
   .filter-action-card
     .action-row
-      .action-row
-        +bulk-action([
-          { value: "restore-all", label: "Khôi phục" },
-          { value: "delete-all", label: "Xóa vĩnh viễn" }
-        ])
+      +bulk-action([
+        { value: "restore-all", label: "Khôi phục" },
+        { value: "delete-all", label: "Xóa vĩnh viễn" }
+      ])
 
       .search-box-large
         i.fa-solid.fa-magnifying-glass
