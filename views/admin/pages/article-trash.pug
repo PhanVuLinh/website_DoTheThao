@@ -1,6 +1,7 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
-//- include ../mixins/pagination.pug
+include ../mixins/bulk-action.pug
+include ../mixins/pagination.pug
 
 block main
   +alert-success(3000)
@@ -14,13 +15,12 @@ block main
 
   .filter-action-card
     .action-row
-      .bulk-action
-        select.form-select(change-multi)
-          option(value="") -- Hành động --
-          option(value="restore") Khôi phục
-          option(value="delete-permanent") Xóa vĩnh viễn
-        button.btn-apply(type="button") Áp dụng
-        
+      .action-row
+        +bulk-action([
+          { value: "restore-all", label: "Khôi phục" },
+          { value: "delete-all", label: "Xóa vĩnh viễn" }
+        ])
+
       .search-box-large
         i.fa-solid.fa-magnifying-glass
         input(type="text" placeholder="Tìm kiếm tiêu đề bài viết đã xóa..." search)
@@ -70,11 +70,9 @@ block main
           else 
             tr
               td(colspan="7" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có bài viết nào bị xóa!
-
-    //- PHÂN TRANG (PAGINATION)
-    //- if pagination
-    //-   .admin-pagination
-    //-     +pagination(pagination)
+  
+    .admin-pagination
+      +pagination(pagination)
 
   form(
     action=""
@@ -90,3 +88,12 @@ block main
     data-path=`/${pathAdmin}/article/delete-destroy`
   )
 
+  form(
+    action=""
+    method="POST"
+    id="form-change-multi"
+    data-path=`/${pathAdmin}/article/change-multi-trash`
+  )
+    input(type="hidden" name="type")
+    input(type="hidden" name="ids")
+          

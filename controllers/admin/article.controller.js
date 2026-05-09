@@ -44,16 +44,16 @@ module.exports.list = async (req, res) => {
   }
 
   //Phân trang
-    const countArticle = await Article.countDocuments(find);
-    let objectPagination = paginationHelper(
-      {
-        currentPage: 1,
-        limitItems: 5,
-      },
-      req.query,
-      countArticle,
-    );
-    //hết Phân trang
+  const countArticle = await Article.countDocuments(find);
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countArticle,
+  );
+  //hết Phân trang
 
   const articleList = await Article.find(find)
     .sort({ createdAt: "desc" })
@@ -79,6 +79,7 @@ module.exports.list = async (req, res) => {
   const accountAdminList = await Account.find({
     deleted: false,
   }).select("id fullName");
+
   res.render("admin/pages/article-list.pug", {
     title: "Danh sách bài viết",
     articleList: articleList,
@@ -225,9 +226,32 @@ module.exports.trash = async (req, res) => {
   const find = {
     deleted: true,
   };
-  const articleList = await Article.find(find).sort({
-    deletedAt: "desc",
-  });
+  //Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = slugify(req.query.keyword, {
+      lower: true,
+      locale: "vi",
+      strict: true,
+    });
+    const keywordRegex = new RegExp(keyword);
+    find.slug = keywordRegex;
+  }
+
+  //Phân trang
+  const countArticle = await Article.countDocuments(find);
+  let objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 5,
+    },
+    req.query,
+    countArticle,
+  );
+  //hết Phân trang
+  const articleList = await Article.find(find)
+    .sort({ deletedAt: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
 
   for (const item of articleList) {
     if (item.createdBy) {
@@ -248,6 +272,7 @@ module.exports.trash = async (req, res) => {
   res.render("admin/pages/article-trash.pug", {
     title: "Thùng rác bài viết",
     articleList: articleList,
+    pagination: objectPagination,
   });
 };
 
@@ -277,5 +302,48 @@ module.exports.deleteDestroy = async (req, res) => {
   } catch (error) {
     req.flash("error", "Không tồn tài");
     res.redirect(`/${variableCongfig.pathAdmin}/trash`);
+  }
+};
+
+module.exports.changeMultiTrash = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account.id;
+
+    switch (type) {
+      case "restore-all":
+        await Article.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: false,
+          },
+        );
+        req.flash("success", `Đã khôi phục ${ids.length} bài viết!`);
+        break;
+
+      case "delete-all":
+        await Article.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: updatedBy,
+            deletedAt: new Date(),
+          },
+        );
+        req.flash(
+          "success",
+          `Đã chuyển ${ids.length} bài viết vào thùng rác!`,
+        );
+        break;
+
+      default:
+        break;
+    }
+    res.redirect(req.get("Referer"));
+  } catch (error) {
+    req.flash("error", "Không tồn tài");
+    res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
+    res.redirect(req.get("Referer"));
   }
 };
