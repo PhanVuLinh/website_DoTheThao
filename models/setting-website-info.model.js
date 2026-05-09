@@ -8,6 +8,11 @@ const settingwebsiteInfoSchema = new mongoose.Schema(
     address: String,
     logo: String,
     favicon: String,
+    heroImage: String,       
+    heroBadge: String,       
+    heroTitle: String,       
+    heroDescription: String,
+    promoBannerImage: String,
   }
 );
 

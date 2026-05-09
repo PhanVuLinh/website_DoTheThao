@@ -4,22 +4,16 @@ include ../mixins/product-item.pug
 block main
   // SECTION 1: HERO
   section.hero
-    img.hero__img(src="../client/assets/images/banner2.jpg" alt="TitiSport")
+    img.hero__img(src=(settingWebsiteInfo.heroImage ? settingWebsiteInfo.heroImage : "") alt=settingWebsiteInfo.websiteName)
     
     .hero__overlay
     .hero__container 
       .hero__content
         .hero__badge 
           i.fa-solid.fa-trophy
-          | THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG
-        h1.hero__title
-          | BỨT PHÁ
-          br
-          | MỌI GIỚI HẠN
-        p.hero__description 
-          | Trải nghiệm đẳng cấp với bộ sưu tập thể thao mới nhất. Chất lượng
-          br
-          | vượt trội, thiết kế tối ưu cho mọi chuyển động.
+          | #{settingWebsiteInfo.heroBadge}
+        h1.hero__title  !{settingWebsiteInfo.heroTitle}
+        p.hero__description #{settingWebsiteInfo.heroDescription}
         
         .hero__search-box
           form.hero-search-form(form-search)
@@ -104,7 +98,7 @@ block main
     .banner-promo__container
       .banner-promo__inner
         a(href="#")
-          img(src="https://giayhaanh.vn/wp-content/uploads/2025/10/banner-quang-cao-giay-the-thao-voi-hinh-anh-an-tuong-va-thong-diep-ro-rang.jpg", alt="Banner Khuyến Mãi Thể Thao")
+          img(src=(settingWebsiteInfo.promoBannerImage ? settingWebsiteInfo.promoBannerImage : ""), alt="Banner Quảng Cáo")
   // END SECTION 6
 
   // SECTION 7: SẢN PHẨM MỚI NHẤT
@@ -128,7 +122,6 @@ block main
       h2.section-title Tin Tức Mới
       
       .news-grid
-        // Cột Trái (2 bài nhỏ)
         .news-col.news-col--side
           each item in newsLeft
             a.news-card-small(href=`/article/detail/${item.slug}`)
@@ -137,10 +130,9 @@ block main
                 span.date= item.createdAtFormat
                 h4.title= item.title
 
-        // Cột Giữa (1 bài lớn)
         .news-col.news-col--center
           article.news-card-large
-            a.news-card-large__img(href=`/article/detail${newsCenter.slug}`)
+            a.news-card-large__img(href=`/article/detail/${newsCenter.slug}`)
               img(src=newsCenter.thumbnail, alt=newsCenter.title)
             .news-card-large__content
               span.date= newsCenter.createdAtFormat
@@ -148,7 +140,6 @@ block main
                 a(href=`/article/detail/${newsCenter.slug}`)= newsCenter.title
               p.desc= newsCenter.description
 
-        // Cột Phải (2 bài nhỏ)
         .news-col.news-col--side
           each item in newsRight
             a.news-card-small(href=`/article/detail/${item.slug}`)

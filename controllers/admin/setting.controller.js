@@ -33,6 +33,16 @@ module.exports.websiteInfoPatch = async (req, res) => {
   } else {
     delete req.body.favicon;
   }
+  if (req.files && req.files.heroImage) {
+    req.body.heroImage = req.files.heroImage[0].path;
+  } else {
+    delete req.body.heroImage;
+  }
+  if(req.files && req.files.promoBannerImage) {
+    req.body.promoBannerImage = req.files.promoBannerImage[0].path;
+  } else {
+    delete req.body.promoBannerImage;
+  }
   const settingWebsiteInfo = await SettingWebsiteInfo.findOne({});
   if (settingWebsiteInfo) {
     await SettingWebsiteInfo.updateOne(

@@ -4,40 +4,43 @@ include ../mixins/alert.pug
 block main
   +alert-error(3000)
   +alert-success(3000)
+  
   .page-header
-    h1.page-title Thông tin website
+    h1.page-title Thông tin Website & Trang chủ
     a.btn-back(href=`/${pathAdmin}/setting/list`) 
       i.fa-solid.fa-arrow-left
       | Quay lại cài đặt chung
 
   .form-card
     form(action=`/${pathAdmin}/setting/website-info?_method=PATCH` method="POST" enctype="multipart/form-data")
+      
       .form-row-2
         .form-group
           label Tên website
-          input.form-control(type="text" name="websiteName" value=settingWebsiteInfo.websiteName)
+          input.form-control(type="text" name="websiteName" value=(settingWebsiteInfo ? settingWebsiteInfo.websiteName : "") placeholder="VD: TitiSport")
         
         .form-group
           label Số điện thoại
-          input.form-control(type="text" name="phone" value=settingWebsiteInfo.phone)
+          input.form-control(type="text" name="phone" value=(settingWebsiteInfo ? settingWebsiteInfo.phone : "") placeholder="VD: 0123456789")
 
       .form-row-2
         .form-group
           label Email
-          input.form-control(type="email" name="email" value=settingWebsiteInfo.email)
+          input.form-control(type="email" name="email" value=(settingWebsiteInfo ? settingWebsiteInfo.email : "") placeholder="VD: contact@titisport.com")
         
         .form-group
           label Địa chỉ
-          input.form-control(type="text" name="address" value=settingWebsiteInfo.address)
+          input.form-control(type="text" name="address" value=(settingWebsiteInfo ? settingWebsiteInfo.address : "") placeholder="VD: 123 Đường ABC, Quận XYZ...")
+          
       .form-row-2.upload-row
         .form-group
           label Logo
           .upload-image-wrapper(upload-image-wrapper)
             input#logo-upload.hidden-input(upload-image-input type="file" name="logo" accept="image/*")
-            label.upload-box(for="logo-upload" upload-image-label class=(settingWebsiteInfo.logo ? "hidden" : ""))
+            label.upload-box(for="logo-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.logo ? "hidden" : ""))
               i.fa-solid.fa-plus
-            .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo.logo ? "" : "hidden"))
-              img(upload-image-preview src=(settingWebsiteInfo.logo ? settingWebsiteInfo.logo : "") alt="Preview")
+            .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.logo ? "" : "hidden"))
+              img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.logo ? settingWebsiteInfo.logo : "") alt="Preview")
               button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
                 i.fa-solid.fa-xmark
                 
@@ -45,12 +48,50 @@ block main
           label Favicon
           .upload-image-wrapper(upload-image-wrapper)
             input#favicon-upload.hidden-input(upload-image-input type="file" name="favicon" accept="image/*")
-            label.upload-box(for="favicon-upload" upload-image-label class=(settingWebsiteInfo.favicon ? "hidden" : ""))
+            label.upload-box(for="favicon-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.favicon ? "hidden" : ""))
               i.fa-solid.fa-plus
-            .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo.favicon ? "" : "hidden"))
-              img(upload-image-preview src=(settingWebsiteInfo.favicon ? settingWebsiteInfo.favicon : "") alt="Preview")
+            .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.favicon ? "" : "hidden"))
+              img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.favicon ? settingWebsiteInfo.favicon : "") alt="Preview")
+              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                i.fa-solid.fa-xmark
+      br
+      .form-row-2
+        .form-group
+          label Dòng chữ nổi bật trên Banner
+          input.form-control(type="text" name="heroBadge" value=(settingWebsiteInfo ? settingWebsiteInfo.heroBadge : "") placeholder="VD: THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG")
+        
+        .form-group
+          label Tiêu đề chính Banner
+          input.form-control(type="text" name="heroTitle" value=(settingWebsiteInfo ? settingWebsiteInfo.heroTitle : "") placeholder="VD: BỨT PHÁ<br>MỌI GIỚI HẠN")
+
+      .form-group
+        label Đoạn mô tả Banner
+        textarea.form-control(name="heroDescription" rows="3" placeholder="Trải nghiệm đẳng cấp với bộ sưu tập thể thao mới nhất...") #{settingWebsiteInfo ? settingWebsiteInfo.heroDescription : ""}
+
+      .form-row-2.upload-row
+        .form-group
+          label Ảnh nền Banner chính (Vị trí đầu trang)
+          .upload-image-wrapper(upload-image-wrapper)
+            input#hero-upload.hidden-input(upload-image-input type="file" name="heroImage" accept="image/*")
+            label.upload-box(for="hero-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? "hidden" : ""))
+              i.fa-solid.fa-plus
+            .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? "" : "hidden"))
+              img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? settingWebsiteInfo.heroImage : "") alt="Preview")
+              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                i.fa-solid.fa-xmark
+                
+        .form-group
+          label Ảnh Banner quảng cáo (Vị trí giữa trang)
+          .upload-image-wrapper(upload-image-wrapper)
+            input#promo-upload.hidden-input(upload-image-input type="file" name="promoBannerImage" accept="image/*")
+            label.upload-box(for="promo-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.promoBannerImage ? "hidden" : ""))
+              i.fa-solid.fa-plus
+            .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.promoBannerImage ? "" : "hidden"))
+              img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.promoBannerImage ? settingWebsiteInfo.promoBannerImage : "") alt="Preview")
               button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
                 i.fa-solid.fa-xmark
 
-      .form-actions-stacked
-        button.btn-submit.btn-submit-large(type="submit") Cập nhật
+      .form-actions-stacked(style="margin-top: 30px;")
+        button.btn-submit.btn-submit-large(type="submit") 
+          i.fa-solid.fa-floppy-disk
+          |  Cập nhật cấu hình

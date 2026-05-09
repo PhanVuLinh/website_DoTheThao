@@ -10,6 +10,9 @@ const upload = multer({ storage: cloudinaryHelper.storage });
 
 const settingController = require("../../controllers/admin/setting.controller");
 
+// =====================================
+// CẤU HÌNH WEBSITE & TRANG CHỦ
+// =====================================
 router.get("/list", settingController.list);
 
 router.get("/website-info", settingController.websiteInfo);
@@ -19,10 +22,15 @@ router.patch(
   upload.fields([
     { name: "logo", maxCount: 1 },
     { name: "favicon", maxCount: 1 },
+    { name: "heroImage", maxCount: 1 },
+    { name: "promoBannerImage", maxCount: 1 },
   ]),
   settingController.websiteInfoPatch,
 );
 
+// =====================================
+// QUẢN LÝ TÀI KHOẢN ADMIN
+// =====================================
 router.get("/account-admin/list", settingController.accountAdminList);
 
 router.patch(
@@ -69,6 +77,9 @@ router.delete(
   settingController.accountAdmindeleteDestroy,
 );
 
+// =====================================
+// QUẢN LÝ NHÓM QUYỀN (ROLE)
+// =====================================
 router.get("/role/list", settingController.roleList);
 
 router.patch("/role/change-multi", settingController.roleChangeMulti);
