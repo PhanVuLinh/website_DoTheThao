@@ -323,18 +323,10 @@ module.exports.changeMultiTrash = async (req, res) => {
         break;
 
       case "delete-all":
-        await Article.updateMany(
-          { _id: { $in: ids } },
-          {
-            deleted: true,
-            deletedBy: updatedBy,
-            deletedAt: new Date(),
-          },
-        );
-        req.flash(
-          "success",
-          `Đã chuyển ${ids.length} bài viết vào thùng rác!`,
-        );
+        await Article.deleteMany({
+          _id: { $in: ids },
+        });
+        req.flash("success", `Đã xóa ${ids.length} vĩnh viễn bài viết`);
         break;
 
       default:

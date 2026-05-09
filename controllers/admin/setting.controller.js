@@ -347,18 +347,10 @@ module.exports.accountAdminChangeMultiTrash = async (req, res) => {
         break;
 
       case "delete-all":
-        await Account.updateMany(
-          { _id: { $in: ids } },
-          {
-            deleted: true,
-            deletedBy: updatedBy,
-            deletedAt: new Date(),
-          },
-        );
-        req.flash(
-          "success",
-          `Đã chuyển ${ids.length} tài khoản vào thùng rác!`,
-        );
+        await Account.deleteMany({
+          _id: { $in: ids },
+        });
+        req.flash("success", `Đã xóa ${ids.length} vĩnh viễn tài khoản`);
         break;
 
       default:
@@ -632,18 +624,10 @@ module.exports.roleChangeMultiTrash = async (req, res) => {
         break;
 
       case "delete-all":
-        await Role.updateMany(
-          { _id: { $in: ids } },
-          {
-            deleted: true,
-            deletedBy: updatedBy,
-            deletedAt: new Date(),
-          },
-        );
-        req.flash(
-          "success",
-          `Đã chuyển ${ids.length} nhóm quyền vào thùng rác!`,
-        );
+        await Contact.deleteMany({
+          _id: { $in: ids },
+        });
+        req.flash("success", `Đã xóa ${ids.length} vĩnh viễn nhóm quyền`);
         break;
 
       default:

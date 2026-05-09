@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
 
 block main
@@ -14,13 +15,11 @@ block main
 
   .filter-action-card
     .action-row
-      .bulk-action
-        select.form-select(change-multi)
-          option(value="") -- Hành động --
-          option(value="restore") Khôi phục
-          option(value="delete-permanent") Xóa vĩnh viễn
-        button.btn-apply(type="button") Áp dụng
-        
+      +bulk-action([
+        { value: "restore-all", label: "Khôi phục" },
+        { value: "delete-all", label: "Xóa vĩnh viễn" }
+      ])
+
       .search-box-large(style="max-width: 500px;")
         i.fa-solid.fa-magnifying-glass
         input(type="text" placeholder="Tìm kiếm email đã xóa..." search)
@@ -60,12 +59,10 @@ block main
             tr
               td(colspan="4" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có email nào bị xóa!
 
-    //- Phân trang (Nếu có)
     if pagination
       .admin-pagination
         +pagination(pagination)
 
-  //- CÁC FORM ẨN ĐỂ XỬ LÝ DỮ LIỆU
   form(
     action=""
     method="POST"
@@ -79,3 +76,13 @@ block main
     id="form-delete-item"
     data-path=`/${pathAdmin}/contact/delete-destroy`
   )
+
+  form(
+    action=""
+    method="POST"
+    id="form-change-multi"
+    data-path=`/${pathAdmin}/contact/change-multi-trash`
+  )
+    input(type="hidden" name="type")
+    input(type="hidden" name="ids")
+          

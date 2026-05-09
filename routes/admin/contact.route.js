@@ -14,4 +14,6 @@ router.patch("/restore/:id", contactController.restore);
 
 router.delete("/delete-destroy/:id", contactController.deleteDestroy);
 
+router.patch("/change-multi-trash", contactController.changeMultiTrash);
+
 module.exports = router;
