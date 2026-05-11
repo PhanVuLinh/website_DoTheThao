@@ -67,6 +67,9 @@ module.exports.permissionList = [
     permissions: [
       { label: "Xem", value: "contact_view" },
       { label: "Xóa", value: "contact_delete" },
+      { label: "Xem thùng rác", value: "contact_trash" },
+      { label: "Khôi phục", value: "contact_restore" },
+      { label: "Xóa vĩnh viễn", value: "contact_destroy" },
     ],
   },
   {

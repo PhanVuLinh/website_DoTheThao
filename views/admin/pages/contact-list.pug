@@ -5,76 +5,104 @@ include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
 
 block main
-  +alert-success(3000)
-  +alert-error(3000)
-  
-  h1.page-title Quản lý Email Đăng Ký
-  .filter-action-card
-    .filter-row
-      .filter-label
-        i.fa-solid.fa-filter
-        span Bộ lọc
-        
-      +filter-date-range()
-        
-      button.btn-clear(filter-reset)
-        i.fa-solid.fa-rotate-right
-        | Xóa bộ lọc
-    .action-row
-      +bulk-action([
-        { value: "delete-all", label: "xóa" },
-      ])
-      .search-box-large
-        i.fa-solid.fa-magnifying-glass
-        input(type="text" placeholder="Tìm kiếm theo email..." search)
-      .action-buttons-right
-        a(href=`/${pathAdmin}/contact/trash`).btn-trash
-          i.fa-regular.fa-trash-can
-          | Thùng rác
+  if(role && role.permissions && role.permissions.includes("contact_view"))
+    +alert-success(3000)
+    +alert-error(3000)
+    
+    h1.page-title Quản lý Email Đăng Ký
+    .filter-action-card
+      .filter-row
+        .filter-label
+          i.fa-solid.fa-filter
+          span Bộ lọc
+          
+        +filter-date-range()
+          
+        button.btn-clear(filter-reset)
+          i.fa-solid.fa-rotate-right
+          | Xóa bộ lọc
+      .action-row
+        - 
+          var bulkOptions = [];
+          if(role && role.permissions) {
+            if(role.permissions.includes("contact_delete")) {
+              bulkOptions.push({ value: "delete-all", label: "Xóa" });
+            }
+          }
 
-  .table-section
-    .table-responsive
-      table.admin-table.table-hover
-        thead
-          tr
-            th.text-center(width="50px")
-              input(type="checkbox" check-all)
-            th Email đăng ký
-            th Ngày đăng ký
-            th Hành động
-        
-        tbody
-          if contactList && contactList.length > 0
-            each item in contactList
-              tr
-                td.text-center
-                  input(type="checkbox" value=item.id name="id" check-item)
-                td.font-weight-600 #{item.email}
-                td
-                  .user-date
-                    span.time #{item.createdAtFormat}
-                td
-                  .action-btns
-                    button.btn-delete(button-delete data-id=item.id title="Xóa email này")
-                      i.fa-regular.fa-trash-can
-          else 
+        if(bulkOptions.length > 0)
+          +bulk-action(bulkOptions)
+          
+        .search-box-large
+          i.fa-solid.fa-magnifying-glass
+          input(type="text" placeholder="Tìm kiếm theo email..." search)
+          
+        .action-buttons-right
+          if(role && role.permissions && role.permissions.includes("contact_trash"))
+            a(href=`/${pathAdmin}/contact/trash`).btn-trash
+              i.fa-regular.fa-trash-can
+              | Thùng rác
+
+    .table-section
+      .table-responsive
+        table.admin-table.table-hover
+          thead
             tr
-              td(colspan="4" class="text-center") Chưa có email đăng ký nào.
-  .admin-pagination
-    +pagination(pagination)
+              th.text-center(width="50px")
+                input(type="checkbox" check-all)
+              th Email đăng ký
+              th Ngày đăng ký
+              if(role && role.permissions && role.permissions.includes("contact_delete"))
+                th Hành động
+          
+          tbody
+            if contactList && contactList.length > 0
+              each item in contactList
+                tr
+                  td.text-center
+                    input(type="checkbox" value=item.id name="id" check-item)
+                  td.font-weight-600 #{item.email}
+                  td
+                    .user-date
+                      span.time #{item.createdAtFormat}
+                  if(role && role.permissions && role.permissions.includes("contact_delete"))
+                    td
+                      .action-btns
+                        button.btn-delete(button-delete data-id=item.id title="Xóa email này")
+                          i.fa-regular.fa-trash-can
+            else 
+              tr
+                td(colspan="4" class="text-center") Chưa có email đăng ký nào.
+                
+    .admin-pagination
+      +pagination(pagination)
 
-  form(
-    action=""
-    method="POST"
-    id="form-delete-item"
-    data-path=`/${pathAdmin}/contact/delete`
-  )
+    if(role && role.permissions && role.permissions.includes("contact_delete"))
+      form(
+        action=""
+        method="POST"
+        id="form-delete-item"
+        data-path=`/${pathAdmin}/contact/delete`
+      )
 
-  form(
-    action=""
-    method="POST"
-    id="form-change-multi"
-    data-path=`/${pathAdmin}/contact/change-multi`
-  )
-    input(type="hidden" name="type")
-    input(type="hidden" name="ids")
+    if(role && role.permissions && role.permissions.includes("contact_delete"))
+      form(
+        action=""
+        method="POST"
+        id="form-change-multi"
+        data-path=`/${pathAdmin}/contact/change-multi`
+      )
+        input(type="hidden" name="type")
+        input(type="hidden" name="ids")
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
