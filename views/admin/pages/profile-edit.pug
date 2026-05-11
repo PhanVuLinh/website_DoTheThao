@@ -2,49 +2,62 @@ extends ../layouts/default.pug
 include ../mixins/alert.pug
 
 block main
-  +alert-success(3000)
-  +alert-error(3000)
+  if(role && role.permissions && role.permissions.includes("profile_view"))
+    +alert-success(3000)
+    +alert-error(3000)
 
-  .page-header
-    h1.page-title Thông tin cá nhân
+    .page-header
+      h1.page-title Thông tin cá nhân
 
-  .form-card
-    form(action=`/${pathAdmin}/profile/edit?_method=PATCH` method="POST" enctype="multipart/form-data")
-      .form-row-2
-        .form-group
-          label Họ tên
-          input.form-control(type="text" name="fullName" value=account.fullName)
-        
-        .form-group
-          label Email
-          input.form-control(type="email" name="email" value=account.email readonly)
+    .form-card
+      form(action=`/${pathAdmin}/profile/edit?_method=PATCH` method="POST" enctype="multipart/form-data")
+        .form-row-2
+          .form-group
+            label Họ tên
+            input.form-control(type="text" name="fullName" value=account.fullName)
           
-      .form-row-2
-        .form-group
-          label Số điện thoại
-          input.form-control(type="text" name="phone" value=account.phone)
-        
-        .form-group
-          label Nhóm quyền
-          input.form-control(type="text" value=(role ? role.title : "Chưa phân quyền") readonly)
-
-      .form-group(style="margin-top: 10px;")
-        label Ảnh đại diện
-        .upload-image-wrapper(upload-image-wrapper)
-          input#avatar-upload.hidden-input(upload-image-input type="file" name="avatar" accept="image/*")
-          
-          label.upload-box(for="avatar-upload" upload-image-label class=(account.avatar ? "hidden" : ""))
-            i.fa-solid.fa-plus
+          .form-group
+            label Email
+            input.form-control(type="email" name="email" value=account.email readonly)
             
-          .image-preview-container(upload-image-preview-container class=(account.avatar ? "" : "hidden"))
-            img(upload-image-preview src=(account.avatar ? account.avatar : "") alt="Preview")
-            button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
-              i.fa-solid.fa-xmark
+        .form-row-2
+          .form-group
+            label Số điện thoại
+            input.form-control(type="text" name="phone" value=account.phone)
+          
+          .form-group
+            label Nhóm quyền
+            input.form-control(type="text" value=(role ? role.title : "Chưa phân quyền") readonly)
 
-      .form-actions-stacked
-        button.btn-submit.btn-submit-large(type="submit") 
-          i.fa-solid.fa-floppy-disk
-          |  Cập nhật
-        a.link-back-underline(href=`/${pathAdmin}/profile/change-password`) 
-          i.fa-solid.fa-key
-          |  Đổi mật khẩu
+        .form-group(style="margin-top: 10px;")
+          label Ảnh đại diện
+          .upload-image-wrapper(upload-image-wrapper)
+            input#avatar-upload.hidden-input(upload-image-input type="file" name="avatar" accept="image/*")
+            
+            label.upload-box(for="avatar-upload" upload-image-label class=(account.avatar ? "hidden" : ""))
+              i.fa-solid.fa-plus
+              
+            .image-preview-container(upload-image-preview-container class=(account.avatar ? "" : "hidden"))
+              img(upload-image-preview src=(account.avatar ? account.avatar : "") alt="Preview")
+              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                i.fa-solid.fa-xmark
+
+        .form-actions-stacked
+          button.btn-submit.btn-submit-large(type="submit") 
+            i.fa-solid.fa-floppy-disk
+            |  Cập nhật
+          a.link-back-underline(href=`/${pathAdmin}/profile/change-password`) 
+            i.fa-solid.fa-key
+            |  Đổi mật khẩu
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.

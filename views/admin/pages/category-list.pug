@@ -42,12 +42,20 @@ block main
               ) #{item.title}
 
       .action-row
-        if(role && role.permissions && (role.permissions.includes("category_delete") || role.permissions.includes("category_edit")))
-          +bulk-action([
-            { value: "delete-all", label: "xóa" },
-            { value: "active", label: "Hoạt động" },
-            { value: "inactive", label: "Dừng hoạt động" }
-          ])
+        - 
+          var bulkOptions = [];
+          if(role && role.permissions) {
+            if(role.permissions.includes("category_delete")) {
+              bulkOptions.push({ value: "delete-all", label: "Xóa" });
+            }
+            if(role.permissions.includes("category_edit")) {
+              bulkOptions.push({ value: "active", label: "Hoạt động" });
+              bulkOptions.push({ value: "inactive", label: "Dừng hoạt động" });
+            }
+          }
+
+        if(bulkOptions.length > 0)
+          +bulk-action(bulkOptions)
         
         .search-box-large
           i.fa-solid.fa-magnifying-glass
@@ -82,21 +90,23 @@ block main
           tbody
             +category-tree(categoryList)
             
-    form(
-      action=""
-      method="POST"
-      id="form-delete-item"
-      data-path=`/${pathAdmin}/category/delete`
-    )
+    if(role && role.permissions && role.permissions.includes("category_delete"))
+      form(
+        action=""
+        method="POST"
+        id="form-delete-item"
+        data-path=`/${pathAdmin}/category/delete`
+      )
             
-    form(
-      action=""
-      method="POST"
-      id="form-change-multi"
-      data-path=`/${pathAdmin}/category/change-multi`
-    )
-      input(type="hidden" name="type")
-      input(type="hidden" name="ids")
+    if(role && role.permissions && (role.permissions.includes("category_edit") || role.permissions.includes("category_delete")))
+      form(
+        action=""
+        method="POST"
+        id="form-change-multi"
+        data-path=`/${pathAdmin}/category/change-multi`
+      )
+        input(type="hidden" name="type")
+        input(type="hidden" name="ids")
   else
     .no-access-wrapper
       .no-access-card

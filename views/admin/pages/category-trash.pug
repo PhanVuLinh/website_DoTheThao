@@ -16,11 +16,19 @@ block main
 
     .filter-action-card
       .action-row
-        if(role && role.permissions && (role.permissions.includes("category_restore") || role.permissions.includes("category_destroy")))
-          +bulk-action([
-            { value: "restore-all", label: "Khôi phục" },
-            { value: "delete-all", label: "Xóa vĩnh viễn" }
-          ])
+        - 
+          var bulkOptions = [];
+          if(role && role.permissions) {
+            if(role.permissions.includes("category_restore")) {
+              bulkOptions.push({ value: "restore-all", label: "Khôi phục" });
+            }
+            if(role.permissions.includes("category_destroy")) {
+              bulkOptions.push({ value: "delete-all", label: "Xóa vĩnh viễn" });
+            }
+          }
+
+        if(bulkOptions.length > 0)
+          +bulk-action(bulkOptions)
           
         .search-box-large
           i.fa-solid.fa-magnifying-glass
