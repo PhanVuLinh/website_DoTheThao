@@ -3,99 +3,112 @@ include ../mixins/options.pug
 include ../mixins/alert.pug
 
 block main
-  +alert-error(3000)
-  +alert-success(3000)
-  .page-header
-    h1.page-title Chỉnh sửa sản phẩm
-    a.btn-back(href=`/${pathAdmin}/product/list`) 
-      i.fa-solid.fa-arrow-left
-      | Quay lại danh sách
+  if(role && role.permissions && role.permissions.includes("product_edit"))
+    +alert-error(3000)
+    +alert-success(3000)
+    .page-header
+      h1.page-title Chỉnh sửa sản phẩm
+      a.btn-back(href=`/${pathAdmin}/product/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
 
-  .form-card
-    form(action=`/${pathAdmin}/product/edit/${productDetail.id}?_method=PATCH` method="POST" enctype="multipart/form-data")
-      .form-row-2
-        .form-group
-          label Tên sản phẩm
-          input.form-control(type="text" name="title" value=productDetail.title)
-        
-        .form-group
-          label Danh mục
-          select.form-control(name="category_id")
-            option(value="") -- Chọn danh mục --
-            +options(categoryList,0,productDetail.category_id)
-      .form-row-2
-        .form-group
-          label Vị trí
-          input.form-control(type="number" name="position" placeholder="Tự động tăng" value=productDetail.position)
-        
-        .form-group
-          label Trạng thái
-          select.form-control(name="status")
-            option(value="active" selected=(productDetail.status === "active" ? true : false)) Hoạt động
-            option(value="inactive" selected=(productDetail.status === "inactive" ? true : false)) Tạm dừn
-      .form-row-2
-        .form-group
-          label Ảnh đại diện
-          .upload-image-wrapper(upload-image-wrapper)
-            input#thumbnail-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
-            label.upload-box(for="thumbnail-upload" upload-image-label class=(productDetail.thumbnail ? "hidden" : ""))
-              i.fa-solid.fa-plus
-            .image-preview-container(upload-image-preview-container class=(productDetail.thumbnail ? "" : "hidden"))
-              img(upload-image-preview src=(productDetail.thumbnail ? productDetail.thumbnail : "") alt=productDetail.title)
-              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
-                i.fa-solid.fa-xmark
-                
-        .form-group
-            label Sản phẩm nổi bật
-            .featured-radios
-              label
-                input(type="radio" name="featured" value="1" checked=(productDetail.featured === "1" ? true : false)) 
-                | Nổi bật
-              label
-                input(type="radio" name="featured" value="0" checked=(productDetail.featured === "0" ? true : false)) 
-                | Không nổi bật
+    .form-card
+      form(action=`/${pathAdmin}/product/edit/${productDetail.id}?_method=PATCH` method="POST" enctype="multipart/form-data")
+        .form-row-2
+          .form-group
+            label Tên sản phẩm
+            input.form-control(type="text" name="title" value=productDetail.title)
+          
+          .form-group
+            label Danh mục
+            select.form-control(name="category_id")
+              option(value="") -- Chọn danh mục --
+              +options(categoryList,0,productDetail.category_id)
+        .form-row-2
+          .form-group
+            label Vị trí
+            input.form-control(type="number" name="position" placeholder="Tự động tăng" value=productDetail.position)
+          
+          .form-group
+            label Trạng thái
+            select.form-control(name="status")
+              option(value="active" selected=(productDetail.status === "active" ? true : false)) Hoạt động
+              option(value="inactive" selected=(productDetail.status === "inactive" ? true : false)) Tạm dừng
+        .form-row-2
+          .form-group
+            label Ảnh đại diện
+            .upload-image-wrapper(upload-image-wrapper)
+              input#thumbnail-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
+              label.upload-box(for="thumbnail-upload" upload-image-label class=(productDetail.thumbnail ? "hidden" : ""))
+                i.fa-solid.fa-plus
+              .image-preview-container(upload-image-preview-container class=(productDetail.thumbnail ? "" : "hidden"))
+                img(upload-image-preview src=(productDetail.thumbnail ? productDetail.thumbnail : "") alt=productDetail.title)
+                button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                  i.fa-solid.fa-xmark
+                  
+          .form-group
+              label Sản phẩm nổi bật
+              .featured-radios
+                label
+                  input(type="radio" name="featured" value="1" checked=(productDetail.featured === "1" ? true : false)) 
+                  | Nổi bật
+                label
+                  input(type="radio" name="featured" value="0" checked=(productDetail.featured === "0" ? true : false)) 
+                  | Không nổi bật
 
-      .form-group
-        label Danh sách ảnh (Thư viện ảnh)
-        .upload-images-wrapper(upload-images-wrapper)
-          input#images-upload.hidden-input(upload-images-input type="file" name="images" accept="image/*" multiple)
-        
-          label.btn-view-all-outline.btn-add-images(for="images-upload")
-            i.fa-solid.fa-images
-            |  Thêm nhiều ảnh
+        .form-group
+          label Danh sách ảnh (Thư viện ảnh)
+          .upload-images-wrapper(upload-images-wrapper)
+            input#images-upload.hidden-input(upload-images-input type="file" name="images" accept="image/*" multiple)
+          
+            label.btn-view-all-outline.btn-add-images(for="images-upload")
+              i.fa-solid.fa-images
+              |  Thêm nhiều ảnh
       
-          .images-preview-grid(upload-images-preview-container)
-            if productDetail.images && productDetail.images.length > 0
-              each img in productDetail.images
-                .image-preview-item
-                  img(src=img)
-                  button.btn-remove-image-multi(type="button" title="Xóa ảnh")
-                    i.fa-solid.fa-xmark
-                  input(type="hidden" name="old_images" value=img)
-      .form-row-2
+            .images-preview-grid(upload-images-preview-container)
+              if productDetail.images && productDetail.images.length > 0
+                each img in productDetail.images
+                  .image-preview-item
+                    img(src=img)
+                    button.btn-remove-image-multi(type="button" title="Xóa ảnh")
+                      i.fa-solid.fa-xmark
+                    input(type="hidden" name="old_images" value=img)
+        .form-row-2
+          .form-group
+            label Giá bán (VNĐ)
+            input.form-control(type="number" name="price" placeholder="Ví dụ: 2500000" value=productDetail.price )
+          
+          .form-group
+            label Giảm giá (%)
+            input.form-control(type="number" name="discountPercentage" placeholder="Ví dụ: 15" min="0" max="100" value=productDetail.discountPercentage)
+
         .form-group
-          label Giá bán (VNĐ)
-          input.form-control(type="number" name="price" placeholder="Ví dụ: 2500000" value=productDetail.price )
-        
+          label Kho hàng theo size / kích cỡ
+          #dynamic-size-list
+
+          button.btn-add-size(type="button" onclick="addSizeField()")
+            i.fa-solid.fa-plus
+            |  Thêm size khác
+
         .form-group
-          label Giảm giá (%)
-          input.form-control(type="number" name="discountPercentage" placeholder="Ví dụ: 15" min="0" max="100" value=productDetail.discountPercentage)
+          label Mô tả sản phẩm
+          textarea.textarea-mce.form-control(name="description" rows="6" placeholder="Nhập mô tả chi tiết cho sản phẩm này...")= productDetail.description
 
-      .form-group
-        label Kho hàng theo size / kích cỡ
-        #dynamic-size-list
+        .form-actions
+          button.btn-submit(type="submit") Cập nhật
 
-        button.btn-add-size(type="button" onclick="addSizeField()")
-          i.fa-solid.fa-plus
-          |  Thêm size khác
+      script.
+        window.productSizes = !{JSON.stringify(productDetail.sizes || [])};
+      script(src="/admin/assets/js/product.js")
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
 
-      .form-group
-        label Mô tả sản phẩm
-        textarea.textarea-mce.form-control(name="description" rows="6" placeholder="Nhập mô tả chi tiết cho sản phẩm này...")= productDetail.description
+        h2.no-access-title Truy cập bị từ chối
 
-      .form-actions
-        button.btn-submit(type="submit") Cập nhật
-
-  script.
-    window.productSizes = !{JSON.stringify(productDetail.sizes || [])};
-  script(src="/admin/assets/js/product.js")
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.

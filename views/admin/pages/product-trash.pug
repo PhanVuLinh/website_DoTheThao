@@ -4,104 +4,133 @@ include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
 
 block main
-  +alert-success(3000)
-  +alert-error(3000)
-  .page-header
-    h1.page-title Thùng rác sản phẩm
-    a.btn-back(href=`/${pathAdmin}/product/list`) 
-      i.fa-solid.fa-arrow-left
-      | Quay lại danh sách
+  if(role && role.permissions && role.permissions.includes("product_trash"))
+    +alert-success(3000)
+    +alert-error(3000)
+    .page-header
+      h1.page-title Thùng rác sản phẩm
+      a.btn-back(href=`/${pathAdmin}/product/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
 
-  .filter-action-card
-    .action-row
-      +bulk-action([
-        { value: "restore-all", label: "Khôi phục" },
-        { value: "delete-all", label: "Xóa vĩnh viễn" }
-      ])
-        
-      .search-box-large
-        i.fa-solid.fa-magnifying-glass
-        input(type="text" placeholder="Tìm kiếm sản phẩm trong thùng rác..." search)
-  .table-section
-    .table-responsive
-      table.admin-table.table-hover
-        thead
-          tr
-            th.text-center(width="50px")
-              input(type="checkbox" check-all)
-            th Tên sản phẩm
-            th Ảnh đại diện
-            th Giá (VNĐ)
-            th Tồn kho
-            th Vị trí
-            th Trạng thái
-            th Tạo bởi
-            th Xóa bởi
-            th Hành động
-        
-        tbody
-          if productList && productList.length > 0
-            each item in productList
-              tr
-                td.text-center
-                  input(type="checkbox" namse="id" value=item.id check-item)
-                td.font-weight-600 #{item.title}
-                td
-                  img.td-thumbnail(src=item.thumbnail alt=item.title)
-                
-                td.text-price #{item.price.toLocaleString('vi-VN')}đ
-                
-                td
-                  .inventory-list
-                    each size in item.sizes
-                      .inventory-item
-                        span #{size.size}
-                        span #{size.stock}
-                      
-                td #{item.position}
-                td 
-                    span.badge-status.badge-inactive Tạm dừng
-                td
-                  .user-date
-                    span.name #{item.createdByFullName}
-                    span.time #{item.createdAtFormat}
-                
-                td
-                  .user-date
-                    span.name #{item.deletedByFullName}
-                    span.time #{item.deletedAtFormat}
-                    
-                td: .action-btns
-                    button.btn-restore(button-restore data-id=item.id)
-                      i.fa-solid.fa-rotate-left
-                    button.btn-delete( title="Xóa vĩnh viễn" button-delete data-id=item.id)
-                      i.fa-regular.fa-trash-can
-          else 
+    .filter-action-card
+      .action-row
+        - 
+          var bulkOptions = [];
+          if(role && role.permissions) {
+            if(role.permissions.includes("product_restore")) {
+              bulkOptions.push({ value: "restore-all", label: "Khôi phục" });
+            }
+            if(role.permissions.includes("product_destroy")) {
+              bulkOptions.push({ value: "delete-all", label: "Xóa vĩnh viễn" });
+            }
+          }
+
+        if(bulkOptions.length > 0)
+          +bulk-action(bulkOptions)
+          
+        .search-box-large
+          i.fa-solid.fa-magnifying-glass
+          input(type="text" placeholder="Tìm kiếm sản phẩm trong thùng rác..." search)
+    .table-section
+      .table-responsive
+        table.admin-table.table-hover
+          thead
             tr
-              td(colspan="10" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có sản phẩm nào bị xóa!
+              th.text-center(width="50px")
+                input(type="checkbox" check-all)
+              th Tên sản phẩm
+              th Ảnh đại diện
+              th Giá (VNĐ)
+              th Tồn kho
+              th Vị trí
+              th Trạng thái
+              th Tạo bởi
+              th Xóa bởi
+              if(role && role.permissions && (role.permissions.includes("product_restore") || role.permissions.includes("product_destroy")))
+                th Hành động
+            
+          tbody
+            if productList && productList.length > 0
+              each item in productList
+                tr
+                  td.text-center
+                    input(type="checkbox" name="id" value=item.id check-item)
+                  td.font-weight-600 #{item.title}
+                  td
+                    img.td-thumbnail(src=item.thumbnail alt=item.title)
+                  
+                  td.text-price #{item.price.toLocaleString('vi-VN')}đ
+                  
+                  td
+                    .inventory-list
+                      each size in item.sizes
+                        .inventory-item
+                          span #{size.size}
+                          span #{size.stock}
+                        
+                  td #{item.position}
+                  td 
+                      span.badge-status.badge-inactive Tạm dừng
+                  td
+                    .user-date
+                      span.name #{item.createdByFullName}
+                      span.time #{item.createdAtFormat}
+                  
+                  td
+                    .user-date
+                      span.name #{item.deletedByFullName}
+                      span.time #{item.deletedAtFormat}
+                      
+                  if(role && role.permissions && (role.permissions.includes("product_restore") || role.permissions.includes("product_destroy")))
+                    td
+                      .action-btns
+                        if(role && role.permissions && role.permissions.includes("product_restore"))
+                          button.btn-restore(button-restore data-id=item.id)
+                            i.fa-solid.fa-rotate-left
+                        if(role && role.permissions && role.permissions.includes("product_destroy"))
+                          button.btn-delete(title="Xóa vĩnh viễn" button-delete data-id=item.id)
+                            i.fa-regular.fa-trash-can
+            else 
+              tr
+                td(colspan="10" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có sản phẩm nào bị xóa!
 
     .admin-pagination
       +pagination(pagination)
 
-  form(
-    action=""
-    method="POST"
-    id="form-restore-item"
-    data-path=`/${pathAdmin}/product/restore`
-  )
-  form(
-      action=""
-      method="POST"
-      id="form-delete-item"
-      data-path=`/${pathAdmin}/product/delete-destroy`
-  )
+    if(role && role.permissions && role.permissions.includes("product_restore"))
+      form(
+        action=""
+        method="POST"
+        id="form-restore-item"
+        data-path=`/${pathAdmin}/product/restore`
+      )
+    if(role && role.permissions && role.permissions.includes("product_destroy"))
+      form(
+          action=""
+          method="POST"
+          id="form-delete-item"
+          data-path=`/${pathAdmin}/product/delete-destroy`
+      )
 
-  form(
-    action=""
-    method="POST"
-    id="form-change-multi"
-    data-path=`/${pathAdmin}/product/change-multi-trash`
-  )
-    input(type="hidden" name="type")
-    input(type="hidden" name="ids")
-          
+    if(role && role.permissions && (role.permissions.includes("product_restore") || role.permissions.includes("product_destroy")))
+      form(
+        action=""
+        method="POST"
+        id="form-change-multi"
+        data-path=`/${pathAdmin}/product/change-multi-trash`
+      )
+        input(type="hidden" name="type")
+        input(type="hidden" name="ids")
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
