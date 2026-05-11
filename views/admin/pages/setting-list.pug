@@ -1,20 +1,36 @@
 extends ../layouts/default.pug
 
 block main
-  h1.page-title Cài đặt chung
+  if(role && role.permissions && (role.permissions.includes("setting_view") || role.permissions.includes("account_admin_view") || role.permissions.includes("role_view")))
+    h1.page-title Cài đặt chung
 
-  .settings-grid
-    a.setting-card(href=`/${pathAdmin}/setting/website-info`)
-      .setting-icon
-        i.fa-solid.fa-info
-      span.setting-title Thông tin website
+    .settings-grid
+      if(role.permissions.includes("setting_view"))
+        a.setting-card(href=`/${pathAdmin}/setting/website-info`)
+          .setting-icon
+            i.fa-solid.fa-info
+          span.setting-title Thông tin website
 
-    a.setting-card(href=`/${pathAdmin}/setting/account-admin/list`)
-      .setting-icon
-        i.fa-solid.fa-user-tie
-      span.setting-title Tài khoản quản trị
+      if(role.permissions.includes("account_admin_view"))
+        a.setting-card(href=`/${pathAdmin}/setting/account-admin/list`)
+          .setting-icon
+            i.fa-solid.fa-user-tie
+          span.setting-title Tài khoản quản trị
 
-    a.setting-card(href=`/${pathAdmin}/setting/role/list`)
-      .setting-icon
-        i.fa-solid.fa-user-gear
-      span.setting-title Nhóm quyền
+      if(role.permissions.includes("role_view"))
+        a.setting-card(href=`/${pathAdmin}/setting/role/list`)
+          .setting-icon
+            i.fa-solid.fa-user-gear
+          span.setting-title Nhóm quyền
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.

@@ -28,7 +28,7 @@ module.exports.permissionList = [
     ],
   },
   {
-    group: "Quản lý mã giảm giá (Coupon)",
+    group: "Quản lý mã giảm giá ",
     permissions: [
       { label: "Xem danh sách", value: "coupon_view" },
       { label: "Thêm mới", value: "coupon_create" },
@@ -65,7 +65,7 @@ module.exports.permissionList = [
   {
     group: "Quản lý thông tin liên hệ",
     permissions: [
-      { label: "Xem", value: "contact_view" },
+      { label: "Xem danh sách", value: "contact_view" },
       { label: "Xóa", value: "contact_delete" },
       { label: "Xem thùng rác", value: "contact_trash" },
       { label: "Khôi phục", value: "contact_restore" },
@@ -87,7 +87,7 @@ module.exports.permissionList = [
   {
     group: "Tài khoản Admin",
     permissions: [
-      { label: "Xem", value: "account_admin_view" },
+      { label: "Xem danh sách", value: "account_admin_view" },
       { label: "Thêm mới", value: "account_admin_create" },
       { label: "Chỉnh sửa", value: "account_admin_edit" },
       { label: "Xóa (Tạm thời)", value: "account_admin_delete" },
@@ -99,7 +99,7 @@ module.exports.permissionList = [
   {
     group: "Nhóm quyền",
     permissions: [
-      { label: "Xem", value: "role_view" },
+      { label: "Xem danh sách", value: "role_view" },
       { label: "Thêm mới", value: "role_create" },
       { label: "Chỉnh sửa tên/mô tả", value: "role_edit" },
       { label: "Phân quyền (Cấp quyền)", value: "role_permissions" },

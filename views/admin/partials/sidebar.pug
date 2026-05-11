@@ -4,49 +4,49 @@ aside.admin-sidebar
     span TitiSport
   
   ul.sidebar-menu
-    if(role.permissions.includes("dashboard_view"))
+    if(role && role.permissions && role.permissions.includes("dashboard_view"))
       li
         a(href=`/${pathAdmin}/dashboard`)
           i.fa-solid.fa-chart-pie
           span Tổng quan
 
-    if(role.permissions.includes("category_view"))
+    if(role && role.permissions && role.permissions.includes("category_view"))
       li
         a(href=`/${pathAdmin}/category/list`)
           i.fa-solid.fa-table-cells-large
           span Quản lý danh mục
 
-    if(role.permissions.includes("product_view"))
+    if(role && role.permissions && role.permissions.includes("product_view"))
       li
         a(href=`/${pathAdmin}/product/list`)
           i.fa-solid.fa-box-open
           span Quản lý sản phẩm
 
-    if(role.permissions.includes("coupon_view"))
+    if(role && role.permissions && role.permissions.includes("coupon_view"))
       li
         a(href=`/${pathAdmin}/coupon/list`)
           i.fa-solid.fa-ticket
           span Quản lý mã giảm giá
 
-    if(role.permissions.includes("order_view"))
+    if(role && role.permissions && role.permissions.includes("order_view"))
       li
         a(href=`/${pathAdmin}/order/list`)
           i.fa-solid.fa-cart-shopping
           span Quản lý đơn hàng
 
-    if(role.permissions.includes("user_view"))
+    if(role && role.permissions && role.permissions.includes("user_view"))
       li
         a(href=`/${pathAdmin}/user/list`)
           i.fa-solid.fa-users
           span Quản lý khách hàng
 
-    if(role.permissions.includes("contact_view"))
+    if(role && role.permissions && role.permissions.includes("contact_view"))
       li
         a(href=`/${pathAdmin}/contact/list`)
           i.fa-solid.fa-address-book
           span Thông tin liên hệ
 
-    if(role.permissions.includes("article_view"))
+    if(role && role.permissions && role.permissions.includes("article_view"))
       li
         a(href=`/${pathAdmin}/article/list`)
           i.fa-solid.fa-newspaper
@@ -54,13 +54,13 @@ aside.admin-sidebar
 
   .sidebar-footer
     ul.sidebar-menu.bottom-menu
-      if(role.permissions.includes("setting_view"))
+      if(role && role.permissions && (role.permissions.includes("setting_view") || role.permissions.includes("account_admin_view") || role.permissions.includes("role_view")))
         li
           a(href=`/${pathAdmin}/setting/list`)
             i.fa-solid.fa-gear
             span Cài đặt chung
 
-      if(role.permissions.includes("profile_view"))
+      if(role && role.permissions && role.permissions.includes("profile_view"))
         li
           a(href=`/${pathAdmin}/profile/edit`)
             i.fa-regular.fa-user
