@@ -38,7 +38,7 @@ module.exports.websiteInfoPatch = async (req, res) => {
   } else {
     delete req.body.heroImage;
   }
-  if(req.files && req.files.promoBannerImage) {
+  if (req.files && req.files.promoBannerImage) {
     req.body.promoBannerImage = req.files.promoBannerImage[0].path;
   } else {
     delete req.body.promoBannerImage;
@@ -105,7 +105,7 @@ module.exports.accountAdminList = async (req, res) => {
       deleted: false,
       _id: account.role_id,
     });
-    account.role_name = role.name;
+    account.role_name = role?.name || "Không có quyền";
   }
 
   const roleList = await Role.find({

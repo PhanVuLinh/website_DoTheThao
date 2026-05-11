@@ -1683,6 +1683,54 @@ textarea.form-control {
   cursor: pointer;
 }
 
+.no-access-wrapper {
+  min-height: calc(100vh - 180px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.no-access-card {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 48px 40px;
+  text-align: center;
+  border: 1px solid #e9eef7;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+}
+
+.no-access-icon {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #466BD6, #6f8df0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-access-icon i {
+  font-size: 36px;
+  color: #ffffff;
+}
+
+.no-access-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 14px;
+}
+
+.no-access-desc {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #64748b;
+}
+
 /* =========================================
    13. ĐÁP ỨNG THIẾT BỊ DI ĐỘNG (RESPONSIVE)
    ========================================= */

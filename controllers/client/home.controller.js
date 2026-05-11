@@ -11,7 +11,7 @@ module.exports.index = async (req, res) => {
     parent_id: { $ne: "" },
   })
     .sort({ position: "desc" })
-    .limit(4);
+    // .limit(4);
   // End section 2
   //section 3
   const productListSection3 = await Product.find({

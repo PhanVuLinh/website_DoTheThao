@@ -1,49 +1,63 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
 include ../mixins/options.pug
-block main
-  +alert-error(3000)
-  +alert-success(3000)
-  .page-header
-    h1.page-title Chỉnh sửa danh mục
-    a.btn-back(href=`/${pathAdmin}/category/list`) 
-      i.fa-solid.fa-arrow-left
-      | Quay lại danh sách
-  .form-card
-    form(action=`/${pathAdmin}/category/edit/${categoryDetail.id}?_method=PATCH` method="POST" enctype="multipart/form-data")
-      .form-row-2
-        .form-group
-          label Tên danh mục
-          input.form-control(type="text" name="title" placeholder="Nhập tên danh mục..."  value=categoryDetail.title)
-        
-        .form-group
-          label Danh mục cha
-          select.form-control(name="parent_id")
-            option(value="") -- Chọn danh mục --
-            +options(categoryList, 0, categoryDetail.parent_id)
-      .form-row-2
-        .form-group
-          label Vị trí
-          input.form-control(type="number" name="position" placeholder="Tự động tăng"  value=categoryDetail.position)
-        
-        .form-group
-          label Trạng thái
-          select.form-control(name="status")
-            option(value="active" selected=(categoryDetail.status === "active" ? true : false)) Hoạt động
-            option(value="inactive" selected=(categoryDetail.status === "inactive" ? true : false)) Tạm dừng
 
-      .form-group
-        label Ảnh đại diện
-        .upload-image-wrapper(upload-image-wrapper)
-          input#thumbnail-category-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
-          label.upload-box(for="thumbnail-category-upload" upload-image-label class=(categoryDetail.thumbnail ? "hidden" : ""))
-            i.fa-solid.fa-plus
-          .image-preview-container(upload-image-preview-container class=(categoryDetail.thumbnail ? "" : "hidden"))
-            img(upload-image-preview src=(categoryDetail.thumbnail ? categoryDetail.thumbnail : "") alt="Preview")
-            button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
-              i.fa-solid.fa-xmark
-      .form-group
-        label Mô tả
-        textarea.form-control(name="description" rows="6" placeholder="Nhập mô tả cho danh mục này...") #{categoryDetail.description}
-      .form-actions
-        button.btn-submit(type="submit") Cập nhật
+block main
+  if(role && role.permissions && role.permissions.includes("category_edit"))
+    +alert-error(3000)
+    +alert-success(3000)
+    .page-header
+      h1.page-title Chỉnh sửa danh mục
+      a.btn-back(href=`/${pathAdmin}/category/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
+    .form-card
+      form(action=`/${pathAdmin}/category/edit/${categoryDetail.id}?_method=PATCH` method="POST" enctype="multipart/form-data")
+        .form-row-2
+          .form-group
+            label Tên danh mục
+            input.form-control(type="text" name="title" placeholder="Nhập tên danh mục..."  value=categoryDetail.title)
+          
+          .form-group
+            label Danh mục cha
+            select.form-control(name="parent_id")
+              option(value="") -- Chọn danh mục --
+              +options(categoryList, 0, categoryDetail.parent_id)
+        .form-row-2
+          .form-group
+            label Vị trí
+            input.form-control(type="number" name="position" placeholder="Tự động tăng"  value=categoryDetail.position)
+          
+          .form-group
+            label Trạng thái
+            select.form-control(name="status")
+              option(value="active" selected=(categoryDetail.status === "active" ? true : false)) Hoạt động
+              option(value="inactive" selected=(categoryDetail.status === "inactive" ? true : false)) Tạm dừng
+
+        .form-group
+          label Ảnh đại diện
+          .upload-image-wrapper(upload-image-wrapper)
+            input#thumbnail-category-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
+            label.upload-box(for="thumbnail-category-upload" upload-image-label class=(categoryDetail.thumbnail ? "hidden" : ""))
+              i.fa-solid.fa-plus
+            .image-preview-container(upload-image-preview-container class=(categoryDetail.thumbnail ? "" : "hidden"))
+              img(upload-image-preview src=(categoryDetail.thumbnail ? categoryDetail.thumbnail : "") alt="Preview")
+              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                i.fa-solid.fa-xmark
+        .form-group
+          label Mô tả
+          textarea.form-control(name="description" rows="6" placeholder="Nhập mô tả cho danh mục này...") #{categoryDetail.description}
+        .form-actions
+          button.btn-submit(type="submit") Cập nhật
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.

@@ -1,90 +1,98 @@
 extends ../layouts/default.pug
 
 block main
-  h1.page-title Tổng quan
+  if(role && role.permissions && role.permissions.includes("dashboard_view"))
+    h1.page-title Tổng quan
 
-  .stat-widgets
-    .widget-card
-      .widget-icon.bg-purple
-        i.fa-solid.fa-user-group
-      .widget-info
-        span.label Quản trị viên
-        h3.value #{section1.totalAdmin}
-    .widget-card
-      .widget-icon.bg-purple
-        i.fa-solid.fa-user-group
-      .widget-info
-        span.label Người dùng
-        h3.value #{section1.totalUser}
+    .stat-widgets
+      .widget-card
+        .widget-icon.bg-purple
+          i.fa-solid.fa-user-group
+        .widget-info
+          span.label Quản trị viên
+          h3.value #{section1.totalAdmin || 0}
 
-    .widget-card
-      .widget-icon.bg-yellow
-        i.fa-solid.fa-box
-      .widget-info
-        span.label Đơn hàng
-        h3.value #{section1.totalOrder}
+      .widget-card
+        .widget-icon.bg-purple
+          i.fa-solid.fa-user-group
+        .widget-info
+          span.label Người dùng
+          h3.value #{section1.totalUser || 0}
 
-    .widget-card
-      .widget-icon.bg-green
-        i.fa-solid.fa-money-bill-trend-up
-      .widget-info
-        span.label Doanh thu
-        h3.value #{section1.totalPrice.toLocaleString('vi-VN')} đ
+      .widget-card
+        .widget-icon.bg-yellow
+          i.fa-solid.fa-box
+        .widget-info
+          span.label Đơn hàng
+          h3.value #{section1.totalOrder || 0}
 
-  .chart-section
-    .section-header
-      h2.section-title Biểu đồ doanh thu
-      select.filter-select(id="chartMonthSelect")
-        each opt in monthOptions
-          - var selected = (opt.month === chart.currentMonth && opt.year === chart.currentYear)
-          option(
-            value=`${opt.month}-${opt.year}`
-            selected=selected
-          ) #{opt.label}
+      .widget-card
+        .widget-icon.bg-green
+          i.fa-solid.fa-money-bill-trend-up
+        .widget-info
+          span.label Doanh thu
+          h3.value #{(section1.totalPrice || 0).toLocaleString('vi-VN')} đ
 
-    .chart-container(
-      data-current-month=chart.currentMonth
-      data-current-year=chart.currentYear
-      data-prev-month=chart.prevMonth
-      data-prev-year=chart.prevYear
-      data-current-revenue=chart.currentMonthRevenue
-      data-prev-revenue=chart.prevMonthRevenue
-    )
-      canvas#revenueChart
+    .chart-section
+      .section-header
+        h2.section-title Biểu đồ doanh thu
+        select.filter-select(id="chartMonthSelect")
+          each opt in monthOptions
+            - var selected = (opt.month === chart.currentMonth && opt.year === chart.currentYear)
+            option(
+              value=`${opt.month}-${opt.year}`
+              selected=selected
+            ) #{opt.label}
 
-  .table-section
-    h2.section-title Đơn hàng mới
-    .table-responsive
-      table.admin-table.table-hover 
-        thead
-          tr
-            th Mã ĐH
-            th Thông tin khách
-            th Sản phẩm
-            th Thanh toán
-            th Trạng thái
-            th Ngày đặt
-        
-        tbody
-          //- Đơn hàng 1
-          each orderDetail in orderList
+      .chart-container(
+        data-current-month=chart.currentMonth
+        data-current-year=chart.currentYear
+        data-prev-month=chart.prevMonth
+        data-prev-year=chart.prevYear
+        data-current-revenue=chart.currentMonthRevenue
+        data-prev-revenue=chart.prevMonthRevenue
+      )
+        canvas#revenueChart
+
+    .table-section
+      h2.section-title Đơn hàng mới
+      .table-responsive
+        table.admin-table.table-hover
+          thead
             tr
-              td
-                span.order-code #{orderDetail.orderCode}
-              td
-                .customer-info
-                  span.font-weight-600 #{orderDetail.fullName}
-                  span.phone #{orderDetail.phone}
-              td 
-                each item in orderDetail.products
-                  .product-mini-item
-                    img(src=item.thumbnail alt=item.title)
-                    .prod-info
-                      span.prod-name #{item.title}
-              td
-                span.text-price #{orderDetail.total.toLocaleString('vi-VN')} đ
-              td
-                - var statusClass = orderDetail.status ? `badge-${orderDetail.status}` : 'badge-pending'
-                span.badge-status(class=statusClass)  #{orderDetail.statusName}
-              td #{orderDetail.createdAtFormat}
-            
+              th Mã ĐH
+              th Thông tin khách
+              th Sản phẩm
+              th Thanh toán
+              th Trạng thái
+              th Ngày đặt
+          tbody
+            if orderList && orderList.length
+              each orderDetail in orderList
+                tr
+                  td
+                    span.order-code #{orderDetail.orderCode}
+                  td
+                    .customer-info
+                      span.font-weight-600 #{orderDetail.fullName}
+                      span.phone #{orderDetail.phone}
+                  td
+                    each item in orderDetail.products
+                      .product-mini-item
+                        img(src=item.thumbnail alt=item.title)
+                        .prod-info
+                          span.prod-name #{item.title}
+                  td
+                    span.text-price #{orderDetail.total.toLocaleString('vi-VN')} đ
+                  td
+                    - var statusClass = orderDetail.status ? `badge-${orderDetail.status}` : 'badge-pending'
+                    span.badge-status(class=statusClass) #{orderDetail.statusName}
+                  td #{orderDetail.createdAtFormat}
+            else
+              tr
+                td(colspan="6") Không có đơn hàng mới
+
+  else
+    .no-permission
+      h2.page-title Bạn không có quyền truy cập trang này
+      p Vui lòng liên hệ quản trị viên để được cấp quyền `dashboard_view`.
