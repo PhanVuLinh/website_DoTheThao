@@ -53,10 +53,13 @@ module.exports.permissionList = [
   {
     group: "Quản lý khách hàng",
     permissions: [
-      { label: "Xem", value: "user_view" },
+      { label: "Xem danh sách", value: "user_view" },
       { label: "Thêm mới", value: "user_create" },
       { label: "Chỉnh sửa", value: "user_edit" },
       { label: "Xóa", value: "user_delete" },
+      { label: "Xem thùng rác", value: "user_trash" },
+      { label: "Khôi phục", value: "user_restore" },
+      { label: "Xóa vĩnh viễn", value: "user_destroy" },
     ],
   },
   {

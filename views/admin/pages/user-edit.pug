@@ -2,59 +2,72 @@ extends ../layouts/default.pug
 include ../mixins/alert.pug
 
 block main
-  +alert-error(3000)
-  +alert-success(3000)
-  
-  .page-header
-    h1.page-title Chỉnh sửa Khách hàng
-    a.btn-back(href=`/${pathAdmin}/user/list`) 
-      i.fa-solid.fa-arrow-left
-      | Quay lại danh sách
+  if(role && role.permissions && role.permissions.includes("user_edit"))
+    +alert-error(3000)
+    +alert-success(3000)
+    
+    .page-header
+      h1.page-title Chỉnh sửa Khách hàng
+      a.btn-back(href=`/${pathAdmin}/user/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
 
-  .form-card
-    form(action=`/${pathAdmin}/user/edit/${userDetail.id}?_method=PATCH` method="POST")
-      
-      .form-row-2
-        .form-group
-          label Họ và tên 
-          input.form-control(
-            type="text" 
-            name="fullName" 
-            value=userDetail.fullName
-            required
-          )
+    .form-card
+      form(action=`/${pathAdmin}/user/edit/${userDetail.id}?_method=PATCH` method="POST")
         
-        .form-group
-          label Email 
-          input.form-control(
-            type="email" 
-            name="email" 
-            value=userDetail.email
-            required
-          )
+        .form-row-2
+          .form-group
+            label Họ và tên 
+            input.form-control(
+              type="text" 
+              name="fullName" 
+              value=userDetail.fullName
+              required
+            )
+          
+          .form-group
+            label Email 
+            input.form-control(
+              type="email" 
+              name="email" 
+              value=userDetail.email
+              required
+            )
 
-      .form-row-2
-        .form-group
-          label Mật khẩu
-          input.form-control(
-            type="password" 
-            name="password" 
-            placeholder="Để trống nếu không muốn đổi mật khẩu"
-          )
-        
-        .form-group
-          label Trạng thái
-          select.form-control(name="status")
-            option(
-              value="active" 
-              selected=(userDetail.status === "active" ? true : false)
-            ) Hoạt động
-            option(
-              value="inactive" 
-              selected=(userDetail.status === "inactive" ? true : false)
-            ) Tạm dừng
+        .form-row-2
+          .form-group
+            label Mật khẩu
+            input.form-control(
+              type="password" 
+              name="password" 
+              placeholder="Để trống nếu không muốn đổi mật khẩu"
+            )
+          
+          .form-group
+            label Trạng thái
+            select.form-control(name="status")
+              option(
+                value="active" 
+                selected=(userDetail.status === "active" ? true : false)
+              ) Hoạt động
+              option(
+                value="inactive" 
+                selected=(userDetail.status === "inactive" ? true : false)
+              ) Tạm dừng
 
-      .form-actions
-        button.btn-submit(type="submit") 
-          i.fa-solid.fa-floppy-disk
-          |  Cập nhật tài khoản
+        .form-actions
+          button.btn-submit(type="submit") 
+            i.fa-solid.fa-floppy-disk
+            |  Cập nhật tài khoản
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
