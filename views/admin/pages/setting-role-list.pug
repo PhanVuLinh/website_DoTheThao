@@ -2,80 +2,112 @@ extends ../layouts/default.pug
 include ../mixins/alert.pug
 include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
+
 block main
-  +alert-success(3000)
-  +alert-error(3000)
-  .page-header
-    h1.page-title Nhóm quyền
-    a.btn-back(href=`/${pathAdmin}/setting/list`) 
-      i.fa-solid.fa-arrow-left
-      | Quay lại cài đặt chung
+  if(role && role.permissions && role.permissions.includes("role_view"))
+    +alert-success(3000)
+    +alert-error(3000)
+    .page-header
+      h1.page-title Nhóm quyền
+      a.btn-back(href=`/${pathAdmin}/setting/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại cài đặt chung
 
-  .filter-action-card
-    .action-row
-      +bulk-action([
-        { value: "delete-all", label: "xóa nhóm quyền" },
-      ])
-        
-      .search-box-large
-        i.fa-solid.fa-magnifying-glass
-        input(type="text" placeholder="Tìm kiếm nhóm quyền..." search)
-        
-      .action-buttons-right
-        a.btn-create(href=`/${pathAdmin}/setting/role/create`)
-          i.fa-solid.fa-plus
-          | Tạo mới
-        a(href=`/${pathAdmin}/setting/role/trash`).btn-trash
-          i.fa-regular.fa-trash-can
-          | Thùng rác
+    .filter-action-card
+      .action-row
+        - 
+          var bulkOptions = [];
+          if(role && role.permissions) {
+            if(role.permissions.includes("role_delete")) {
+              bulkOptions.push({ value: "delete-all", label: "Xóa nhóm quyền" });
+            }
+          }
 
-  .table-section
-    .table-responsive
-      table.admin-table.table-hover
-        thead
-          tr
-            th.text-center(width="50px")
-              input(type="checkbox" check-all)
-            th Tên nhóm quyền
-            th Mô tả ngắn
-            th Tạo bởi
-            th Cập nhật bởi
-            th Hành động
-        
-        tbody
-          each item in roleList
+        if(bulkOptions.length > 0)
+          +bulk-action(bulkOptions)
+          
+        .search-box-large
+          i.fa-solid.fa-magnifying-glass
+          input(type="text" placeholder="Tìm kiếm nhóm quyền..." search)
+          
+        .action-buttons-right
+          if(role && role.permissions && role.permissions.includes("role_create"))
+            a.btn-create(href=`/${pathAdmin}/setting/role/create`)
+              i.fa-solid.fa-plus
+              | Tạo mới
+          if(role && role.permissions && role.permissions.includes("role_trash"))
+            a(href=`/${pathAdmin}/setting/role/trash`).btn-trash
+              i.fa-regular.fa-trash-can
+              | Thùng rác
+
+    .table-section
+      .table-responsive
+        table.admin-table.table-hover
+          thead
             tr
-              td.text-center
-                input(type="checkbox" value=item.id name="id" check-item)
-              td.font-weight-600 #{item.name}
-              td #{item.description}
-              td
-                .user-date
-                  span.name #{item.createdByFullName}
-                  span.time #{item.createdAtFormat}
-              td
-                .user-date
-                  span.name #{item.updatedByFullName}
-                  span.time #{item.updatedAtFormat}
-              td
-                .action-btns
-                  a(href=`/${pathAdmin}/setting/role/edit/${item.id}`).btn-edit
-                    i.fa-regular.fa-pen-to-square
-                  button.btn-delete(button-delete data-id=item.id)
-                    i.fa-regular.fa-trash-can
+              th.text-center(width="50px")
+                input(type="checkbox" check-all)
+              th Tên nhóm quyền
+              th Mô tả ngắn
+              th Tạo bởi
+              th Cập nhật bởi
+              if(role && role.permissions && (role.permissions.includes("role_edit") || role.permissions.includes("role_delete")))
+                th Hành động
+          
+          tbody
+            each item in roleList
+              tr
+                td.text-center
+                  input(type="checkbox" value=item.id name="id" check-item)
+                td.font-weight-600 #{item.name}
+                td #{item.description}
+                td
+                  .user-date
+                    span.name #{item.createdByFullName}
+                    span.time #{item.createdAtFormat}
+                td
+                  .user-date
+                    span.name #{item.updatedByFullName}
+                    span.time #{item.updatedAtFormat}
+                if(role && role.permissions && (role.permissions.includes("role_edit") || role.permissions.includes("role_delete")))
+                  td
+                    .action-btns
+                      if(role && role.permissions && role.permissions.includes("role_edit"))
+                        a(href=`/${pathAdmin}/setting/role/edit/${item.id}`).btn-edit
+                          i.fa-regular.fa-pen-to-square
+                      if(role && role.permissions && role.permissions.includes("role_delete"))
+                        button.btn-delete(button-delete data-id=item.id)
+                          i.fa-regular.fa-trash-can
+
     .admin-pagination
       +pagination(pagination)
-  form(
-    action=""
-    method="POST"
-    id="form-delete-item"
-    data-path=`/${pathAdmin}/setting/role/delete`
-  )
-  form(
-    action=""
-    method="POST"
-    id="form-change-multi"
-    data-path=`/${pathAdmin}/setting/role/change-multi`
-  )
-    input(type="hidden" name="type")
-    input(type="hidden" name="ids")
+
+    if(role && role.permissions && role.permissions.includes("role_delete"))
+      form(
+        action=""
+        method="POST"
+        id="form-delete-item"
+        data-path=`/${pathAdmin}/setting/role/delete`
+      )
+      
+    if(role && role.permissions && role.permissions.includes("role_delete"))
+      form(
+        action=""
+        method="POST"
+        id="form-change-multi"
+        data-path=`/${pathAdmin}/setting/role/change-multi`
+      )
+        input(type="hidden" name="type")
+        input(type="hidden" name="ids")
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.

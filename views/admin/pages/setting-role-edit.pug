@@ -1,46 +1,59 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+
 block main
-  +alert-error(3000)
-  +alert-success(3000)
-  .page-header
-    h1.page-title Chỉnh sửa nhóm quyền
-    a.btn-back(href=`/${pathAdmin}/setting/role/list`) 
-      i.fa-solid.fa-arrow-left
-      | Quay lại danh sách
+  if(role && role.permissions && role.permissions.includes("role_edit"))
+    +alert-error(3000)
+    +alert-success(3000)
+    .page-header
+      h1.page-title Chỉnh sửa nhóm quyền
+      a.btn-back(href=`/${pathAdmin}/setting/role/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
 
-  .form-card
-    form(action=`/${pathAdmin}/setting/role/edit/${roleDetail.id}?_method=PATCH` method="POST" )
-      
-      .form-row-2
-        .form-group
-          label Tên nhóm quyền
-          input.form-control(type="text" name="name" value=roleDetail.name)
+    .form-card
+      form(action=`/${pathAdmin}/setting/role/edit/${roleDetail.id}?_method=PATCH` method="POST" )
         
-        .form-group
-          label Mô tả ngắn
-          input.form-control(type="text" name="description" value=roleDetail.description)
+        .form-row-2
+          .form-group
+            label Tên nhóm quyền
+            input.form-control(type="text" name="name" value=roleDetail.name)
+          
+          .form-group
+            label Mô tả ngắn
+            input.form-control(type="text" name="description" value=roleDetail.description)
 
-      .form-group
-        label Phân quyền chi tiết
-        .permissions-grid
-          each group in permissionList
-            .permission-card
-              .permission-card-header
-                h4.permission-title #{group.group}
-
-              .permission-card-body
-                each item in group.permissions
-                  .check-item
-                    input(
-                      type="checkbox"
-                      name="permissions"
-                      value=item.value
-                      id=item.value
-                      checked=roleDetail.permissions.includes(item.value)
-                    )
-                    label(for=item.value) #{item.label}
-                
         .form-group
-      .form-actions-stacked
-        button.btn-submit.btn-submit-large(type="submit") Chỉnh sửa
+          label Phân quyền chi tiết
+          .permissions-grid
+            each group in permissionList
+              .permission-card
+                .permission-card-header
+                  h4.permission-title #{group.group}
+
+                .permission-card-body
+                  each item in group.permissions
+                    .check-item
+                      input(
+                        type="checkbox"
+                        name="permissions"
+                        value=item.value
+                        id=item.value
+                        checked=roleDetail.permissions.includes(item.value)
+                      )
+                      label(for=item.value) #{item.label}
+                  
+        .form-actions-stacked
+          button.btn-submit.btn-submit-large(type="submit") Chỉnh sửa
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.

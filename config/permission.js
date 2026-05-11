@@ -102,7 +102,6 @@ module.exports.permissionList = [
       { label: "Xem danh sách", value: "role_view" },
       { label: "Thêm mới", value: "role_create" },
       { label: "Chỉnh sửa tên/mô tả", value: "role_edit" },
-      { label: "Phân quyền (Cấp quyền)", value: "role_permissions" },
       { label: "Xóa (Tạm thời)", value: "role_delete" },
       { label: "Xem thùng rác", value: "role_trash" },
       { label: "Khôi phục", value: "role_restore" },

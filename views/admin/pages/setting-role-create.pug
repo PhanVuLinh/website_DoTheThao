@@ -1,47 +1,59 @@
 extends ../layouts/default.pug
 
 block main
-  .page-header
-    h1.page-title Tạo nhóm quyền
-    a.btn-back(href=`/${pathAdmin}/setting/role/list`) 
-      i.fa-solid.fa-arrow-left
-      | Quay lại danh sách
+  if(role && role.permissions && role.permissions.includes("role_create"))
+    .page-header
+      h1.page-title Tạo nhóm quyền
+      a.btn-back(href=`/${pathAdmin}/setting/role/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
 
-  .form-card
-    form(action=`/${pathAdmin}/setting/role/create` method="POST")
-      
-      .form-row-2
-        .form-group
-          label Tên nhóm quyền
-          input.form-control(type="text" name="name" placeholder="Ví dụ: Quản trị viên" required)
+    .form-card
+      form(action=`/${pathAdmin}/setting/role/create` method="POST")
         
-        .form-group
-          label Mô tả ngắn
-          input.form-control(type="text" name="description" placeholder="Ví dụ: Có đầy đủ các quyền")
+        .form-row-2
+          .form-group
+            label Tên nhóm quyền
+            input.form-control(type="text" name="name" placeholder="Ví dụ: Quản trị viên" required)
+          
+          .form-group
+            label Mô tả ngắn
+            input.form-control(type="text" name="description" placeholder="Ví dụ: Có đầy đủ các quyền")
 
-      .form-group
-        label Phân quyền chi tiết
-        .permissions-grid
-          each group in permissionList
-            .permission-card
-              .permission-card-header
-                h4.permission-title 
-                  | #{group.group}
-              
-              
-              .permission-card-body
-                each item in group.permissions
-                  .check-item
-                    input(
-                      type="checkbox"
-                      name="permissions"
-                      value=item.value
-                      id=item.value
-                      class="check-item-input"
-                    )
-                    label(for=item.value) #{item.label}
+        .form-group
+          label Phân quyền chi tiết
+          .permissions-grid
+            each group in permissionList
+              .permission-card
+                .permission-card-header
+                  h4.permission-title 
+                    | #{group.group}
                 
-      .form-actions-stacked
-        button.btn-submit.btn-submit-large(type="submit") 
-          i.fa-solid.fa-plus(style="margin-right: 8px;")
-          | Tạo mới nhóm quyền
+                .permission-card-body
+                  each item in group.permissions
+                    .check-item
+                      input(
+                        type="checkbox"
+                        name="permissions"
+                        value=item.value
+                        id=item.value
+                        class="check-item-input"
+                      )
+                      label(for=item.value) #{item.label}
+                  
+        .form-actions-stacked
+          button.btn-submit.btn-submit-large(type="submit") 
+            i.fa-solid.fa-plus(style="margin-right: 8px;")
+            | Tạo mới nhóm quyền
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
