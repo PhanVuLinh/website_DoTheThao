@@ -2,53 +2,66 @@ extends ../layouts/default.pug
 include ../mixins/alert.pug
 
 block main
-  +alert-error(3000)
-  +alert-success(3000)
-  
-  .page-header
-    h1.page-title chỉnh sửa bài viết
-    a.btn-back(href=`/${pathAdmin}/article/list`) 
-      i.fa-solid.fa-arrow-left
-      | Quay lại danh sách
+  if(role && role.permissions && role.permissions.includes("article_edit"))
+    +alert-error(3000)
+    +alert-success(3000)
+    
+    .page-header
+      h1.page-title Chỉnh sửa bài viết
+      a.btn-back(href=`/${pathAdmin}/article/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
 
-  .form-card
-    form(action=`/${pathAdmin}/article/edit/${articleDetail.id}?_method=PATCH` method="POST" enctype="multipart/form-data")
-      
-      .form-group
-        label Tiêu đề bài viết
-        input.form-control(type="text" name="title" value=articleDetail.title)
-            
-      .form-row-2
-        .form-group
-          label Vị trí
-          input.form-control(type="number" name="position" value=articleDetail.position)
+    .form-card
+      form(action=`/${pathAdmin}/article/edit/${articleDetail.id}?_method=PATCH` method="POST" enctype="multipart/form-data")
         
         .form-group
-          label Trạng thái
-          select.form-control(name="status")
-            option(value="active" selected=(articleDetail.status === "active" ? true : false)) Hoạt động
-            option(value="inactive" selected=(articleDetail.status === "inactive" ? true : false)) Tạm dừng
+          label Tiêu đề bài viết
+          input.form-control(type="text" name="title" value=articleDetail.title)
+              
+        .form-row-2
+          .form-group
+            label Vị trí
+            input.form-control(type="number" name="position" value=articleDetail.position)
+          
+          .form-group
+            label Trạng thái
+            select.form-control(name="status")
+              option(value="active" selected=(articleDetail.status === "active" ? true : false)) Hoạt động
+              option(value="inactive" selected=(articleDetail.status === "inactive" ? true : false)) Tạm dừng
 
-      .form-group
-        label Ảnh đại diện
-        .upload-image-wrapper(upload-image-wrapper)
-          input#thumbnail-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
-          label.upload-box(for="thumbnail-upload" upload-image-label class=(articleDetail.thumbnail ? "hidden" : ""))
-            i.fa-solid.fa-plus
-          .image-preview-container(upload-image-preview-container class=(articleDetail.thumbnail ? "" : "hidden"))
-            img(upload-image-preview src=(articleDetail.thumbnail ? articleDetail.thumbnail : "") alt="Preview")
-            button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
-              i.fa-solid.fa-xmark
+        .form-group
+          label Ảnh đại diện
+          .upload-image-wrapper(upload-image-wrapper)
+            input#thumbnail-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
+            label.upload-box(for="thumbnail-upload" upload-image-label class=(articleDetail.thumbnail ? "hidden" : ""))
+              i.fa-solid.fa-plus
+            .image-preview-container(upload-image-preview-container class=(articleDetail.thumbnail ? "" : "hidden"))
+              img(upload-image-preview src=(articleDetail.thumbnail ? articleDetail.thumbnail : "") alt="Preview")
+              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                i.fa-solid.fa-xmark
 
-      .form-group
-        label Mô tả ngắn gọn
-        textarea.form-control(name="description" rows="3") #{articleDetail.description}
+        .form-group
+          label Mô tả ngắn gọn
+          textarea.form-control(name="description" rows="3") #{articleDetail.description}
 
-      .form-group
-        label Nội dung chi tiết
-        textarea.form-control.textarea-mce(name="content" rows="15") #{articleDetail.content}
+        .form-group
+          label Nội dung chi tiết
+          textarea.form-control.textarea-mce(name="content" rows="15") #{articleDetail.content}
 
-      .form-actions
-        button.btn-submit(type="submit") 
-          i.fa-solid.fa-floppy-disk
-          |  Cập nhật bài viết
+        .form-actions
+          button.btn-submit(type="submit") 
+            i.fa-solid.fa-floppy-disk
+            |  Cập nhật bài viết
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
