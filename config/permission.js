@@ -45,6 +45,9 @@ module.exports.permissionList = [
       { label: "Xem danh sách", value: "order_view" },
       { label: "Cập nhật trạng thái", value: "order_edit" },
       { label: "Xóa đơn hàng", value: "order_delete" },
+      { label: "Xem thùng rác", value: "order_trash" },
+      { label: "Khôi phục", value: "order_restore" },
+      { label: "Xóa vĩnh viễn", value: "order_destroy" },
     ],
   },
   {

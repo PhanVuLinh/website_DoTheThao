@@ -2,63 +2,75 @@ extends ../layouts/default.pug
 include ../mixins/alert.pug
 
 block main
-  +alert-error(3000)
-  +alert-success(3000)
-  .page-header
-    h1.page-title Chi tiết đơn hàng: 
-      span.order-code #{orderDetail.orderCode}
-    a.btn-back(href=`/${pathAdmin}/order/list`) 
-      i.fa-solid.fa-arrow-left
-      | Quay lại danh sách
+  if(role && role.permissions && role.permissions.includes("order_edit"))
+    +alert-error(3000)
+    +alert-success(3000)
+    .page-header
+      h1.page-title Chi tiết đơn hàng: 
+        span.order-code #{orderDetail.orderCode}
+      a.btn-back(href=`/${pathAdmin}/order/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
 
-  .order-details-container
-    form(action=`/${pathAdmin}/order/edit/${orderDetail.id}?_method=PATCH` method="POST")
-      .order-main-content
-        h3.section-title Sản phẩm
-        .order-products-list.mb-4
-          each item in orderDetail.products
-            .product-list-item
-              img(src=item.thumbnail)
-              .prod-info-stack
-                span.prod-name-main #{item.title}
-                span.prod-meta-main #{item.size}
-              .prod-qty-price
-                span.prod-qty #{item.quantity}
-                span.prod-price #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
-  
-        h3.section-title Thanh toán
-        .payment-summary.mb-4
-          span Tạm tính: #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
-          //- span Phí vận chuyển: 30.000đ
-          span Giảm giá: #{orderDetail.discount.toLocaleString('vi-VN')} đ
-          span Mã giảm: #{orderDetail.couponCode}
-          span.total-amount-display TỔNG CỘNG: #{orderDetail.total.toLocaleString('vi-VN')} đ
-      .order-side-content
-        .order-section-box.mb-4
-          label Thông tin khách
-          .customer-info-box
-            span.cust-name #{orderDetail.fullName}
-            span.cust-phone SĐT: #{orderDetail.phone}
-            span.cust-address Địa chỉ: #{orderDetail.address}
-            if(orderDetail.note)
-              span.cust-note Ghi chú: #{orderDetail.note}
-        .order-section-box.mb-4
-          label Thời gian đặt
-          input.form-control(type="text" value=orderDetail.createdAtFormat readonly)
-        .order-section-box.mb-4
-          label Phương thức thanh toán
-          input.form-control(type="text" value=orderDetail.paymentMethodName readonly)
-        .order-section-box.mb-4
-          label Trạng thái thanh toán
-          .status-update-row
-            select.form-select.w-auto(name="paymentStatus")
-              each item in paymentStatus
-                option(value=item.value selected=(item.value === orderDetail.paymentStatus ? true : false)) #{item.label}            
-            button.btn-apply.w-auto(type="submit") Áp dụng
-        .order-section-box.mb-4
-          label Trạng thái đơn
-          .status-update-row
-            select.form-select.w-auto(name="status")
-              each item in orderStatus
-                option(value=item.value selected=(item.value === orderDetail.status ? true : false)) #{item.label} 
-            button.btn-apply.w-auto Áp dụng
+    .order-details-container
+      form(action=`/${pathAdmin}/order/edit/${orderDetail.id}?_method=PATCH` method="POST")
+        .order-main-content
+          h3.section-title Sản phẩm
+          .order-products-list.mb-4
+            each item in orderDetail.products
+              .product-list-item
+                img(src=item.thumbnail)
+                .prod-info-stack
+                  span.prod-name-main #{item.title}
+                  span.prod-meta-main #{item.size}
+                .prod-qty-price
+                  span.prod-qty #{item.quantity}
+                  span.prod-price #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
+    
+          h3.section-title Thanh toán
+          .payment-summary.mb-4
+            span Tạm tính: #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
+            span Giảm giá: #{orderDetail.discount.toLocaleString('vi-VN')} đ
+            span Mã giảm: #{orderDetail.couponCode}
+            span.total-amount-display TỔNG CỘNG: #{orderDetail.total.toLocaleString('vi-VN')} đ
+        .order-side-content
+          .order-section-box.mb-4
+            label Thông tin khách
+            .customer-info-box
+              span.cust-name #{orderDetail.fullName}
+              span.cust-phone SĐT: #{orderDetail.phone}
+              span.cust-address Địa chỉ: #{orderDetail.address}
+              if(orderDetail.note)
+                span.cust-note Ghi chú: #{orderDetail.note}
+          .order-section-box.mb-4
+            label Thời gian đặt
+            input.form-control(type="text" value=orderDetail.createdAtFormat readonly)
+          .order-section-box.mb-4
+            label Phương thức thanh toán
+            input.form-control(type="text" value=orderDetail.paymentMethodName readonly)
+          .order-section-box.mb-4
+            label Trạng thái thanh toán
+            .status-update-row
+              select.form-select.w-auto(name="paymentStatus")
+                each item in paymentStatus
+                  option(value=item.value selected=(item.value === orderDetail.paymentStatus ? true : false)) #{item.label}            
+              button.btn-apply.w-auto(type="submit") Áp dụng
+          .order-section-box.mb-4
+            label Trạng thái đơn
+            .status-update-row
+              select.form-select.w-auto(name="status")
+                each item in orderStatus
+                  option(value=item.value selected=(item.value === orderDetail.status ? true : false)) #{item.label} 
+              button.btn-apply.w-auto(type="submit") Áp dụng
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.

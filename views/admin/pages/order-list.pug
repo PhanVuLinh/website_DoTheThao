@@ -6,115 +6,145 @@ include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
 
 block main
-  +alert-success(3000)
-  +alert-error(3000)
-  h1.page-title Quản lý đơn hàng
-  .filter-action-card
-    .filter-row
-      .filter-label
-        i.fa-solid.fa-filter
-        span Bộ lọc
-      
-      +filter-orderStatus()
+  if(role && role.permissions && role.permissions.includes("order_view"))
+    +alert-success(3000)
+    +alert-error(3000)
+    h1.page-title Quản lý đơn hàng
+    .filter-action-card
+      .filter-row
+        .filter-label
+          i.fa-solid.fa-filter
+          span Bộ lọc
         
-      +filter-date-range()
-        
-      +filter-paymentMethod()
-        
-      +filter-paymentStatus()
+        +filter-orderStatus()
+          
+        +filter-date-range()
+          
+        +filter-paymentMethod()
+          
+        +filter-paymentStatus()
 
-      button.btn-clear(filter-reset)
-        i.fa-solid.fa-rotate-right
-        | Xóa bộ lọc
-    .action-row
-      +bulk-action([
-        { value: "cancel", label: "Hủy đơn" },
-        { value: "shipping", label: "Đang giao hàng" },
-        { value: "done", label: "Hoàn thành" },
-        { value: "delete-all", label: "Xóa đơn hàng" }
-      ])
-      .search-box-large
-        i.fa-solid.fa-magnifying-glass
-        input(type="text" placeholder="Tìm kiếm theo Mã đơn, Tên khách hàng, SĐT..." search)
-      .action-buttons-right
-        a(href=`/${pathAdmin}/order/trash`).btn-trash
-          i.fa-regular.fa-trash-can
-          | Thùng rác
-  .table-section
-    .table-responsive
-      table.admin-table.table-hover
-        thead
-          tr
-            th.text-center(width="50px")
-              input(type="checkbox" check-all)
-            th Mã ĐH
-            th Thông tin khách
-            th(width="300px") Danh sách sản phẩm
-            th Thanh toán
-            th Trạng thái
-            th Ngày đặt
-            th Hành động
-        
-        tbody
-          each orderDetail in orderList
+        button.btn-clear(filter-reset)
+          i.fa-solid.fa-rotate-right
+          | Xóa bộ lọc
+      .action-row
+        - 
+          var bulkOptions = [];
+          if(role && role.permissions) {
+            if(role.permissions.includes("order_edit")) {
+              bulkOptions.push({ value: "cancel", label: "Hủy đơn" });
+              bulkOptions.push({ value: "shipping", label: "Đang giao hàng" });
+              bulkOptions.push({ value: "done", label: "Hoàn thành" });
+            }
+            if(role.permissions.includes("order_delete")) {
+              bulkOptions.push({ value: "delete-all", label: "Xóa đơn hàng" });
+            }
+          }
+
+        if(bulkOptions.length > 0)
+          +bulk-action(bulkOptions)
+
+        .search-box-large
+          i.fa-solid.fa-magnifying-glass
+          input(type="text" placeholder="Tìm kiếm theo Mã đơn, Tên khách hàng, SĐT..." search)
+        .action-buttons-right
+          if(role && role.permissions && role.permissions.includes("order_trash"))
+            a(href=`/${pathAdmin}/order/trash`).btn-trash
+              i.fa-regular.fa-trash-can
+              | Thùng rác
+    .table-section
+      .table-responsive
+        table.admin-table.table-hover
+          thead
             tr
-              td.text-center
-                input(type="checkbox" value=orderDetail.id name="id" check-item)
-              td.order-code #{orderDetail.orderCode}
-              td
-                .customer-info
-                  span.font-weight-600 #{orderDetail.fullName}
-                  span.phone SĐT: #{orderDetail.phone}
-                  span.phone Địa chỉ: #{orderDetail.address}
-                  if(orderDetail.note)
-                    span.phone(style="color: var(--red-main)") Ghi chú: #{orderDetail.note}
-              td
-                .order-products-list
-                  each item in orderDetail.products
-                    .product-mini-item
-                      img(src=item.thumbnail alt=item.title)
-                      .prod-info
-                        span.prod-name #{item.title}
-                        span.prod-meta #{item.size} | SL: #{item.quantity} | #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
-              td
-                .payment-summary
-                  span Tạm tính: #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
-                  span Giảm giá: #{orderDetail.discount.toLocaleString('vi-VN')} đ
-                  if(orderDetail.couponCode)
-                    span Mã giảm: #{orderDetail.couponCode}
-                  span.total-pay Thanh toán: #{orderDetail.total.toLocaleString('vi-VN')} đ
-                  span PTTT: #{orderDetail.paymentMethodName}
-                  span TTTT: #{orderDetail.paymentStatusName}
-              td
-                - var statusClass = orderDetail.status ? `badge-${orderDetail.status}` : 'badge-pending'
-                span.badge-status(class=statusClass)  #{orderDetail.statusName}
-              td
-                .user-date
-                  span.name #{orderDetail.createdAtTime}
-                  span.time #{orderDetail.createdAtDate}
-              td: .action-btns
-                  a.btn-edit(href=`/${pathAdmin}/order/edit/${orderDetail.id}` title="Cập nhật")
-                    i.fa-regular.fa-pen-to-square
-                  button.btn-delete(title="Hủy đơn" button-delete data-id=orderDetail.id)
-                    i.fa-regular.fa-trash-can
-
+              th.text-center(width="50px")
+                input(type="checkbox" check-all)
+              th Mã ĐH
+              th Thông tin khách
+              th(width="300px") Danh sách sản phẩm
+              th Thanh toán
+              th Trạng thái
+              th Ngày đặt
+              if(role && role.permissions && (role.permissions.includes("order_edit") || role.permissions.includes("order_delete")))
+                th Hành động
+          
+          tbody
+            each orderDetail in orderList
+              tr
+                td.text-center
+                  input(type="checkbox" value=orderDetail.id name="id" check-item)
+                td.order-code #{orderDetail.orderCode}
+                td
+                  .customer-info
+                    span.font-weight-600 #{orderDetail.fullName}
+                    span.phone SĐT: #{orderDetail.phone}
+                    span.phone Địa chỉ: #{orderDetail.address}
+                    if(orderDetail.note)
+                      span.phone(style="color: var(--red-main)") Ghi chú: #{orderDetail.note}
+                td
+                  .order-products-list
+                    each item in orderDetail.products
+                      .product-mini-item
+                        img(src=item.thumbnail alt=item.title)
+                        .prod-info
+                          span.prod-name #{item.title}
+                          span.prod-meta #{item.size} | SL: #{item.quantity} | #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
+                td
+                  .payment-summary
+                    span Tạm tính: #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
+                    span Giảm giá: #{orderDetail.discount.toLocaleString('vi-VN')} đ
+                    if(orderDetail.couponCode)
+                      span Mã giảm: #{orderDetail.couponCode}
+                    span.total-pay Thanh toán: #{orderDetail.total.toLocaleString('vi-VN')} đ
+                    span PTTT: #{orderDetail.paymentMethodName}
+                    span TTTT: #{orderDetail.paymentStatusName}
+                td
+                  - var statusClass = orderDetail.status ? `badge-${orderDetail.status}` : 'badge-pending'
+                  span.badge-status(class=statusClass)  #{orderDetail.statusName}
+                td
+                  .user-date
+                    span.name #{orderDetail.createdAtTime}
+                    span.time #{orderDetail.createdAtDate}
+                
+                if(role && role.permissions && (role.permissions.includes("order_edit") || role.permissions.includes("order_delete")))
+                  td
+                    .action-btns
+                      if(role && role.permissions && role.permissions.includes("order_edit"))
+                        a.btn-edit(href=`/${pathAdmin}/order/edit/${orderDetail.id}` title="Cập nhật")
+                          i.fa-regular.fa-pen-to-square
+                      if(role && role.permissions && role.permissions.includes("order_delete"))
+                        button.btn-delete(title="Hủy đơn" button-delete data-id=orderDetail.id)
+                          i.fa-regular.fa-trash-can
 
     .admin-pagination
       +pagination(pagination)
 
-  form(
-    action=""
-    method="POST"
-    id="form-delete-item"
-    data-path=`/${pathAdmin}/order/delete`
-  )
+    if(role && role.permissions && role.permissions.includes("order_delete"))
+      form(
+        action=""
+        method="POST"
+        id="form-delete-item"
+        data-path=`/${pathAdmin}/order/delete`
+      )
 
-  form(
-    action=""
-    method="POST"
-    id="form-change-multi"
-    data-path=`/${pathAdmin}/order/change-multi`
-  )
-    input(type="hidden" name="type")
-    input(type="hidden" name="ids")
-            
+    if(role && role.permissions && (role.permissions.includes("order_edit") || role.permissions.includes("order_delete")))
+      form(
+        action=""
+        method="POST"
+        id="form-change-multi"
+        data-path=`/${pathAdmin}/order/change-multi`
+      )
+        input(type="hidden" name="type")
+        input(type="hidden" name="ids")
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
