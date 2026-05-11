@@ -4,86 +4,117 @@ include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
 
 block main
-  +alert-success(3000)
-  +alert-error(3000)
+  if(role && role.permissions && role.permissions.includes("coupon_trash"))
+    +alert-success(3000)
+    +alert-error(3000)
 
-  .page-header
-    h1.page-title Thùng rác mã giảm giá
-    a.btn-back(href=`/${pathAdmin}/coupon/list`) 
-      i.fa-solid.fa-arrow-left
-      | Quay lại danh sách
-  .filter-action-card
-    .action-row
-      +bulk-action([
-          { value: "restore-all", label: "Khôi phục" },
-          { value: "delete-all", label: "Xóa vĩnh viễn" }
-        ])
-      .search-box-large
-        i.fa-solid.fa-magnifying-glass
-        input(type="text" placeholder="Tìm kiếm mã giảm giá..." search)
+    .page-header
+      h1.page-title Thùng rác mã giảm giá
+      a.btn-back(href=`/${pathAdmin}/coupon/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
+    .filter-action-card
+      .action-row
+        - 
+          var bulkOptions = [];
+          if(role && role.permissions) {
+            if(role.permissions.includes("coupon_restore")) {
+              bulkOptions.push({ value: "restore-all", label: "Khôi phục" });
+            }
+            if(role.permissions.includes("coupon_destroy")) {
+              bulkOptions.push({ value: "delete-all", label: "Xóa vĩnh viễn" });
+            }
+          }
 
-  .table-section
-    .table-responsive
-      table.admin-table.table-hover
-        thead
-          tr
-            th.text-center(width="50px")
-                input(type="checkbox" check-all)
-            th Mã coupon
-            th Tên sự kiện
-            th % Giảm giá
-            th Giảm tối đa
-            th Số lượng còn lại
-            th Ngày hết hạn
-            th Xóa bởi
-            th Hành động
-        
-        tbody
-          if couponList && couponList.length > 0
-            each item in couponList
-              tr
-                td.text-center
-                  input(type="checkbox" name="id" value=item.id check-item)
-                td.font-weight-600.text-uppercase #{item.code}
-                td #{item.title}
-                td #{item.discountPercentage}%
-                td #{item.maxDiscountAmount.toLocaleString('vi-VN')} đ
-                td #{item.quantity}
-                td #{item.expirationDateFormat}
-                td
-                  .user-date
-                    span.name #{item.deletedByFullName}
-                    span.time #{item.deletedAtFormat}
-                td
-                  .action-btns
-                    button.btn-edit(button-restore data-id=item.id title="Khôi phục")
-                      i.fa-solid.fa-rotate-left
-                    button.btn-delete(button-delete data-id=item.id title="Xóa vĩnh viễn")
-                      i.fa-regular.fa-trash-can
-          else
+        if(bulkOptions.length > 0)
+          +bulk-action(bulkOptions)
+
+        .search-box-large
+          i.fa-solid.fa-magnifying-glass
+          input(type="text" placeholder="Tìm kiếm mã giảm giá..." search)
+
+    .table-section
+      .table-responsive
+        table.admin-table.table-hover
+          thead
             tr
-              td(colspan="9" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có mã giảm giá nào bị xóa!
+              th.text-center(width="50px")
+                  input(type="checkbox" check-all)
+              th Mã coupon
+              th Tên sự kiện
+              th % Giảm giá
+              th Giảm tối đa
+              th Số lượng còn lại
+              th Ngày hết hạn
+              th Xóa bởi
+              if(role && role.permissions && (role.permissions.includes("coupon_restore") || role.permissions.includes("coupon_destroy")))
+                th Hành động
+          
+          tbody
+            if couponList && couponList.length > 0
+              each item in couponList
+                tr
+                  td.text-center
+                    input(type="checkbox" name="id" value=item.id check-item)
+                  td.font-weight-600.text-uppercase #{item.code}
+                  td #{item.title}
+                  td #{item.discountPercentage}%
+                  td #{item.maxDiscountAmount.toLocaleString('vi-VN')} đ
+                  td #{item.quantity}
+                  td #{item.expirationDateFormat}
+                  td
+                    .user-date
+                      span.name #{item.deletedByFullName}
+                      span.time #{item.deletedAtFormat}
+                  if(role && role.permissions && (role.permissions.includes("coupon_restore") || role.permissions.includes("coupon_destroy")))
+                    td
+                      .action-btns
+                        if(role && role.permissions && role.permissions.includes("coupon_restore"))
+                          button.btn-edit(button-restore data-id=item.id title="Khôi phục")
+                            i.fa-solid.fa-rotate-left
+                        if(role && role.permissions && role.permissions.includes("coupon_destroy"))
+                          button.btn-delete(button-delete data-id=item.id title="Xóa vĩnh viễn")
+                            i.fa-regular.fa-trash-can
+            else
+              tr
+                td(colspan="9" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có mã giảm giá nào bị xóa!
     .admin-pagination
       +pagination(pagination)
-  form(
-    action=""
-    method="POST"
-    id="form-restore-item"
-    data-path=`/${pathAdmin}/coupon/restore`
-  )
-  
-  form(
-    action=""
-    method="POST"
-    id="form-delete-item"
-    data-path=`/${pathAdmin}/coupon/delete-destroy`
-  )
-  form(
-    action=""
-    method="POST"
-    id="form-change-multi"
-    data-path=`/${pathAdmin}/coupon/change-multi-trash`
-  )
-    input(type="hidden" name="type")
-    input(type="hidden" name="ids")
-          
+
+    if(role && role.permissions && role.permissions.includes("coupon_restore"))
+      form(
+        action=""
+        method="POST"
+        id="form-restore-item"
+        data-path=`/${pathAdmin}/coupon/restore`
+      )
+    
+    if(role && role.permissions && role.permissions.includes("coupon_destroy"))
+      form(
+        action=""
+        method="POST"
+        id="form-delete-item"
+        data-path=`/${pathAdmin}/coupon/delete-destroy`
+      )
+
+    if(role && role.permissions && (role.permissions.includes("coupon_restore") || role.permissions.includes("coupon_destroy")))
+      form(
+        action=""
+        method="POST"
+        id="form-change-multi"
+        data-path=`/${pathAdmin}/coupon/change-multi-trash`
+      )
+        input(type="hidden" name="type")
+        input(type="hidden" name="ids")
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.

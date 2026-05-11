@@ -2,51 +2,64 @@ extends ../layouts/default.pug
 include ../mixins/alert.pug
 
 block main
-  +alert-error(3000)
-  
-  .page-header
-    h1.page-title Tạo mã giảm giá
-    a.btn-back(href=`/${pathAdmin}/coupon/list`) 
-      i.fa-solid.fa-arrow-left
-      | Quay lại danh sách
+  if(role && role.permissions && role.permissions.includes("coupon_create"))
+    +alert-error(3000)
+    
+    .page-header
+      h1.page-title Tạo mã giảm giá
+      a.btn-back(href=`/${pathAdmin}/coupon/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
 
-  .form-card
-    form(action=`/${pathAdmin}/coupon/create` method="POST")
-      .form-row-2
-        .form-group
-          label Tên sự kiện
-          input.form-control(type="text" name="title" placeholder="Ví dụ: Sự kiện Noel 2025")
-        
-        .form-group
-          label Mã giảm giá
-          input.form-control.text-uppercase(type="text" name="code" placeholder="Ví dụ: NOEL2025")
+    .form-card
+      form(action=`/${pathAdmin}/coupon/create` method="POST")
+        .form-row-2
+          .form-group
+            label Tên sự kiện
+            input.form-control(type="text" name="title" placeholder="Ví dụ: Sự kiện Noel 2025")
+          
+          .form-group
+            label Mã giảm giá
+            input.form-control.text-uppercase(type="text" name="code" placeholder="Ví dụ: NOEL2025")
 
-      .form-row-2
-        .form-group
-          label % Giảm giá
-          input.form-control(type="number" name="discountPercentage" min="0" max="100" value="0")
-        
-        .form-group
-          label Giảm tối đa (VNĐ)
-          input.form-control(type="number" name="maxDiscountAmount" min="0" value="0" step="1000")
+        .form-row-2
+          .form-group
+            label % Giảm giá
+            input.form-control(type="number" name="discountPercentage" min="0" max="100" value="0")
+          
+          .form-group
+            label Giảm tối đa (VNĐ)
+            input.form-control(type="number" name="maxDiscountAmount" min="0" value="0" step="1000")
 
-      .form-row-2
-        .form-group
-          label Số lượng
-          input.form-control(type="number" name="quantity" min="1" value="1")
-        
-        .form-group
-          label Ngày hết hạn
-          input.form-control(type="date" name="expirationDate" )
+        .form-row-2
+          .form-group
+            label Số lượng
+            input.form-control(type="number" name="quantity" min="1" value="1")
+          
+          .form-group
+            label Ngày hết hạn
+            input.form-control(type="date" name="expirationDate" )
 
-      .form-row-2
-        .form-group
-          label Trạng thái
-          select.form-control(name="status")
-            option(value="active" selected) Hoạt động
-            option(value="inactive") Tạm dừng
-        
-        .form-group 
+        .form-row-2
+          .form-group
+            label Trạng thái
+            select.form-control(name="status")
+              option(value="active" selected) Hoạt động
+              option(value="inactive") Tạm dừng
+          
+          .form-group 
 
-      .form-actions
-        button.btn-submit(type="submit") Tạo mới
+        .form-actions
+          button.btn-submit(type="submit") Tạo mới
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.

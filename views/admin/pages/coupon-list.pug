@@ -5,95 +5,126 @@ include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
 
 block main
-  +alert-success(3000)
-  +alert-error(3000)
+  if(role && role.permissions && role.permissions.includes("coupon_view"))
+    +alert-success(3000)
+    +alert-error(3000)
 
-  h1.page-title Danh sách Mã giảm giá
+    h1.page-title Danh sách Mã giảm giá
 
-  .filter-action-card
-    .filter-row
-      .filter-label
-        i.fa-solid.fa-filter
-        span Bộ lọc
-        
-      +filter-status()
-        
-      button.btn-clear(filter-reset)
-        i.fa-solid.fa-rotate-right
-        | Xóa bộ lọc
-    .action-row
-      +bulk-action([
-        { value: "delete-all", label: "xóa" },
-        { value: "active", label: "Hoạt động" },
-        { value: "inactive", label: "Dừng hoạt động" }
-      ])
-      .search-box-large
-        i.fa-solid.fa-magnifying-glass
-        input(type="text" placeholder="Tìm kiếm mã giảm giá..." search)
+    .filter-action-card
+      .filter-row
+        .filter-label
+          i.fa-solid.fa-filter
+          span Bộ lọc
+          
+        +filter-status()
+          
+        button.btn-clear(filter-reset)
+          i.fa-solid.fa-rotate-right
+          | Xóa bộ lọc
+      .action-row
+        - 
+          var bulkOptions = [];
+          if(role && role.permissions) {
+            if(role.permissions.includes("coupon_delete")) {
+              bulkOptions.push({ value: "delete-all", label: "Xóa" });
+            }
+            if(role.permissions.includes("coupon_edit")) {
+              bulkOptions.push({ value: "active", label: "Hoạt động" });
+              bulkOptions.push({ value: "inactive", label: "Dừng hoạt động" });
+            }
+          }
 
-      .action-buttons-right
-        a(href=`/${pathAdmin}/coupon/create`).btn-create
-          i.fa-solid.fa-plus
-          | Thêm mã giảm giá
-        a(href=`/${pathAdmin}/coupon/trash`).btn-trash
-          i.fa-regular.fa-trash-can
-          | Thùng rác
+        if(bulkOptions.length > 0)
+          +bulk-action(bulkOptions)
+          
+        .search-box-large
+          i.fa-solid.fa-magnifying-glass
+          input(type="text" placeholder="Tìm kiếm mã giảm giá..." search)
 
-  .table-section
-    .table-responsive
-      table.admin-table.table-hover
-        thead
-          tr
-            th.text-center(width="50px")
-              input(type="checkbox" check-all)
-            th Mã coupon
-            th Tên sự kiện
-            th Trạng thái
-            th % Giảm giá
-            th Giảm tối đa
-            th Số lượng còn lại
-            th Ngày hết hạn
-            th Hành động
-        
-        tbody
-          if couponList && couponList.length > 0
-            each item in couponList
-              tr
-                td.text-center
-                  input(type="checkbox" value=item.id name="id" check-item)
-                td.font-weight-600.text-uppercase #{item.code}
-                td #{item.title}
-                td 
-                  span(class=`badge-status ${item.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{item.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}
-                td #{item.discountPercentage}%
-                td #{item.maxDiscountAmount.toLocaleString('vi-VN')} đ
-                td #{item.quantity}
-                td #{item.expirationDateFormat}
-                td
-                  .action-btns
-                    a.btn-edit(href=`/${pathAdmin}/coupon/edit/${item.id}` title="Sửa")
-                      i.fa-regular.fa-pen-to-square
-                    button.btn-delete(button-delete data-id=item.id title="Xóa")
-                      i.fa-regular.fa-trash-can
-          else
+        .action-buttons-right
+          if(role && role.permissions && role.permissions.includes("coupon_create"))
+            a(href=`/${pathAdmin}/coupon/create`).btn-create
+              i.fa-solid.fa-plus
+              | Thêm mã giảm giá
+          if(role && role.permissions && role.permissions.includes("coupon_trash"))
+            a(href=`/${pathAdmin}/coupon/trash`).btn-trash
+              i.fa-regular.fa-trash-can
+              | Thùng rác
+
+    .table-section
+      .table-responsive
+        table.admin-table.table-hover
+          thead
             tr
-              td.text-center(colspan="7" style="padding: 30px;") Chưa có mã giảm giá nào.
+              th.text-center(width="50px")
+                input(type="checkbox" check-all)
+              th Mã coupon
+              th Tên sự kiện
+              th Trạng thái
+              th % Giảm giá
+              th Giảm tối đa
+              th Số lượng còn lại
+              th Ngày hết hạn
+              if(role && role.permissions && (role.permissions.includes("coupon_edit") || role.permissions.includes("coupon_delete")))
+                th Hành động
+          
+          tbody
+            if couponList && couponList.length > 0
+              each item in couponList
+                tr
+                  td.text-center
+                    input(type="checkbox" value=item.id name="id" check-item)
+                  td.font-weight-600.text-uppercase #{item.code}
+                  td #{item.title}
+                  td 
+                    span(class=`badge-status ${item.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{item.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}
+                  td #{item.discountPercentage}%
+                  td #{item.maxDiscountAmount.toLocaleString('vi-VN')} đ
+                  td #{item.quantity}
+                  td #{item.expirationDateFormat}
+                  if(role && role.permissions && (role.permissions.includes("coupon_edit") || role.permissions.includes("coupon_delete")))
+                    td
+                      .action-btns
+                        if(role && role.permissions && role.permissions.includes("coupon_edit"))
+                          a.btn-edit(href=`/${pathAdmin}/coupon/edit/${item.id}` title="Sửa")
+                            i.fa-regular.fa-pen-to-square
+                        if(role && role.permissions && role.permissions.includes("coupon_delete"))
+                          button.btn-delete(button-delete data-id=item.id title="Xóa")
+                            i.fa-regular.fa-trash-can
+            else
+              tr
+                td.text-center(colspan="9" style="padding: 30px;") Chưa có mã giảm giá nào.
 
-  .admin-pagination
-    +pagination(pagination)
+    .admin-pagination
+      +pagination(pagination)
 
-  form(
-    action=""
-    method="POST"
-    id="form-delete-item"
-    data-path=`/${pathAdmin}/coupon/delete`
-  )
+    if(role && role.permissions && role.permissions.includes("coupon_delete"))
+      form(
+        action=""
+        method="POST"
+        id="form-delete-item"
+        data-path=`/${pathAdmin}/coupon/delete`
+      )
 
-  form(
-    action=""
-    method="POST"
-    id="form-change-multi"
-    data-path=`/${pathAdmin}/coupon/change-multi`
-  )
-    input(type="hidden" name="type")
-    input(type="hidden" name="ids")
+    if(role && role.permissions && (role.permissions.includes("coupon_edit") || role.permissions.includes("coupon_delete")))
+      form(
+        action=""
+        method="POST"
+        id="form-change-multi"
+        data-path=`/${pathAdmin}/coupon/change-multi`
+      )
+        input(type="hidden" name="type")
+        input(type="hidden" name="ids")
+  else
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
