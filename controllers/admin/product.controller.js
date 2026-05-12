@@ -222,7 +222,6 @@ module.exports.edit = async (req, res) => {
       categoryList: categoryTree,
       productDetail: productDetail,
     });
-    console.log(productDetail);
   } catch (error) {
     req.flash("error", "Không tồn tài");
     res.redirect(`/${variableCongfig.pathAdmin}/product/list`);

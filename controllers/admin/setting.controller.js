@@ -300,7 +300,7 @@ module.exports.accountAdminTrash = async (req, res) => {
       _id: item.role_id,
       deleted: false,
     });
-    item.role_name = role.name;
+    item.role_name = role?.name || "Không có quyền";
     item.deletedAtFormat = moment(item.deletedAt).format("HH:mm - DD/MM/YYYY");
   }
   res.render("admin/pages/setting-account-admin-trash.pug", {

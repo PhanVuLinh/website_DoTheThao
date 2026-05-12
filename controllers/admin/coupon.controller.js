@@ -105,6 +105,16 @@ module.exports.create = (req, res) => {
 
 module.exports.createPost = async (req, res) => {
   try {
+    const existCoupon = await Coupon.findOne({
+      code: req.body.code,
+      deleted: false,
+    });
+
+    if (existCoupon) {
+      req.flash("error", "Mã giảm giá này đã tồn tại! Vui lòng nhập mã khác.");
+      res.redirect(req.get("Referer"));
+      return;
+    }
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.maxDiscountAmount = parseInt(req.body.maxDiscountAmount);
     req.body.quantity = parseInt(req.body.quantity);
@@ -145,6 +155,24 @@ module.exports.edit = async (req, res) => {
 module.exports.editPatch = async (req, res) => {
   try {
     const id = req.params.id;
+    if (req.body.code) {
+      const existCoupon = await Coupon.findOne({
+        code: req.body.code,
+        deleted: false,
+        _id: { $ne: id },
+      });
+
+      if (existCoupon) {
+        req.flash(
+          "error",
+          "Mã giảm giá này đã tồn tại! Vui lòng nhập mã khác.",
+        );
+        res.redirect(req.get("Referer"));
+        return;
+      }
+    }
+    req.body.updatedBy = req.account.id;
+    req.body.updatedAt = new Date();
     await Coupon.updateOne(
       {
         _id: id,

@@ -40,10 +40,12 @@ module.exports.loginPost = async (req, res) => {
     maxAge: 2 * 60 * 60 * 1000,
     httpOnly: true,
   });
+  req.flash("success", "Đăng nhập thành công!");
   res.redirect(`/${variableCongfig.pathAdmin}/dashboard`);
 };
 
 module.exports.logout = (req, res) => {
   res.clearCookie("token");
+  req.flash("success", "Đã đăng xuất!");
   res.redirect(`/${variableCongfig.pathAdmin}/auth/login`);
 };

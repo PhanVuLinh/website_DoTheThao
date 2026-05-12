@@ -1,7 +1,10 @@
 extends ../layouts/default.pug
+include ../mixins/alert.pug
 
 block main
   if(role && role.permissions && role.permissions.includes("dashboard_view"))
+    +alert-success(3000)
+    +alert-error(3000)
     h1.page-title Tổng quan
 
     .stat-widgets
@@ -93,6 +96,14 @@ block main
                 td(colspan="6") Không có đơn hàng mới
 
   else
-    .no-permission
-      h2.page-title Bạn không có quyền truy cập trang này
-      p Vui lòng liên hệ quản trị viên để được cấp quyền `dashboard_view`.
+    .no-access-wrapper
+      .no-access-card
+        .no-access-icon
+          i.fa-solid.fa-lock
+
+        h2.no-access-title Truy cập bị từ chối
+
+        p.no-access-desc
+          | Bạn không có quyền truy cập vào trang này.
+          br
+          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
