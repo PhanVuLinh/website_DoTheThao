@@ -525,13 +525,11 @@ document.addEventListener("DOMContentLoaded", function () {
       parseInt(currentYear) === now.getFullYear();
 
     const processedCurrentData = currentMonthData.map((val, i) => {
-      if (isCurrentMonth && i >= now.getDate()) return null;
-      return val === 0 ? null : val; // Bỏ ngày 0 để chart đẹp hơn (tuỳ chọn)
+      if (isCurrentMonth && i >= now.getDate()) return null; // Tương lai thì trả về null
+      return val; // Quá khứ (dù bán được 0 đồng) vẫn phải giữ số 0 để nó vẽ đường dây đi ngang đáy!
     });
 
-    const processedPrevData = prevMonthData.map((val) =>
-      val === 0 ? null : val,
-    );
+    const processedPrevData = prevMonthData.map((val) => val);
 
     new Chart(ctx, {
       type: "line",

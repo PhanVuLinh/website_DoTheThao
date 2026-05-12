@@ -4,9 +4,8 @@ const Order = require("../../models/order.model");
 const Product = require("../../models/product.model");
 const User = require("../../models/user.model");
 
-const variableCongfig = require("../../config/variable");
-
-// Hàm lấy doanh thu theo từng ngày trong tháng
+const variableConfig = require("../../config/variable");
+// Hàm lấy doanh thu theo từng ngày trong tháng (ĐÃ ĐƯỢC NÂNG CẤP)
 async function getRevenueByMonth(year, month) {
   const daysInMonth = new Date(year, month, 0).getDate();
   const startDate = new Date(year, month - 1, 1);
@@ -21,8 +20,19 @@ async function getRevenueByMonth(year, month) {
   const dailyRevenue = Array(daysInMonth).fill(0);
 
   for (const order of orders) {
-    const day = new Date(order.createdAt).getDate(); // 1-based
-    dailyRevenue[day - 1] += order.total || 0;
+    // FIX 1: Dùng moment để đưa về đúng múi giờ Việt Nam (tránh bị lệch ngày khi đẩy lên Host)
+    const day = moment(order.createdAt).utcOffset("+07:00").date();
+
+    // FIX 2: Đề phòng Database của bạn quên lưu trường tổng tiền (total)
+    let orderTotal = order.total;
+    if (!orderTotal && order.products && order.products.length > 0) {
+      orderTotal = order.products.reduce(
+        (sum, item) => sum + item.priceNew * item.quantity,
+        0,
+      );
+    }
+
+    dailyRevenue[day - 1] += orderTotal || 0;
   }
 
   return dailyRevenue;
@@ -57,19 +67,15 @@ module.exports.dashboard = async (req, res) => {
   //End section 1
   // Section 2 - Biểu đồ doanh thu
   const now = new Date();
-
-  // Lấy tháng/năm từ query hoặc dùng tháng hiện tại
   const chartMonth = parseInt(req.query.chartMonth) || now.getMonth() + 1;
   const chartYear = parseInt(req.query.chartYear) || now.getFullYear();
 
-  // Tính tháng trước
   const prevMonth = chartMonth === 1 ? 12 : chartMonth - 1;
   const prevYear = chartMonth === 1 ? chartYear - 1 : chartYear;
 
   const currentMonthRevenue = await getRevenueByMonth(chartYear, chartMonth);
   const prevMonthRevenue = await getRevenueByMonth(prevYear, prevMonth);
 
-  // Tạo danh sách 6 tháng gần nhất để render dropdown
   const monthOptions = [];
   for (let i = 0; i < 6; i++) {
     let m = now.getMonth() + 1 - i;
@@ -107,13 +113,13 @@ module.exports.dashboard = async (req, res) => {
         }
       }
 
-      order.paymentMethodName = variableCongfig.paymentMethod.find(
+      order.paymentMethodName = variableConfig.paymentMethod.find(
         (item) => item.value === order.paymentMethod,
       ).label;
-      order.paymentStatusName = variableCongfig.paymentStatus.find(
+      order.paymentStatusName = variableConfig.paymentStatus.find(
         (item) => item.value === order.paymentStatus,
       ).label;
-      order.statusName = variableCongfig.orderStatus.find(
+      order.statusName = variableConfig.orderStatus.find(
         (item) => item.value === order.status,
       ).label;
 
