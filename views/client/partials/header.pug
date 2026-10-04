@@ -50,13 +50,10 @@ nav.navbar
         //- li
         //-   a(href="") Liên Hệ
 
-    form.header-search(action="/search" method="GET")
-      i.fa-solid.fa-magnifying-glass.header-search__icon
-      input(type="text" name="keyword" placeholder="Tìm kiếm sản phẩm, thương hiệu..." value=(keyword || "") autocomplete="off")
-      button.header-search__btn(type="submit" aria-label="Tìm kiếm")
-        i.fa-solid.fa-arrow-right
-
     .nav-actions
+      button.action-btn.search-toggle-btn(type="button" title="Tìm kiếm sản phẩm" aria-label="Mở tìm kiếm")
+        i.fa-solid.fa-magnifying-glass
+
       a(href="/cart" title="Giỏ hàng").action-btn.cart-action-btn
         i.fa-solid.fa-cart-shopping
         if (miniCart > 0)
@@ -64,10 +61,8 @@ nav.navbar
 
       if (user) 
         .user-profile-menu
-          button.user-pill-btn(type="button")
+          button.action-btn.user-action-btn.user-logged-btn(type="button" title=user.fullName aria-label="Tài khoản")
             i.fa-solid.fa-circle-user
-            span.user-name #{user.fullName ? user.fullName.split(' ').slice(-1)[0] : 'Tài khoản'}
-            i.fa-solid.fa-chevron-down.user-chevron
           .user-dropdown
             .user-dropdown-header
               span.user-greeting Xin chào,
@@ -83,6 +78,27 @@ nav.navbar
               i.fa-solid.fa-arrow-right-from-bracket
               | Đăng xuất
       else
-        a.auth-pill-btn(href="/auth/login")
+        a.action-btn.user-action-btn(href="/auth/login" title="Đăng nhập tài khoản" aria-label="Đăng nhập")
           i.fa-regular.fa-user
-          span Đăng nhập
+
+  //- EXPANDABLE SEARCH DRAWER (Lúc dùng / khi click icon tìm kiếm)
+  .header-search-drawer#headerSearchDrawer
+    .container
+      .search-drawer__content
+        form.search-drawer__form(action="/search" method="GET")
+          i.fa-solid.fa-magnifying-glass.drawer-search-icon
+          input.drawer-search-input#headerSearchInput(type="text" name="keyword" placeholder="Tìm kiếm giày đá bóng, áo đấu, phụ kiện..." value=(keyword || "") autocomplete="off")
+          button.drawer-search-submit(type="submit")
+            i.fa-solid.fa-magnifying-glass
+            span Tìm kiếm
+          button.drawer-search-close#headerSearchClose(type="button" aria-label="Đóng tìm kiếm")
+            i.fa-solid.fa-xmark
+        .search-drawer__suggestions
+          span.sugg-label Gợi ý:
+          a.sugg-tag(href="/search?keyword=Puma") Puma King
+          a.sugg-tag(href="/search?keyword=Nike") Nike Phantom
+          a.sugg-tag(href="/search?keyword=Giày") Giày đá bóng
+          a.sugg-tag(href="/search?keyword=Áo") Áo thi đấu
+          a.sugg-tag(href="/search?keyword=Bóng") Quả bóng đá
+
+.header-search-backdrop#headerSearchBackdrop

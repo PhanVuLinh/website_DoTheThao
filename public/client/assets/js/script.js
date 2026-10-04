@@ -315,3 +315,47 @@ if (countdownBox) {
     }, 1000); // Cập nhật lại mỗi 1 giây
   }
 }
+
+/* =========================================
+   SEARCH DRAWER TOGGLE (RESPONSIVE SEARCH)
+   ========================================= */
+const searchToggleBtn = document.querySelector(".search-toggle-btn");
+const searchDrawer = document.getElementById("headerSearchDrawer");
+const searchBackdrop = document.getElementById("headerSearchBackdrop");
+const searchCloseBtn = document.getElementById("headerSearchClose");
+const searchInput = document.getElementById("headerSearchInput");
+
+if (searchToggleBtn && searchDrawer) {
+  const openSearch = () => {
+    searchDrawer.classList.add("is-open");
+    if (searchBackdrop) searchBackdrop.classList.add("is-open");
+    searchToggleBtn.classList.add("is-active");
+    if (searchInput) {
+      setTimeout(() => searchInput.focus(), 150);
+    }
+  };
+
+  const closeSearch = () => {
+    searchDrawer.classList.remove("is-open");
+    if (searchBackdrop) searchBackdrop.classList.remove("is-open");
+    searchToggleBtn.classList.remove("is-active");
+  };
+
+  searchToggleBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (searchDrawer.classList.contains("is-open")) {
+      closeSearch();
+    } else {
+      openSearch();
+    }
+  });
+
+  if (searchCloseBtn) searchCloseBtn.addEventListener("click", closeSearch);
+  if (searchBackdrop) searchBackdrop.addEventListener("click", closeSearch);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && searchDrawer.classList.contains("is-open")) {
+      closeSearch();
+    }
+  });
+}
