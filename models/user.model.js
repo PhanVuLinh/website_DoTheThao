@@ -4,7 +4,12 @@ const generate = require("../helpers/generate.helper");
 const userSchema = new mongoose.Schema(
   {
     fullName: String,
-    email: String,
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
     password: String,
     token: {
       type: String,
@@ -28,6 +33,10 @@ const userSchema = new mongoose.Schema(
   },
 );
 
+userSchema.index({ email: 1 }, { unique: true, partialFilterExpression: { deleted: false } });
+userSchema.index({ token: 1 });
+
 const User = mongoose.model("User", userSchema, "users");
 
 module.exports = User;
+

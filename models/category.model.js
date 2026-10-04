@@ -29,6 +29,11 @@ const categorySchema = new mongoose.Schema(
   },
 );
 
+categorySchema.index({ deleted: 1, status: 1 });
+categorySchema.index({ parent_id: 1, deleted: 1, status: 1 });
+categorySchema.index({ position: -1 });
+
 const Category = mongoose.model("Category", categorySchema, "categories");
 
 module.exports = Category;
+

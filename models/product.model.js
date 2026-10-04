@@ -34,6 +34,11 @@ const productSchema = new mongoose.Schema(
   },
 );
 
+productSchema.index({ category_id: 1, deleted: 1, status: 1 });
+productSchema.index({ deleted: 1, status: 1 });
+productSchema.index({ position: -1 });
+
 const Product = mongoose.model("Product", productSchema, "products");
 
 module.exports = Product;
+

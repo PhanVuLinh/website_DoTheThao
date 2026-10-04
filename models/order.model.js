@@ -4,7 +4,11 @@ const orderSchema = new mongoose.Schema(
   {
     user_id: String, 
     cartId: String,
-    orderCode: String,
+    orderCode: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     fullName: String,
     phone: String,
     address: String,
@@ -32,6 +36,12 @@ const orderSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+orderSchema.index({ orderCode: 1 }, { unique: true });
+orderSchema.index({ user_id: 1, createdAt: -1 });
+orderSchema.index({ deleted: 1, status: 1 });
+
 const Order = mongoose.model("Order", orderSchema, "orders");
 
 module.exports = Order;
+

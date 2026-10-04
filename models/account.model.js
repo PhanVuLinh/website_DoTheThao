@@ -26,6 +26,9 @@ const accountSchema = new mongoose.Schema(
   },
 );
 
+accountSchema.index({ email: 1 }, { unique: true, partialFilterExpression: { deleted: false } });
+
 const Account = mongoose.model("Account", accountSchema, "accounts");
 
 module.exports = Account;
+
