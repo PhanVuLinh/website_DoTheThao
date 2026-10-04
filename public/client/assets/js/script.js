@@ -188,7 +188,9 @@ if (qtyInput && btnPlus && btnMinus) {
       updateStock(getCurrentStock());
       const sizeLabels = document.querySelectorAll(".size-btn");
       sizeLabels.forEach((label) => label.classList.remove("active"));
-      const activeLabel = document.querySelector(`label[for="${input.id}"]`);
+      const activeLabel = input.parentElement
+        ? input.parentElement.querySelector(".size-btn")
+        : document.getElementById(input.id)?.nextElementSibling;
       if (activeLabel) activeLabel.classList.add("active");
     });
   });
@@ -197,11 +199,12 @@ if (qtyInput && btnPlus && btnMinus) {
     'input[name="size"]:checked',
   );
   if (defaultCheckedInput) {
-    const activeLabel = document.querySelector(
-      `label[for="${defaultCheckedInput.id}"]`,
-    );
+    const activeLabel = defaultCheckedInput.parentElement
+      ? defaultCheckedInput.parentElement.querySelector(".size-btn")
+      : document.getElementById(defaultCheckedInput.id)?.nextElementSibling;
     if (activeLabel) activeLabel.classList.add("active");
   }
+
 
   btnPlus.addEventListener("click", () => {
     const max = getCurrentStock();

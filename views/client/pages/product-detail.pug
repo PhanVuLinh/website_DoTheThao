@@ -8,28 +8,38 @@ block main
       .detail-grid
         .detail-left
           .detail-card.product-image-card
-            .swiper.main-swiper
-              .swiper-wrapper
-                each img in productDetail.images
-                  .swiper-slide
-                    img(src=img, alt=productDetail.title)
-              .swiper-button-next
-              .swiper-button-prev
-            .swiper.thumb-swiper
-              .swiper-wrapper
-                each img in productDetail.images
-                  .swiper-slide
-                    img(src=img, alt=productDetail.title)
+            if productDetail.images && productDetail.images.length > 0
+              .swiper.main-swiper
+                .swiper-wrapper
+                  each img in productDetail.images
+                    .swiper-slide
+                      img(src=img, alt=productDetail.title)
+                if productDetail.images.length > 1
+                  .swiper-button-next
+                  .swiper-button-prev
+              if productDetail.images.length > 1
+                .swiper.thumb-swiper
+                  .swiper-wrapper
+                    each img in productDetail.images
+                      .swiper-slide
+                        img(src=img, alt=productDetail.title)
+            else if productDetail.thumbnail
+              .gallery-main
+                img(src=productDetail.thumbnail, alt=productDetail.title)
+            else
+              .gallery-main
+                img(src="/client/assets/images/default-thumbnail.jpg", alt=productDetail.title)
+
           .detail-card.info-card
             h3.card-title
               i.fa-solid.fa-circle-info
               | Thông Tin Chi Tiết
-            p.info-desc !{productDetail.description}
+            .info-desc !{productDetail.description || 'Đang cập nhật thông tin chi tiết.'}
 
         // --- CỘT PHẢI: FORM ĐẶT HÀNG ---
         .detail-right
           form(
-            action=`/cart/add/${productDetail.id}`
+            action=`/cart/add/${productDetail._id || productDetail.id}`
             method="POST"
           )
             .booking-card
@@ -66,13 +76,13 @@ block main
                       div.size-item
                         input(
                           type="radio", 
-                          id=`size-${item.size}`, 
+                          id=`size-opt-${index}`, 
                           name="size", 
                           value=item.size, 
                           checked=(index === 0), 
                           data-stock=item.stock
                         )
-                        label.size-btn(for=`size-${item.size}`) #{item.size}
+                        label.size-btn(for=`size-opt-${index}`) #{item.size.replace(/^size:\s*/i, "")}
                   else 
                     p.text-danger Sản phẩm tạm hết hàng.
 
@@ -109,3 +119,4 @@ block main
                   .icon-box
                     i.fa-solid.fa-truck-fast
                   span Miễn phí vận chuyển toàn quốc
+

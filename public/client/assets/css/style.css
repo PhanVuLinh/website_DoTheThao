@@ -1376,7 +1376,26 @@ ul {
   line-height: 1.8;
   color: #444;
   font-size: 15.5px;
+  word-wrap: break-word;
 }
+.info-card .info-desc p {
+  margin-bottom: 12px;
+}
+.info-card .info-desc ul,
+.info-card .info-desc ol {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+.info-card .info-desc li {
+  margin-bottom: 6px;
+}
+.info-card .info-desc img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 15px 0;
+}
+
 
 /* --- FORM ĐẶT HÀNG --- */
 .booking-card {
