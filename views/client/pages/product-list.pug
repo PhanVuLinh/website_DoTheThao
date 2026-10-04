@@ -21,7 +21,7 @@ block main
                   each item in allChildCategories
                     li(class=(category.slug === item.slug ? "active" : ""))
                       a(href=`/category/${item.slug}`)
-                        i.fa-solid.fa-caret-right
+                        i.fa-solid.fa-chevron-right
                         span #{item.title}
 
             .filter-group
@@ -30,15 +30,28 @@ block main
                 li
                   label
                     input(type="radio" name="price" value="under-1m" checked=(queryPrice === "under-1m"))
-                    |  Dưới 1 Triệu
+                    span Dưới 1 Triệu
                 li
                   label
                     input(type="radio" name="price" value="1m-to-3m" checked=(queryPrice === "1m-to-3m"))
-                    |  1 Triệu - 3 Triệu
+                    span 1 Triệu - 3 Triệu
                 li
                   label
                     input(type="radio" name="price" value="over-3m" checked=(queryPrice === "over-3m"))
-                    |  Trên 3 Triệu
+                    span Trên 3 Triệu
+
+            if availableBrands && availableBrands.length > 0
+              .filter-group
+                h4.filter-group-title Thương Hiệu
+                ul.filter-list
+                  each b in availableBrands
+                    li
+                      label
+                        input(type="checkbox" name="brand" value=b checked=(queryBrand && (Array.isArray(queryBrand) ? queryBrand.includes(b) : queryBrand === b)))
+                        span #{b}
+
+            if querySort
+              input(type="hidden" name="sort" value=querySort)
 
             .filter-actions
               button.btn-apply-filter(type="submit") 
@@ -53,19 +66,29 @@ block main
         main.product-content
           .product-content__header
             .header-info
-              h2.title #{breadcrumb.title}
-              p.desc Tổng #{productCategory.length} sản phẩm
+              h1.title #{breadcrumb.title}
+              p.desc Hiển thị <strong>#{productCategory ? productCategory.length : 0}</strong> trên tổng số <strong>#{totalCount !== undefined ? totalCount : (productCategory ? productCategory.length : 0)}</strong> sản phẩm
               
             .header-sort
-              span Sắp xếp:
+              span Sắp xếp theo:
               select.sort-select(name="sort" id="sort-select")
-                option(value="newest" selected=(querySort === "newest")) Mới Nhất
+                option(value="newest" selected=(querySort === "newest" || !querySort)) Mới Nhất
                 option(value="price-asc" selected=(querySort === "price-asc")) Giá tăng dần
                 option(value="price-desc" selected=(querySort === "price-desc")) Giá giảm dần
           
-          .product-content__grid
-            each product in productCategory
-              +productItem(product)
+          if productCategory && productCategory.length > 0
+            .product-content__grid
+              each product in productCategory
+                +productItem(product)
 
-          // PHÂN TRANG
-          +pagination(pagination)
+            // PHÂN TRANG
+            +pagination(pagination)
+          else
+            .empty-filter-state
+              .empty-icon
+                i.fa-solid.fa-box-open
+              h3 Không tìm thấy sản phẩm nào!
+              p Vui lòng thử chọn khoảng giá hoặc thương hiệu khác để xem sản phẩm phù hợp.
+              a.btn-clear-filter-action(href=`/category/${category.slug}`)
+                i.fa-solid.fa-rotate-right
+                | Xem tất cả sản phẩm danh mục này

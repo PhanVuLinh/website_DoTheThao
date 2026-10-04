@@ -1,6 +1,7 @@
 const slugify = require("slugify");
 const Product = require("../../models/product.model");
 const regexHelper = require("../../helpers/regex.helper");
+const productPriceHelper = require("../../helpers/getPriceNew.helper.js");
 
 module.exports.searchList = async (req, res) => {
   const find = {
@@ -40,8 +41,26 @@ module.exports.searchList = async (req, res) => {
       $in: brands.map((b) => new RegExp(regexHelper.escapeRegex(String(b).trim()), "i")),
     };
   }
-  const productList = await Product.find(find).sort({ position: "desc" });
 
+  const rawProducts = await Product.find(find).lean().sort({ position: "desc" });
+  let productList = productPriceHelper.priceNewProduct(rawProducts);
+
+  if (req.query.sort) {
+    if (req.query.sort === "price-asc") {
+      productList.sort((a, b) => a.priceNew - b.priceNew);
+    } else if (req.query.sort === "price-desc") {
+      productList.sort((a, b) => b.priceNew - a.priceNew);
+    } else if (req.query.sort === "newest") {
+      productList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+  }
+
+  // Get available brands for filtering
+  const rawBrands = await Product.distinct("brand", {
+    deleted: false,
+    status: "active",
+  });
+  const availableBrands = rawBrands.filter((b) => b && typeof b === "string" && b.trim() !== "");
 
   res.render("client/pages/search.pug", {
     title: "Kết quả tìm kiếm",
@@ -49,5 +68,7 @@ module.exports.searchList = async (req, res) => {
     keyword: req.query.keyword,
     queryPrice: req.query.price,
     queryBrand: req.query.brand,
+    querySort: req.query.sort,
+    availableBrands: availableBrands,
   });
 };

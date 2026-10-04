@@ -47,17 +47,43 @@ module.exports.list = async (req, res) => {
     });
     //End Breadcrumb
 
-    //danh mục cho bộ lọc danh mục
-    const allChildCategories = await Category.find({
-      deleted: false,
-      status: "active",
-      parent_id: { $ne: "" },
-    }).sort({ position: "desc" });
-    //End danh mục cho bộ lọc danh mục
+    // Lấy tất cả danh mục con cháu của danh mục hiện tại để hiển thị đầy đủ sản phẩm
+    const getSubCategoryIds = async (parentId) => {
+      const subs = await Category.find({
+        parent_id: parentId,
+        deleted: false,
+        status: "active",
+      }).select("_id");
+      let subIds = subs.map((item) => item._id.toString());
+      for (const sub of subs) {
+        const grandSubs = await getSubCategoryIds(sub._id);
+        subIds = subIds.concat(grandSubs);
+      }
+      return subIds;
+    };
+
+    const subCategoryIds = await getSubCategoryIds(category.id);
+    const allCategoryIds = [category.id, ...subCategoryIds];
+
+    // Danh mục cho bộ lọc bên trái (thông minh: hiển thị danh mục con hoặc danh mục cùng cấp)
+    let filterCategories = [];
+    if (category.parent_id) {
+      filterCategories = await Category.find({
+        deleted: false,
+        status: "active",
+        parent_id: category.parent_id,
+      }).sort({ position: "desc" });
+    } else {
+      filterCategories = await Category.find({
+        deleted: false,
+        status: "active",
+        parent_id: category.id,
+      }).sort({ position: "desc" });
+    }
 
     // XỬ LÝ LỌC & SẮP XẾP SẢN PHẨM
     const find = {
-      category_id: category.id,
+      category_id: { $in: allCategoryIds },
       deleted: false,
       status: "active",
     };
@@ -84,12 +110,18 @@ module.exports.list = async (req, res) => {
       };
     }
 
+    // Lấy danh sách thương hiệu thực tế của danh mục này để hiển thị trên bộ lọc
+    const rawBrands = await Product.distinct("brand", {
+      category_id: { $in: allCategoryIds },
+      deleted: false,
+      status: "active",
+    });
+    const availableBrands = rawBrands.filter((b) => b && typeof b === "string" && b.trim() !== "");
 
-    //danh sách sản phẩm
+    // Danh sách sản phẩm
     const productCategory = await Product.find(find).lean();
     const newProductCategory =
       productPriceHelper.priceNewProduct(productCategory);
-    //end danh sách sản phẩm
 
     // Xử lý Sắp xếp (Sort)
     if (req.query.sort) {
@@ -103,16 +135,15 @@ module.exports.list = async (req, res) => {
         );
       }
     } else {
-      // Mặc định sắp xếp theo vị trí
-      newProductCategory.sort((a, b) => b.position - a.position);
+      newProductCategory.sort((a, b) => (b.position || 0) - (a.position || 0));
     }
 
-    //Phân trang
+    // Phân trang
     const countProduct = newProductCategory.length;
     let objectPagination = paginationHelper(
       {
         currentPage: 1,
-        limitItems: 9,
+        limitItems: 12,
       },
       req.query,
       countProduct,
@@ -122,19 +153,21 @@ module.exports.list = async (req, res) => {
       objectPagination.skip,
       objectPagination.skip + objectPagination.limitItems,
     );
-    //hết Phân trang
+
     res.render("client/pages/product-list.pug", {
-      title: "Danh sách sản phẩm",
+      title: category.title || "Danh sách sản phẩm",
       breadcrumb: breadcrumb,
       productCategory: paginatedProducts,
       pagination: objectPagination,
       category: category,
-      allChildCategories: allChildCategories,
+      allChildCategories: filterCategories,
+      availableBrands: availableBrands,
+      totalCount: countProduct,
       queryPrice: req.query.price,
       queryBrand: req.query.brand,
       querySort: req.query.sort,
-      
     });
+
   } else {
     res.redirect(`/`);
   }

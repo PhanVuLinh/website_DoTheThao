@@ -3,110 +3,183 @@ extends ../layouts/default.pug
 block main 
   section.cart-page
     .container
-      .cart-container
-        if(cartDetail.products.length > 0)
-          .cart-box
-            .cart-box__header
-              h2.title Giỏ Hàng
-              a.continue-link(href="/") Quay lại mua hàng <i class="fa-solid fa-angle-right"></i>
-            
-            .cart-list
-              each item in cartDetail.products
-                .cart-item(data-price-new=(item.productInfo ? item.productInfo.priceNew : 0) style="position: relative;")
-                  a.btn-delete(
-                    href=`/cart/delete/${item.product_id}?size=${encodeURIComponent(item.size)}`
-                    style="position: absolute; top: 10px; right: 10px; color: #999; text-decoration: none; font-size: 1.2rem;"
-                  ) 
-                    i.fa-solid.fa-xmark
-                  .cart-item__checkbox
-                    input(type="checkbox" checked)
-                  if item.productInfo
-                    a(href=`/product/detail/${item.productInfo.slug}`)
-                      img.cart-item__img(src=item.productInfo.thumbnail alt=item.productInfo.title)
+      if(cartDetail.products && cartDetail.products.length > 0)
+        .cart-layout-grid
+          // CỘT TRÁI: DANH SÁCH SẢN PHẨM TRONG GIỎ
+          .cart-layout-main
+            .cart-box.cart-items-card
+              .cart-box__header
+                .cart-header-title
+                  h1.title Giỏ Hàng Của Bạn
+                  span.items-count (#{cartDetail.products.length} sản phẩm)
+                a.continue-link(href="/") 
+                  i.fa-solid.fa-arrow-left
+                  span Tiếp tục mua sắm
+              
+              .cart-freeship-banner
+                i.fa-solid.fa-truck-fast
+                span Bạn được <strong>Miễn phí vận chuyển</strong> cho đơn hàng này!
+              
+              .cart-list
+                each item in cartDetail.products
+                  .cart-item(data-price-new=(item.productInfo ? item.productInfo.priceNew : 0))
+                    a.cart-item__delete-btn(
+                      href=`/cart/delete/${item.product_id}?size=${encodeURIComponent(item.size)}`
+                      title="Xóa sản phẩm này"
+                    ) 
+                      i.fa-solid.fa-trash-can
                     
-                    .cart-item__info
-                      a(href=`/product/detail/${item.productInfo.slug}`)
-                        h3.name #{item.productInfo.title}
-                      p.variant Phân loại: #{item.size}
+                    if item.productInfo
+                      a.cart-item__img-link(href=`/product/detail/${item.productInfo.slug}`)
+                        img.cart-item__img(src=item.productInfo.thumbnail alt=item.productInfo.title)
+                      
+                      .cart-item__info
+                        a.cart-item__title(href=`/product/detail/${item.productInfo.slug}`)
+                          h3 #{item.productInfo.title}
+                        .cart-item__meta
+                          span.variant-badge Kích cỡ: #{item.size}
+                          if item.productInfo.brand
+                            span.brand-badge #{item.productInfo.brand}
+                    else
+                      .cart-item__info
+                        h3.cart-item__title Sản phẩm không khả dụng
+                        .cart-item__meta
+                          span.variant-badge Kích cỡ: #{item.size}
+                    
+                    .cart-item__action
+                      .qty-control
+                        button.btn-qty.minus(type="button" aria-label="Giảm số lượng") -
+                        input.qty-input(
+                          type="number" 
+                          name="quantity" 
+                          value=item.quantity 
+                          product-id=item.product_id 
+                          data-size=item.size
+                          min="1"
+                          data-old=item.quantity
+                        )
+                        button.btn-qty.plus(type="button" aria-label="Tăng số lượng") +
+                      .item-price #{item.totalPrice ? item.totalPrice.toLocaleString('vi-VN') : 0} đ
+
+          // CỘT PHẢI: TỔNG KẾT & FORM ĐẶT HÀNG (STICKY)
+          .cart-layout-sidebar
+            .cart-box.cart-checkout-card
+              h2.checkout-title Tóm Tắt Đơn Hàng
+
+              // MÃ GIẢM GIÁ
+              .cart-discount-section
+                label.section-mini-label(for="coupon-input") Mã ưu đãi / Voucher
+                .discount-input-wrap
+                  if cartDetail.coupon && cartDetail.coupon.code
+                    input#coupon-input.coupon-field(type="text" value=cartDetail.coupon.code readonly)
+                    button.btn-apply#btn-apply-coupon(type="button" style="display: none;") Áp dụng
+                    button.btn-cancel-coupon#btn-cancel-coupon(type="button" style="display: block;") Hủy mã
                   else
-                    .cart-item__info
-                      h3.name Sản phẩm không khả dụng
-                      p.variant Phân loại: #{item.size}
+                    input#coupon-input.coupon-field(type="text" placeholder="Nhập mã giảm giá (VD: SALE10)")
+                    button.btn-apply#btn-apply-coupon(type="button" style="display: block;") Áp dụng
+                    button.btn-cancel-coupon#btn-cancel-coupon(type="button" style="display: none;") Hủy mã
 
+              // TỔNG TIỀN CHI TIẾT
+              .cart-summary 
+                input#subtotal-raw(type="hidden" value=cartDetail.totalPrice)
+                .summary-row
+                  span.label Tạm tính:
+                  span.value.cart-total #{cartDetail.totalPrice.toLocaleString('vi-VN')} đ
+                
+                .summary-row#discount-row(
+                  style=(cartDetail.discountAmount > 0 ? "display: flex;" : "display: none;")
+                  data-percent=(cartDetail.couponInfo ? cartDetail.couponInfo.discountPercentage : 0)
+                  data-max=(cartDetail.couponInfo ? cartDetail.couponInfo.maxDiscountAmount : 0)
+                )
+                  span.label Giảm giá:
+                  span#discount-val.value.text-discount - #{cartDetail.discountAmount ? cartDetail.discountAmount.toLocaleString('vi-VN') : 0} đ
+                
+                .summary-row
+                  span.label Phí giao hàng:
+                  span.value.text-freeship Miễn phí
+                
+                .summary-divider
+                
+                .summary-row.total-row
+                  span.label Tổng thanh toán:
+                  strong.total-amount
+                    span#total-val.cart-total #{cartDetail.totalPayment ? cartDetail.totalPayment.toLocaleString('vi-VN') : cartDetail.totalPrice.toLocaleString('vi-VN')} đ
+
+              // FORM GIAO HÀNG & PHƯƠNG THỨC THANH TOÁN
+              .checkout-details-section
+                h3.checkout-subheading Thông Tin Nhận Hàng
+                form.checkout-form(action="/order/create" method="POST")
+                  .form-group
+                    label(for="fullName") Họ và tên người nhận <span class="required">*</span>
+                    input.form-control#fullName(type="text" name="fullName" placeholder="Ví dụ: Nguyễn Văn A" value=oldData.fullName || "" required)
                   
-                  .cart-item__action
-                    .qty-control
-                      button.btn-qty.minus -
-                      input.qty-input(
-                        type="number" 
-                        name="quantity" 
-                        value=item.quantity 
-                        product-id=item.product_id 
-                        data-size=item.size
-                        min="1"
-                        data-old=item.quantity
-                      )
-                      button.btn-qty.plus +
-                    .item-price #{item.totalPrice ? item.totalPrice.toLocaleString('vi-VN') : 0} đ
+                  .form-group
+                    label(for="phone") Số điện thoại <span class="required">*</span>
+                    input.form-control#phone(type="tel" name="phone" placeholder="Ví dụ: 0912345678" value=oldData.phone || "" required)
+                  
+                  .form-group
+                    label(for="address") Địa chỉ giao hàng chi tiết <span class="required">*</span>
+                    input.form-control#address(type="text" name="address" placeholder="Số nhà, tên đường, phường/xã, quận/huyện..." value=oldData.address || "" required)
+                  
+                  .form-group
+                    label(for="note") Ghi chú đơn hàng (Tùy chọn)
+                    textarea.form-control#note(name="note" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao..." rows="2")= oldData.note || ""
+                  
+                  .payment-methods-section
+                    h4.payment-label Phương thức thanh toán
+                    .payment-grid
+                      label.payment-card
+                        input(type="radio" name="paymentMethod" value="cod" checked)
+                        .payment-card__content
+                          .payment-icon
+                            i.fa-solid.fa-money-bill-wave
+                          .payment-text
+                            strong Thanh toán khi nhận hàng (COD)
+                            span Nhận hàng kiểm tra rồi mới thanh toán
+                      
+                      label.payment-card
+                        input(type="radio" name="paymentMethod" value="zaloPay" checked=(oldData.paymentMethod === "zaloPay"))
+                        .payment-card__content
+                          .payment-icon.icon-zalopay
+                            i.fa-solid.fa-wallet
+                          .payment-text
+                            strong Ví điện tử ZaloPay
+                            span Quét mã QR tiện lợi & an toàn
+                      
+                      label.payment-card
+                        input(type="radio" name="paymentMethod" value="vnPay" checked=(oldData.paymentMethod === "vnPay"))
+                        .payment-card__content
+                          .payment-icon.icon-vnpay
+                            i.fa-solid.fa-qrcode
+                          .payment-text
+                            strong Cổng VNPay / QR Code
+                            span Hỗ trợ tất cả ứng dụng ngân hàng
+                      
+                      label.payment-card
+                        input(type="radio" name="paymentMethod" value="momo" checked=(oldData.paymentMethod === "momo"))
+                        .payment-card__content
+                          .payment-icon.icon-momo
+                            i.fa-solid.fa-mobile-screen-button
+                          .payment-text
+                            strong Ví MoMo
+                            span Thanh toán tức thì qua ứng dụng MoMo
 
-            .cart-discount-row
-              .discount-input-wrap
-                if cartDetail.coupon && cartDetail.coupon.code
-                  input#coupon-input(type="text" value=cartDetail.coupon.code readonly)
-                  button.btn-apply#btn-apply-coupon(type="button" style="display: none;") Dùng Mã
-                  button#btn-cancel-coupon(type="button" style="display: block; background: #dc3545; color: white; border: none; padding: 0 20px; border-radius: 0 6px 6px 0; font-weight: 700; cursor: pointer;") Hủy
-                else
-                  input#coupon-input(type="text" placeholder="Nhập mã giảm giá")
-                  button.btn-apply#btn-apply-coupon(type="button" style="display: block;") Dùng Mã
-                  button#btn-cancel-coupon(type="button" style="display: none; background: #dc3545; color: white; border: none; padding: 0 20px; border-radius: 0 6px 6px 0; font-weight: 700; cursor: pointer;") Hủy
-            .cart-summary 
-              input#subtotal-raw(type="hidden" value=cartDetail.totalPrice)
-              .summary-row
-                span Tạm tính:
-                .inner-price
-                  span.cart-total #{cartDetail.totalPrice.toLocaleString('vi-VN')} đ
-              
-              .summary-row#discount-row(
-                style=(cartDetail.discountAmount > 0 ? "display: flex;" : "display: none;")
-                data-percent=(cartDetail.couponInfo ? cartDetail.couponInfo.discountPercentage : 0)
-                data-max=(cartDetail.couponInfo ? cartDetail.couponInfo.maxDiscountAmount : 0)
-              )
-                span Giảm:
-                span#discount-val(style="color: red;") - #{cartDetail.discountAmount ? cartDetail.discountAmount.toLocaleString('vi-VN') : 0} đ
-              
-              .summary-row.total
-                span Thanh toán:
-                strong.price-red
-                  span#total-val.cart-total #{cartDetail.totalPayment ? cartDetail.totalPayment.toLocaleString('vi-VN') : cartDetail.totalPrice.toLocaleString('vi-VN')} đ
-          .cart-box.checkout-box
-            h2.title Thông Tin Giao Hàng
-            form.checkout-form(action="/order/create" method="POST")
-              .form-grid
-                .form-group
-                  input.form-control(type="text" name="fullName" placeholder="Họ và tên *" value=oldData.fullName || "")
-                .form-group
-                  input.form-control(type="text" name="phone" placeholder="Số điện thoại *" value=oldData.phone || "")
-              .form-group
-                input.form-control(type="text" name="address" placeholder="Địa chỉ nhận hàng chi tiết *" value=oldData.address || "")
-              .form-group
-                textarea.form-control(name="note" placeholder="Ghi chú thêm (Tùy chọn)" rows="3")
-              
-              h3.subtitle Chọn phương thức thanh toán
-              .payment-methods
-                label.payment-option
-                  input(type="radio" name="paymentMethod" value="cod" checked)
-                  span Thanh toán tiền mặt khi nhận hàng (COD)
-                label.payment-option
-                  input(type="radio" name="paymentMethod" value="zaloPay" checked=(oldData.paymentMethod === "zaloPay"))
-                  span ZaloPay
-                label.payment-option
-                  input(type="radio" name="paymentMethod" value="vnPay" checked=(oldData.paymentMethod === "vnPay"))
-                  span VNPay
-                label.payment-option
-                  input(type="radio" name="paymentMethod" value="momo" checked=(oldData.paymentMethod === "momo"))
-                  span Ví MoMo
+                  button.btn-submit-order(type="submit")
+                    i.fa-solid.fa-lock
+                    | TIẾN HÀNH ĐẶT HÀNG
+                  
+                  .checkout-guarantee
+                    i.fa-solid.fa-shield-halved
+                    span Bảo mật thông tin thanh toán & cam kết chính hãng 100%
 
-              button.btn-submit-order(type="submit") ĐẶT HÀNG
-        else 
-          p Chưa có sản phẩm trong giỏ hàng 
+      else 
+        .empty-cart-view
+          .empty-cart-card
+            .empty-cart-icon
+              i.fa-solid.fa-bag-shopping
+            h2.empty-cart-title Giỏ hàng của bạn đang trống!
+            p.empty-cart-subtitle Có vẻ như bạn chưa chọn được sản phẩm ưng ý. Hãy khám phá ngay các mẫu giày đá bóng, quần áo thể thao chính hãng mới nhất.
+            a.btn-explore-now(href="/category/bong-da")
+              i.fa-solid.fa-arrow-right
+              | Khám Phá Sản Phẩm Ngay
   script(src="/client/assets/js/cart.js")

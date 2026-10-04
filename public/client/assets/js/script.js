@@ -257,15 +257,17 @@ if (sortSelect) {
 }
 //End sắp xếp sản phẩm
 
-//Chặn click danh mục cha
+//Chặn click danh mục cha trên mobile để mở dropdown
 document.querySelectorAll(".nav-links li").forEach((li) => {
   const link = li.querySelector("a");
   const dropdown = li.querySelector(".dropdown");
 
   if (dropdown && link) {
     link.addEventListener("click", (e) => {
-      e.preventDefault();
-      li.classList.toggle("open");
+      if (window.innerWidth <= 992) {
+        e.preventDefault();
+        li.classList.toggle("open");
+      }
     });
   }
 });

@@ -50,30 +50,39 @@ nav.navbar
         //- li
         //-   a(href="") Liên Hệ
 
-    .nav-actions
-      button.action-btn.search-btn-mobile
-        i.fa-solid.fa-magnifying-glass
+    form.header-search(action="/search" method="GET")
+      i.fa-solid.fa-magnifying-glass.header-search__icon
+      input(type="text" name="keyword" placeholder="Tìm kiếm sản phẩm, thương hiệu..." value=(keyword || "") autocomplete="off")
+      button.header-search__btn(type="submit" aria-label="Tìm kiếm")
+        i.fa-solid.fa-arrow-right
 
-      a(href="/cart").action-btn
+    .nav-actions
+      a(href="/cart" title="Giỏ hàng").action-btn.cart-action-btn
         i.fa-solid.fa-cart-shopping
-        span(class = `action-badge ${miniCart > 0 ? 'badge-red' : ''}` )  #{miniCart > 0 ? miniCart : ''}
+        if (miniCart > 0)
+          span.action-badge.badge-red #{miniCart}
 
       if (user) 
-        .action-btn.user-logged-in
-          i.fa-solid.fa-user-check
+        .user-profile-menu
+          button.user-pill-btn(type="button")
+            i.fa-solid.fa-circle-user
+            span.user-name #{user.fullName ? user.fullName.split(' ').slice(-1)[0] : 'Tài khoản'}
+            i.fa-solid.fa-chevron-down.user-chevron
           .user-dropdown
             .user-dropdown-header
+              span.user-greeting Xin chào,
               strong #{user.fullName}
-            a(href="/user/profile") 
+            a.user-dropdown-item(href="/user/profile") 
               i.fa-regular.fa-id-card
               | Thông tin tài khoản
-            a(href="/user/order-history") 
+            a.user-dropdown-item(href="/user/order-history") 
               i.fa-solid.fa-box-open
               | Đơn hàng của tôi
             hr
-            a(href="/auth/logout").text-danger
+            a.user-dropdown-item.text-danger(href="/auth/logout")
               i.fa-solid.fa-arrow-right-from-bracket
               | Đăng xuất
       else
-        a(href="/auth/login").action-btn
+        a.auth-pill-btn(href="/auth/login")
           i.fa-regular.fa-user
+          span Đăng nhập
