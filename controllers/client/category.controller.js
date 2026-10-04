@@ -75,11 +75,15 @@ module.exports.list = async (req, res) => {
 
     // Lọc theo Thương Hiệu
     if (req.query.brand) {
+      const regexHelper = require("../../helpers/regex.helper");
       const brands = Array.isArray(req.query.brand)
         ? req.query.brand
         : [req.query.brand];
-      find.brand = { $in: brands.map((b) => new RegExp(b, "i")) };
+      find.brand = {
+        $in: brands.map((b) => new RegExp(regexHelper.escapeRegex(String(b).trim()), "i")),
+      };
     }
+
 
     //danh sách sản phẩm
     const productCategory = await Product.find(find).lean();

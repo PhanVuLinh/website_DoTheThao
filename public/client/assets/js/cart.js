@@ -76,7 +76,8 @@ const handleQtyChange = () => {
   inputsQuantity.forEach((input) => {
     input.addEventListener("input", () => {
       const productId = input.getAttribute("product-id");
-      const quantity = parseInt(input.value);
+      const size = input.getAttribute("data-size") || "";
+      let quantity = parseInt(input.value);
 
       if (isNaN(quantity) || quantity < 1) {
         quantity = 1;
@@ -84,28 +85,27 @@ const handleQtyChange = () => {
       }
 
       const cartItem = input.closest(".cart-item");
-      const priceNew = parseInt(cartItem.getAttribute("data-price-new"));
+      const priceNew = parseInt(cartItem.getAttribute("data-price-new")) || 0;
 
       const itemPrice = cartItem.querySelector(".item-price");
       const total = priceNew * quantity;
-      itemPrice.innerText = total.toLocaleString("vi-VN") + " đ";
+      if (itemPrice) {
+        itemPrice.innerText = total.toLocaleString("vi-VN") + " đ";
+      }
 
       updateCartTotal();
 
-      fetch(`/cart/update/${productId}/${quantity}`);
-      fetch(`/cart/update/${productId}/${quantity}`)
+      fetch(`/cart/update/${productId}/${quantity}?size=${encodeURIComponent(size)}`)
         .then((res) => res.json())
         .then((data) => {
           if (!data.success) {
             alert(data.message);
             const oldValue = input.getAttribute("data-old");
             input.value = oldValue;
-            const total = priceNew * oldValue;
-            itemPrice.innerText = total.toLocaleString("vi-VN") + " đ";
-
-            cartItem.querySelector(".item-price").innerText =
-              total.toLocaleString("vi-VN") + " đ";
-
+            const fallbackTotal = priceNew * parseInt(oldValue);
+            if (itemPrice) {
+              itemPrice.innerText = fallbackTotal.toLocaleString("vi-VN") + " đ";
+            }
             updateCartTotal();
             return;
           }
@@ -116,6 +116,7 @@ const handleQtyChange = () => {
     });
   });
 };
+
 
 handleQtyChange();
 

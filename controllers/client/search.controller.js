@@ -1,5 +1,7 @@
 const slugify = require("slugify");
 const Product = require("../../models/product.model");
+const regexHelper = require("../../helpers/regex.helper");
+
 module.exports.searchList = async (req, res) => {
   const find = {
     deleted: false,
@@ -7,15 +9,16 @@ module.exports.searchList = async (req, res) => {
   };
 
   if (req.query.keyword) {
-    const keyword = req.query.keyword;
-    const regex = new RegExp(keyword, "i");
+    const rawKeyword = (req.query.keyword || "").trim();
+    const safeKeyword = regexHelper.escapeRegex(rawKeyword);
+    const regex = new RegExp(safeKeyword, "i");
 
-    const slugKeyword = slugify(keyword, {
+    const slugKeyword = slugify(rawKeyword, {
       lower: true,
       locale: "vi",
       strict: true,
     });
-    const slugRegex = new RegExp(slugKeyword, "i");
+    const slugRegex = new RegExp(regexHelper.escapeRegex(slugKeyword), "i");
     find.$or = [{ title: regex }, { slug: slugRegex }];
   }
 
@@ -33,9 +36,12 @@ module.exports.searchList = async (req, res) => {
     const brands = Array.isArray(req.query.brand)
       ? req.query.brand
       : [req.query.brand];
-    find.brand = { $in: brands.map((b) => new RegExp(b, "i")) };
+    find.brand = {
+      $in: brands.map((b) => new RegExp(regexHelper.escapeRegex(String(b).trim()), "i")),
+    };
   }
   const productList = await Product.find(find).sort({ position: "desc" });
+
 
   res.render("client/pages/search.pug", {
     title: "Kết quả tìm kiếm",

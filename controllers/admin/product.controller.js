@@ -7,6 +7,7 @@ const variableCongfig = require("../../config/variable");
 
 const categoryHelper = require("../../helpers/category.helper");
 const paginationHelper = require("../../helpers/pagination.helper");
+const regexHelper = require("../../helpers/regex.helper");
 
 module.exports.list = async (req, res) => {
   let find = {
@@ -56,13 +57,15 @@ module.exports.list = async (req, res) => {
 
   //Tìm kiếm
   if (req.query.keyword) {
-    const keyword = slugify(req.query.keyword, {
+    const rawKeyword = (req.query.keyword || "").trim();
+    const keyword = slugify(rawKeyword, {
       lower: true,
       locale: "vi",
       strict: true,
     });
-    const keywordRegex = new RegExp(keyword);
-    find.slug = keywordRegex;
+    const safeRegex = new RegExp(regexHelper.escapeRegex(rawKeyword), "i");
+    const slugRegex = new RegExp(regexHelper.escapeRegex(keyword), "i");
+    find.$or = [{ title: safeRegex }, { slug: slugRegex }];
   }
 
   //Phân trang
@@ -299,13 +302,15 @@ module.exports.trash = async (req, res) => {
   };
   //Tìm kiếm
   if (req.query.keyword) {
-    const keyword = slugify(req.query.keyword, {
+    const rawKeyword = (req.query.keyword || "").trim();
+    const keyword = slugify(rawKeyword, {
       lower: true,
       locale: "vi",
       strict: true,
     });
-    const keywordRegex = new RegExp(keyword);
-    find.slug = keywordRegex;
+    const safeRegex = new RegExp(regexHelper.escapeRegex(rawKeyword), "i");
+    const slugRegex = new RegExp(regexHelper.escapeRegex(keyword), "i");
+    find.$or = [{ title: safeRegex }, { slug: slugRegex }];
   }
 
   //Phân trang

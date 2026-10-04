@@ -2,110 +2,143 @@ const moment = require("moment");
 const Order = require("../../models/order.model");
 const Product = require("../../models/product.model");
 const Account = require("../../models/account.model");
+const Coupon = require("../../models/coupon.model");
 
 const variableCongfig = require("../../config/variable");
 const paginationHelper = require("../../helpers/pagination.helper");
+const regexHelper = require("../../helpers/regex.helper");
 
 module.exports.list = async (req, res) => {
-  const find = {
-    deleted: false,
-  };
-  //lọc theo trạng thái
-  if (req.query.status) {
-    find.status = req.query.status;
-  }
-  //lọc theo ngày tạo
-  const dateFilter = {};
-  if (req.query.startDate) {
-    const startDate = moment(req.query.startDate).startOf("date").toDate();
-    dateFilter.$gte = startDate;
-  }
-  if (req.query.endDate) {
-    const endDate = moment(req.query.endDate).endOf("date").toDate();
-    dateFilter.$lte = endDate;
-  }
-  if (Object.keys(dateFilter).length > 0) {
-    find.createdAt = dateFilter;
-  }
-  //lọc theo trạng thái thanh toán
-  if (req.query.payment_status) {
-    find.paymentStatus = req.query.payment_status;
-  }
-  //lọc theo phương thức thanh toán
-  if (req.query.payment_method) {
-    find.paymentMethod = req.query.payment_method;
-  }
-  //Tìm kiếm
-  if (req.query.keyword) {
-    const keyword = req.query.keyword.trim();
-    const regexKeyword = new RegExp(keyword, "i");
-    find.$or = [
-      { orderCode: regexKeyword },
-      { fullName: regexKeyword },
-      { phone: regexKeyword },
-    ];
-  }
+  try {
+    const find = {
+      deleted: false,
+    };
+    // Lọc theo trạng thái
+    if (req.query.status) {
+      find.status = req.query.status;
+    }
+    // Lọc theo ngày tạo
+    const dateFilter = {};
+    if (req.query.startDate) {
+      const startDate = moment(req.query.startDate).startOf("date").toDate();
+      dateFilter.$gte = startDate;
+    }
+    if (req.query.endDate) {
+      const endDate = moment(req.query.endDate).endOf("date").toDate();
+      dateFilter.$lte = endDate;
+    }
+    if (Object.keys(dateFilter).length > 0) {
+      find.createdAt = dateFilter;
+    }
+    // Lọc theo trạng thái thanh toán
+    if (req.query.payment_status) {
+      find.paymentStatus = req.query.payment_status;
+    }
+    // Lọc theo phương thức thanh toán
+    if (req.query.payment_method) {
+      find.paymentMethod = req.query.payment_method;
+    }
+    // Tìm kiếm an toàn
+    if (req.query.keyword) {
+      const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
+      const regexKeyword = new RegExp(keyword, "i");
+      find.$or = [
+        { orderCode: regexKeyword },
+        { fullName: regexKeyword },
+        { phone: regexKeyword },
+      ];
+    }
 
-  //Phân trang
-  const countOrder = await Order.countDocuments(find);
-  let objectPagination = paginationHelper(
-    {
-      currentPage: 1,
-      limitItems: 5,
-    },
-    req.query,
-    countOrder,
-  );
-  //hết Phân trang
+    // Phân trang
+    const countOrder = await Order.countDocuments(find);
+    let objectPagination = paginationHelper(
+      {
+        currentPage: 1,
+        limitItems: 10,
+      },
+      req.query,
+      countOrder,
+    );
 
-  const orderList = await Order.find(find)
-    .sort({ createdAt: "desc" })
-    .limit(objectPagination.limitItems)
-    .skip(objectPagination.skip);
+    const orderList = await Order.find(find)
+      .sort({ createdAt: "desc" })
+      .limit(objectPagination.limitItems)
+      .skip(objectPagination.skip)
+      .lean();
 
-  for (const order of orderList) {
-    if (order.products && order.products.length > 0) {
-      for (const item of order.products) {
-        const infoProduct = await Product.findOne({
-          _id: item.product_id,
-          deleted: false,
+    // Tối ưu N+1: Thu thập tất cả product_ids để query 1 lần
+    const allProductIds = [];
+    orderList.forEach((order) => {
+      if (order.products && order.products.length > 0) {
+        order.products.forEach((p) => {
+          if (p.product_id) allProductIds.push(p.product_id);
         });
-        if (infoProduct) {
-          const priceNewQuantity = item.priceNew * item.quantity;
-          item.priceNewQuantity = priceNewQuantity;
-          item.title = infoProduct.title;
-          item.slug = infoProduct.slug;
-          item.thumbnail = infoProduct.thumbnail;
+      }
+    });
+
+    const products = await Product.find({
+      _id: { $in: allProductIds },
+    }).select("title slug thumbnail");
+
+    const productMap = {};
+    products.forEach((p) => {
+      productMap[p._id.toString()] = p;
+    });
+
+    for (const order of orderList) {
+      if (order.products && order.products.length > 0) {
+        for (const item of order.products) {
+          const infoProduct = productMap[item.product_id?.toString()];
+          if (infoProduct) {
+            item.priceNewQuantity = (item.priceNew || 0) * (item.quantity || 1);
+            item.title = infoProduct.title;
+            item.slug = infoProduct.slug;
+            item.thumbnail = infoProduct.thumbnail;
+          }
         }
       }
 
-      order.paymentMethodName = variableCongfig.paymentMethod.find(
+      const pMethod = variableCongfig.paymentMethod.find(
         (item) => item.value === order.paymentMethod,
-      ).label;
-      order.paymentStatusName = variableCongfig.paymentStatus.find(
+      );
+      order.paymentMethodName = pMethod ? pMethod.label : order.paymentMethod;
+
+      const pStatus = variableCongfig.paymentStatus.find(
         (item) => item.value === order.paymentStatus,
-      ).label;
-      order.statusName = variableCongfig.orderStatus.find(
+      );
+      order.paymentStatusName = pStatus ? pStatus.label : order.paymentStatus;
+
+      const oStatus = variableCongfig.orderStatus.find(
         (item) => item.value === order.status,
-      ).label;
+      );
+      order.statusName = oStatus ? oStatus.label : order.status;
 
       order.createdAtTime = moment(order.createdAt).format("HH:mm");
       order.createdAtDate = moment(order.createdAt).format("DD/MM/YYYY");
     }
-  }
 
-  res.render("admin/pages/order-list.pug", {
-    title: "Danh sách đơn hàng",
-    orderList: orderList,
-    pagination: objectPagination,
-  });
+    res.render("admin/pages/order-list.pug", {
+      title: "Danh sách đơn hàng",
+      orderList: orderList,
+      pagination: objectPagination,
+    });
+  } catch (error) {
+    console.error("Order list error:", error);
+    req.flash("error", "Lỗi hiển thị danh sách đơn hàng!");
+    res.redirect(`/${variableCongfig.pathAdmin}/dashboard`);
+  }
 };
 
 module.exports.changeMulti = async (req, res) => {
   try {
     const type = req.body.type;
-    const ids = req.body.ids.split(",").map((id) => id.trim());
+    const ids = (req.body.ids || "").split(",").map((id) => id.trim()).filter(Boolean);
     const updatedBy = req.account.id;
+
+    if (!ids.length) {
+      req.flash("error", "Không có đơn hàng nào được chọn!");
+      return res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/list`);
+    }
 
     switch (type) {
       case "shipping":
@@ -121,17 +154,44 @@ module.exports.changeMulti = async (req, res) => {
         req.flash("success", `Đã cập nhật ${ids.length} đơn hàng!`);
         break;
 
-      case "cancel":
+      case "cancel": {
+        // Tìm các đơn chưa cancel để hoàn lại kho và coupon
+        const ordersToCancel = await Order.find({
+          _id: { $in: ids },
+          status: { $ne: "cancel" },
+        });
+
+        for (const order of ordersToCancel) {
+          if (order.products && order.products.length > 0) {
+            for (const item of order.products) {
+              await Product.updateOne(
+                { _id: item.product_id, "sizes.size": item.size },
+                { $inc: { "sizes.$.stock": item.quantity } },
+              );
+            }
+          }
+          if (order.coupon && order.coupon.code) {
+            await Coupon.updateOne(
+              { code: order.coupon.code },
+              {
+                $inc: { quantity: 1 },
+                $pull: { usedBy: order.user_id },
+              },
+            );
+          }
+        }
+
         await Order.updateMany(
           { _id: { $in: ids } },
           {
-            status: type,
+            status: "cancel",
             updatedBy: updatedBy,
             updatedAt: new Date(),
           },
         );
-        req.flash("success", `Đã cập nhật ${ids.length} đơn hàng!`);
+        req.flash("success", `Đã hủy ${ids.length} đơn hàng và hoàn trả tồn kho!`);
         break;
+      }
 
       case "delete-all":
         await Order.updateMany(
@@ -142,7 +202,7 @@ module.exports.changeMulti = async (req, res) => {
             deletedAt: new Date(),
           },
         );
-        req.flash("success", `Đã hủy ${ids.length} đơn hàng!`);
+        req.flash("success", `Đã xóa ${ids.length} đơn hàng vào thùng rác!`);
         break;
 
       default:
@@ -150,11 +210,11 @@ module.exports.changeMulti = async (req, res) => {
         break;
     }
 
-    return res.redirect(req.get("Referer"));
+    return res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/list`);
   } catch (error) {
-    console.log(error);
+    console.error("Order changeMulti error:", error);
     req.flash("error", "Có lỗi xảy ra!");
-    return res.redirect(req.get("Referer"));
+    return res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/list`);
   }
 };
 
@@ -165,6 +225,11 @@ module.exports.edit = async (req, res) => {
       _id: id,
       deleted: false,
     });
+
+    if (!orderDetail) {
+      req.flash("error", "Đơn hàng không tồn tại!");
+      return res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
+    }
 
     for (const item of orderDetail.products) {
       const infoProduct = await Product.findOne({
@@ -180,9 +245,10 @@ module.exports.edit = async (req, res) => {
       }
     }
 
-    orderDetail.paymentMethodName = variableCongfig.paymentMethod.find(
+    const pMethod = variableCongfig.paymentMethod.find(
       (item) => item.value === orderDetail.paymentMethod,
-    ).label;
+    );
+    orderDetail.paymentMethodName = pMethod ? pMethod.label : orderDetail.paymentMethod;
 
     orderDetail.createdAtFormat = moment(orderDetail.createdAt).format(
       "HH:mm - DD/MM/YYYY",
@@ -195,7 +261,8 @@ module.exports.edit = async (req, res) => {
       orderStatus: variableCongfig.orderStatus,
     });
   } catch (error) {
-    req.flash("error", "Không tồn tài");
+    console.error("Order edit error:", error);
+    req.flash("error", "Đơn hàng không tồn tại");
     res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
   }
 };
@@ -208,19 +275,51 @@ module.exports.editPatch = async (req, res) => {
       deleted: false,
     });
     if (!order) {
+      req.flash("error", "Đơn hàng không tồn tại!");
       return res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
     }
+
+    const { status, paymentStatus } = req.body;
+    const updateData = {};
+    if (status) updateData.status = status;
+    if (paymentStatus) updateData.paymentStatus = paymentStatus;
+    updateData.updatedBy = req.account.id;
+    updateData.updatedAt = new Date();
+
+    // Nếu chuyển trạng thái sang cancel và trước đó chưa cancel -> hoàn trả tồn kho & coupon
+    if (status === "cancel" && order.status !== "cancel") {
+      if (order.products && order.products.length > 0) {
+        for (const item of order.products) {
+          await Product.updateOne(
+            { _id: item.product_id, "sizes.size": item.size },
+            { $inc: { "sizes.$.stock": item.quantity } },
+          );
+        }
+      }
+      if (order.coupon && order.coupon.code) {
+        await Coupon.updateOne(
+          { code: order.coupon.code },
+          {
+            $inc: { quantity: 1 },
+            $pull: { usedBy: order.user_id },
+          },
+        );
+      }
+    }
+
     await Order.updateOne(
       {
         _id: id,
         deleted: false,
       },
-      req.body,
+      updateData,
     );
+
     req.flash("success", "Cập nhật trạng thái đơn hàng thành công");
-    res.redirect(req.get("Referer"));
+    res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/list`);
   } catch (error) {
-    req.flash("error", "Không tồn tài");
+    console.error("Order editPatch error:", error);
+    req.flash("error", "Có lỗi xảy ra khi cập nhật đơn hàng!");
     res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
   }
 };
@@ -237,87 +336,121 @@ module.exports.delete = async (req, res) => {
       },
     );
     req.flash("success", "Xóa đơn hàng thành công");
-    res.redirect(req.get("Referer"));
+    res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/list`);
   } catch (error) {
-    req.flash("error", "Không tồn tài");
+    console.error("Order delete error:", error);
+    req.flash("error", "Không tồn tại đơn hàng!");
     res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
   }
 };
 
 module.exports.trash = async (req, res) => {
-  const find = {
-    deleted: true,
-  };
+  try {
+    const find = {
+      deleted: true,
+    };
 
-  //Tìm kiếm
-  if (req.query.keyword) {
-    const keyword = req.query.keyword.trim();
-    const regexKeyword = new RegExp(keyword, "i");
-    find.$or = [
-      { orderCode: regexKeyword },
-      { fullName: regexKeyword },
-      { phone: regexKeyword },
-    ];
-  }
-
-  //Phân trang
-  const countOrder = await Order.countDocuments(find);
-  let objectPagination = paginationHelper(
-    {
-      currentPage: 1,
-      limitItems: 5,
-    },
-    req.query,
-    countOrder,
-  );
-  //hết Phân trang
-
-  const orderList = await Order.find(find)
-    .sort({ deletedAt: "desc" })
-    .limit(objectPagination.limitItems)
-    .skip(objectPagination.skip);
-
-  for (const order of orderList) {
-    for (const item of order.products) {
-      const infoProduct = await Product.findOne({
-        _id: item.product_id,
-        deleted: false,
-      });
-
-      if (infoProduct) {
-        item.title = infoProduct.title;
-        item.thumbnail = infoProduct.thumbnail;
-
-        item.priceNewQuantity = item.priceNew * item.quantity;
-      }
-    }
-    if (order.deletedBy) {
-      const infoAccountDeleted = await Account.findOne({
-        _id: order.deletedBy,
-      });
-      order.deletedByFullName = infoAccountDeleted?.fullName;
+    // Tìm kiếm
+    if (req.query.keyword) {
+      const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
+      const regexKeyword = new RegExp(keyword, "i");
+      find.$or = [
+        { orderCode: regexKeyword },
+        { fullName: regexKeyword },
+        { phone: regexKeyword },
+      ];
     }
 
-    order.paymentMethodName = variableCongfig.paymentMethod.find(
-      (item) => item.value === order.paymentMethod,
-    )?.label;
-    order.paymentStatusName = variableCongfig.paymentStatus.find(
-      (item) => item.value === order.paymentStatus,
-    )?.label;
-    order.statusName = variableCongfig.orderStatus.find(
-      (item) => item.value === order.status,
-    )?.label;
-
-    order.deletedAtFormat = moment(order.deletedAt).format(
-      "HH:mm - DD/MM/YYYY",
+    // Phân trang
+    const countOrder = await Order.countDocuments(find);
+    let objectPagination = paginationHelper(
+      {
+        currentPage: 1,
+        limitItems: 10,
+      },
+      req.query,
+      countOrder,
     );
-  }
 
-  res.render("admin/pages/order-trash.pug", {
-    title: "Thùng rác đơn hàng",
-    orderList: orderList,
-    pagination: objectPagination,
-  });
+    const orderList = await Order.find(find)
+      .sort({ deletedAt: "desc" })
+      .limit(objectPagination.limitItems)
+      .skip(objectPagination.skip)
+      .lean();
+
+    // Tối ưu batch query cho trash
+    const allProductIds = [];
+    const allAccountIds = [];
+    orderList.forEach((order) => {
+      if (order.products) {
+        order.products.forEach((p) => {
+          if (p.product_id) allProductIds.push(p.product_id);
+        });
+      }
+      if (order.deletedBy) allAccountIds.push(order.deletedBy);
+    });
+
+    const [products, accounts] = await Promise.all([
+      Product.find({ _id: { $in: allProductIds } }).select("title thumbnail"),
+      Account.find({ _id: { $in: allAccountIds } }).select("fullName"),
+    ]);
+
+    const productMap = {};
+    products.forEach((p) => {
+      productMap[p._id.toString()] = p;
+    });
+
+    const accountMap = {};
+    accounts.forEach((a) => {
+      accountMap[a._id.toString()] = a;
+    });
+
+    for (const order of orderList) {
+      if (order.products) {
+        for (const item of order.products) {
+          const infoProduct = productMap[item.product_id?.toString()];
+          if (infoProduct) {
+            item.title = infoProduct.title;
+            item.thumbnail = infoProduct.thumbnail;
+            item.priceNewQuantity = (item.priceNew || 0) * (item.quantity || 1);
+          }
+        }
+      }
+      if (order.deletedBy) {
+        const infoAccountDeleted = accountMap[order.deletedBy?.toString()];
+        order.deletedByFullName = infoAccountDeleted?.fullName;
+      }
+
+      const pMethod = variableCongfig.paymentMethod.find(
+        (item) => item.value === order.paymentMethod,
+      );
+      order.paymentMethodName = pMethod?.label || order.paymentMethod;
+
+      const pStatus = variableCongfig.paymentStatus.find(
+        (item) => item.value === order.paymentStatus,
+      );
+      order.paymentStatusName = pStatus?.label || order.paymentStatus;
+
+      const oStatus = variableCongfig.orderStatus.find(
+        (item) => item.value === order.status,
+      );
+      order.statusName = oStatus?.label || order.status;
+
+      order.deletedAtFormat = moment(order.deletedAt).format(
+        "HH:mm - DD/MM/YYYY",
+      );
+    }
+
+    res.render("admin/pages/order-trash.pug", {
+      title: "Thùng rác đơn hàng",
+      orderList: orderList,
+      pagination: objectPagination,
+    });
+  } catch (error) {
+    console.error("Order trash error:", error);
+    req.flash("error", "Lỗi tải thùng rác đơn hàng!");
+    res.redirect(`/${variableCongfig.pathAdmin}/dashboard`);
+  }
 };
 
 module.exports.restore = async (req, res) => {
@@ -330,10 +463,11 @@ module.exports.restore = async (req, res) => {
       },
     );
     req.flash("success", "Khôi phục đơn hàng thành công");
-    res.redirect(req.get("Referer"));
+    res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/trash`);
   } catch (error) {
-    req.flash("error", "Không tồn tài");
-    res.redirect(`/${variableCongfig.pathAdmin}/trash`);
+    console.error("Order restore error:", error);
+    req.flash("error", "Không tồn tại đơn hàng!");
+    res.redirect(`/${variableCongfig.pathAdmin}/order/trash`);
   }
 };
 
@@ -342,18 +476,18 @@ module.exports.deleteDestroy = async (req, res) => {
     const id = req.params.id;
     await Order.deleteOne({ _id: id });
     req.flash("success", "Đã xóa vĩnh viễn đơn hàng thành công");
-    res.redirect(req.get("Referer"));
+    res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/trash`);
   } catch (error) {
-    req.flash("error", "Không tồn tài");
-    res.redirect(`/${variableCongfig.pathAdmin}/trash`);
+    console.error("Order deleteDestroy error:", error);
+    req.flash("error", "Không tồn tại đơn hàng!");
+    res.redirect(`/${variableCongfig.pathAdmin}/order/trash`);
   }
 };
 
 module.exports.changeMultiTrash = async (req, res) => {
   try {
     const type = req.body.type;
-    const ids = req.body.ids.split(", ");
-    const updatedBy = req.account.id;
+    const ids = (req.body.ids || "").split(",").map((s) => s.trim()).filter(Boolean);
 
     switch (type) {
       case "restore-all":
@@ -376,10 +510,11 @@ module.exports.changeMultiTrash = async (req, res) => {
       default:
         break;
     }
-    res.redirect(req.get("Referer"));
+    res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/trash`);
   } catch (error) {
-    req.flash("error", "Không tồn tài");
-    res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
-    res.redirect(req.get("Referer"));
+    console.error("Order changeMultiTrash error:", error);
+    req.flash("error", "Có lỗi xảy ra!");
+    res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/trash`);
   }
 };
+

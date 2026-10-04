@@ -1,10 +1,10 @@
-const md5 = require("md5");
 const moment = require("moment");
 const Account = require("../../models/account.model");
 const Role = require("../../models/role.model");
 const SettingWebsiteInfo = require("../../models/setting-website-info.model");
 const variableCongfig = require("../../config/variable");
 const permissonConfig = require("../../config/permission");
+const passwordHelper = require("../../helpers/password.helper");
 
 const paginationHelper = require("../../helpers/pagination.helper");
 
@@ -187,7 +187,7 @@ module.exports.accountAdminCreatePost = async (req, res) => {
     res.redirect(req.get("Referer"));
   } else {
     const record = new Account(req.body);
-    record.password = md5(record.password);
+    record.password = await passwordHelper.hashPassword(record.password);
     await record.save();
 
     req.flash("success", "Tạo tài khoản thành công");
@@ -228,11 +228,14 @@ module.exports.accountAdminEditPatch = async (req, res) => {
 
     if (emailExist) {
       req.flash("error", "Email đã tồn tại");
-      res.redirect(req.get("Referer"));
+      return res.redirect(req.get("Referer"));
     }
 
-    if (req.body.password) req.body.password = md5(req.body.password);
-    else delete req.body.password;
+    if (req.body.password) {
+      req.body.password = await passwordHelper.hashPassword(req.body.password);
+    } else {
+      delete req.body.password;
+    }
 
     await Account.updateOne({ _id: req.params.id }, req.body);
 
@@ -607,11 +610,10 @@ module.exports.roleDeleteDestroy = async (req, res) => {
   try {
     const id = req.params.id;
     await Role.deleteOne({ _id: id });
-    s;
     req.flash("success", "Đã xóa vĩnh viễn nhóm quyền thành công");
     res.redirect(req.get("Referer"));
   } catch (error) {
-    req.flash("error", "Không tồn tài");
+    req.flash("error", "Không tồn tại");
     res.redirect(`/${variableCongfig.pathAdmin}/setting/role/trash`);
   }
 };
@@ -634,7 +636,7 @@ module.exports.roleChangeMultiTrash = async (req, res) => {
         break;
 
       case "delete-all":
-        await Contact.deleteMany({
+        await Role.deleteMany({
           _id: { $in: ids },
         });
         req.flash("success", `Đã xóa ${ids.length} vĩnh viễn nhóm quyền`);
@@ -645,8 +647,7 @@ module.exports.roleChangeMultiTrash = async (req, res) => {
     }
     res.redirect(req.get("Referer"));
   } catch (error) {
-    req.flash("error", "Không tồn tài");
-    res.redirect(`/${variableCongfig.pathAdmin}/article/list`);
-    res.redirect(req.get("Referer"));
+    req.flash("error", "Không tồn tại hoặc đã xảy ra lỗi");
+    res.redirect(`/${variableCongfig.pathAdmin}/setting/role/trash`);
   }
 };

@@ -11,176 +11,248 @@ const Coupon = require("../../models/coupon.model");
 const generateHelper = require("../../helpers/generate.helper");
 const variableCongfig = require("../../config/variable");
 const sortPayHelper = require("../../helpers/sortPay.helper");
+const jwtHelper = require("../../helpers/jwt.helper");
+
+// Helper lấy user từ JWT / Cookie an toàn
+const getAuthUser = async (req) => {
+  const token = req.cookies.tokenUser || req.cookies.token;
+  if (!token) return null;
+
+  const decoded = jwtHelper.verifyToken(token);
+  if (decoded && decoded.userId) {
+    const user = await User.findOne({ _id: decoded.userId, deleted: false, status: "active" });
+    if (user) return user;
+  }
+  // Fallback token cũ
+  return await User.findOne({ token: token, deleted: false, status: "active" });
+};
 
 module.exports.createPost = async (req, res) => {
   try {
-    if (!req.cookies.token) {
+    const user = await getAuthUser(req);
+    if (!user) {
       req.session.returnTo = "/cart";
       req.flash("error", "Vui lòng đăng nhập để đặt hàng!");
       return res.redirect("/auth/login");
     }
-    const user = await User.findOne({
-      token: req.cookies.token,
-      deleted: false,
-    });
-    if (!user) {
-      req.flash("error", "Tài khoản không tồn tại!");
-      return res.redirect("/auth/login");
-    }
-    req.body.user_id = user.id;
 
-    req.body.orderCode = "DH" + generateHelper.generateOrderCode(10);
     const cartId = req.cookies.cartId;
-    const cart = await Cart.findOne({
-      _id: cartId,
-    });
-    req.body.cartId = cartId;
+    const cart = await Cart.findOne({ _id: cartId });
 
-    const products = [];
-    let subtotalValue = 0;
+    if (!cart || !cart.products || cart.products.length === 0) {
+      req.flash("error", "Giỏ hàng của bạn đang trống!");
+      return res.redirect("/cart");
+    }
 
-    for (const product of cart.products) {
+    // 1. Kiểm tra tồn kho trước khi đặt hàng (Tránh Race Condition & âm kho)
+    for (const item of cart.products) {
       const productInfo = await Product.findOne({
-        _id: product.product_id,
+        _id: item.product_id,
         deleted: false,
-      }).select("price discountPercentage");
+        status: "active",
+      });
 
-      if (productInfo) {
-        const priceNew =
-          productInfo.price * (1 - productInfo.discountPercentage / 100);
-        subtotalValue += priceNew * product.quantity;
-        const objectProduct = {
-          product_id: product.product_id,
-          quantity: product.quantity,
-          size: product.size,
-          price: productInfo.price,
-          discountPercentage: productInfo.discountPercentage,
-          priceNew: priceNew,
-        };
-        products.push(objectProduct);
+      if (!productInfo) {
+        req.flash("error", "Một số sản phẩm trong giỏ không còn tồn tại!");
+        return res.redirect("/cart");
+      }
 
-        //cập nhật tồn kho
-        await Product.updateOne(
-          {
-            _id: product.product_id,
-            "sizes.size": product.size,
-          },
-          { $inc: { "sizes.$.stock": -product.quantity } },
+      const sizeItem = productInfo.sizes?.find((s) => s.size === item.size);
+      if (!sizeItem || sizeItem.stock < item.quantity) {
+        req.flash(
+          "error",
+          `Sản phẩm "${productInfo.title}" (Size ${item.size}) chỉ còn ${sizeItem ? sizeItem.stock : 0} sản phẩm trong kho!`,
         );
+        return res.redirect("/cart");
       }
     }
-    req.body.products = products;
-    //tạm tính
-    req.body.subtotal = subtotalValue;
-    
+
+    // 2. Trừ tồn kho nguyên tử (Atomic Update có điều kiện stock >= quantity)
+    const deductedItems = [];
+    let subtotalValue = 0;
+    const products = [];
+
+    for (const item of cart.products) {
+      const productInfo = await Product.findOne({
+        _id: item.product_id,
+        deleted: false,
+      }).select("price discountPercentage title");
+
+      const priceNew = productInfo.price * (1 - productInfo.discountPercentage / 100);
+      subtotalValue += priceNew * item.quantity;
+
+      // Trừ kho có kiểm tra điều kiện tồn dư
+      const updateResult = await Product.updateOne(
+        {
+          _id: item.product_id,
+          sizes: {
+            $elemMatch: {
+              size: item.size,
+              stock: { $gte: item.quantity },
+            },
+          },
+        },
+        { $inc: { "sizes.$.stock": -item.quantity } },
+      );
+
+      if (updateResult.modifiedCount === 0) {
+        // Rollback lại các sản phẩm đã trừ trước đó trong vòng lặp nếu có sản phẩm bị tranh chấp
+        for (const prev of deductedItems) {
+          await Product.updateOne(
+            { _id: prev.product_id, "sizes.size": prev.size },
+            { $inc: { "sizes.$.stock": prev.quantity } },
+          );
+        }
+        req.flash("error", `Sản phẩm "${productInfo.title}" vừa hết hàng, vui lòng cập nhật lại giỏ!`);
+        return res.redirect("/cart");
+      }
+
+      deductedItems.push(item);
+
+      products.push({
+        product_id: item.product_id,
+        quantity: item.quantity,
+        size: item.size,
+        price: productInfo.price,
+        discountPercentage: productInfo.discountPercentage,
+        priceNew: priceNew,
+      });
+    }
+
+    // 3. Xử lý mã giảm giá (Atomic Check & Update)
     let discountValue = 0;
     let couponRecord = null;
 
     if (cart.coupon && cart.coupon.code) {
-      couponRecord  = await Coupon.findOne({
+      couponRecord = await Coupon.findOne({
         code: cart.coupon.code,
         deleted: false,
         status: "active",
       });
 
-      // Kiểm tra xem khách đã dùng chưa (Bảo vệ an toàn)
       const isUsed =
         couponRecord &&
         couponRecord.usedBy &&
         couponRecord.usedBy.includes(user.id);
 
-      // Nếu mã hợp lệ VÀ chưa dùng
       if (couponRecord && couponRecord.quantity > 0 && !isUsed) {
         let calculatedDiscount = (subtotalValue * couponRecord.discountPercentage) / 100;
-        
-        // 2. So sánh: Chỉ khi nào vượt quá mức tối đa thì mới lấy Max
         if (calculatedDiscount > couponRecord.maxDiscountAmount) {
           discountValue = couponRecord.maxDiscountAmount;
         } else {
-          discountValue = calculatedDiscount; // Còn không thì cứ lấy đúng số tiền %
+          discountValue = calculatedDiscount;
         }
 
-        // 3. Đẩy tên mã vào req.body để Mongoose lưu xuống Database
-        req.body.couponCode = couponRecord.code;
-      } else {
-        discountValue = 0;
+        // Cập nhật lượt dùng coupon nguyên tử
+        const couponUpdate = await Coupon.updateOne(
+          {
+            _id: couponRecord.id,
+            quantity: { $gt: 0 },
+            usedBy: { $ne: user.id },
+          },
+          {
+            $inc: { quantity: -1 },
+            $push: { usedBy: user.id },
+          },
+        );
+
+        if (couponUpdate.modifiedCount > 0) {
+          req.body.couponCode = couponRecord.code;
+        } else {
+          discountValue = 0;
+        }
       }
     }
-    //đã thanh toán đc chỉ còn xử lý lưu code, discount, total và coupee tài khoảng đã dùng 
-    
+
+    // 4. Lưu đơn hàng
+    req.body.user_id = user.id;
+    req.body.orderCode = "DH" + generateHelper.generateOrderCode(10);
+    req.body.cartId = cartId;
+    req.body.products = products;
+    req.body.subtotal = subtotalValue;
     req.body.discount = discountValue;
-    req.body.total = req.body.subtotal - req.body.discount;
-    if (req.body.total < 0) req.body.total = 0;
-    //trạng thái thanh toán
+    req.body.total = Math.max(0, subtotalValue - discountValue);
     req.body.paymentStatus = "unpaid";
-    //trạng thái đơn hàng
     req.body.status = "initial";
 
-    const newRecord = new Order(req.body);
-    await newRecord.save();
+    const newOrder = new Order(req.body);
+    await newOrder.save();
 
-    if (couponRecord && discountValue > 0) {
-      await Coupon.updateOne(
-        { _id: couponRecord.id },
-        {
-          $inc: { quantity: -1 },
-          $push: { usedBy: user.id },
-        },
-      );
-    }
-
+    // 5. Điều hướng theo phương thức thanh toán
     switch (req.body.paymentMethod) {
       case "cod":
         await Cart.updateOne(
           { _id: cartId },
           { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
         );
-        req.flash("success", "Đặt hàng thành công");
-        res.redirect(`/order/success/${newRecord.id}`);
-        break;
+        req.flash("success", "Đặt hàng thành công!");
+        return res.redirect(`/order/success/${newOrder.id}`);
+
       case "zaloPay":
-        res.redirect(`/order/payment-zalopay/${newRecord.id}`);
-        break;
+        return res.redirect(`/order/payment-zalopay/${newOrder.id}`);
+
       case "vnPay":
-        res.redirect(`/order/payment-vnpay/${newRecord.id}`);
-        break;
+        return res.redirect(`/order/payment-vnpay/${newOrder.id}`);
+
       case "momo":
-        res.redirect(`/order/payment-momo/${newRecord.id}`);
-        break;
+      case "bank":
+        req.flash(
+          "error",
+          "Phương thức thanh toán này hiện chưa hỗ trợ trực tuyến, vui lòng chọn COD, ZaloPay hoặc VNPay!",
+        );
+        return res.redirect("/cart");
+
       default:
-        res.redirect("/cart");
-        break;
+        req.flash("error", "Phương thức thanh toán không hợp lệ!");
+        return res.redirect("/cart");
     }
   } catch (error) {
-    req.flash("error", "Đặt hàng không thành công");
-    res.redirect("/");
+    console.error("Order Create Error:", error);
+    req.flash("error", "Đặt hàng không thành công, vui lòng thử lại!");
+    return res.redirect("/cart");
   }
 };
 
 module.exports.orderSuccess = async (req, res) => {
   try {
     const orderId = req.params.orderId;
+    const user = await getAuthUser(req);
+
     const orderDetail = await Order.findOne({
       _id: orderId,
       deleted: false,
     });
-    if (!orderDetail) return res.redirect("/");
 
-    orderDetail.paymentMethodName = variableCongfig.paymentMethod.find(
+    if (!orderDetail) {
+      req.flash("error", "Đơn hàng không tồn tại!");
+      return res.redirect("/");
+    }
+
+    // Phòng chống IDOR: Chỉ chủ sở hữu đơn hàng (hoặc Admin) mới xem được
+    const adminToken = req.cookies.tokenAdmin;
+    const isAdmin = adminToken && jwtHelper.verifyToken(adminToken);
+
+    if (!isAdmin && (!user || orderDetail.user_id !== user.id)) {
+      req.flash("error", "Bạn không có quyền xem thông tin đơn hàng này!");
+      return res.redirect("/");
+    }
+
+    const paymentMethodObj = variableCongfig.paymentMethod.find(
       (item) => item.value === orderDetail.paymentMethod,
-    ).label;
-
-    orderDetail.paymentStatusName = variableCongfig.paymentStatus.find(
-      (item) => item.value === orderDetail.paymentStatus,
-    ).label;
-
-    orderDetail.statusName = variableCongfig.orderStatus.find(
-      (item) => item.value === orderDetail.status,
-    ).label;
-
-    orderDetail.createdAtFormat = moment(orderDetail.createdAt).format(
-      "HH:mm - DD/MM/YYYY",
     );
+    orderDetail.paymentMethodName = paymentMethodObj ? paymentMethodObj.label : orderDetail.paymentMethod;
+
+    const paymentStatusObj = variableCongfig.paymentStatus.find(
+      (item) => item.value === orderDetail.paymentStatus,
+    );
+    orderDetail.paymentStatusName = paymentStatusObj ? paymentStatusObj.label : orderDetail.paymentStatus;
+
+    const orderStatusObj = variableCongfig.orderStatus.find(
+      (item) => item.value === orderDetail.status,
+    );
+    orderDetail.statusName = orderStatusObj ? orderStatusObj.label : orderDetail.status;
+
+    orderDetail.createdAtFormat = moment(orderDetail.createdAt).format("HH:mm - DD/MM/YYYY");
 
     for (const item of orderDetail.products) {
       const infoProduct = await Product.findOne({
@@ -188,8 +260,7 @@ module.exports.orderSuccess = async (req, res) => {
         deleted: false,
       });
       if (infoProduct) {
-        const priceNewQuantity = item.priceNew * item.quantity;
-        item.priceNewQuantity = priceNewQuantity;
+        item.priceNewQuantity = item.priceNew * item.quantity;
         item.title = infoProduct.title;
         item.slug = infoProduct.slug;
         item.thumbnail = infoProduct.thumbnail;
@@ -201,7 +272,8 @@ module.exports.orderSuccess = async (req, res) => {
       orderDetail: orderDetail,
     });
   } catch (error) {
-    req.flash("error", "Không tồn tài");
+    console.error("Order Success Error:", error);
+    req.flash("error", "Đơn hàng không tồn tại!");
     res.redirect("/");
   }
 };
@@ -209,6 +281,8 @@ module.exports.orderSuccess = async (req, res) => {
 module.exports.paymentZalopay = async (req, res) => {
   try {
     const orderId = req.params.orderId;
+    const user = await getAuthUser(req);
+
     const orderDetail = await Order.findOne({
       _id: orderId,
       paymentStatus: "unpaid",
@@ -220,6 +294,11 @@ module.exports.paymentZalopay = async (req, res) => {
       return res.redirect("/");
     }
 
+    if (user && orderDetail.user_id !== user.id) {
+      req.flash("error", "Bạn không có quyền thanh toán đơn hàng này!");
+      return res.redirect("/");
+    }
+
     const config = {
       app_id: process.env.ZALOPAY_APPID,
       key1: process.env.ZALOPAY_KEY1,
@@ -228,7 +307,6 @@ module.exports.paymentZalopay = async (req, res) => {
     };
 
     const embed_data = {
-      // Sau khi user thanh toán xong ZaloPay redirect về đây (GET)
       redirecturl: `${process.env.DOMAIN_WEBSITE}/order/payment-zalopay-return/${orderDetail.id}`,
     };
 
@@ -242,17 +320,19 @@ module.exports.paymentZalopay = async (req, res) => {
     const transID = Math.floor(Math.random() * 1000000);
     const app_trans_id = `${moment().format("YYMMDD")}_${transID}`;
 
+    // Lưu app_trans_id vào order để đối soát khi return
+    await Order.updateOne({ _id: orderDetail.id }, { note: app_trans_id });
+
     const order = {
       app_id: config.app_id,
       app_trans_id: app_trans_id,
-      app_user: orderDetail.user_id.toString(),
+      app_user: orderDetail.user_id ? orderDetail.user_id.toString() : "guest",
       app_time: Date.now(),
       item: JSON.stringify(items),
       embed_data: JSON.stringify(embed_data),
       amount: Math.round(Number(orderDetail.total)),
       description: `Thanh toán đơn hàng #${orderDetail.orderCode}`,
       bank_code: "",
-      // ZaloPay server gọi đây để xác nhận (POST)
       callback_url: `${process.env.DOMAIN_WEBSITE}/order/payment-zalopay-callback`,
     };
 
@@ -270,92 +350,114 @@ module.exports.paymentZalopay = async (req, res) => {
 
     const result = await axios.post(config.endpoint, null, { params: order });
 
-    if (result.data.return_code == 1) {
+    if (result.data.return_code === 1) {
       return res.redirect(result.data.order_url);
     } else {
-      console.log("ZaloPay error:", result.data);
-      req.flash("error", "Lỗi cổng thanh toán ZaloPay.");
+      console.error("ZaloPay create error:", result.data);
+      req.flash("error", "Lỗi cổng thanh toán ZaloPay, vui lòng thử lại!");
       return res.redirect("/cart");
     }
   } catch (error) {
     console.error("Lỗi khởi tạo ZaloPay:", error);
-    res.redirect("/");
+    req.flash("error", "Không thể kết nối cổng ZaloPay!");
+    res.redirect("/cart");
   }
 };
 
+// Sửa lỗ hổng Bypass ZaloPay: Bắt buộc xác thực trạng thái qua API ZaloPay
 module.exports.paymentZalopayReturn = async (req, res) => {
   try {
     const orderId = req.params.orderId;
-    const status = req.query.status;
+    const orderDetail = await Order.findOne({ _id: orderId, deleted: false });
 
-    console.log(`[ZaloPay Return] orderId: ${orderId}, status: ${status}`);
+    if (!orderDetail) {
+      req.flash("error", "Đơn hàng không tồn tại!");
+      return res.redirect("/");
+    }
 
-    if (status == "1") {
-      const orderDetail = await Order.findOne({ _id: orderId, deleted: false });
-
-      if (!orderDetail) {
-        req.flash("error", "Đơn hàng không tồn tại!");
-        return res.redirect("/");
-      }
-
-      if (orderDetail.paymentStatus !== "paid") {
-        await Order.updateOne(
-          { _id: orderId, deleted: false },
-          { paymentStatus: "paid", status: "initial" },
-        );
-        await Cart.updateOne(
-          { _id: orderDetail.cartId },
-          { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
-        );
-      }
-
+    // Nếu đơn đã được webhook callback cập nhật thành công trước đó
+    if (orderDetail.paymentStatus === "paid") {
       return res.redirect(`/order/success/${orderId}`);
     }
 
-    req.flash("error", "Thanh toán ZaloPay thất bại hoặc bị hủy!");
+    // Xác thực thực tế với ZaloPay Server qua API v2/query
+    const app_trans_id = req.query.apptransid || orderDetail.note;
+    if (app_trans_id) {
+      const postData = {
+        app_id: process.env.ZALOPAY_APPID,
+        app_trans_id: app_trans_id,
+      };
+      const data = `${postData.app_id}|${postData.app_trans_id}|${process.env.ZALOPAY_KEY1}`;
+      postData.mac = CryptoJS.HmacSHA256(data, process.env.ZALOPAY_KEY1).toString();
+
+      try {
+        const checkStatus = await axios.post(
+          `${process.env.ZALOPAY_DOMAIN}/v2/query`,
+          null,
+          { params: postData },
+        );
+
+        // Chỉ khi ZaloPay server chính thức xác nhận thành công (return_code = 1)
+        if (checkStatus.data && checkStatus.data.return_code === 1) {
+          await Order.updateOne(
+            { _id: orderId, paymentStatus: "unpaid" },
+            { paymentStatus: "paid", status: "initial" },
+          );
+          await Cart.updateOne(
+            { _id: orderDetail.cartId },
+            { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
+          );
+          return res.redirect(`/order/success/${orderId}`);
+        }
+      } catch (err) {
+        console.error("ZaloPay query API failed:", err.message);
+      }
+    }
+
+    req.flash("error", "Thanh toán ZaloPay chưa hoàn tất hoặc không hợp lệ!");
     return res.redirect("/cart");
   } catch (error) {
-    console.log("Lỗi ZaloPay Return:", error);
-    req.flash("error", "Lỗi hệ thống!");
+    console.error("Lỗi ZaloPay Return:", error);
+    req.flash("error", "Lỗi hệ thống khi kiểm tra thanh toán!");
     res.redirect("/");
   }
 };
 
+// ZaloPay Webhook Callback (Server-to-Server)
 module.exports.paymentZalopayCallback = async (req, res) => {
   let result = {};
   try {
     const dataStr = req.body.data;
     const reqMac = req.body.mac;
 
-    const mac = CryptoJS.HmacSHA256(
-      dataStr,
-      process.env.ZALOPAY_KEY2,
-    ).toString();
+    const mac = CryptoJS.HmacSHA256(dataStr, process.env.ZALOPAY_KEY2).toString();
 
     if (reqMac !== mac) {
       result.return_code = -1;
       result.return_message = "mac not equal";
     } else {
       const dataJson = JSON.parse(dataStr);
-      const orderCode = dataJson["description"].split("#")[1];
+      const orderCode = dataJson["description"]?.split("#")[1];
 
-      const orderUpdate = await Order.findOneAndUpdate(
-        { orderCode: orderCode, paymentStatus: "unpaid" },
-        { paymentStatus: "paid", status: "initial" },
-      );
-
-      if (orderUpdate) {
-        await Cart.updateOne(
-          { _id: orderUpdate.cartId },
-          { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
+      if (orderCode) {
+        const orderUpdate = await Order.findOneAndUpdate(
+          { orderCode: orderCode, paymentStatus: "unpaid" },
+          { paymentStatus: "paid", status: "initial" },
         );
+
+        if (orderUpdate) {
+          await Cart.updateOne(
+            { _id: orderUpdate.cartId },
+            { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
+          );
+        }
       }
 
       result.return_code = 1;
       result.return_message = "success";
     }
   } catch (ex) {
-    console.log("Lỗi ZaloPay Callback:", ex.message);
+    console.error("Lỗi ZaloPay Callback:", ex.message);
     result.return_code = 0;
     result.return_message = ex.message;
   }
@@ -365,6 +467,8 @@ module.exports.paymentZalopayCallback = async (req, res) => {
 module.exports.paymentVnpay = async (req, res) => {
   try {
     const orderId = req.params.orderId;
+    const user = await getAuthUser(req);
+
     const orderDetail = await Order.findOne({
       _id: orderId,
       paymentStatus: "unpaid",
@@ -376,14 +480,19 @@ module.exports.paymentVnpay = async (req, res) => {
       return res.redirect("/");
     }
 
+    if (user && orderDetail.user_id !== user.id) {
+      req.flash("error", "Bạn không có quyền thanh toán đơn hàng này!");
+      return res.redirect("/");
+    }
+
     let date = new Date();
     let createDate = moment(date).format("YYYYMMDDHHmmss");
 
     let ipAddr =
       req.headers["x-forwarded-for"] ||
-      req.connection.remoteAddress ||
-      req.socket.remoteAddress ||
-      req.connection.socket.remoteAddress;
+      req.connection?.remoteAddress ||
+      req.socket?.remoteAddress ||
+      "127.0.0.1";
 
     let tmnCode = process.env.VNPAY_CODE;
     let secretKey = process.env.VNPAY_SECRET;
@@ -391,16 +500,13 @@ module.exports.paymentVnpay = async (req, res) => {
     let returnUrl = `${process.env.DOMAIN_WEBSITE}/order/payment-vnpay-result`;
     let orderIdVNP = `${orderId}-${Date.now()}`;
     let amount = orderDetail.total;
-    let bankCode = "";
 
-    let locale = "vn";
-    let currCode = "VND";
     let vnp_Params = {};
     vnp_Params["vnp_Version"] = "2.1.0";
     vnp_Params["vnp_Command"] = "pay";
     vnp_Params["vnp_TmnCode"] = tmnCode;
-    vnp_Params["vnp_Locale"] = locale;
-    vnp_Params["vnp_CurrCode"] = currCode;
+    vnp_Params["vnp_Locale"] = "vn";
+    vnp_Params["vnp_CurrCode"] = "VND";
     vnp_Params["vnp_TxnRef"] = orderIdVNP;
     vnp_Params["vnp_OrderInfo"] = "Thanh toan cho ma GD:" + orderIdVNP;
     vnp_Params["vnp_OrderType"] = "other";
@@ -408,32 +514,28 @@ module.exports.paymentVnpay = async (req, res) => {
     vnp_Params["vnp_ReturnUrl"] = returnUrl;
     vnp_Params["vnp_IpAddr"] = ipAddr;
     vnp_Params["vnp_CreateDate"] = createDate;
-    if (bankCode !== null && bankCode !== "") {
-      vnp_Params["vnp_BankCode"] = bankCode;
-    }
 
     vnp_Params = sortPayHelper.sortObject(vnp_Params);
 
     let querystring = require("qs");
     let signData = querystring.stringify(vnp_Params, { encode: false });
-    let crypto = require("crypto");
     let hmac = crypto.createHmac("sha512", secretKey);
-    let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
+    let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
     vnp_Params["vnp_SecureHash"] = signed;
     vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
-    console.log("RETURN URL:", returnUrl);
-    res.redirect(vnpUrl);
+
+    return res.redirect(vnpUrl);
   } catch (error) {
-    console.log("Lỗi tạo link VNPay:", error);
+    console.error("Lỗi tạo link VNPay:", error);
     req.flash("error", "Lỗi hệ thống khi khởi tạo thanh toán VNPay!");
-    res.redirect("/");
+    res.redirect("/cart");
   }
 };
 
+// Sửa lỗi Crash View "success" không tồn tại trong VNPay Result
 module.exports.paymentVnpayResult = async (req, res) => {
   try {
     let vnp_Params = req.query;
-
     let secureHash = vnp_Params["vnp_SecureHash"];
 
     delete vnp_Params["vnp_SecureHash"];
@@ -442,27 +544,27 @@ module.exports.paymentVnpayResult = async (req, res) => {
     vnp_Params = sortPayHelper.sortObject(vnp_Params);
 
     let secretKey = process.env.VNPAY_SECRET;
-
     let querystring = require("qs");
     let signData = querystring.stringify(vnp_Params, { encode: false });
-    let crypto = require("crypto");
     let hmac = crypto.createHmac("sha512", secretKey);
-    let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
+    let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
     if (secureHash === signed) {
+      const [orderId] = (vnp_Params["vnp_TxnRef"] || "").split("-");
+      const orderDetail = await Order.findOne({ _id: orderId, deleted: false });
+
+      if (!orderDetail) {
+        req.flash("error", "Đơn hàng không tồn tại!");
+        return res.redirect("/");
+      }
+
       if (
         vnp_Params["vnp_ResponseCode"] === "00" &&
         vnp_Params["vnp_TransactionStatus"] === "00"
       ) {
-        const [orderId, date] = vnp_Params["vnp_TxnRef"].split("-");
-        const orderDetail = await Order.findOne({
-          _id: orderId,
-          deleted: false,
-        });
-
         await Order.updateOne(
           { _id: orderId, deleted: false },
-          { paymentStatus: "paid" },
+          { paymentStatus: "paid", status: "initial" },
         );
         await Cart.updateOne(
           { _id: orderDetail.cartId },
@@ -471,13 +573,18 @@ module.exports.paymentVnpayResult = async (req, res) => {
         return res.redirect(`/order/success/${orderId}`);
       }
 
-      res.render("success", { code: vnp_Params["vnp_ResponseCode"] });
+      req.flash(
+        "error",
+        `Giao dịch VNPay không thành công hoặc bị hủy (Mã phản hồi: ${vnp_Params["vnp_ResponseCode"]})!`,
+      );
+      return res.redirect("/cart");
     } else {
-      res.render("success", { code: "97" });
+      req.flash("error", "Chữ ký bảo mật giao dịch VNPay không hợp lệ!");
+      return res.redirect("/cart");
     }
   } catch (error) {
-    console.log(error);
-    req.flash("error", "Lỗi hệ thống khi thanh toán VNPay!");
-    res.redirect("/");
+    console.error("VNPay Result Error:", error);
+    req.flash("error", "Lỗi hệ thống khi kiểm tra kết quả thanh toán VNPay!");
+    res.redirect("/cart");
   }
 };

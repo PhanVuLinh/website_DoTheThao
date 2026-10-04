@@ -12,21 +12,26 @@ block main
             
             .cart-list
               each item in cartDetail.products
-                .cart-item(data-price-new=item.productInfo.priceNew style="position: relative;")
+                .cart-item(data-price-new=(item.productInfo ? item.productInfo.priceNew : 0) style="position: relative;")
                   a.btn-delete(
-                    href=`/cart/delete/${item.product_id}`
+                    href=`/cart/delete/${item.product_id}?size=${encodeURIComponent(item.size)}`
                     style="position: absolute; top: 10px; right: 10px; color: #999; text-decoration: none; font-size: 1.2rem;"
                   ) 
                     i.fa-solid.fa-xmark
                   .cart-item__checkbox
                     input(type="checkbox" checked)
-                  a(href=`/product/detail/${item.productInfo.slug}`)
-                    img.cart-item__img(src=item.productInfo.thumbnail alt=item.productInfo.title)
-                  
-                  .cart-item__info
+                  if item.productInfo
                     a(href=`/product/detail/${item.productInfo.slug}`)
-                      h3.name #{item.productInfo.title}
-                    p.variant Phân loại: #{item.size}
+                      img.cart-item__img(src=item.productInfo.thumbnail alt=item.productInfo.title)
+                    
+                    .cart-item__info
+                      a(href=`/product/detail/${item.productInfo.slug}`)
+                        h3.name #{item.productInfo.title}
+                      p.variant Phân loại: #{item.size}
+                  else
+                    .cart-item__info
+                      h3.name Sản phẩm không khả dụng
+                      p.variant Phân loại: #{item.size}
 
                   
                   .cart-item__action
@@ -37,11 +42,13 @@ block main
                         name="quantity" 
                         value=item.quantity 
                         product-id=item.product_id 
+                        data-size=item.size
                         min="1"
                         data-old=item.quantity
                       )
                       button.btn-qty.plus +
-                    .item-price #{item.totalPrice.toLocaleString('vi-VN')} đ
+                    .item-price #{item.totalPrice ? item.totalPrice.toLocaleString('vi-VN') : 0} đ
+
             .cart-discount-row
               .discount-input-wrap
                 if cartDetail.coupon && cartDetail.coupon.code

@@ -1,9 +1,10 @@
 const moment = require("moment");
-const Contact = require("../../models/Contact.model");
+const Contact = require("../../models/contact.model");
 const Account = require("../../models/account.model");
 
 const variableCongfig = require("../../config/variable");
 const paginationHelper = require("../../helpers/pagination.helper");
+const regexHelper = require("../../helpers/regex.helper");
 
 module.exports.list = async (req, res) => {
   const find = {
@@ -11,8 +12,9 @@ module.exports.list = async (req, res) => {
   };
   //Tìm kiếm
   if (req.query.keyword) {
-    const keyword = req.query.keyword.trim();
+    const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
     const regexKeyword = new RegExp(keyword, "i");
+
     find.$or = [{ email: regexKeyword }];
   }
   //lọc theo ngày tạo
