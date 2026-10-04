@@ -25,8 +25,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser("PPCCLLAABB001"));
 
 // session + flash + locals -> alert
-app.use(session({ cookie: { maxAge: 60000 } }));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "PPCCLLAABB001",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 60000 },
+  }),
+);
 app.use(flash());
+
 app.use(alertMiddleware.alert);
 
 //TinyMCE
