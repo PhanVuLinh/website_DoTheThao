@@ -12,5 +12,10 @@ router.get("/order-history", userController.orderHistory);
 router.get("/order-history/detail/:orderId", userController.orderHistoryDetail);
 
 router.get("/change-password", userController.changePassword);
+router.patch("/password/edit", validate.changePassword, userController.changePasswordPatch);
+router.post("/password/edit", validate.changePassword, userController.changePasswordPatch);
+router.patch("/change-password", validate.changePassword, userController.changePasswordPatch);
+router.post("/change-password", validate.changePassword, userController.changePasswordPatch);
 
 module.exports = router;
+

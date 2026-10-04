@@ -12,3 +12,25 @@ module.exports.updateProfile = (req, res, next) => {
   }
   next();
 };
+
+module.exports.changePassword = (req, res, next) => {
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+
+  if (!currentPassword) {
+    req.flash("error", "Vui lòng nhập mật khẩu hiện tại!");
+    return res.redirect(req.get("Referer") || "/user/change-password");
+  }
+
+  if (!newPassword || newPassword.length < 6) {
+    req.flash("error", "Mật khẩu mới phải có ít nhất 6 ký tự!");
+    return res.redirect(req.get("Referer") || "/user/change-password");
+  }
+
+  if (newPassword !== confirmPassword) {
+    req.flash("error", "Mật khẩu xác nhận không trùng khớp!");
+    return res.redirect(req.get("Referer") || "/user/change-password");
+  }
+
+  next();
+};
+
