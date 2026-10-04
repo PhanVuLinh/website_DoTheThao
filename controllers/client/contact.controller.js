@@ -13,6 +13,5 @@ module.exports.createPost = async (req, res) => {
   const newContact = new Contact(req.body);
   await newContact.save();
   req.flash("success", "Cảm ơn bạn đã đăng ký nhận tin tức từ chúng tôi");
-
   res.redirect(req.get("Referer"));
 };

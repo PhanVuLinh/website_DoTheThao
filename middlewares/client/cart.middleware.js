@@ -10,8 +10,18 @@ module.exports.cartId = async (req, res, next) => {
     });
   } else {
     const cart = await Cart.findOne({ _id: req.cookies.cartId });
-    cart.totalQuantity = cart.products.length;
-    res.locals.miniCart = cart.totalQuantity;
+    if (cart) {
+      cart.totalQuantity = cart.products.length;
+      res.locals.miniCart = cart.totalQuantity;
+    } else {
+      const newCart = new Cart();
+      await newCart.save();
+
+      res.cookie("cartId", newCart.id, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+      });
+      res.locals.miniCart = 0;
+    }
   }
 
   next();
