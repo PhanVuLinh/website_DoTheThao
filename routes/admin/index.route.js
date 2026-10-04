@@ -14,6 +14,10 @@ const profileRoutes = require("../admin/profile.route");
 const articleRoutes = require("../admin/article.route");
 const couponRoutes = require("../admin/coupon.route");
 
+router.get("/", (req, res) => {
+  res.redirect("/admin/dashboard");
+});
+
 router.use("/auth", authRoutes);
 
 router.use("/dashboard", authMiddleware.requireAuth, dashboardRoutes);

@@ -1,23 +1,23 @@
 const router = require("express").Router();
-
 const orderController = require("../../controllers/admin/order.controller");
+const authMiddleware = require("../../middlewares/admin/auth.middleware");
 
-router.get("/list", orderController.list);
+router.get("/list", authMiddleware.checkPermission("order_view"), orderController.list);
 
-router.patch("/change-multi", orderController.changeMulti);
+router.patch("/change-multi", authMiddleware.checkPermission("order_edit"), orderController.changeMulti);
 
-router.get("/edit/:id", orderController.edit);
+router.get("/edit/:id", authMiddleware.checkPermission("order_edit"), orderController.edit);
 
-router.patch("/edit/:id", orderController.editPatch);
+router.patch("/edit/:id", authMiddleware.checkPermission("order_edit"), orderController.editPatch);
 
-router.delete("/delete/:id", orderController.delete);
+router.delete("/delete/:id", authMiddleware.checkPermission("order_delete"), orderController.delete);
 
-router.get("/trash", orderController.trash);
+router.get("/trash", authMiddleware.checkPermission("order_trash"), orderController.trash);
 
-router.patch("/restore/:id", orderController.restore);
+router.patch("/restore/:id", authMiddleware.checkPermission("order_restore"), orderController.restore);
 
-router.delete("/delete-destroy/:id", orderController.deleteDestroy);
+router.delete("/delete-destroy/:id", authMiddleware.checkPermission("order_destroy"), orderController.deleteDestroy);
 
-router.patch("/change-multi-trash", orderController.changeMultiTrash);
+router.patch("/change-multi-trash", authMiddleware.checkPermission("order_trash"), orderController.changeMultiTrash);
 
 module.exports = router;
