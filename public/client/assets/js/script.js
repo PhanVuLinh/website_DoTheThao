@@ -311,9 +311,24 @@ if (countdownBox) {
       nums[0].innerText = h < 10 ? "0" + h : h;
       nums[1].innerText = m < 10 ? "0" + m : m;
       nums[2].innerText = s < 10 ? "0" + s : s;
-      
     }, 1000); // Cập nhật lại mỗi 1 giây
   }
+}
+
+/* =========================================
+   FLASH DEALS HORIZONTAL SCROLL NAVIGATION
+   ========================================= */
+const flashList = document.getElementById("flashProductsList");
+const flashPrevBtn = document.querySelector(".flash-nav-btn--prev");
+const flashNextBtn = document.querySelector(".flash-nav-btn--next");
+
+if (flashList && flashPrevBtn && flashNextBtn) {
+  flashPrevBtn.addEventListener("click", () => {
+    flashList.scrollBy({ left: -320, behavior: "smooth" });
+  });
+  flashNextBtn.addEventListener("click", () => {
+    flashList.scrollBy({ left: 320, behavior: "smooth" });
+  });
 }
 
 /* =========================================

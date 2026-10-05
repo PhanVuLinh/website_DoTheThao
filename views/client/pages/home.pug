@@ -173,35 +173,96 @@ block main
       .flash-deals__container
         .flash-promo
           .flash-promo__badge
-            i.fa-solid.fa-bolt
-            | FLASH SALE 2026
+            span.live-pulse-dot
+            | FLASH SALE • LIVE
           h2.flash-promo__title-new
-            | SIÊU BÃO DEALS
-            br
-            | THỂ THAO
-          p.flash-promo__desc Ưu đãi giá tốt nhất cho các dòng sản phẩm thi đấu tuyển chọn.
+            span.title-sub ĐẶC QUYỀN HÔM NAY
+            span.title-main SĂN DEAL CHỚP NHOÁNG
+          p.flash-promo__desc Giày thi đấu & trang bị thể thao tuyển chọn giảm sâu số lượng có hạn.
           
-          p.flash-promo__countdown-label Kết thúc sau:
-          .flash-promo__countdown#flashCountdown
-            .countdown-box
-              span.num#cdHours 08
-              span.label GIỜ
-            span.colon :
-            .countdown-box
-              span.num#cdMinutes 45
-              span.label PHÚT
-            span.colon :
-            .countdown-box
-              span.num#cdSeconds 30
-              span.label GIÂY
+          .flash-promo__timer-wrapper
+            p.flash-promo__countdown-label
+              i.fa-regular.fa-clock
+              | KẾT THÚC TRONG
+            .flash-promo__countdown#flashCountdown
+              .countdown-box
+                span.num#cdHours 08
+                span.label GIỜ
+              span.colon :
+              .countdown-box
+                span.num#cdMinutes 45
+                span.label PHÚT
+              span.colon :
+              .countdown-box
+                span.num#cdSeconds 30
+                span.label GIÂY
 
-          a.flash-promo__btn(href="/product") Xem Tất Cả Deals
+          a.flash-promo__btn(href="/product")
+            span Khám Phá Tất Cả Deals
+            i.fa-solid.fa-arrow-right
 
         .flash-products-wrapper
-          .flash-products-list
-            each item in productListSection3
+          button.flash-nav-btn.flash-nav-btn--prev(type="button" aria-label="Lùi lại")
+            i.fa-solid.fa-chevron-left
+          button.flash-nav-btn.flash-nav-btn--next(type="button" aria-label="Tiến tới")
+            i.fa-solid.fa-chevron-right
+          .flash-products-list#flashProductsList
+            each item, index in productListSection3
               .flash-product-item
-                +productItem(item)
+                .flash-deal-card
+                  a.flash-deal-card__link(href=`/product/detail/${item.slug}`)
+                    .flash-deal-card__img-box
+                      if item.discountPercentage > 0
+                        span.flash-badge-discount
+                          i.fa-solid.fa-bolt
+                          | -#{item.discountPercentage}%
+                      if item.featured == "1"
+                        span.flash-badge-hot HOT
+                      else if item.isNew == true
+                        span.flash-badge-new MỚI
+                      
+                      img.flash-deal-card__img(src=item.thumbnail, alt=item.title, loading="lazy")
+                      
+                      .flash-deal-card__quick-overlay
+                        span.quick-view-pill
+                          i.fa-solid.fa-eye
+                          | Chi tiết sản phẩm
+                    
+                    .flash-deal-card__info
+                      span.flash-deal-card__brand
+                        i.fa-solid.fa-shield-halved
+                        | #{item.brand || 'CHÍNH HÃNG 100%'}
+                      h3.flash-deal-card__title(title=item.title) #{item.title}
+                      
+                      .flash-deal-card__rating
+                        .stars-group
+                          - for (let i = 0; i < 5; i++)
+                            i.fa-solid.fa-star
+                        span.rating-score (5.0)
+                        span.rating-verified
+                          i.fa-solid.fa-circle-check
+                          | Đã xác thực
+
+                  .deal-progress-wrap
+                    .deal-progress-bar
+                      .deal-progress-fill(style=`width: ${65 + ((index * 11) % 30)}%`)
+                    .deal-progress-text
+                      span.sold-text
+                        i.fa-solid.fa-fire-flame-curved
+                        | Đã bán #{15 + index * 7}
+                      span.stock-tag Sắp cháy hàng
+
+                  .flash-deal-card__footer
+                    .flash-deal-card__price-group
+                      if (item.priceNew && item.priceNew < item.price)
+                        span.deal-old-price #{item.price.toLocaleString('vi-VN')}đ
+                        span.deal-new-price #{item.priceNew.toLocaleString('vi-VN')}đ
+                      else
+                        span.deal-new-price #{(item.price || 0).toLocaleString('vi-VN')}đ
+                    
+                    a.btn-deal-cart(href=`/product/detail/${item.slug}` title="Xem chi tiết & Mua ngay")
+                      i.fa-solid.fa-cart-shopping
+                      span Mua ngay
 
   // ==========================================
   // SECTION 6: INTERACTIVE SPORTS HUB (TABS THEO BỘ MÔN)
