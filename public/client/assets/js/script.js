@@ -422,7 +422,46 @@ if (copyVoucherBtns.length > 0) {
     } catch (err) {
       console.error("Fallback copy failed", err);
     }
-    document.body.removeChild(textArea);
+  }
+
+  const hotVoucherBtn = document.querySelector(".btn-vault-hot-copy");
+  if (hotVoucherBtn) {
+    hotVoucherBtn.addEventListener("click", function () {
+      const code = this.getAttribute("data-code");
+      if (!code) return;
+
+      const performHotCopy = () => {
+        const span = this.querySelector("span");
+        const originalText = span ? span.innerText : "Lấy mã HOT nhất";
+        if (span) span.innerText = "Đã lấy mã HOT!";
+        this.classList.add("copied");
+
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "success",
+            title: `Đã lưu mã giảm sốc nhất "${code}"!`,
+            showConfirmButton: false,
+            timer: 2500,
+            timerProgressBar: true,
+          });
+        }
+
+        setTimeout(() => {
+          if (span) span.innerText = originalText;
+          this.classList.remove("copied");
+        }, 2200);
+      };
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(code).then(performHotCopy).catch(() => {
+          fallbackCopyText(code, performHotCopy);
+        });
+      } else {
+        fallbackCopyText(code, performHotCopy);
+      }
+    });
   }
 }
 

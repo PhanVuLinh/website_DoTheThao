@@ -82,7 +82,7 @@ block main
 
   // ==========================================
   // ==========================================
-  // SECTION 3: VOUCHER VAULT (MÃ GIẢM GIÁ TỪ DATABASE)
+  // SECTION 3: VÍ VOUCHER KHUYẾN MÃI (SPORT PASSBOOK)
   // ==========================================
   if couponList && couponList.length > 0
     section.voucher-vault#voucher-vault
@@ -90,39 +90,57 @@ block main
         .section-header-wrap
           .section-header-left
             .section-tag
-              i.fa-solid.fa-ticket
-              | ƯU ĐÃI ĐẶC QUYỀN
+              i.fa-solid.fa-wallet
+              | VÍ ĐẶC QUYỀN HỘI VIÊN
             h2.section-title Ví Voucher Khuyến Mãi
-            p.section-subtitle Thu thập mã giảm giá độc quyền để áp dụng trực tiếp khi thanh toán đơn hàng.
+            p.section-subtitle Thu thập thẻ ưu đãi độc quyền để nhận chiết khấu trực tiếp khi thanh toán đơn hàng.
           
           .section-header-right
-            span.voucher-tip
-              i.fa-regular.fa-circle-question
-              | Bấm "Sao chép" để lưu mã vào bộ nhớ
+            .voucher-vault__summary-pill
+              i.fa-solid.fa-ticket
+              span #{couponList.length} Mã khả dụng
+            button.btn-vault-hot-copy(type="button" data-code=couponList[0].code title="Sao chép ngay mã giảm giá cao nhất")
+              i.fa-solid.fa-bolt
+              span Lấy mã HOT nhất
 
         .voucher-grid
-          each coupon in couponList
-            .voucher-card
-              .voucher-card__badge
-                span.voucher-pct -#{coupon.discountPercentage}%
-                span.voucher-badge-label GIẢM
-              
-              .voucher-card__content
-                .voucher-card__top
-                  span.voucher-code-pill
-                    i.fa-solid.fa-ticket
-                    | #{coupon.code}
+          each coupon, index in couponList
+            .voucher-ticket(class=`voucher-ticket--theme-${index % 4}`)
+              .voucher-ticket__top
+                .voucher-ticket__badge-row
+                  span.voucher-ticket__brand
+                    i.fa-solid.fa-medal
+                    | TITISPORT PASS
+                  span.voucher-ticket__pct -#{coupon.discountPercentage}%
                 
-                h4.voucher-title= coupon.title
-                p.voucher-max-discount Giảm tối đa #{coupon.maxDiscountAmount ? coupon.maxDiscountAmount.toLocaleString('vi-VN') : '0'} đ
+                .voucher-ticket__hero
+                  .voucher-ticket__amount
+                    span.amount-num #{coupon.discountPercentage}
+                    span.amount-unit %
+                    span.amount-label GIẢM
+                  .voucher-ticket__code-box
+                    span.code-label MÃ VOUCHER
+                    span.code-text= coupon.code
+
+                .voucher-ticket__notch.voucher-ticket__notch--left
+                .voucher-ticket__dashed-divider
+                .voucher-ticket__notch.voucher-ticket__notch--right
+
+              .voucher-ticket__bottom
+                h4.voucher-ticket__title= coupon.title
+                p.voucher-ticket__limit Giảm tối đa #{coupon.maxDiscountAmount ? coupon.maxDiscountAmount.toLocaleString('vi-VN') : '0'} đ cho đơn hàng
                 
-                .voucher-card__bottom
-                  span.voucher-exp(title=`Hạn sử dụng: ${coupon.expirationDateFormatted}`)
+                .voucher-ticket__footer
+                  span.voucher-ticket__exp(title=`Hạn sử dụng: ${coupon.expirationDateFormatted}`)
                     i.fa-regular.fa-clock
                     | HSD: #{coupon.expirationDateFormatted}
-                  button.btn-copy-voucher(type="button" data-code=coupon.code title="Bấm để sao chép mã")
-                    i.fa-regular.fa-copy
-                    span.copy-text Sao chép
+                  span.voucher-ticket__state
+                    i.fa-solid.fa-circle-check
+                    | Khả dụng
+
+                button.btn-ticket-copy.btn-copy-voucher(type="button" data-code=coupon.code title="Bấm để sao chép mã")
+                  i.fa-regular.fa-copy
+                  span.copy-text Sao chép mã
 
   // ==========================================
   // SECTION 4: KHÁM PHÁ DANH MỤC THỂ THAO
