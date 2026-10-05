@@ -117,7 +117,9 @@ block main
                 p.voucher-max-discount Giảm tối đa #{coupon.maxDiscountAmount ? coupon.maxDiscountAmount.toLocaleString('vi-VN') : '0'} đ
                 
                 .voucher-card__bottom
-                  span.voucher-exp HSD: #{coupon.expirationDateFormatted}
+                  span.voucher-exp(title=`Hạn sử dụng: ${coupon.expirationDateFormatted}`)
+                    i.fa-regular.fa-clock
+                    | HSD: #{coupon.expirationDateFormatted}
                   button.btn-copy-voucher(type="button" data-code=coupon.code title="Bấm để sao chép mã")
                     i.fa-regular.fa-copy
                     span.copy-text Sao chép

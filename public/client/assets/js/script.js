@@ -372,8 +372,10 @@ if (copyVoucherBtns.length > 0) {
 
       const performCopy = () => {
         const copyTextSpan = this.querySelector(".copy-text");
+        const icon = this.querySelector("i");
         const originalText = copyTextSpan ? copyTextSpan.innerText : "Sao chép";
-        if (copyTextSpan) copyTextSpan.innerText = "Đã chép!";
+        if (copyTextSpan) copyTextSpan.innerText = "Đã lưu!";
+        if (icon) icon.className = "fa-solid fa-check";
         this.classList.add("copied");
 
         if (typeof Swal !== "undefined") {
@@ -390,6 +392,7 @@ if (copyVoucherBtns.length > 0) {
 
         setTimeout(() => {
           if (copyTextSpan) copyTextSpan.innerText = originalText;
+          if (icon) icon.className = "fa-regular fa-copy";
           this.classList.remove("copied");
         }, 2200);
       };
