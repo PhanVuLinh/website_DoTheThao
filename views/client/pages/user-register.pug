@@ -9,20 +9,45 @@ block main
         
         form(action="/auth/register" method="POST")
           .form-group
-            label(for="fullName") Họ và Tên
-            input#fullName.form-control(type="text" name="fullName" placeholder="Nhập họ và tên" )
+            label(for="fullName") Họ và Tên <span style="color:#ef4444">*</span>
+            input#fullName.form-control(
+              type="text" 
+              name="fullName" 
+              placeholder="Nhập họ và tên" 
+              value=oldData.fullName || ""
+              required
+              minlength="2"
+            )
 
           .form-group
-            label(for="email") Email
-            input#email.form-control(type="email" name="email" placeholder="Nhập email" )
+            label(for="email") Email <span style="color:#ef4444">*</span>
+            input#email.form-control(
+              type="email" 
+              name="email" 
+              placeholder="Ví dụ: name@gmail.com" 
+              value=oldData.email || ""
+              required
+            )
             
           .form-group
-            label(for="password") Mật khẩu
-            input#password.form-control(type="password" name="password" placeholder="Tạo mật khẩu" )
+            label(for="password") Mật khẩu <span style="color:#ef4444">*</span>
+            input#password.form-control(
+              type="password" 
+              name="password" 
+              placeholder="Tạo mật khẩu (tối thiểu 6 ký tự)" 
+              required
+              minlength="6"
+            )
 
           .form-group
-            label(for="confirmPassword") Xác nhận mật khẩu
-            input#confirmPassword.form-control(type="password" name="confirmPassword" placeholder="Nhập lại mật khẩu" )
+            label(for="confirmPassword") Xác nhận mật khẩu <span style="color:#ef4444">*</span>
+            input#confirmPassword.form-control(
+              type="password" 
+              name="confirmPassword" 
+              placeholder="Nhập lại mật khẩu" 
+              required
+              data-match="#password"
+            )
             
           button.btn-auth(type="submit") 
             | Đăng Ký

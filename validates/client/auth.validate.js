@@ -2,38 +2,38 @@ module.exports.registerPost = (req, res, next) => {
   const { fullName, email, password, confirmPassword } = req.body;
 
   if (!fullName || fullName.trim() === "") {
-    req.flash("error", "Vui lòng nhập họ và tên!");
+    req.flashFormError("fullName", "Vui lòng nhập họ và tên!");
     return res.redirect(req.get("Referer"));
   }
 
   if (fullName.trim().length < 2) {
-    req.flash("error", "Họ và tên phải có ít nhất 2 ký tự!");
+    req.flashFormError("fullName", "Họ và tên phải có ít nhất 2 ký tự!");
     return res.redirect(req.get("Referer"));
   }
 
   if (!email || email.trim() === "") {
-    req.flash("error", "Vui lòng nhập email!");
+    req.flashFormError("email", "Vui lòng nhập email!");
     return res.redirect(req.get("Referer"));
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    req.flash("error", "Email không hợp lệ!");
+    req.flashFormError("email", "Email không hợp lệ (Ví dụ: name@gmail.com)!");
     return res.redirect(req.get("Referer"));
   }
 
   if (!password || password.trim() === "") {
-    req.flash("error", "Vui lòng nhập mật khẩu!");
+    req.flashFormError("password", "Vui lòng nhập mật khẩu!");
     return res.redirect(req.get("Referer"));
   }
 
   if (password.length < 6) {
-    req.flash("error", "Mật khẩu phải có ít nhất 6 ký tự!");
+    req.flashFormError("password", "Mật khẩu phải có ít nhất 6 ký tự!");
     return res.redirect(req.get("Referer"));
   }
 
   if (password !== confirmPassword) {
-    req.flash("error", "Mật khẩu xác nhận không khớp!");
+    req.flashFormError("confirmPassword", "Mật khẩu xác nhận không khớp!");
     return res.redirect(req.get("Referer"));
   }
 
@@ -47,23 +47,23 @@ module.exports.loginPost = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || email.trim() === "") {
-    req.flash("error", "Vui lòng nhập email!");
+    req.flashFormError("email", "Vui lòng nhập email!");
     return res.redirect(req.get("Referer"));
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    req.flash("error", "Email không hợp lệ!");
+    req.flashFormError("email", "Email không hợp lệ (Ví dụ: name@gmail.com)!");
     return res.redirect(req.get("Referer"));
   }
 
   if (!password || password.trim() === "") {
-    req.flash("error", "Vui lòng nhập mật khẩu!");
+    req.flashFormError("password", "Vui lòng nhập mật khẩu!");
     return res.redirect(req.get("Referer"));
   }
 
   if (password.length < 6) {
-    req.flash("error", "Mật khẩu phải có ít nhất 6 ký tự!");
+    req.flashFormError("password", "Mật khẩu phải có ít nhất 6 ký tự!");
     return res.redirect(req.get("Referer"));
   }
 
@@ -76,13 +76,13 @@ module.exports.forgotPasswordPost = (req, res, next) => {
   const { email } = req.body;
 
   if (!email || email.trim() === "") {
-    req.flash("error", "Vui lòng nhập email!");
+    req.flashFormError("email", "Vui lòng nhập email!");
     return res.redirect(req.get("Referer"));
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    req.flash("error", "Email không hợp lệ!");
+    req.flashFormError("email", "Email không hợp lệ!");
     return res.redirect(req.get("Referer"));
   }
 
@@ -95,22 +95,22 @@ module.exports.otpPasswordPost = (req, res, next) => {
   const { email, otp } = req.body;
 
   if (!email || email.trim() === "") {
-    req.flash("error", "Thiếu email!");
+    req.flashFormError("email", "Thiếu email!");
     return res.redirect(req.get("Referer"));
   }
 
   if (!otp || otp.trim() === "") {
-    req.flash("error", "Vui lòng nhập mã OTP!");
+    req.flashFormError("otp", "Vui lòng nhập mã OTP!");
     return res.redirect(req.get("Referer"));
   }
 
   if (!/^\d+$/.test(otp)) {
-    req.flash("error", "OTP chỉ được chứa số!");
+    req.flashFormError("otp", "Mã OTP chỉ được chứa chữ số!");
     return res.redirect(req.get("Referer"));
   }
 
   if (otp.length !== 6) {
-    req.flash("error", "OTP phải gồm 6 chữ số!");
+    req.flashFormError("otp", "Mã OTP phải gồm 6 chữ số!");
     return res.redirect(req.get("Referer"));
   }
 
@@ -121,22 +121,22 @@ module.exports.resetPasswordPost = (req, res, next) => {
   const { password, confirmPassword } = req.body;
 
   if (!password || password.trim() === "") {
-    req.flash("error", "Vui lòng nhập mật khẩu mới!");
+    req.flashFormError("password", "Vui lòng nhập mật khẩu mới!");
     return res.redirect(req.get("Referer"));
   }
 
   if (password.length < 6) {
-    req.flash("error", "Mật khẩu phải có ít nhất 6 ký tự!");
+    req.flashFormError("password", "Mật khẩu phải có ít nhất 6 ký tự!");
     return res.redirect(req.get("Referer"));
   }
 
   if (!confirmPassword || confirmPassword.trim() === "") {
-    req.flash("error", "Vui lòng xác nhận mật khẩu!");
+    req.flashFormError("confirmPassword", "Vui lòng xác nhận mật khẩu!");
     return res.redirect(req.get("Referer"));
   }
 
   if (password !== confirmPassword) {
-    req.flash("error", "Mật khẩu xác nhận không khớp!");
+    req.flashFormError("confirmPassword", "Mật khẩu xác nhận không khớp!");
     return res.redirect(req.get("Referer"));
   }
 

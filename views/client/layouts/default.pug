@@ -48,4 +48,7 @@ html(lang="vi")
 
     script(src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js")
     
+    script.
+      window.formErrors = !{JSON.stringify(formErrors || {})};
+    script(src="/common/js/form-validator.js")
     script(src="/client/assets/js/script.js") 

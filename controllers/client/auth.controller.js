@@ -29,18 +29,18 @@ module.exports.loginPost = async (req, res) => {
     });
 
     if (!user) {
-      req.flash("error", "Email không tồn tại trong hệ thống!");
+      req.flashFormError("email", "Email không tồn tại trong hệ thống!");
       return res.redirect(req.get("Referer") || "/auth/login");
     }
 
     const isMatch = await passwordHelper.comparePassword(password, user.password);
     if (!isMatch) {
-      req.flash("error", "Sai mật khẩu!");
+      req.flashFormError("password", "Sai mật khẩu!");
       return res.redirect(req.get("Referer") || "/auth/login");
     }
 
     if (user.status === "inactive") {
-      req.flash("error", "Tài khoản đang bị khóa!");
+      req.flashFormError("email", "Tài khoản đang bị khóa!");
       return res.redirect(req.get("Referer") || "/auth/login");
     }
 
@@ -102,7 +102,7 @@ module.exports.registerPost = async (req, res) => {
 
     const existEmail = await User.findOne({ email: email, deleted: false });
     if (existEmail) {
-      req.flash("error", "Email đã tồn tại trong hệ thống!");
+      req.flashFormError("email", "Email đã tồn tại trong hệ thống! Vui lòng dùng email khác.");
       return res.redirect(req.get("Referer") || "/auth/register");
     }
 
@@ -162,12 +162,12 @@ module.exports.forgotPasswordPost = async (req, res) => {
     });
 
     if (!user) {
-      req.flash("error", "Email không tồn tại trong hệ thống!");
+      req.flashFormError("email", "Email không tồn tại trong hệ thống!");
       return res.redirect(req.get("Referer") || "/auth/forgot-password");
     }
 
     if (user.status === "inactive") {
-      req.flash("error", "Tài khoản đang bị khóa!");
+      req.flashFormError("email", "Tài khoản đang bị khóa!");
       return res.redirect(req.get("Referer") || "/auth/forgot-password");
     }
 
