@@ -1,58 +1,67 @@
-aside.admin-sidebar
-  a(href=`/${pathAdmin}/dashboard`).sidebar-brand
-    i.fa-solid.fa-shield-halved
-    span TitiSport
+aside.admin-sidebar#adminSidebar
+  .sidebar-header
+    a(href=`/${pathAdmin}/dashboard`).sidebar-brand
+      .brand-icon-box
+        i.fa-solid.fa-shield-halved
+      .brand-title-wrap
+        span.brand-name TitiSport
+        span.brand-badge ADMIN
+    button.sidebar-close-btn#sidebarClose(type="button" aria-label="Đóng thanh điều hướng")
+      i.fa-solid.fa-xmark
   
-  ul.sidebar-menu
-    if(role && role.permissions && role.permissions.includes("dashboard_view"))
-      li
-        a(href=`/${pathAdmin}/dashboard`)
-          i.fa-solid.fa-chart-pie
-          span Tổng quan
+  .sidebar-body
+    .sidebar-section-title ĐIỀU HƯỚNG CHÍNH
+    ul.sidebar-menu
+      if(role && role.permissions && role.permissions.includes("dashboard_view"))
+        li
+          a(href=`/${pathAdmin}/dashboard`)
+            i.fa-solid.fa-chart-pie
+            span Tổng quan
 
-    if(role && role.permissions && role.permissions.includes("category_view"))
-      li
-        a(href=`/${pathAdmin}/category/list`)
-          i.fa-solid.fa-table-cells-large
-          span Quản lý danh mục
+      if(role && role.permissions && role.permissions.includes("category_view"))
+        li
+          a(href=`/${pathAdmin}/category/list`)
+            i.fa-solid.fa-table-cells-large
+            span Quản lý danh mục
 
-    if(role && role.permissions && role.permissions.includes("product_view"))
-      li
-        a(href=`/${pathAdmin}/product/list`)
-          i.fa-solid.fa-box-open
-          span Quản lý sản phẩm
+      if(role && role.permissions && role.permissions.includes("product_view"))
+        li
+          a(href=`/${pathAdmin}/product/list`)
+            i.fa-solid.fa-box-open
+            span Quản lý sản phẩm
 
-    if(role && role.permissions && role.permissions.includes("coupon_view"))
-      li
-        a(href=`/${pathAdmin}/coupon/list`)
-          i.fa-solid.fa-ticket
-          span Quản lý mã giảm giá
+      if(role && role.permissions && role.permissions.includes("coupon_view"))
+        li
+          a(href=`/${pathAdmin}/coupon/list`)
+            i.fa-solid.fa-ticket
+            span Quản lý mã giảm giá
 
-    if(role && role.permissions && role.permissions.includes("order_view"))
-      li
-        a(href=`/${pathAdmin}/order/list`)
-          i.fa-solid.fa-cart-shopping
-          span Quản lý đơn hàng
+      if(role && role.permissions && role.permissions.includes("order_view"))
+        li
+          a(href=`/${pathAdmin}/order/list`)
+            i.fa-solid.fa-cart-shopping
+            span Quản lý đơn hàng
 
-    if(role && role.permissions && role.permissions.includes("user_view"))
-      li
-        a(href=`/${pathAdmin}/user/list`)
-          i.fa-solid.fa-users
-          span Quản lý khách hàng
+      if(role && role.permissions && role.permissions.includes("user_view"))
+        li
+          a(href=`/${pathAdmin}/user/list`)
+            i.fa-solid.fa-users
+            span Quản lý khách hàng
 
-    if(role && role.permissions && role.permissions.includes("contact_view"))
-      li
-        a(href=`/${pathAdmin}/contact/list`)
-          i.fa-solid.fa-address-book
-          span Thông tin liên hệ
+      if(role && role.permissions && role.permissions.includes("contact_view"))
+        li
+          a(href=`/${pathAdmin}/contact/list`)
+            i.fa-solid.fa-address-book
+            span Thông tin liên hệ
 
-    if(role && role.permissions && role.permissions.includes("article_view"))
-      li
-        a(href=`/${pathAdmin}/article/list`)
-          i.fa-solid.fa-newspaper
-          span Quản lý bài viết
+      if(role && role.permissions && role.permissions.includes("article_view"))
+        li
+          a(href=`/${pathAdmin}/article/list`)
+            i.fa-solid.fa-newspaper
+            span Quản lý bài viết
 
   .sidebar-footer
+    .sidebar-section-title CẤU HÌNH & TÀI KHOẢN
     ul.sidebar-menu.bottom-menu
       if(role && role.permissions && (role.permissions.includes("setting_view") || role.permissions.includes("account_admin_view") || role.permissions.includes("role_view")))
         li

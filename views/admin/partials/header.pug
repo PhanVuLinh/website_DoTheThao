@@ -1,15 +1,74 @@
 header.admin-header
-  .header-search
-    i.fa-solid.fa-magnifying-glass
-    input(type="text" placeholder="Tìm kiếm...")
+  .header-left
+    button.btn-sidebar-toggle#sidebarToggle(type="button" aria-label="Mở thanh điều hướng")
+      i.fa-solid.fa-bars-staggered
+    
+    .header-search
+      i.fa-solid.fa-magnifying-glass
+      input(type="text" placeholder="Tìm kiếm nhanh trong hệ thống..." id="adminGlobalSearch" autocomplete="off")
+      span.search-shortcut ⌘K
   
   .header-actions
-    .notification-bell
-      i.fa-regular.fa-bell
-      span.badge 6
-    
-    .admin-profile
-      img(src=(account.avatar ? account.avatar : "https://ui-avatars.com/api/?name=Admin&background=00004d&color=fff") alt=account.fullName)
-      .info
-        span.name #{account.fullName}
-        span.role Admin
+    .header-action-item.notification-wrapper
+      button.notification-bell#notificationBtn(type="button" aria-label="Thông báo" aria-expanded="false")
+        i.fa-regular.fa-bell
+        span.badge 3
+      
+      .dropdown-menu.notification-dropdown#notificationDropdown
+        .dropdown-header
+          span.dropdown-title Thông báo gần đây
+          span.dropdown-badge 3 mới
+        ul.notification-list
+          li.notification-item.unread
+            .notif-icon.bg-indigo
+              i.fa-solid.fa-cart-shopping
+            .notif-content
+              p.notif-text Đơn hàng mới vừa được đặt thành công
+              span.notif-time Vừa xong
+          li.notification-item.unread
+            .notif-icon.bg-amber
+              i.fa-solid.fa-triangle-exclamation
+            .notif-content
+              p.notif-text Sản phẩm có size sắp hết hàng
+              span.notif-time 30 phút trước
+          li.notification-item
+            .notif-icon.bg-emerald
+              i.fa-solid.fa-user-check
+            .notif-content
+              p.notif-text Khách hàng mới vừa đăng ký tài khoản
+              span.notif-time 2 giờ trước
+        .dropdown-footer
+          a(href=`/${pathAdmin}/order/list`) Xem tất cả đơn hàng
+
+    .header-divider
+
+    .header-action-item.profile-wrapper
+      button.admin-profile#adminProfileBtn(type="button" aria-label="Tài khoản quản trị" aria-expanded="false")
+        img(
+          src=(account.avatar ? account.avatar : "https://ui-avatars.com/api/?name=Admin&background=1e3a8a&color=fff") 
+          alt=account.fullName
+          onerror="this.src='https://ui-avatars.com/api/?name=Admin&background=1e3a8a&color=fff'"
+        )
+        .info
+          span.name #{account.fullName}
+          span.role #{role && role.name ? role.name : 'Quản trị viên'}
+        i.fa-solid.fa-chevron-down.profile-chevron
+      
+      .dropdown-menu.profile-dropdown#profileDropdown
+        .profile-dropdown-header
+          p.profile-full-name #{account.fullName}
+          p.profile-email #{account.email}
+        ul.dropdown-list
+          li
+            a(href=`/${pathAdmin}/profile/edit`)
+              i.fa-regular.fa-user
+              span Thông tin cá nhân
+          li
+            a(href=`/${pathAdmin}/profile/change-password`)
+              i.fa-solid.fa-key
+              span Đổi mật khẩu
+          li.divider
+          li
+            a.text-danger(href=`/${pathAdmin}/auth/logout`)
+              i.fa-solid.fa-arrow-right-from-bracket
+              span Đăng xuất

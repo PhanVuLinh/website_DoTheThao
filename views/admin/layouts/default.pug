@@ -7,8 +7,8 @@ html(lang="vi")
 
     link(
       rel="stylesheet" 
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-      )
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    )
       
     link(
       rel="stylesheet"
@@ -20,9 +20,8 @@ html(lang="vi")
       rel="stylesheet"
     )
 
-
-
   body.admin-body
+    .sidebar-overlay#sidebarOverlay(aria-hidden="true")
     include ../partials/sidebar.pug
 
     .admin-main-wrapper

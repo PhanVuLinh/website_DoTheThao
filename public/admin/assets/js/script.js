@@ -114,18 +114,41 @@ if (uploadImagesInput && uploadImagesPreviewContainer) {
 const listButtonDelete = document.querySelectorAll("[button-delete]");
 if (listButtonDelete.length > 0) {
   const formDeleteItem = document.querySelector("#form-delete-item");
-  const path = formDeleteItem.getAttribute("data-path");
-  listButtonDelete.forEach((button) => {
-    button.addEventListener("click", () => {
-      const isConfirm = confirm("Bạn có muốn xóa?");
-      if (isConfirm) {
+  if (formDeleteItem) {
+    const path = formDeleteItem.getAttribute("data-path");
+    listButtonDelete.forEach((button) => {
+      button.addEventListener("click", () => {
         const id = button.getAttribute("data-id");
-        const action = `${path}/${id}?_method=DELETE`;
-        formDeleteItem.action = action;
-        formDeleteItem.submit();
-      }
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            title: "Xác nhận xóa?",
+            text: "Dữ liệu này sẽ được chuyển vào thùng rác!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#ef4444",
+            cancelButtonColor: "#64748b",
+            confirmButtonText: "Xóa bản ghi",
+            cancelButtonText: "Hủy bỏ",
+            reverseButtons: true,
+            focusCancel: true
+          }).then((result) => {
+            if (result.isConfirmed) {
+              const action = `${path}/${id}?_method=DELETE`;
+              formDeleteItem.action = action;
+              formDeleteItem.submit();
+            }
+          });
+        } else {
+          const isConfirm = confirm("Bạn có chắc muốn xóa bản ghi này?");
+          if (isConfirm) {
+            const action = `${path}/${id}?_method=DELETE`;
+            formDeleteItem.action = action;
+            formDeleteItem.submit();
+          }
+        }
+      });
     });
-  });
+  }
 }
 //End button delete
 
@@ -281,7 +304,16 @@ if (formChangeMulti) {
     btnApply.addEventListener("click", () => {
       const type = selectChangeMulti.value;
       if (!type) {
-        alert("Vui lòng chọn một hành động!");
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            icon: "info",
+            title: "Thông báo",
+            text: "Vui lòng chọn một hành động để áp dụng!",
+            confirmButtonColor: "#2563eb",
+          });
+        } else {
+          alert("Vui lòng chọn một hành động!");
+        }
         return;
       }
 
@@ -289,11 +321,7 @@ if (formChangeMulti) {
         "input[check-item]:checked",
       );
       if (listCheckItemChecked.length > 0) {
-        const isConfirm = confirm(
-          `Bạn có chắc muốn áp dụng hành động này cho ${listCheckItemChecked.length} bản ghi?`,
-        );
-
-        if (isConfirm) {
+        const applyAction = () => {
           let ids = [];
           listCheckItemChecked.forEach((input) => {
             ids.push(input.value);
@@ -306,9 +334,43 @@ if (formChangeMulti) {
           const path = formChangeMulti.getAttribute("data-path");
           formChangeMulti.action = `${path}?_method=PATCH`;
           formChangeMulti.submit();
+        };
+
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            title: "Xác nhận thao tác?",
+            text: `Bạn có chắc muốn áp dụng hành động này cho ${listCheckItemChecked.length} bản ghi đã chọn?`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#2563eb",
+            cancelButtonColor: "#64748b",
+            confirmButtonText: "Áp dụng ngay",
+            cancelButtonText: "Hủy bỏ",
+            reverseButtons: true,
+          }).then((result) => {
+            if (result.isConfirmed) {
+              applyAction();
+            }
+          });
+        } else {
+          const isConfirm = confirm(
+            `Bạn có chắc muốn áp dụng hành động này cho ${listCheckItemChecked.length} bản ghi?`,
+          );
+          if (isConfirm) {
+            applyAction();
+          }
         }
       } else {
-        alert("Vui lòng chọn ít nhất 1 bản ghi để áp dụng!");
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            icon: "warning",
+            title: "Chưa chọn bản ghi",
+            text: "Vui lòng chọn ít nhất 1 bản ghi để áp dụng!",
+            confirmButtonColor: "#2563eb",
+          });
+        } else {
+          alert("Vui lòng chọn ít nhất 1 bản ghi để áp dụng!");
+        }
       }
     });
   }
@@ -499,6 +561,98 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+
+  // --- A1. XỬ LÝ MOBILE SIDEBAR TOGGLE & OVERLAY ---
+  const sidebarToggleBtn = document.getElementById("sidebarToggle");
+  const sidebarCloseBtn = document.getElementById("sidebarClose");
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
+  const adminSidebar = document.querySelector(".admin-sidebar");
+
+  function openAdminSidebar() {
+    if (adminSidebar) adminSidebar.classList.add("show");
+    if (sidebarOverlay) sidebarOverlay.classList.add("active");
+  }
+
+  function closeAdminSidebar() {
+    if (adminSidebar) adminSidebar.classList.remove("show");
+    if (sidebarOverlay) sidebarOverlay.classList.remove("active");
+  }
+
+  if (sidebarToggleBtn) {
+    sidebarToggleBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      openAdminSidebar();
+    });
+  }
+  if (sidebarCloseBtn) {
+    sidebarCloseBtn.addEventListener("click", closeAdminSidebar);
+  }
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener("click", closeAdminSidebar);
+  }
+
+  // --- A2. XỬ LÝ HEADER DROPDOWNS (NOTIFICATION & USER PROFILE) ---
+  const notificationBtn = document.getElementById("notificationBtn");
+  const notificationDropdown = document.getElementById("notificationDropdown");
+  const adminProfileBtn = document.getElementById("adminProfileBtn");
+  const profileDropdown = document.getElementById("profileDropdown");
+
+  if (notificationBtn && notificationDropdown) {
+    notificationBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (profileDropdown) profileDropdown.classList.remove("show");
+      const isOpen = notificationDropdown.classList.toggle("show");
+      notificationBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+  }
+
+  if (adminProfileBtn && profileDropdown) {
+    adminProfileBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (notificationDropdown) notificationDropdown.classList.remove("show");
+      const isOpen = profileDropdown.classList.toggle("show");
+      adminProfileBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      const chevron = adminProfileBtn.querySelector(".profile-chevron");
+      if (chevron) {
+        chevron.style.transform = isOpen ? "rotate(180deg)" : "rotate(0deg)";
+      }
+    });
+  }
+
+  document.addEventListener("click", function (e) {
+    if (notificationDropdown && !notificationDropdown.contains(e.target) && e.target !== notificationBtn) {
+      notificationDropdown.classList.remove("show");
+      if (notificationBtn) notificationBtn.setAttribute("aria-expanded", "false");
+    }
+    if (profileDropdown && !profileDropdown.contains(e.target) && (!adminProfileBtn || !adminProfileBtn.contains(e.target))) {
+      profileDropdown.classList.remove("show");
+      if (adminProfileBtn) {
+        adminProfileBtn.setAttribute("aria-expanded", "false");
+        const chevron = adminProfileBtn.querySelector(".profile-chevron");
+        if (chevron) chevron.style.transform = "rotate(0deg)";
+      }
+    }
+  });
+
+  // --- A3. PHÍM TẮT TÌM KIẾM NHANH (⌘K hoặc /) ---
+  const globalSearchInput = document.getElementById("adminGlobalSearch") || document.querySelector("[search]");
+  document.addEventListener("keydown", function (e) {
+    const isEditing = ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName);
+    if ((e.key === "/" || (e.key === "k" && (e.metaKey || e.ctrlKey))) && !isEditing) {
+      if (globalSearchInput) {
+        e.preventDefault();
+        globalSearchInput.focus();
+        if (typeof globalSearchInput.select === "function") globalSearchInput.select();
+      }
+    }
+  });
+
+  // --- A4. FALLBACK HÌNH ẢNH LỖI TỰ ĐỘNG ---
+  document.querySelectorAll("img.td-thumbnail, img.td-avatar").forEach(function (img) {
+    img.addEventListener("error", function () {
+      this.src = "https://placehold.co/100x100/f1f5f9/64748b?text=SP";
+    });
+  });
 
   // --- B. KHỞI TẠO BIỂU ĐỒ DOANH THU (Dùng cho trang Dashboard) ---
   const ctx = document.getElementById("revenueChart");
