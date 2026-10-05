@@ -1,10 +1,14 @@
 aside.admin-sidebar#adminSidebar
   .sidebar-header
     a(href=`/${pathAdmin}/dashboard`).sidebar-brand
-      .brand-icon-box
-        i.fa-solid.fa-shield-halved
+      if(settingWebsiteInfo && settingWebsiteInfo.logo)
+        .brand-logo-box
+          img.brand-logo-img(src=settingWebsiteInfo.logo alt=(settingWebsiteInfo.websiteName || "Logo"))
+      else
+        .brand-icon-box
+          i.fa-solid.fa-shield-halved
       .brand-title-wrap
-        span.brand-name TitiSport
+        span.brand-name #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : 'TitiSport'}
         span.brand-badge ADMIN
     button.sidebar-close-btn#sidebarClose(type="button" aria-label="Đóng thanh điều hướng")
       i.fa-solid.fa-xmark

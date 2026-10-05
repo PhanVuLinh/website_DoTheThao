@@ -1,6 +1,9 @@
 const router = require("express").Router();
 
 const authMiddleware = require("../../middlewares/admin/auth.middleware");
+const settingMiddleware = require("../../middlewares/admin/setting.middleware");
+
+router.use(settingMiddleware.websiteInfo);
 
 const authRoutes = require("./auth.route");
 const dashboardRoutes = require("../admin/dashboard.route");

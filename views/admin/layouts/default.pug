@@ -3,7 +3,10 @@ html(lang="vi")
   head 
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    title #{title }
+    title #{title} | #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : 'TitiSport'} Admin
+
+    if(settingWebsiteInfo && settingWebsiteInfo.favicon)
+      link(rel="icon" type="image/x-icon" href=settingWebsiteInfo.favicon)
 
     link(
       rel="stylesheet" 

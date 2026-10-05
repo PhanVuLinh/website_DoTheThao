@@ -12,9 +12,13 @@ block main
     .auth-form-wrapper
       .auth-form-container
         .auth-header
-          .auth-logo-icon
-            i.fa-solid.fa-shield-halved
-          h2.auth-title TitiSport Admin
+          if(settingWebsiteInfo && settingWebsiteInfo.logo)
+            .auth-logo-img-box
+              img(src=settingWebsiteInfo.logo alt=(settingWebsiteInfo.websiteName || "Logo"))
+          else
+            .auth-logo-icon
+              i.fa-solid.fa-shield-halved
+          h2.auth-title #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : 'TitiSport'} Admin
           p.auth-desc Đăng nhập hệ thống quản trị viên
         
         form.auth-form#login-form(action=`/${pathAdmin}/auth/login` method="POST")
