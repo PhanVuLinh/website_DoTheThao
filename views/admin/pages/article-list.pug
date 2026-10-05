@@ -5,6 +5,7 @@ include ../mixins/filter-status.pug
 include ../mixins/filter-created-by.pug
 include ../mixins/filter-date-range.pug
 include ../mixins/pagination.pug
+include ../mixins/switch-status.pug
 
 block main
   if(role && role.permissions && role.permissions.includes("article_view"))
@@ -93,7 +94,7 @@ block main
                   td #{item.position}
                   
                   td
-                    span(class=`badge-status ${item.status == "active" ? "badge-active" : "badge-inactive"}`) #{item.status == "active" ? "Hoạt động" : "Tạm dừng" }
+                    +switch-status(item, `/${pathAdmin}/article/change-multi`, "article_edit")
                   
                   td
                     .user-date

@@ -4,6 +4,7 @@ include ../mixins/bulk-action.pug
 include ../mixins/filter-status.pug
 include ../mixins/filter-date-range.pug
 include ../mixins/pagination.pug
+include ../mixins/switch-status.pug
 
 block main
   if(role && role.permissions && role.permissions.includes("account_admin_view"))
@@ -97,7 +98,7 @@ block main
                   td #{item.role_name}
                   td #{item.jobTitle}
                   td
-                    span.badge-status(class= `${item.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{item.status == "active" ? "Hoạt động" : "Tạm dừng"}
+                    +switch-status(item, `/${pathAdmin}/setting/account-admin/change-multi`, "account_admin_edit")
                   if(role && role.permissions && (role.permissions.includes("account_admin_edit") || role.permissions.includes("account_admin_delete")))
                     td
                       .action-btns

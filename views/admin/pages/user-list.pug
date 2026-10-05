@@ -3,6 +3,7 @@ include ../mixins/alert.pug
 include ../mixins/bulk-action.pug
 include ../mixins/filter-status.pug
 include ../mixins/pagination.pug
+include ../mixins/switch-status.pug
 
 block main
   if(role && role.permissions && role.permissions.includes("user_view"))
@@ -79,7 +80,7 @@ block main
                   td #{item.email}
                   
                   td 
-                    span(class=`badge-status ${item.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{item.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}
+                    +switch-status(item, `/${pathAdmin}/user/change-multi`, "user_edit")
                   
                   
                   td

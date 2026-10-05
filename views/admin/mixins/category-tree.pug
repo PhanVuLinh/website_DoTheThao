@@ -1,3 +1,5 @@
+include ./switch-status.pug
+
 mixin category-tree(items, level = 0)
   each item in items
     - const prefix = Array(level + 1).join('-- ')
@@ -19,7 +21,7 @@ mixin category-tree(items, level = 0)
       td #{item.position}
       
       td
-        span(class=`badge-status ${item.status == "active" ? "badge-active" : "badge-inactive"}`) #{item.status == "active" ? "Hoạt động" : "Tạm dừng"}
+        +switch-status(item, `/${pathAdmin}/category/change-multi`, "category_edit")
       
       td
         .user-date

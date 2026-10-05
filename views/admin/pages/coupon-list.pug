@@ -3,6 +3,7 @@ include ../mixins/alert.pug
 include ../mixins/filter-status.pug
 include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
+include ../mixins/switch-status.pug
 
 block main
   if(role && role.permissions && role.permissions.includes("coupon_view"))
@@ -78,7 +79,7 @@ block main
                   td.font-weight-600.text-uppercase #{item.code}
                   td #{item.title}
                   td 
-                    span(class=`badge-status ${item.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{item.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}
+                    +switch-status(item, `/${pathAdmin}/coupon/change-multi`, "coupon_edit")
                   td #{item.discountPercentage}%
                   td #{item.maxDiscountAmount.toLocaleString('vi-VN')} đ
                   td #{item.quantity}
