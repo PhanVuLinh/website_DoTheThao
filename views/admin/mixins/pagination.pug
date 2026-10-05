@@ -2,11 +2,11 @@ mixin pagination(pagination)
   if pagination.totalPage > 1
     ul.pagination-list
       li(class=`page-item ${pagination.currentPage > 1 ? "": "disabled"} `)
-        button.page-link(button-pagination=pagination.currentPage-1)
+        button.page-link(button-pagination=pagination.currentPage-1 title="Trang trước")
           i.fa-solid.fa-angle-left
       - for (var i = 1; i <= pagination.totalPage; i++)
         li(class=`page-item ${pagination.currentPage == i ? "active": ""}`)
           button.page-link(button-pagination=i) #{i}
-      lili(class=`page-item ${pagination.currentPage == pagination.totalPage ? "disabled": ""} `)
-        button.page-link(button-pagination=pagination.currentPage+1)
+      li(class=`page-item ${pagination.currentPage == pagination.totalPage ? "disabled": ""} `)
+        button.page-link(button-pagination=pagination.currentPage+1 title="Trang sau")
           i.fa-solid.fa-angle-right

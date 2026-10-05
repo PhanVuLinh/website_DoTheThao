@@ -69,52 +69,73 @@ block main
                 th Hành động
           
           tbody
-            each orderDetail in orderList
-              tr
-                td.text-center
-                  input(type="checkbox" value=orderDetail.id name="id" check-item)
-                td.order-code #{orderDetail.orderCode}
-                td
-                  .customer-info
-                    span.font-weight-600 #{orderDetail.fullName}
-                    span.phone SĐT: #{orderDetail.phone}
-                    span.phone Địa chỉ: #{orderDetail.address}
-                    if(orderDetail.note)
-                      span.phone(style="color: var(--red-main)") Ghi chú: #{orderDetail.note}
-                td
-                  .order-products-list
-                    each item in orderDetail.products
-                      .product-mini-item
-                        img(src=item.thumbnail alt=item.title)
-                        .prod-info
-                          span.prod-name #{item.title}
-                          span.prod-meta #{item.size} | SL: #{item.quantity} | #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
-                td
-                  .payment-summary
-                    span Tạm tính: #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
-                    span Giảm giá: #{orderDetail.discount.toLocaleString('vi-VN')} đ
-                    if(orderDetail.couponCode)
-                      span Mã giảm: #{orderDetail.couponCode}
-                    span.total-pay Thanh toán: #{orderDetail.total.toLocaleString('vi-VN')} đ
-                    span PTTT: #{orderDetail.paymentMethodName}
-                    span TTTT: #{orderDetail.paymentStatusName}
-                td
-                  - var statusClass = orderDetail.status ? `badge-${orderDetail.status}` : 'badge-pending'
-                  span.badge-status(class=statusClass)  #{orderDetail.statusName}
-                td
-                  .user-date
-                    span.name #{orderDetail.createdAtTime}
-                    span.time #{orderDetail.createdAtDate}
-                
-                if(role && role.permissions && (role.permissions.includes("order_edit") || role.permissions.includes("order_delete")))
+            if orderList && orderList.length > 0
+              each orderDetail in orderList
+                tr
+                  td.text-center
+                    input(type="checkbox" value=orderDetail.id name="id" check-item)
                   td
-                    .action-btns
-                      if(role && role.permissions && role.permissions.includes("order_edit"))
-                        a.btn-edit(href=`/${pathAdmin}/order/edit/${orderDetail.id}` title="Cập nhật")
-                          i.fa-regular.fa-pen-to-square
-                      if(role && role.permissions && role.permissions.includes("order_delete"))
-                        button.btn-delete(title="Hủy đơn" button-delete data-id=orderDetail.id)
-                          i.fa-regular.fa-trash-can
+                    a.order-code(href=`/${pathAdmin}/order/edit/${orderDetail.id}`) #{orderDetail.orderCode}
+                  td
+                    .customer-info
+                      span.font-weight-600 #{orderDetail.fullName}
+                      span.phone 
+                        i.fa-solid.fa-phone
+                        | #{orderDetail.phone}
+                      span.phone.address-clamp
+                        i.fa-solid.fa-location-dot
+                        | #{orderDetail.address}
+                      if(orderDetail.note)
+                        span.phone.note-text
+                          i.fa-solid.fa-message
+                          | #{orderDetail.note}
+                  td
+                    .order-products-list
+                      each item in orderDetail.products
+                        .product-mini-item
+                          img(
+                            src=item.thumbnail 
+                            alt=item.title
+                            onerror="this.src='https://placehold.co/80x80/e2e8f0/64748b?text=SP'"
+                          )
+                          .prod-info
+                            span.prod-name(title=item.title) #{item.title}
+                            span.prod-meta Size: #{item.size || 'Tiêu chuẩn'} | SL: #{item.quantity} | #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
+                  td
+                    .payment-summary
+                      span Tạm tính: #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
+                      if(orderDetail.discount)
+                        span Giảm giá: #{orderDetail.discount.toLocaleString('vi-VN')} đ
+                      if(orderDetail.couponCode)
+                        span Mã giảm: #{orderDetail.couponCode}
+                      span.total-pay Thanh toán: #{orderDetail.total.toLocaleString('vi-VN')} đ
+                      span.badge-method #{orderDetail.paymentMethodName}
+                      span.badge-pay-status #{orderDetail.paymentStatusName}
+                  td
+                    - var statusClass = orderDetail.status ? `badge-${orderDetail.status}` : 'badge-pending'
+                    span.badge-status(class=statusClass) #{orderDetail.statusName}
+                  td
+                    .user-date
+                      span.name #{orderDetail.createdAtTime}
+                      span.time #{orderDetail.createdAtDate}
+                  
+                  if(role && role.permissions && (role.permissions.includes("order_edit") || role.permissions.includes("order_delete")))
+                    td
+                      .action-btns
+                        if(role && role.permissions && role.permissions.includes("order_edit"))
+                          a.btn-action.btn-edit(href=`/${pathAdmin}/order/edit/${orderDetail.id}` title="Chi tiết / Cập nhật")
+                            i.fa-regular.fa-pen-to-square
+                        if(role && role.permissions && role.permissions.includes("order_delete"))
+                          button.btn-action.btn-delete(title="Hủy đơn hàng" button-delete data-id=orderDetail.id)
+                            i.fa-regular.fa-trash-can
+            else
+              tr
+                td(colspan="8")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-solid.fa-cart-shopping
+                    h4.empty-title Chưa có đơn hàng nào
+                    p.empty-desc Hiện tại chưa có đơn hàng nào phù hợp với bộ lọc hiện tại.
 
     .admin-pagination
       +pagination(pagination)

@@ -88,7 +88,20 @@ block main
               if(role && role.permissions && (role.permissions.includes("category_edit") || role.permissions.includes("category_delete")))
                 th Hành động
           tbody
-            +category-tree(categoryList)
+            if categoryList && categoryList.length > 0
+              +category-tree(categoryList)
+            else
+              tr
+                td(colspan="8")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-solid.fa-table-cells-large
+                    h4.empty-title Chưa có danh mục nào
+                    p.empty-desc Hãy tạo danh mục đầu tiên để phân loại sản phẩm.
+                    if(role && role.permissions && role.permissions.includes("category_create"))
+                      a(href=`/${pathAdmin}/category/create`).btn-create
+                        i.fa-solid.fa-plus
+                        | Tạo danh mục mới
             
     if(role && role.permissions && role.permissions.includes("category_delete"))
       form(
