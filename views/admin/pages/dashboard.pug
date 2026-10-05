@@ -5,47 +5,63 @@ block main
   if(role && role.permissions && role.permissions.includes("dashboard_view"))
     +alert-success(3000)
     +alert-error(3000)
-    h1.page-title Tổng quan
+
+    .dashboard-hero
+      .hero-text
+        h1.page-title Tổng quan hệ thống
+        p.page-subtitle Theo dõi các chỉ số kinh doanh và hoạt động quản trị trong thời gian thực.
+      .hero-date
+        i.fa-regular.fa-calendar
+        span Hôm nay, #{new Date().toLocaleDateString('vi-VN')}
 
     .stat-widgets
-      .widget-card
-        .widget-icon.bg-purple
-          i.fa-solid.fa-user-group
+      .widget-card.widget-admin
+        .widget-icon.bg-indigo
+          i.fa-solid.fa-user-shield
         .widget-info
           span.label Quản trị viên
           h3.value #{section1.totalAdmin || 0}
+          span.widget-subtext Tài khoản đang hoạt động
 
-      .widget-card
-        .widget-icon.bg-purple
-          i.fa-solid.fa-user-group
+      .widget-card.widget-users
+        .widget-icon.bg-blue
+          i.fa-solid.fa-users
         .widget-info
-          span.label Người dùng
+          span.label Khách hàng
           h3.value #{section1.totalUser || 0}
+          span.widget-subtext Thành viên trên hệ thống
 
-      .widget-card
-        .widget-icon.bg-yellow
-          i.fa-solid.fa-box
+      .widget-card.widget-orders
+        .widget-icon.bg-amber
+          i.fa-solid.fa-cart-shopping
         .widget-info
-          span.label Đơn hàng
+          span.label Tổng đơn hàng
           h3.value #{section1.totalOrder || 0}
+          span.widget-subtext Đơn hàng đã ghi nhận
 
-      .widget-card
-        .widget-icon.bg-green
-          i.fa-solid.fa-money-bill-trend-up
+      .widget-card.widget-revenue
+        .widget-icon.bg-emerald
+          i.fa-solid.fa-coins
         .widget-info
-          span.label Doanh thu
+          span.label Tổng doanh thu
           h3.value #{(section1.totalPrice || 0).toLocaleString('vi-VN')} đ
+          span.widget-subtext Doanh số tích lũy
 
     .chart-section
       .section-header
-        h2.section-title Biểu đồ doanh thu
-        select.filter-select(id="chartMonthSelect")
-          each opt in monthOptions
-            - var selected = (opt.month === chart.currentMonth && opt.year === chart.currentYear)
-            option(
-              value=`${opt.month}-${opt.year}`
-              selected=selected
-            ) #{opt.label}
+        .section-header-left
+          h2.section-title Biểu đồ doanh thu
+          p.section-desc So sánh doanh thu theo ngày giữa tháng được chọn và tháng trước đó
+        .section-header-right
+          .chart-filter-wrap
+            i.fa-regular.fa-calendar-days
+            select.filter-select(id="chartMonthSelect" aria-label="Chọn tháng thống kê")
+              each opt in monthOptions
+                - var selected = (opt.month === chart.currentMonth && opt.year === chart.currentYear)
+                option(
+                  value=`${opt.month}-${opt.year}`
+                  selected=selected
+                ) #{opt.label}
 
       .chart-container(
         data-current-month=chart.currentMonth
@@ -58,7 +74,16 @@ block main
         canvas#revenueChart
 
     .table-section
-      h2.section-title Đơn hàng mới
+      .section-header
+        .section-header-left
+          h2.section-title Đơn hàng mới nhất
+          p.section-desc Các đơn hàng vừa được đặt gần đây cần xử lý
+        if(role && role.permissions && role.permissions.includes("order_view"))
+          .section-header-right
+            a.btn-link-action(href=`/${pathAdmin}/order/list`)
+              span Xem tất cả đơn hàng
+              i.fa-solid.fa-arrow-right
+      
       .table-responsive
         table.admin-table.table-hover
           thead
@@ -69,31 +94,52 @@ block main
               th Thanh toán
               th Trạng thái
               th Ngày đặt
+              th Thao tác
           tbody
             if orderList && orderList.length
               each orderDetail in orderList
                 tr
                   td
-                    span.order-code #{orderDetail.orderCode}
+                    a.order-code(href=`/${pathAdmin}/order/edit/${orderDetail.id}`) #{orderDetail.orderCode}
                   td
                     .customer-info
                       span.font-weight-600 #{orderDetail.fullName}
-                      span.phone #{orderDetail.phone}
+                      span.phone 
+                        i.fa-solid.fa-phone
+                        | #{orderDetail.phone}
                   td
-                    each item in orderDetail.products
-                      .product-mini-item
-                        img(src=item.thumbnail alt=item.title)
-                        .prod-info
-                          span.prod-name #{item.title}
+                    .mini-products-stack
+                      each item in orderDetail.products
+                        .product-mini-item
+                          img(
+                            src=item.thumbnail 
+                            alt=item.title 
+                            onerror="this.src='https://placehold.co/80x80/e2e8f0/64748b?text=SP'"
+                          )
+                          .prod-info
+                            span.prod-name(title=item.title) #{item.title}
+                            if item.size || item.quantity
+                              span.prod-meta Size: #{item.size || 'Tiêu chuẩn'} | SL: #{item.quantity}
                   td
                     span.text-price #{orderDetail.total.toLocaleString('vi-VN')} đ
                   td
                     - var statusClass = orderDetail.status ? `badge-${orderDetail.status}` : 'badge-pending'
                     span.badge-status(class=statusClass) #{orderDetail.statusName}
-                  td #{orderDetail.createdAtFormat}
+                  td
+                    span.text-muted #{orderDetail.createdAtFormat}
+                  td
+                    .action-btns
+                      if(role && role.permissions && role.permissions.includes("order_edit"))
+                        a.btn-action.btn-view(href=`/${pathAdmin}/order/edit/${orderDetail.id}` title="Xem chi tiết đơn")
+                          i.fa-regular.fa-eye
             else
               tr
-                td(colspan="6") Không có đơn hàng mới
+                td(colspan="7")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-solid.fa-receipt
+                    h4.empty-title Chưa có đơn hàng mới
+                    p.empty-desc Hiện tại chưa ghi nhận đơn hàng phát sinh nào trong hệ thống.
 
   else
     .no-access-wrapper
