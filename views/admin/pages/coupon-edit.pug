@@ -30,7 +30,16 @@ block main
           
           .form-group
             label Giảm tối đa (VNĐ)
-            input.form-control(type="number" name="maxDiscountAmount" min="0" step="1000" value=couponDetail.maxDiscountAmount)
+            .input-currency-wrapper
+              input.form-control(
+                type="text" 
+                inputmode="numeric" 
+                input-currency 
+                name="maxDiscountAmount" 
+                placeholder="Ví dụ: 100.000" 
+                value=couponDetail.maxDiscountAmount
+              )
+              span.input-currency-suffix đ
 
         .form-row-2
           .form-group

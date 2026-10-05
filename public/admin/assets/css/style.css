@@ -1830,6 +1830,54 @@ textarea.is-invalid {
   animation: shakeInput 0.35s ease-in-out;
 }
 
+/* Currency Input Component */
+.input-currency-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-currency-wrapper .form-control {
+  padding-right: 48px;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.input-currency-suffix {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--admin-primary, #4361ee);
+  background-color: var(--admin-primary-subtle, #eef2ff);
+  border: 1px solid rgba(67, 97, 238, 0.2);
+  border-radius: 6px;
+  padding: 3px 8px;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.input-currency-wrapper .form-control:focus ~ .input-currency-suffix {
+  color: #ffffff;
+  background-color: var(--admin-primary, #4361ee);
+  border-color: var(--admin-primary, #4361ee);
+}
+
+.input-currency-wrapper .form-control.is-invalid ~ .input-currency-suffix {
+  color: var(--admin-danger, #ef4444);
+  background-color: #fef2f2;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
 /* Radio Group in Forms */
 .featured-radios {
   display: flex;

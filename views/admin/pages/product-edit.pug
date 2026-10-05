@@ -75,8 +75,18 @@ block main
                     input(type="hidden" name="old_images" value=img)
         .form-row-2
           .form-group
-            label Giá bán (VNĐ)
-            input.form-control(type="number" name="price" placeholder="Ví dụ: 2500000" value=productDetail.price )
+            label Giá bán (VNĐ) <span style="color:#ef4444">*</span>
+            .input-currency-wrapper
+              input.form-control(
+                type="text" 
+                inputmode="numeric" 
+                input-currency 
+                name="price" 
+                placeholder="Ví dụ: 2.500.000" 
+                value=productDetail.price 
+                required
+              )
+              span.input-currency-suffix đ
           
           .form-group
             label Giảm giá (%)

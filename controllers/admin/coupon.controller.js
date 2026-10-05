@@ -116,7 +116,7 @@ module.exports.createPost = async (req, res) => {
       return;
     }
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
-    req.body.maxDiscountAmount = parseInt(req.body.maxDiscountAmount);
+    req.body.maxDiscountAmount = parseInt(String(req.body.maxDiscountAmount || 0).replace(/\D/g, ""), 10);
     req.body.quantity = parseInt(req.body.quantity);
     req.body.createdBy = req.account.id;
     req.body.updatedBy = req.account.id;
@@ -173,6 +173,9 @@ module.exports.editPatch = async (req, res) => {
     }
     req.body.updatedBy = req.account.id;
     req.body.updatedAt = new Date();
+    if (req.body.maxDiscountAmount !== undefined && req.body.maxDiscountAmount !== "") {
+      req.body.maxDiscountAmount = parseInt(String(req.body.maxDiscountAmount).replace(/\D/g, ""), 10);
+    }
     await Coupon.updateOne(
       {
         _id: id,

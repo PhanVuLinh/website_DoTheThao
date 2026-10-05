@@ -13,6 +13,7 @@ module.exports.createPost = (req, res, next) => {
     req.flashFormError("price", "Vui lòng nhập giá sản phẩm!");
     return res.redirect(req.get("Referer"));
   }
+  req.body.price = String(req.body.price).replace(/\D/g, "");
 
   if (req.body.position) {
     const positionInt = parseInt(req.body.position, 10);

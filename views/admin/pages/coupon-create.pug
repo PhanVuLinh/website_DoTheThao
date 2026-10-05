@@ -48,13 +48,17 @@ block main
           
           .form-group
             label Giảm tối đa (VNĐ)
-            input.form-control(
-              type="number" 
-              name="maxDiscountAmount" 
-              min="0" 
-              value=oldData.maxDiscountAmount !== undefined ? oldData.maxDiscountAmount : "0" 
-              step="1000"
-            )
+            .input-currency-wrapper
+              input.form-control(
+                type="text" 
+                inputmode="numeric" 
+                input-currency 
+                name="maxDiscountAmount" 
+                placeholder="Ví dụ: 100.000" 
+                min="0" 
+                value=oldData.maxDiscountAmount !== undefined ? oldData.maxDiscountAmount : "0" 
+              )
+              span.input-currency-suffix đ
 
         .form-row-2
           .form-group

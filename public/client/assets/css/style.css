@@ -4540,3 +4540,51 @@ textarea.is-invalid {
   animation: shakeInput 0.35s ease-in-out;
 }
 
+/* Currency Input Component */
+.input-currency-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-currency-wrapper .form-control {
+  padding-right: 48px;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.input-currency-suffix {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--red-main, #d90429);
+  background-color: #fff1f2;
+  border: 1px solid rgba(217, 4, 41, 0.2);
+  border-radius: 6px;
+  padding: 3px 8px;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.input-currency-wrapper .form-control:focus ~ .input-currency-suffix {
+  color: #ffffff;
+  background-color: var(--red-main, #d90429);
+  border-color: var(--red-main, #d90429);
+}
+
+.input-currency-wrapper .form-control.is-invalid ~ .input-currency-suffix {
+  color: #ef4444;
+  background-color: #fef2f2;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+

@@ -25,7 +25,10 @@ module.exports.createPost = (req, res, next) => {
   }
 
   // 4. Max discount
-  req.body.maxDiscountAmount = parseInt(req.body.maxDiscountAmount, 10);
+  if (req.body.maxDiscountAmount !== undefined && req.body.maxDiscountAmount !== "") {
+    req.body.maxDiscountAmount = String(req.body.maxDiscountAmount).replace(/\D/g, "");
+  }
+  req.body.maxDiscountAmount = parseInt(req.body.maxDiscountAmount || 0, 10);
   if (isNaN(req.body.maxDiscountAmount) || req.body.maxDiscountAmount < 0) {
     req.flashFormError("maxDiscountAmount", "Giảm tối đa phải >= 0!");
     return res.redirect(req.get("Referer"));

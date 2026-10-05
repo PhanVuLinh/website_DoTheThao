@@ -184,7 +184,7 @@ module.exports.createPost = async (req, res) => {
     req.files && req.files.thumbnail
       ? req.files.thumbnail[0].path
       : delete req.body.thumbnail;
-  req.body.price = req.body.price ? parseInt(req.body.price) : 0;
+  req.body.price = req.body.price ? parseInt(String(req.body.price).replace(/\D/g, ""), 10) : 0;
   req.body.discountPercentage = req.body.discountPercentage
     ? parseInt(req.body.discountPercentage)
     : 0;
@@ -247,7 +247,7 @@ module.exports.editPatch = async (req, res) => {
       delete req.body.thumbnail;
     }
 
-    req.body.price = req.body.price ? parseInt(req.body.price) : 0;
+    req.body.price = req.body.price ? parseInt(String(req.body.price).replace(/\D/g, ""), 10) : 0;
     req.body.discountPercentage = req.body.discountPercentage
       ? parseInt(req.body.discountPercentage)
       : 0;

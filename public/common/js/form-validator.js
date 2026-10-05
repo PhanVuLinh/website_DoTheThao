@@ -14,6 +14,141 @@
   const REGEX_PHONE = /^(0|\+84)[3|5|7|8|9][0-9]{8}$/;
 
   /**
+   * Kiểm tra input có phải là trường tiền tệ không
+   */
+  function isCurrencyInput(input) {
+    if (!input || input.tagName !== "INPUT") return false;
+    return (
+      input.hasAttribute("input-currency") ||
+      input.dataset.type === "currency" ||
+      input.name === "price" ||
+      input.name === "maxDiscountAmount"
+    );
+  }
+
+  /**
+   * Định dạng chuỗi số thành tiền tệ Việt Nam (phân cách bằng dấu chấm '.')
+   * Ví dụ: 123123123 -> 123.123.123
+   */
+  function formatVNCurrencyString(val) {
+    if (val === undefined || val === null) return "";
+    const raw = String(val).replace(/\D/g, "");
+    if (!raw) return "";
+    const clean = raw.replace(/^0+(?=\d)/, "");
+    return clean.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  /**
+   * Định dạng input tiền tệ trực tiếp khi đang gõ, bảo toàn vị trí con trỏ chuột
+   */
+  function formatVNCurrencyInput(input) {
+    const cursorPos = input.selectionStart || 0;
+    const originalValue = input.value || "";
+    
+    // Đếm số lượng chữ số nằm trước con trỏ hiện tại
+    const digitsBeforeCursor = originalValue.slice(0, cursorPos).replace(/\D/g, "").length;
+    
+    const formatted = formatVNCurrencyString(originalValue);
+    input.value = formatted;
+    
+    if (formatted === "") {
+      input.setSelectionRange(0, 0);
+      return;
+    }
+    
+    // Tìm vị trí con trỏ mới tương ứng với số chữ số đã gõ
+    let newCursorPos = 0;
+    let digitCount = 0;
+    for (let i = 0; i < formatted.length; i++) {
+      if (/\d/.test(formatted[i])) {
+        digitCount++;
+      }
+      if (digitCount === digitsBeforeCursor) {
+        newCursorPos = i + 1;
+        break;
+      }
+    }
+    if (digitsBeforeCursor === 0) newCursorPos = 0;
+    if (newCursorPos > formatted.length) newCursorPos = formatted.length;
+    
+    input.setSelectionRange(newCursorPos, newCursorPos);
+  }
+
+  /**
+   * Gắn formatter tiền tệ vào ô input
+   */
+  function attachCurrencyFormatter(input) {
+    if (input.dataset.currencyAttached) return;
+    input.dataset.currencyAttached = "true";
+
+    // Format giá trị ban đầu nếu có sẵn (ví dụ load từ database hoặc oldData)
+    if (input.value) {
+      input.value = formatVNCurrencyString(input.value);
+    }
+
+    input.addEventListener("input", function () {
+      formatVNCurrencyInput(this);
+    });
+
+    // Xử lý phím Backspace và Delete thông minh khi gặp dấu chấm '.'
+    input.addEventListener("keydown", function (e) {
+      const cursorPos = this.selectionStart;
+      const cursorEnd = this.selectionEnd;
+      if (cursorPos !== cursorEnd) return;
+
+      // Khi nhấn Backspace đứng sau dấu chấm
+      if (e.key === "Backspace" && cursorPos > 0 && this.value[cursorPos - 1] === ".") {
+        e.preventDefault();
+        const val = this.value;
+        const before = val.slice(0, cursorPos - 2);
+        const after = val.slice(cursorPos);
+        this.value = before + after;
+        formatVNCurrencyInput(this);
+        return;
+      }
+
+      // Khi nhấn Delete đứng trước dấu chấm
+      if (e.key === "Delete" && cursorPos < this.value.length && this.value[cursorPos] === ".") {
+        e.preventDefault();
+        const val = this.value;
+        const before = val.slice(0, cursorPos);
+        const after = val.slice(cursorPos + 2);
+        this.value = before + after;
+        formatVNCurrencyInput(this);
+        return;
+      }
+    });
+
+    // Xử lý Paste
+    input.addEventListener("paste", function (e) {
+      e.preventDefault();
+      const pastedText = (e.clipboardData || window.clipboardData).getData("text") || "";
+      const cleanDigits = pastedText.replace(/\D/g, "");
+      if (!cleanDigits) return;
+
+      const start = this.selectionStart;
+      const end = this.selectionEnd;
+      const currentVal = this.value;
+      const newVal = currentVal.slice(0, start) + cleanDigits + currentVal.slice(end);
+      this.value = newVal;
+      formatVNCurrencyInput(this);
+    });
+
+    input.addEventListener("blur", function () {
+      if (this.value) {
+        this.value = formatVNCurrencyString(this.value);
+      }
+    });
+  }
+
+  function initCurrencyInputs() {
+    const selector =
+      'input[input-currency], input[data-type="currency"], input[name="price"], input[name="maxDiscountAmount"]';
+    const currencyInputs = document.querySelectorAll(selector);
+    currencyInputs.forEach(attachCurrencyFormatter);
+  }
+
+  /**
    * Lấy nhãn đại diện của trường để tạo thông báo thân thiện
    */
   function getFieldLabel(input) {
@@ -45,6 +180,7 @@
       code: "Mã",
       price: "Giá",
       discountPercentage: "Phần trăm giảm giá",
+      maxDiscountAmount: "Giảm tối đa",
       quantity: "Số lượng",
       position: "Vị trí",
       description: "Mô tả",
@@ -71,9 +207,10 @@
     if (!feedback) {
       feedback = document.createElement("div");
       feedback.className = "invalid-feedback";
-      // Chèn sau input hoặc sau input-group
-      if (input.nextSibling) {
-        formGroup.insertBefore(feedback, input.nextSibling);
+      // Chèn sau input hoặc wrapper của input (ví dụ .input-currency-wrapper)
+      const container = input.closest(".input-currency-wrapper") || input;
+      if (container.nextSibling) {
+        formGroup.insertBefore(feedback, container.nextSibling);
       } else {
         formGroup.appendChild(feedback);
       }
@@ -156,8 +293,27 @@
       }
     }
 
-    // 6. Kiểm tra số âm / số nguyên
-    if (input.type === "number") {
+    // 6. Kiểm tra trường Tiền tệ (Currency)
+    if (isCurrencyInput(input)) {
+      const rawDigits = val.replace(/\D/g, "");
+      if (rawDigits === "" && isRequired) {
+        showFieldError(input, `Vui lòng nhập ${label.toLowerCase()}!`);
+        return false;
+      }
+      if (rawDigits !== "") {
+        const numVal = parseInt(rawDigits, 10);
+        if (isNaN(numVal)) {
+          showFieldError(input, `${label} phải là một số tiền hợp lệ!`);
+          return false;
+        }
+        const minVal = parseFloat(input.getAttribute("min"));
+        if (!isNaN(minVal) && numVal < minVal) {
+          showFieldError(input, `${label} không được nhỏ hơn ${formatVNCurrencyString(minVal)} đ!`);
+          return false;
+        }
+      }
+    } else if (input.type === "number") {
+      // 7. Kiểm tra số nguyên / số thông thường
       const minVal = parseFloat(input.getAttribute("min"));
       const numVal = parseFloat(val);
       if (isNaN(numVal)) {
@@ -241,6 +397,14 @@
         }
         return false;
       }
+
+      // Khi form hoàn toàn hợp lệ: gỡ bỏ dấu chấm '.' ở các ô tiền tệ trước khi gửi lên server
+      const currencyInputs = form.querySelectorAll(
+        'input[input-currency], input[data-type="currency"], input[name="price"], input[name="maxDiscountAmount"]'
+      );
+      currencyInputs.forEach((input) => {
+        input.value = input.value.replace(/\D/g, "");
+      });
     });
   }
 
@@ -270,6 +434,7 @@
    * Khởi tạo toàn bộ các form trên trang
    */
   function init() {
+    initCurrencyInputs();
     const forms = document.querySelectorAll("form:not([no-validate])");
     forms.forEach(attachValidatorToForm);
     handleServerFormErrors();
@@ -285,6 +450,9 @@
   // Xuất ra window để gọi lại nếu cần
   window.FormValidator = {
     init: init,
+    initCurrency: initCurrencyInputs,
+    formatCurrency: formatVNCurrencyString,
+    formatCurrencyInput: formatVNCurrencyInput,
     validateInput: validateSingleInput,
     showError: showFieldError,
     clearError: clearFieldError,
