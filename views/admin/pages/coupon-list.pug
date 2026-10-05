@@ -94,7 +94,16 @@ block main
                             i.fa-regular.fa-trash-can
             else
               tr
-                td.text-center(colspan="9" style="padding: 30px;") Chưa có mã giảm giá nào.
+                td(colspan="9")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-solid.fa-ticket
+                    h4.empty-title Chưa có mã giảm giá nào
+                    p.empty-desc Hãy tạo mã giảm giá để thúc đẩy doanh số bán hàng.
+                    if(role && role.permissions && role.permissions.includes("coupon_create"))
+                      a(href=`/${pathAdmin}/coupon/create`).btn-create
+                        i.fa-solid.fa-plus
+                        | Thêm mã giảm giá đầu tiên
 
     .admin-pagination
       +pagination(pagination)

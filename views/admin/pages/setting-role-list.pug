@@ -55,29 +55,38 @@ block main
                 th Hành động
           
           tbody
-            each item in roleList
-              tr
-                td.text-center
-                  input(type="checkbox" value=item.id name="id" check-item)
-                td.font-weight-600 #{item.name}
-                td #{item.description}
-                td
-                  .user-date
-                    span.name #{item.createdByFullName}
-                    span.time #{item.createdAtFormat}
-                td
-                  .user-date
-                    span.name #{item.updatedByFullName}
-                    span.time #{item.updatedAtFormat}
-                if(role && role.permissions && (role.permissions.includes("role_edit") || role.permissions.includes("role_delete")))
+            if roleList && roleList.length > 0
+              each item in roleList
+                tr
+                  td.text-center
+                    input(type="checkbox" value=item.id name="id" check-item)
+                  td.font-weight-600 #{item.name}
+                  td #{item.description}
                   td
-                    .action-btns
-                      if(role && role.permissions && role.permissions.includes("role_edit"))
-                        a(href=`/${pathAdmin}/setting/role/edit/${item.id}`).btn-edit
-                          i.fa-regular.fa-pen-to-square
-                      if(role && role.permissions && role.permissions.includes("role_delete"))
-                        button.btn-delete(button-delete data-id=item.id)
-                          i.fa-regular.fa-trash-can
+                    .user-date
+                      span.name #{item.createdByFullName}
+                      span.time #{item.createdAtFormat}
+                  td
+                    .user-date
+                      span.name #{item.updatedByFullName}
+                      span.time #{item.updatedAtFormat}
+                  if(role && role.permissions && (role.permissions.includes("role_edit") || role.permissions.includes("role_delete")))
+                    td
+                      .action-btns
+                        if(role && role.permissions && role.permissions.includes("role_edit"))
+                          a(href=`/${pathAdmin}/setting/role/edit/${item.id}` title="Chỉnh sửa nhóm quyền").btn-action.btn-edit
+                            i.fa-regular.fa-pen-to-square
+                        if(role && role.permissions && role.permissions.includes("role_delete"))
+                          button.btn-action.btn-delete(button-delete data-id=item.id title="Xóa nhóm quyền")
+                            i.fa-regular.fa-trash-can
+            else
+              tr
+                td(colspan="6")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-solid.fa-user-gear
+                    h4.empty-title Chưa có nhóm quyền nào
+                    p.empty-desc Hãy tạo nhóm quyền mới để phân quyền cho các tài khoản quản trị.
 
     .admin-pagination
       +pagination(pagination)

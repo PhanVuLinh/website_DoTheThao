@@ -72,7 +72,12 @@ block main
                           i.fa-regular.fa-trash-can
             else 
               tr
-                td(colspan="4" class="text-center") Chưa có email đăng ký nào.
+                td(colspan="4")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-solid.fa-envelope-open-text
+                    h4.empty-title Chưa có email đăng ký nào
+                    p.empty-desc Danh sách email nhận tin từ khách hàng sẽ hiển thị tại đây khi có người đăng ký.
                 
     .admin-pagination
       +pagination(pagination)

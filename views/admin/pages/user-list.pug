@@ -103,7 +103,12 @@ block main
                             i.fa-regular.fa-trash-can
             else
               tr
-                td(colspan="7" class="text-center") Không có dữ liệu khách hàng nào.
+                td(colspan="7")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-solid.fa-users
+                    h4.empty-title Chưa có khách hàng nào
+                    p.empty-desc Hiện tại hệ thống chưa ghi nhận tài khoản khách hàng nào.
         
     .admin-pagination
       +pagination(pagination)
