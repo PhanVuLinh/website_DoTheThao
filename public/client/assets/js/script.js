@@ -75,21 +75,21 @@ if (menuArrows.length > 0) {
 // end mobile menu
 
 // slider flash deals
-const flashList = document.querySelector(".flash-products-list");
+const flashList1 = document.querySelector(".flash-products-list");
 const prevBtn = document.querySelector(".prev-btn");
 const nextBtn = document.querySelector(".next-btn");
 
-if (flashList && prevBtn && nextBtn) {
+if (flashList1 && prevBtn && nextBtn) {
   nextBtn.addEventListener("click", () => {
     const itemWidth =
-      flashList.querySelector(".flash-product-item").offsetWidth + 20;
-    flashList.scrollBy({ left: itemWidth, behavior: "smooth" });
+      flashList1.querySelector(".flash-product-item").offsetWidth + 20;
+    flashList1.scrollBy({ left: itemWidth, behavior: "smooth" });
   });
 
   prevBtn.addEventListener("click", () => {
     const itemWidth =
-      flashList.querySelector(".flash-product-item").offsetWidth + 20;
-    flashList.scrollBy({ left: -itemWidth, behavior: "smooth" });
+      flashList1.querySelector(".flash-product-item").offsetWidth + 20;
+    flashList1.scrollBy({ left: -itemWidth, behavior: "smooth" });
   });
 }
 // end slider flash deals
@@ -503,4 +503,4 @@ if (sportsHubWrapper) {
       }
     });
   });
-}
+}

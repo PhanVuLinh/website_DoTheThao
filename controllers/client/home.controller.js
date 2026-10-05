@@ -37,7 +37,7 @@ module.exports.index = async (req, res) => {
     })
       .sort({ discountPercentage: "desc" })
       .limit(6);
-    
+
     // Fallback nếu chưa có nhiều sản phẩm giảm giá
     const productListSection3 = productPriceHelper.priceNewProduct(
       flashDealsRaw.length > 0
