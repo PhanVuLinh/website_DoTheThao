@@ -1,0 +1,19 @@
+mixin switch-status(item, path, permissionKey)
+  - const canEdit = role && role.permissions && role.permissions.includes(permissionKey);
+  label.switch-ios-wrapper(
+    class=(!canEdit ? 'is-disabled' : '')
+    title=(canEdit ? 'Gạt để chuyển trạng thái nhanh' : 'Bạn không có quyền chuyển trạng thái')
+  )
+    input.switch-ios-input(
+      type="checkbox"
+      button-change-status
+      data-id=item.id
+      data-status=item.status
+      data-path=path
+      checked=(item.status === 'active')
+      disabled=!canEdit
+    )
+    span.switch-ios-slider
+      span.switch-ios-knob
+    span.switch-ios-label(class=(item.status === 'active' ? 'label-active' : 'label-inactive'))
+      | #{item.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}

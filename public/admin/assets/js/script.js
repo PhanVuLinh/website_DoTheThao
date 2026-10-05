@@ -538,10 +538,114 @@ if (filtePaymentMethod) {
 }
 ///end filter-payment-method lọc
 
+// ==========================================
+// XỬ LÝ CHUYỂN ĐỔI TRẠNG THÁI NHANH (iOS Switch Toggle)
+// ==========================================
+function initStatusSwitchToggle() {
+  const switchStatusInputs = document.querySelectorAll("[button-change-status]");
+  if (switchStatusInputs.length === 0) return;
+
+  switchStatusInputs.forEach((input) => {
+    if (input.dataset.switchBound) return;
+    input.dataset.switchBound = "true";
+
+    input.addEventListener("change", async function () {
+      const id = this.getAttribute("data-id");
+      const path = this.getAttribute("data-path");
+      const isChecked = this.checked;
+      const newStatus = isChecked ? "active" : "inactive";
+      const wrapper = this.closest(".switch-ios-wrapper");
+      const label = wrapper ? wrapper.querySelector(".switch-ios-label") : null;
+
+      // Cập nhật text & class ngay lập tức (Micro-interaction mượt mà)
+      if (label) {
+        label.textContent = isChecked ? "Hoạt động" : "Tạm dừng";
+        if (isChecked) {
+          label.classList.remove("label-inactive");
+          label.classList.add("label-active");
+        } else {
+          label.classList.remove("label-active");
+          label.classList.add("label-inactive");
+        }
+      }
+
+      if (wrapper) {
+        wrapper.classList.add("is-updating");
+      }
+      this.disabled = true;
+
+      try {
+        const response = await fetch(`${path}?_method=PATCH`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            type: newStatus,
+            ids: id,
+          }),
+        });
+
+        if (response.ok) {
+          this.setAttribute("data-status", newStatus);
+          if (typeof Swal !== "undefined") {
+            Swal.fire({
+              toast: true,
+              position: "top-end",
+              icon: "success",
+              title: `Đã đổi trạng thái thành "${isChecked ? "Hoạt động" : "Tạm dừng"}"`,
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+            });
+          }
+        } else {
+          throw new Error("Máy chủ phản hồi lỗi!");
+        }
+      } catch (error) {
+        console.error("Lỗi khi cập nhật trạng thái:", error);
+        // Rollback nếu có lỗi xảy ra
+        this.checked = !isChecked;
+        if (label) {
+          const revertChecked = this.checked;
+          label.textContent = revertChecked ? "Hoạt động" : "Tạm dừng";
+          if (revertChecked) {
+            label.classList.remove("label-inactive");
+            label.classList.add("label-active");
+          } else {
+            label.classList.remove("label-active");
+            label.classList.add("label-inactive");
+          }
+        }
+
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "error",
+            title: "Không thể cập nhật trạng thái!",
+            text: "Vui lòng thử lại sau.",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+          });
+        }
+      } finally {
+        if (wrapper) {
+          wrapper.classList.remove("is-updating");
+        }
+        this.disabled = false;
+      }
+    });
+  });
+}
+initStatusSwitchToggle();
+
 // =========================================
 // 2. KHỞI TẠO KHI TRANG ĐÃ TẢI XONG (DOM Ready)
 // =========================================
 document.addEventListener("DOMContentLoaded", function () {
+  initStatusSwitchToggle();
   // --- A. XỬ LÝ SIDEBAR ACTIVE ---
   const sider = document.querySelector(".admin-sidebar");
   if (sider) {
