@@ -16,22 +16,29 @@ block main
       form(action=`/${pathAdmin}/article/create` method="POST" enctype="multipart/form-data")
         
         .form-group
-          label Tiêu đề bài viết
-          input.form-control(type="text" name="title" placeholder="Ví dụ: Top 5 đôi giày chạy bộ tốt nhất 2026...")
+          label Tiêu đề bài viết <span style="color:#ef4444">*</span>
+          input.form-control(
+            type="text" 
+            name="title" 
+            placeholder="Ví dụ: Top 5 đôi giày chạy bộ tốt nhất 2026..." 
+            value=oldData.title || ""
+            required 
+            minlength="5"
+          )
               
         .form-row-2
           .form-group
             label Vị trí
-            input.form-control(type="number" name="position" placeholder="Tự động tăng")
+            input.form-control(type="number" name="position" placeholder="Tự động tăng" value=oldData.position || "")
           
           .form-group
             label Trạng thái
             select.form-control(name="status")
-              option(value="active") Hoạt động
-              option(value="inactive") Tạm dừng
+              option(value="active" selected=(oldData.status !== "inactive")) Hoạt động
+              option(value="inactive" selected=(oldData.status === "inactive")) Tạm dừng
 
         .form-group
-          label Ảnh đại diện (Thumbnail)
+          label Ảnh đại diện (Thumbnail) <span style="color:#ef4444">*</span>
           .upload-image-wrapper(upload-image-wrapper)
             input#thumbnail-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
             label.upload-box(for="thumbnail-upload" upload-image-label)
@@ -43,11 +50,11 @@ block main
 
         .form-group
           label Mô tả ngắn gọn
-          textarea.form-control(name="description" rows="3" placeholder="Nhập đoạn mô tả ngắn hiển thị bên ngoài danh sách bài viết...")
+          textarea.form-control(name="description" rows="3" placeholder="Nhập đoạn mô tả ngắn hiển thị bên ngoài danh sách bài viết...")= oldData.description || ""
 
         .form-group
-          label Nội dung chi tiết
-          textarea.form-control.textarea-mce(name="content" rows="15" placeholder="Viết nội dung chi tiết của bài viết tại đây...")
+          label Nội dung chi tiết <span style="color:#ef4444">*</span>
+          textarea.form-control.textarea-mce(name="content" rows="15" placeholder="Viết nội dung chi tiết của bài viết tại đây...")= oldData.content || ""
 
         .form-actions
           button.btn-submit(type="submit") 

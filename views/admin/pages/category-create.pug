@@ -14,25 +14,32 @@ block main
       form(action=`/${pathAdmin}/category/create` method="POST" enctype="multipart/form-data")
         .form-row-2
           .form-group
-            label Tên danh mục
-            input.form-control(type="text" name="title" placeholder="Nhập tên danh mục...")
+            label Tên danh mục <span style="color:#ef4444">*</span>
+            input.form-control(
+              type="text" 
+              name="title" 
+              placeholder="Nhập tên danh mục..." 
+              value=oldData.title || ""
+              required 
+              minlength="3"
+            )
           
           .form-group
             label Danh mục cha
             select.form-control(name="parent_id")
               option(value="") -- Chọn danh mục --
-              +options(categoryList, 0)
+              +options(categoryList, 0, oldData.parent_id)
 
         .form-row-2
           .form-group
             label Vị trí
-            input.form-control(type="number" name="position" placeholder="Tự động tăng")
+            input.form-control(type="number" name="position" placeholder="Tự động tăng" value=oldData.position || "")
           
           .form-group
             label Trạng thái
             select.form-control(name="status")
-              option(value="active") Hoạt động
-              option(value="inactive") Tạm dừng
+              option(value="active" selected=(oldData.status !== "inactive")) Hoạt động
+              option(value="inactive" selected=(oldData.status === "inactive")) Tạm dừng
     
         .form-group
           label Ảnh đại diện
@@ -48,7 +55,7 @@ block main
 
         .form-group
           label Mô tả
-          textarea.form-control(name="description" rows="6" placeholder="Nhập mô tả cho danh mục này...")
+          textarea.form-control(name="description" rows="6" placeholder="Nhập mô tả cho danh mục này...")= oldData.description || ""
 
         .form-actions
           button.btn-submit(type="submit") Tạo mới

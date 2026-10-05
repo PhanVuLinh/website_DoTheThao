@@ -38,4 +38,7 @@ html(lang="vi")
     script(src="/tinymce/tinymce.min.js") 
     script(src="/admin/assets/js/tinymce-config.js") 
 
+    script.
+      window.formErrors = !{JSON.stringify(formErrors || {})};
+    script(src="/common/js/form-validator.js")
     script(src="/admin/assets/js/script.js")

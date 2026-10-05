@@ -44,15 +44,17 @@ function addSizeField() {
 
 window.addEventListener("DOMContentLoaded", function () {
   const container = document.getElementById("dynamic-size-list");
+  if (!container) return;
 
-  // EDIT PAG
-  if (window.productSizes && window.productSizes.length > 0) {
-    window.productSizes.forEach((item) => {
+  const sizesToLoad = (window.productSizes && window.productSizes.length > 0)
+    ? window.productSizes
+    : (window.oldSizes && window.oldSizes.length > 0 ? window.oldSizes : null);
+
+  if (sizesToLoad) {
+    sizesToLoad.forEach((item) => {
       container.appendChild(createSizeField(item.size, item.stock));
     });
-  }
-  // CREATE PAG
-  else {
+  } else {
     addSizeField();
   }
 });

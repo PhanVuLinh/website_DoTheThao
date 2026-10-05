@@ -111,7 +111,7 @@ module.exports.createPost = async (req, res) => {
     });
 
     if (existCoupon) {
-      req.flash("error", "Mã giảm giá này đã tồn tại! Vui lòng nhập mã khác.");
+      req.flashFormError("code", "Mã giảm giá này đã tồn tại! Vui lòng nhập mã khác.");
       res.redirect(req.get("Referer"));
       return;
     }

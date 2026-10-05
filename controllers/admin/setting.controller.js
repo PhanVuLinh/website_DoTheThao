@@ -183,8 +183,8 @@ module.exports.accountAdminCreatePost = async (req, res) => {
     deleted: false,
   });
   if (emailExist) {
-    req.flash("error", "Email đã tồn tại");
-    res.redirect(req.get("Referer"));
+    req.flashFormError("email", "Email này đã tồn tại trên hệ thống!");
+    return res.redirect(req.get("Referer"));
   } else {
     const record = new Account(req.body);
     record.password = await passwordHelper.hashPassword(record.password);

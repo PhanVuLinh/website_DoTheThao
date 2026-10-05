@@ -18,25 +18,32 @@ block main
         
         .form-row-2
           .form-group
-            label Tên sản phẩm
-            input.form-control(type="text" name="title" placeholder="Ví dụ: Nike Air Zoom Pegasus 39" )
+            label Tên sản phẩm <span style="color:#ef4444">*</span>
+            input.form-control(
+              type="text" 
+              name="title" 
+              placeholder="Ví dụ: Nike Air Zoom Pegasus 39" 
+              value=oldData.title || "" 
+              required 
+              minlength="3"
+            )
           
           .form-group
             label Danh mục
             select.form-control(name="category_id")
               option(value="") -- Chọn danh mục --
-              +options(categoryList,0)
+              +options(categoryList, 0, oldData.category_id)
         
         .form-row-2
           .form-group
             label Vị trí
-            input.form-control(type="number" name="position" placeholder="Tự động tăng")
+            input.form-control(type="number" name="position" placeholder="Tự động tăng" value=oldData.position || "")
           
           .form-group
             label Trạng thái
             select.form-control(name="status")
-              option(value="active") Hoạt động
-              option(value="inactive") Tạm dừng
+              option(value="active" selected=(oldData.status !== "inactive")) Hoạt động
+              option(value="inactive" selected=(oldData.status === "inactive")) Tạm dừng
 
         .form-row-2 
           .form-group
@@ -54,10 +61,10 @@ block main
             label Sản phẩm nổi bật
             .featured-radios
               label
-                input(type="radio" name="featured" value="1") 
+                input(type="radio" name="featured" value="1" checked=(oldData.featured === "1")) 
                 | Nổi bật
               label
-                input(type="radio" name="featured" value="0" checked) 
+                input(type="radio" name="featured" value="0" checked=(oldData.featured !== "1")) 
                 | Không nổi bật
 
         .form-group
@@ -73,15 +80,29 @@ block main
         
         .form-row-2
           .form-group
-            label Giá bán (VNĐ)
-            input.form-control(type="number" name="price" placeholder="Ví dụ: 2500000" min="0" )
+            label Giá bán (VNĐ) <span style="color:#ef4444">*</span>
+            input.form-control(
+              type="number" 
+              name="price" 
+              placeholder="Ví dụ: 2500000" 
+              min="0" 
+              value=oldData.price || "" 
+              required
+            )
           
           .form-group
             label Giảm giá (%)
-            input.form-control(type="number" name="discountPercentage" placeholder="Ví dụ: 15" min="0" max="100" value="0")
+            input.form-control(
+              type="number" 
+              name="discountPercentage" 
+              placeholder="Ví dụ: 15" 
+              min="0" 
+              max="100" 
+              value=oldData.discountPercentage !== undefined ? oldData.discountPercentage : "0"
+            )
 
         .form-group
-          label Kho hàng theo size / kích cỡ
+          label Kho hàng theo size / kích cỡ <span style="color:#ef4444">*</span>
           #dynamic-size-list
 
           button.btn-add-size(type="button" onclick="addSizeField()")
@@ -90,11 +111,13 @@ block main
 
         .form-group
           label Mô tả sản phẩm
-          textarea.textarea-mce.form-control(name="description" rows="6" placeholder="Nhập mô tả chi tiết cho sản phẩm này...")
+          textarea.textarea-mce.form-control(name="description" rows="6" placeholder="Nhập mô tả chi tiết cho sản phẩm này...")= oldData.description || ""
 
         .form-actions
           button.btn-submit(type="submit") Tạo mới
 
+      script.
+        window.oldSizes = !{JSON.stringify(oldData.sizes || [])};
       script(src="/admin/assets/js/product.js")
   else
     .no-access-wrapper

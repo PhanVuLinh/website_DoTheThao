@@ -15,37 +15,73 @@ block main
       form(action=`/${pathAdmin}/coupon/create` method="POST")
         .form-row-2
           .form-group
-            label Tên sự kiện
-            input.form-control(type="text" name="title" placeholder="Ví dụ: Sự kiện Noel 2025")
+            label Tên sự kiện <span style="color:#ef4444">*</span>
+            input.form-control(
+              type="text" 
+              name="title" 
+              placeholder="Ví dụ: Sự kiện Noel 2025" 
+              value=oldData.title || ""
+              required
+            )
           
           .form-group
-            label Mã giảm giá
-            input.form-control.text-uppercase(type="text" name="code" placeholder="Ví dụ: NOEL2025")
+            label Mã giảm giá <span style="color:#ef4444">*</span>
+            input.form-control.text-uppercase(
+              type="text" 
+              name="code" 
+              placeholder="Ví dụ: NOEL2025" 
+              value=oldData.code || ""
+              required
+            )
 
         .form-row-2
           .form-group
-            label % Giảm giá
-            input.form-control(type="number" name="discountPercentage" min="0" max="100" value="0")
+            label % Giảm giá <span style="color:#ef4444">*</span>
+            input.form-control(
+              type="number" 
+              name="discountPercentage" 
+              min="0" 
+              max="100" 
+              value=oldData.discountPercentage !== undefined ? oldData.discountPercentage : "0"
+              required
+            )
           
           .form-group
             label Giảm tối đa (VNĐ)
-            input.form-control(type="number" name="maxDiscountAmount" min="0" value="0" step="1000")
+            input.form-control(
+              type="number" 
+              name="maxDiscountAmount" 
+              min="0" 
+              value=oldData.maxDiscountAmount !== undefined ? oldData.maxDiscountAmount : "0" 
+              step="1000"
+            )
 
         .form-row-2
           .form-group
-            label Số lượng
-            input.form-control(type="number" name="quantity" min="1" value="1")
+            label Số lượng <span style="color:#ef4444">*</span>
+            input.form-control(
+              type="number" 
+              name="quantity" 
+              min="1" 
+              value=oldData.quantity || "1"
+              required
+            )
           
           .form-group
-            label Ngày hết hạn
-            input.form-control(type="date" name="expirationDate" )
+            label Ngày hết hạn <span style="color:#ef4444">*</span>
+            input.form-control(
+              type="date" 
+              name="expirationDate" 
+              value=oldData.expirationDate || ""
+              required
+            )
 
         .form-row-2
           .form-group
             label Trạng thái
             select.form-control(name="status")
-              option(value="active" selected) Hoạt động
-              option(value="inactive") Tạm dừng
+              option(value="active" selected=(oldData.status !== "inactive")) Hoạt động
+              option(value="inactive" selected=(oldData.status === "inactive")) Tạm dừng
           
           .form-group 
 

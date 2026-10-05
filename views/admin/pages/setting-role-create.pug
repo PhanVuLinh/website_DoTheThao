@@ -13,12 +13,24 @@ block main
         
         .form-row-2
           .form-group
-            label Tên nhóm quyền
-            input.form-control(type="text" name="name" placeholder="Ví dụ: Quản trị viên" required)
+            label Tên nhóm quyền <span style="color:#ef4444">*</span>
+            input.form-control(
+              type="text" 
+              name="name" 
+              placeholder="Ví dụ: Quản trị viên" 
+              value=oldData.name || "" 
+              required 
+              minlength="2"
+            )
           
           .form-group
             label Mô tả ngắn
-            input.form-control(type="text" name="description" placeholder="Ví dụ: Có đầy đủ các quyền")
+            input.form-control(
+              type="text" 
+              name="description" 
+              placeholder="Ví dụ: Có đầy đủ các quyền" 
+              value=oldData.description || ""
+            )
 
         .form-group
           label Phân quyền chi tiết
@@ -38,6 +50,7 @@ block main
                         value=item.value
                         id=item.value
                         class="check-item-input"
+                        checked=(oldData.permissions && (Array.isArray(oldData.permissions) ? oldData.permissions.includes(item.value) : oldData.permissions === item.value))
                       )
                       label(for=item.value) #{item.label}
                   
