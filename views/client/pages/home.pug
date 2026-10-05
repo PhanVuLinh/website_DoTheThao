@@ -2,146 +2,472 @@ extends ../layouts/default.pug
 include ../mixins/product-item.pug
 
 block main
-  // SECTION 1: HERO
+  // ==========================================
+  // SECTION 1: HERO REVOLUTION (ĐẲNG CẤP THỂ THAO)
+  // ==========================================
   section.hero
     img.hero__img(src=(settingWebsiteInfo.heroImage ? settingWebsiteInfo.heroImage : "") alt=settingWebsiteInfo.websiteName)
-    
     .hero__overlay
     .hero__container 
       .hero__content
-        .hero__badge 
-          i.fa-solid.fa-trophy
-          | #{settingWebsiteInfo.heroBadge}
-        h1.hero__title  !{settingWebsiteInfo.heroTitle}
-        p.hero__description #{settingWebsiteInfo.heroDescription}
+        if settingWebsiteInfo.heroBadge
+          .hero__badge 
+            i.fa-solid.fa-trophy
+            | #{settingWebsiteInfo.heroBadge}
+            
+        h1.hero__title !{settingWebsiteInfo.heroTitle || "BỨT PHÁ<br>MỌI GIỚI HẠN"}
+        p.hero__description #{settingWebsiteInfo.heroDescription || "Trải nghiệm đẳng cấp với bộ sưu tập thể thao chính hãng mới nhất. Chất lượng vượt trội, thiết kế tối ưu cho mọi chuyển động."}
         
+        .hero__cta-group
+          a.btn-hero-primary(href="/product")
+            | Khám Phá Ngay
+            i.fa-solid.fa-arrow-right
+          if couponList && couponList.length > 0
+            a.btn-hero-secondary(href="#voucher-vault")
+              i.fa-solid.fa-ticket
+              | Săn Voucher Hot
+
         .hero__search-box
           form.hero-search-form(form-search)
             i.fa-solid.fa-magnifying-glass.icon-search
-            input(placeholder="Bạn muốn tìm gì hôm nay?" type="text" name="keyword" keyword)
+            input(placeholder="Tìm kiếm giày bóng đá, bóng chuyền, áo đấu..." type="text" name="keyword" keyword)
             button(type="submit") Tìm Kiếm
-  // END SECTION 1: HERO
 
-  // SECTION 2: CATEGORIES
+        .hero__stats-pill
+          .stat-item
+            i.fa-solid.fa-certificate
+            span 100% Chính Hãng
+          .stat-divider
+          .stat-item
+            i.fa-solid.fa-truck-bolt
+            span Giao Nhanh 2H
+          .stat-divider
+          .stat-item
+            i.fa-solid.fa-arrow-rotate-left
+            span Đổi Trả 30 Ngày
+
+  // ==========================================
+  // SECTION 2: TRUST & VALUE PROPOSITIONS
+  // ==========================================
+  section.trust-features
+    .trust-features__container
+      .trust-grid
+        .trust-card
+          .trust-icon.trust-icon--speed
+            i.fa-solid.fa-truck-fast
+          .trust-info
+            h4.trust-title Giao Hàng Hỏa Tốc 2H
+            p.trust-desc Nhận hàng ngay trong ngày, hỗ trợ kiểm tra hàng trước khi thanh toán.
+        
+        .trust-card
+          .trust-icon.trust-icon--shield
+            i.fa-solid.fa-shield-halved
+          .trust-info
+            h4.trust-title 100% Hàng Chính Hãng
+            p.trust-desc Cam kết chất lượng quốc tế, đền bù gấp 10 lần nếu phát hiện hàng nhái.
+        
+        .trust-card
+          .trust-icon.trust-icon--return
+            i.fa-solid.fa-arrow-rotate-left
+          .trust-info
+            h4.trust-title Đổi Trả Miễn Phí 30 Ngày
+            p.trust-desc Hỗ trợ đổi size linh hoạt tận nơi, thủ tục đơn giản trong 1 phút.
+        
+        .trust-card
+          .trust-icon.trust-icon--support
+            i.fa-solid.fa-headset
+          .trust-info
+            h4.trust-title Tư Vấn Chuyên Nghiệp 24/7
+            p.trust-desc Đội ngũ am hiểu sâu về dụng cụ và giày thể thao chuyên dụng.
+
+  // ==========================================
+  // SECTION 3: VOUCHER VAULT (MÃ GIẢM GIÁ TỪ DATABASE)
+  // ==========================================
+  if couponList && couponList.length > 0
+    section.voucher-vault#voucher-vault
+      .voucher-vault__container
+        .section-header-wrap
+          .section-header-left
+            .section-tag
+              i.fa-solid.fa-ticket
+              | ƯU ĐÃI ĐẶC QUYỀN
+            h2.section-title Ví Voucher Khuyến Mãi
+            p.section-subtitle Thu thập mã giảm giá độc quyền để áp dụng trực tiếp khi thanh toán đơn hàng.
+          
+          .section-header-right
+            span.voucher-tip
+              i.fa-regular.fa-circle-question
+              | Bấm "Sao chép" để lưu mã vào bộ nhớ
+
+        .voucher-grid
+          each coupon in couponList
+            .voucher-card
+              .voucher-card__badge
+                span.voucher-pct -#{coupon.discountPercentage}%
+                span.voucher-badge-label GIẢM
+              
+              .voucher-card__content
+                .voucher-card__top
+                  h4.voucher-title= coupon.title
+                  span.voucher-code-pill= coupon.code
+                
+                p.voucher-max-discount Giảm tối đa #{coupon.maxDiscountAmount ? coupon.maxDiscountAmount.toLocaleString('vi-VN') : '0'} đ
+                
+                .voucher-card__bottom
+                  span.voucher-exp HSD: #{coupon.expirationDateFormatted}
+                  button.btn-copy-voucher(type="button" data-code=coupon.code title="Bấm để sao chép mã")
+                    i.fa-regular.fa-copy
+                    span.copy-text Sao chép
+
+  // ==========================================
+  // SECTION 4: KHÁM PHÁ DANH MỤC THỂ THAO
+  // ==========================================
   section.categories
     .categories__container
-      .categories__header
-        .categories__title-wrap
-          h2.categories__title Khám Phá Bộ Sưu Tập
+      .section-header-center
+        .section-tag
+          i.fa-solid.fa-layer-group
+          | BỘ SƯU TẬP
+        h2.categories__title Khám Phá Bộ Môn Thể Thao
+        p.section-subtitle Đầy đủ trang thiết bị chuyên dụng phục vụ mọi cấp độ từ phong trào đến thi đấu chuyên nghiệp.
 
       .categories__grid
         if categoryChildren && categoryChildren.length > 0
           each cat in categoryChildren
             a.category-card(href=`/category/${cat.slug}`)
               .category-card__img-wrap
-                img(src=cat.thumbnail, alt=cat.title)
+                img(src=cat.thumbnail, alt=cat.title loading="lazy")
               h3.category-card__title= cat.title
-  // END SECTION 2: CATEGORIES
+              span.category-card__action
+                | Khám phá
+                i.fa-solid.fa-chevron-right
 
-  // SECTION 3: FLASH DEALS
-  section.flash-deals
-    .flash-deals__container
-      .flash-promo
-        .flash-promo__badge
-          i.fa-solid.fa-bolt
-          | ƯU ĐÃI 2026
-        h2.flash-promo__title-new
-          | DEALS THỂ THAO
-          br
-          | CHÍNH HÃNG
-        p.flash-promo__countdown-label Kết thúc sau:
-        .flash-promo__countdown
-          .countdown-box
-            span.num 
-            span.label GIỜ
-          span.colon :
-          .countdown-box
-            span.num 
-            span.label PHÚT
-          span.colon :
-          .countdown-box
-            span.num 
-            span.label GIÂY
+  // ==========================================
+  // SECTION 5: FLASH DEALS (GIẢM GIÁ CỰC SỐC)
+  // ==========================================
+  if productListSection3 && productListSection3.length > 0
+    section.flash-deals
+      .flash-deals__container
+        .flash-promo
+          .flash-promo__badge
+            i.fa-solid.fa-bolt
+            | FLASH SALE 2026
+          h2.flash-promo__title-new
+            | SIÊU BÃO DEALS
+            br
+            | THỂ THAO
+          p.flash-promo__desc Ưu đãi giá tốt nhất cho các dòng sản phẩm thi đấu tuyển chọn.
+          
+          p.flash-promo__countdown-label Kết thúc sau:
+          .flash-promo__countdown#flashCountdown
+            .countdown-box
+              span.num#cdHours 08
+              span.label GIỜ
+            span.colon :
+            .countdown-box
+              span.num#cdMinutes 45
+              span.label PHÚT
+            span.colon :
+            .countdown-box
+              span.num#cdSeconds 30
+              span.label GIÂY
 
-      .flash-products-wrapper
-        button.slider-btn.prev-btn
-          i.fa-solid.fa-chevron-left
-        .flash-products-list
-          each item in productListSection3
-            .flash-product-item
-              +productItem(item)
-        button.slider-btn.next-btn
-          i.fa-solid.fa-chevron-right
-  // END SECTION 3: FLASH DEALS
+          a.flash-promo__btn(href="/product") Xem Tất Cả Deals
 
-  // SECTION 5: SẢN PHẨM NỔI BẬT
-  section.featured-products
-    .featured-products__container
-      h2.section-title Sản Phẩm Nổi Bật
-      
-      .featured-products__grid
-        each item in productFeaturedSection5
-          +productItem(item)
+        .flash-products-wrapper
+          .flash-products-list
+            each item in productListSection3
+              .flash-product-item
+                +productItem(item)
 
-      .featured-products__actions
-        a.btn-view-all-outline(href="#") 
-          | Xem Tất Cả 
+  // ==========================================
+  // SECTION 6: INTERACTIVE SPORTS HUB (TABS THEO BỘ MÔN)
+  // ==========================================
+  section.sports-hub-section
+    .sports-hub-container
+      .section-header-wrap
+        .section-header-left
+          .section-tag
+            i.fa-solid.fa-medal
+            | TRANG BỊ ĐỈNH CAO
+          h2.section-title Sản Phẩm Theo Bộ Môn
+          p.section-subtitle Lựa chọn dụng cụ và phụ kiện phù hợp nhất cho môn thể thao yêu thích của bạn.
+        
+        .sports-hub-tabs(sports-hub-tabs)
+          button.hub-tab-btn.is-active(type="button" data-tab-target="tab-featured")
+            i.fa-solid.fa-fire
+            | Nổi Bật Nhất
+          button.hub-tab-btn(type="button" data-tab-target="tab-football")
+            i.fa-solid.fa-futbol
+            | Bóng Đá Pro
+          button.hub-tab-btn(type="button" data-tab-target="tab-volleyball")
+            i.fa-solid.fa-volleyball
+            | Bóng Chuyền Star
+          button.hub-tab-btn(type="button" data-tab-target="tab-newest")
+            i.fa-solid.fa-sparkles
+            | Hàng Mới Về
+
+      // Tab Panels
+      .sports-hub-panels
+        // 1. Tab Featured
+        .hub-panel.is-active#tab-featured
+          .featured-products__grid
+            if productFeaturedSection5 && productFeaturedSection5.length > 0
+              each item in productFeaturedSection5
+                +productItem(item)
+            else
+              p.empty-text Đang cập nhật sản phẩm...
+        
+        // 2. Tab Football
+        .hub-panel#tab-football
+          .featured-products__grid
+            if footballProducts && footballProducts.length > 0
+              each item in footballProducts
+                +productItem(item)
+            else
+              p.empty-text Đang cập nhật sản phẩm bóng đá...
+        
+        // 3. Tab Volleyball
+        .hub-panel#tab-volleyball
+          .featured-products__grid
+            if volleyballProducts && volleyballProducts.length > 0
+              each item in volleyballProducts
+                +productItem(item)
+            else
+              p.empty-text Đang cập nhật sản phẩm bóng chuyền...
+        
+        // 4. Tab Newest
+        .hub-panel#tab-newest
+          .featured-products__grid
+            if productListSection7 && productListSection7.length > 0
+              each item in productListSection7
+                +productItem(item)
+            else
+              p.empty-text Đang cập nhật sản phẩm mới...
+
+      .sports-hub-footer
+        a.btn-view-all-glow(href="/product")
+          | Xem Toàn Bộ Sản Phẩm
           i.fa-solid.fa-arrow-right-long
-  // END SECTION 5
 
-  // SECTION 6: BANNER QUẢNG CÁO
-  section.banner-promo(data-aos="fade-up" data-aos-duration="800")
-    .banner-promo__container
-      .banner-promo__inner
-        a(href="#")
-          img(src=(settingWebsiteInfo.promoBannerImage ? settingWebsiteInfo.promoBannerImage : ""), alt="Banner Quảng Cáo")
-  // END SECTION 6
+  // ==========================================
+  // SECTION 7: PROMO BANNER CINEMATIC (ẢNH TỪ DATABASE)
+  // ==========================================
+  if settingWebsiteInfo && settingWebsiteInfo.promoBannerImage
+    section.banner-promo(data-aos="fade-up")
+      .banner-promo__container
+        .banner-promo__inner
+          a.banner-promo__link(href="/product")
+            img(src=settingWebsiteInfo.promoBannerImage alt="Banner Khuyến Mãi Đặc Biệt" loading="lazy")
+            .banner-promo__glass-tag
+              i.fa-solid.fa-star
+              span Bộ Sưu Tập Giày Thi Đấu Mùa Giải 2026 - Giảm Đến 30%
 
-  // SECTION 7: SẢN PHẨM MỚI NHẤT
-  section.featured-products
-    .featured-products__container
-      h2.section-title Sản Phẩm Mới Nhất
-      
-      .featured-products__grid
-        each item in productListSection7
-          +productItem(item)
+  // ==========================================
+  // SECTION 8: CẢM NHẬN KHÁCH HÀNG & CỘNG ĐỒNG THỂ THAO
+  // ==========================================
+  section.testimonials-section
+    .testimonials-container
+      .section-header-center
+        .section-tag
+          i.fa-solid.fa-heart
+          | ĐÁNH GIÁ THỰC TẾ
+        h2.section-title Khách Hàng Nói Về #{settingWebsiteInfo.websiteName || 'TitiSport'}
+        p.section-subtitle Hàng ngàn vận động viên và người yêu thể thao đã tin tưởng đồng hành.
 
-      .featured-products__actions
-        a.btn-view-all-outline(href="#") 
-          | Xem Tất Cả 
-          i.fa-solid.fa-arrow-right-long
-  // END SECTION 7
+      .testimonials-grid
+        .testimonial-card
+          .testimonial-rating
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+          p.testimonial-text "Giày đá bóng Nike Mercurial mua ở shop đi rất êm chân, đinh bám sân cực tốt. Giao hàng 2 tiếng là nhận được, hỗ trợ tư vấn size chuẩn xác 100%!"
+          .testimonial-author
+            .author-avatar
+              img(src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80" alt="Nguyễn Văn Nam" loading="lazy")
+            .author-meta
+              strong.author-name Nguyễn Văn Nam
+              span.author-tag Cầu thủ phong trào Hà Nội (Đã mua Mercurial Superfly)
+        
+        .testimonial-card
+          .testimonial-rating
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+          p.testimonial-text "Bóng Mikasa MVA200 chuẩn thi đấu FIVB, đường chỉ khâu và độ nảy hoàn hảo. Shop đóng gói cẩn thận có cả túi khí bảo vệ, sẽ tiếp tục ủng hộ dài lâu!"
+          .testimonial-author
+            .author-avatar
+              img(src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&h=120&q=80" alt="Trần Hoàng Khang" loading="lazy")
+            .author-meta
+              strong.author-name Trần Hoàng Khang
+              span.author-tag VĐV Bóng chuyền TP.HCM (Đã mua Mikasa MVA200)
 
-  // SECTION 9: TIN TỨC MỚI 
-  section.news-section(data-aos="fade-up" data-aos-duration="800")
-    .news-section__container
-      h2.section-title Tin Tức Mới
-      
-      .news-grid
-        .news-col.news-col--side
-          each item in newsLeft
-            a.news-card-small(href=`/article/detail/${item.slug}`)
-              img(src=item.thumbnail, alt=item.title)
-              .news-card-small__overlay
-                span.date= item.createdAtFormat
-                h4.title= item.title
+        .testimonial-card
+          .testimonial-rating
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+          p.testimonial-text "Áo thi đấu Dri-FIT thoát mồ hôi cực nhanh, mặc vào hè rất thoáng khí. Dùng mã giảm giá của shop tiết kiệm được hơn 100k, dịch vụ rất chu đáo!"
+          .testimonial-author
+            .author-avatar
+              img(src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&h=120&q=80" alt="Lê Quang Minh" loading="lazy")
+            .author-meta
+              strong.author-name Lê Quang Minh
+              span.author-tag Runner & GYM Enthusiast (Đã mua Áo Nike Dri-FIT)
 
-        .news-col.news-col--center
-          article.news-card-large
-            a.news-card-large__img(href=`/article/detail/${newsCenter.slug}`)
-              img(src=newsCenter.thumbnail, alt=newsCenter.title)
-            .news-card-large__content
-              span.date= newsCenter.createdAtFormat
-              h3.title
-                a(href=`/article/detail/${newsCenter.slug}`)= newsCenter.title
-              p.desc= newsCenter.description
+  // ==========================================
+  // SECTION 9: TIN TỨC THỂ THAO & HƯỚNG DẪN TẬP LUYỆN (TỪ DB)
+  // ==========================================
+  if articleListSection9 && articleListSection9.length > 0 || newsCenter
+    section.news-section
+      .news-section__container
+        .section-header-wrap
+          .section-header-left
+            .section-tag
+              i.fa-solid.fa-newspaper
+              | CẨM NANG THỂ THAO
+            h2.section-title Tin Tức & Kiến Thức Mới Nhất
+            p.section-subtitle Bí quyết tập luyện, kỹ năng chọn trang bị và xu hướng thể thao cập nhật liên tục.
+          
+          .section-header-right
+            a.btn-view-articles(href="/article")
+              | Xem Tất Cả Bài Viết
+              i.fa-solid.fa-arrow-right
+        
+        .news-grid
+          if newsLeft && newsLeft.length > 0
+            .news-col.news-col--side
+              each item in newsLeft
+                a.news-card-small(href=`/article/detail/${item.slug}`)
+                  img(src=item.thumbnail, alt=item.title loading="lazy")
+                  .news-card-small__overlay
+                    span.date
+                      i.fa-regular.fa-calendar
+                      |  #{item.createdAtFormat}
+                    h4.title= item.title
 
-        .news-col.news-col--side
-          each item in newsRight
-            a.news-card-small(href=`/article/detail/${item.slug}`)
-              img(src=item.thumbnail, alt=item.title)
-              .news-card-small__overlay
-                span.date= item.createdAtFormat
-                h4.title= item.title
-  // END SECTION 9
-    
+          if newsCenter
+            .news-col.news-col--center
+              article.news-card-large
+                a.news-card-large__img(href=`/article/detail/${newsCenter.slug}`)
+                  img(src=newsCenter.thumbnail, alt=newsCenter.title loading="lazy")
+                .news-card-large__content
+                  span.date
+                    i.fa-regular.fa-calendar
+                    |  #{newsCenter.createdAtFormat}
+                  h3.title
+                    a(href=`/article/detail/${newsCenter.slug}`)= newsCenter.title
+                  p.desc= newsCenter.description
+                  a.read-more-link(href=`/article/detail/${newsCenter.slug}`)
+                    | Đọc tiếp
+                    i.fa-solid.fa-arrow-right
+
+          if newsRight && newsRight.length > 0
+            .news-col.news-col--side
+              each item in newsRight
+                a.news-card-small(href=`/article/detail/${item.slug}`)
+                  img(src=item.thumbnail, alt=item.title loading="lazy")
+                  .news-card-small__overlay
+                    span.date
+                      i.fa-regular.fa-calendar
+                      |  #{item.createdAtFormat}
+                    h4.title= item.title
+
+  // ==========================================
+  // SECTION 10: THƯƠNG HIỆU THỂ THAO HÀNG ĐẦU (OFFICIAL BRANDS)
+  // ==========================================
+  section.brands-section
+    .brands-container
+      .section-header-center
+        .section-tag
+          i.fa-solid.fa-certificate
+          | THƯƠNG HIỆU ĐỐI TÁC
+        h2.section-title Đối Tác Thể Thao Toàn Cầu
+        p.section-subtitle #{settingWebsiteInfo.websiteName || 'TitiSport'} tự hào phân phối chính hãng các thương hiệu dụng cụ và trang phục thi đấu hàng đầu thế giới.
+
+      .brands-grid
+        a.brand-card(href="/?keyword=Nike")
+          .brand-card__icon-box
+            i.fa-solid.fa-bolt-lightning
+          h4.brand-card__name NIKE
+          span.brand-card__tagline Just Do It
+          p.brand-card__desc Giày đá bóng Mercurial, Phantom và trang phục thể thao công nghệ Dri-FIT đỉnh cao.
+          span.brand-card__badge
+            i.fa-solid.fa-circle-check
+            | Phân Phối Chính Hãng
+
+        a.brand-card(href="/?keyword=Adidas")
+          .brand-card__icon-box
+            i.fa-solid.fa-shield-halved
+          h4.brand-card__name ADIDAS
+          span.brand-card__tagline Impossible Is Nothing
+          p.brand-card__desc Bóng thi đấu FIFA World Cup Al Rihla, giày Predator và đồ tập chuyên nghiệp.
+          span.brand-card__badge
+            i.fa-solid.fa-circle-check
+            | Phân Phối Chính Hãng
+
+        a.brand-card(href="/?keyword=Puma")
+          .brand-card__icon-box
+            i.fa-solid.fa-trophy
+          h4.brand-card__name PUMA
+          span.brand-card__tagline Forever Faster
+          p.brand-card__desc Dòng giày thi đấu đỉnh cao King Ultimate, Ultra siêu nhẹ với độ bám hoàn hảo.
+          span.brand-card__badge
+            i.fa-solid.fa-circle-check
+            | Phân Phối Chính Hãng
+
+        a.brand-card(href="/?keyword=Mikasa")
+          .brand-card__icon-box
+            i.fa-solid.fa-volleyball
+          h4.brand-card__name MIKASA
+          span.brand-card__tagline Official FIVB Ball
+          p.brand-card__desc Bóng chuyền thi đấu chính thức Olympic và các giải đấu chuyên nghiệp toàn cầu.
+          span.brand-card__badge
+            i.fa-solid.fa-circle-check
+            | Phân Phối Chính Hãng
+
+        a.brand-card(href="/?keyword=Asics")
+          .brand-card__icon-box
+            i.fa-solid.fa-shoe-prints
+          h4.brand-card__name ASICS
+          span.brand-card__tagline Sound Mind, Sound Body
+          p.brand-card__desc Dòng giày bóng chuyền Gel-Rocket, Sky Elite với đệm Gel giảm chấn số 1.
+          span.brand-card__badge
+            i.fa-solid.fa-circle-check
+            | Phân Phối Chính Hãng
+
+        a.brand-card(href="/?keyword=Mizuno")
+          .brand-card__icon-box
+            i.fa-solid.fa-medal
+          h4.brand-card__name MIZUNO
+          span.brand-card__tagline Reach Beyond
+          p.brand-card__desc Đẳng cấp công nghệ Nhật Bản với dòng Wave Momentum và Morelia siêu bền.
+          span.brand-card__badge
+            i.fa-solid.fa-circle-check
+            | Phân Phối Chính Hãng
+
+        a.brand-card(href="/?keyword=Molten")
+          .brand-card__icon-box
+            i.fa-solid.fa-award
+          h4.brand-card__name MOLTEN
+          span.brand-card__tagline For The Real Game
+          p.brand-card__desc Bóng da cao cấp V5M4500, còi thi đấu và thiết bị trọng tài tiêu chuẩn quốc tế.
+          span.brand-card__badge
+            i.fa-solid.fa-circle-check
+            | Phân Phối Chính Hãng
+
+        a.brand-card(href="/product")
+          .brand-card__icon-box
+            i.fa-solid.fa-fire-flame-curved
+          h4.brand-card__name PVL SPECIAL
+          span.brand-card__tagline Premium Sports
+          p.brand-card__desc Phụ kiện thể thao chọn lọc, túi đựng bóng, tất thi đấu chống trơn cao cấp.
+          span.brand-card__badge
+            i.fa-solid.fa-arrow-right
+            | Xem Toàn Bộ Kho

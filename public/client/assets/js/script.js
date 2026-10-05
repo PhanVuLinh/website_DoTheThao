@@ -359,3 +359,91 @@ if (searchToggleBtn && searchDrawer) {
     }
   });
 }
+
+/* =========================================
+   VOUCHER COPY TO CLIPBOARD
+   ========================================= */
+const copyVoucherBtns = document.querySelectorAll(".btn-copy-voucher");
+if (copyVoucherBtns.length > 0) {
+  copyVoucherBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const code = this.getAttribute("data-code");
+      if (!code) return;
+
+      const performCopy = () => {
+        const copyTextSpan = this.querySelector(".copy-text");
+        const originalText = copyTextSpan ? copyTextSpan.innerText : "Sao chép";
+        if (copyTextSpan) copyTextSpan.innerText = "Đã chép!";
+        this.classList.add("copied");
+
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "success",
+            title: `Đã sao chép mã "${code}"!`,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+          });
+        }
+
+        setTimeout(() => {
+          if (copyTextSpan) copyTextSpan.innerText = originalText;
+          this.classList.remove("copied");
+        }, 2200);
+      };
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(code).then(performCopy).catch(() => {
+          fallbackCopyText(code, performCopy);
+        });
+      } else {
+        fallbackCopyText(code, performCopy);
+      }
+    });
+  });
+
+  function fallbackCopyText(text, callback) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand("copy");
+      if (callback) callback();
+    } catch (err) {
+      console.error("Fallback copy failed", err);
+    }
+    document.body.removeChild(textArea);
+  }
+}
+
+/* =========================================
+   SPORTS HUB TABS SWITCHER
+   ========================================= */
+const sportsHubWrapper = document.querySelector("[sports-hub-tabs]");
+if (sportsHubWrapper) {
+  const tabButtons = sportsHubWrapper.querySelectorAll(".hub-tab-btn");
+  const tabPanels = document.querySelectorAll(".sports-hub-panels .hub-panel");
+
+  tabButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const targetId = btn.getAttribute("data-tab-target");
+      if (!targetId) return;
+
+      tabButtons.forEach((b) => b.classList.remove("is-active"));
+      tabPanels.forEach((p) => p.classList.remove("is-active"));
+
+      btn.classList.add("is-active");
+      const targetPanel = document.getElementById(targetId);
+      if (targetPanel) {
+        targetPanel.classList.add("is-active");
+      }
+    });
+  });
+}

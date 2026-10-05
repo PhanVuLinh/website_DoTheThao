@@ -2,85 +2,140 @@ const moment = require("moment");
 const Product = require("../../models/product.model");
 const Category = require("../../models/category.model");
 const Article = require("../../models/article.model");
+const Coupon = require("../../models/coupon.model");
+const Order = require("../../models/order.model");
 
 const productPriceHelper = require("../../helpers/getPriceNew.helper.js");
+
 module.exports.index = async (req, res) => {
-  // section
-  const categoryChildren = await Category.find({
-    deleted: false,
-    parent_id: { $ne: "" },
-  })
-    .sort({ position: "desc" })
-    // .limit(4);
-  // End section 2
-  //section 3
-  const productListSection3 = await Product.find({
-    deleted: false,
-    status: "active",
-  })
-    .sort({
-      position: "desc",
+  try {
+    // 1. Danh mục sản phẩm con (Sub-categories for visual exploration)
+    const categoryChildren = await Category.find({
+      deleted: false,
+      parent_id: { $ne: "" },
+    }).sort({ position: "desc" });
+
+    // 2. Mã giảm giá độc quyền đang hoạt động (Exclusive Coupons from DB)
+    const couponList = await Coupon.find({
+      deleted: false,
+      status: "active",
     })
-    .limit(6);
-  const newProductListSection3 =
-    productPriceHelper.priceNewProduct(productListSection3);
-  //End section 3
+      .sort({ discountPercentage: "desc" })
+      .limit(4);
 
-  //section 5
-  const productFeaturedSection5 = await Product.find({
-    deleted: false,
-    status: "active",
-    featured: "1",
-  })
-    .sort({
-      position: "desc",
+    for (const c of couponList) {
+      c.expirationDateFormatted = c.expirationDate
+        ? moment(c.expirationDate).format("DD/MM/YYYY")
+        : "Vô thời hạn";
+    }
+
+    // 3. Flash Sale: Sản phẩm có giảm giá cao nhất (Flash Deals)
+    const flashDealsRaw = await Product.find({
+      deleted: false,
+      status: "active",
+      discountPercentage: { $gt: 0 },
     })
-    .limit(8);
+      .sort({ discountPercentage: "desc" })
+      .limit(6);
+    
+    // Fallback nếu chưa có nhiều sản phẩm giảm giá
+    const productListSection3 = productPriceHelper.priceNewProduct(
+      flashDealsRaw.length > 0
+        ? flashDealsRaw
+        : await Product.find({ deleted: false, status: "active" }).sort({ position: "desc" }).limit(6)
+    );
 
-  const newProductFeaturedSection5 = productPriceHelper.priceNewProduct(
-    productFeaturedSection5,
-  );
-  //End section 5
-
-  //section 7
-  const productListSection7 = await Product.find({
-    deleted: false,
-    status: "active",
-  })
-    .sort({
-      position: "desc",
+    // 4. Sản phẩm Nổi bật (Featured Products)
+    const productFeaturedSection5Raw = await Product.find({
+      deleted: false,
+      status: "active",
+      featured: "1",
     })
-    .limit(8);
+      .sort({ position: "desc" })
+      .limit(8);
 
-  const newProductListSection7 =
-    productPriceHelper.priceNewProduct(productListSection7);
-  //End section 7
+    const productFeaturedSection5 = productPriceHelper.priceNewProduct(productFeaturedSection5Raw);
 
-  //section 9
-  const articleListSection9 = await Article.find({
-    deleted: false,
-    status: "active",
-  })
-    .sort({ createdAt: "desc" })
-    .limit(5);
+    // 5. Sản phẩm Mới nhất (Newest Arrivals)
+    const productListSection7Raw = await Product.find({
+      deleted: false,
+      status: "active",
+    })
+      .sort({ createdAt: "desc" })
+      .limit(8);
 
-  for (const item of articleListSection9) {
-    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+    const productListSection7 = productPriceHelper.priceNewProduct(productListSection7Raw);
+
+    // 6. Phân nhóm môn thể thao cho Interactive Category Tabs (Dữ liệu thực từ DB)
+    // - Bóng Đá (Football)
+    const footballParent = await Category.findOne({ title: { $regex: /Bóng Đá/i }, deleted: false });
+    let footballCategoryIds = [];
+    if (footballParent) {
+      const footballChildren = await Category.find({ parent_id: footballParent._id.toString(), deleted: false });
+      footballCategoryIds = [footballParent._id.toString(), ...footballChildren.map((c) => c._id.toString())];
+    }
+    const footballProductsRaw = await Product.find({
+      deleted: false,
+      status: "active",
+      category_id: { $in: footballCategoryIds },
+    }).limit(8);
+    const footballProducts = productPriceHelper.priceNewProduct(footballProductsRaw);
+
+    // - Bóng Chuyền (Volleyball)
+    const volleyballParent = await Category.findOne({ title: { $regex: /Bóng Chuyền/i }, deleted: false });
+    let volleyballCategoryIds = [];
+    if (volleyballParent) {
+      const volleyballChildren = await Category.find({ parent_id: volleyballParent._id.toString(), deleted: false });
+      volleyballCategoryIds = [volleyballParent._id.toString(), ...volleyballChildren.map((c) => c._id.toString())];
+    }
+    const volleyballProductsRaw = await Product.find({
+      deleted: false,
+      status: "active",
+      category_id: { $in: volleyballCategoryIds },
+    }).limit(8);
+    const volleyballProducts = productPriceHelper.priceNewProduct(volleyballProductsRaw);
+
+    // 7. Tin tức thể thao (Articles from DB)
+    const articleListSection9 = await Article.find({
+      deleted: false,
+      status: "active",
+    })
+      .sort({ createdAt: "desc" })
+      .limit(5);
+
+    for (const item of articleListSection9) {
+      item.createdAtFormat = moment(item.createdAt).format("DD/MM/YYYY");
+    }
+
+    const newsCenter = articleListSection9[0] || null;
+    const newsLeft = articleListSection9.slice(1, 3);
+    const newsRight = articleListSection9.slice(3, 5);
+
+    // 8. Thống kê thực tế từ DB để hiển thị Trust Bar (Real Store Stats)
+    const totalProductsCount = await Product.countDocuments({ deleted: false, status: "active" });
+    const totalOrdersCount = await Order.countDocuments({});
+    const totalCategoriesCount = await Category.countDocuments({ deleted: false });
+
+    res.render("client/pages/home.pug", {
+      title: "Trang chủ",
+      categoryChildren: categoryChildren,
+      couponList: couponList,
+      productListSection3: productListSection3,
+      productFeaturedSection5: productFeaturedSection5,
+      productListSection7: productListSection7,
+      footballProducts: footballProducts,
+      volleyballProducts: volleyballProducts,
+      newsCenter: newsCenter,
+      newsLeft: newsLeft,
+      newsRight: newsRight,
+      storeStats: {
+        totalProducts: totalProductsCount,
+        totalOrders: totalOrdersCount,
+        totalCategories: totalCategoriesCount,
+      },
+    });
+  } catch (error) {
+    console.error("Error loading home page:", error);
+    res.redirect("/product");
   }
-
-  const newsCenter = articleListSection9[0] || null;
-  const newsLeft = articleListSection9.slice(1, 3);
-  const newsRight = articleListSection9.slice(3, 5);
-
-  //End section 9
-  res.render("client/pages/home.pug", {
-    title: "Trang chủ",
-    productListSection3: newProductListSection3,
-    productFeaturedSection5: newProductFeaturedSection5,
-    productListSection7: newProductListSection7,
-    categoryChildren: categoryChildren,
-    newsCenter: newsCenter,
-    newsLeft: newsLeft,
-    newsRight: newsRight,
-  });
 };
