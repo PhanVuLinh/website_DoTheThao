@@ -12,8 +12,7 @@ mixin productItem(item)
           
         img(src=item.thumbnail, alt=item.title, loading="lazy")
         
-      if item.brand
-        span.flash-product-card__brand #{item.brand}
+      span.flash-product-card__brand #{item.brand || 'CHÍNH HÃNG'}
       h3.flash-product-card__title(title=item.title) #{item.title}
 
     .flash-product-card__rating

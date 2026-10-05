@@ -81,6 +81,7 @@ block main
             p.trust-desc Đội ngũ am hiểu sâu về dụng cụ và giày thể thao chuyên dụng.
 
   // ==========================================
+  // ==========================================
   // SECTION 3: VOUCHER VAULT (MÃ GIẢM GIÁ TỪ DATABASE)
   // ==========================================
   if couponList && couponList.length > 0
@@ -108,9 +109,11 @@ block main
               
               .voucher-card__content
                 .voucher-card__top
-                  h4.voucher-title= coupon.title
-                  span.voucher-code-pill= coupon.code
+                  span.voucher-code-pill
+                    i.fa-solid.fa-ticket
+                    | #{coupon.code}
                 
+                h4.voucher-title= coupon.title
                 p.voucher-max-discount Giảm tối đa #{coupon.maxDiscountAmount ? coupon.maxDiscountAmount.toLocaleString('vi-VN') : '0'} đ
                 
                 .voucher-card__bottom
@@ -204,7 +207,7 @@ block main
             i.fa-solid.fa-volleyball
             | Bóng Chuyền Star
           button.hub-tab-btn(type="button" data-tab-target="tab-newest")
-            i.fa-solid.fa-sparkles
+            i.fa-solid.fa-bolt
             | Hàng Mới Về
 
       // Tab Panels
@@ -254,7 +257,7 @@ block main
   // SECTION 7: PROMO BANNER CINEMATIC (ẢNH TỪ DATABASE)
   // ==========================================
   if settingWebsiteInfo && settingWebsiteInfo.promoBannerImage
-    section.banner-promo(data-aos="fade-up")
+    section.banner-promo
       .banner-promo__container
         .banner-promo__inner
           a.banner-promo__link(href="/product")
@@ -393,81 +396,140 @@ block main
 
       .brands-grid
         a.brand-card(href="/?keyword=Nike")
-          .brand-card__icon-box
-            i.fa-solid.fa-bolt-lightning
+          .brand-card__logo-wrap
+            img.brand-card__logo-img(src="/client/assets/images/brands/nike.svg" alt="Nike Logo" loading="lazy")
           h4.brand-card__name NIKE
           span.brand-card__tagline Just Do It
+          span.brand-spec-pill
+            i.fa-solid.fa-futbol
+            | Giày Đá Bóng & Áo Đấu
           p.brand-card__desc Giày đá bóng Mercurial, Phantom và trang phục thể thao công nghệ Dri-FIT đỉnh cao.
-          span.brand-card__badge
-            i.fa-solid.fa-circle-check
-            | Phân Phối Chính Hãng
+          .brand-card__footer
+            span.brand-card__badge
+              i.fa-solid.fa-circle-check
+              | Phân Phối Chính Hãng
+            span.brand-view-link
+              | Xem Sản Phẩm
+              i.fa-solid.fa-arrow-right
 
         a.brand-card(href="/?keyword=Adidas")
-          .brand-card__icon-box
-            i.fa-solid.fa-shield-halved
+          .brand-card__logo-wrap
+            img.brand-card__logo-img(src="/client/assets/images/brands/adidas.svg" alt="Adidas Logo" loading="lazy")
           h4.brand-card__name ADIDAS
           span.brand-card__tagline Impossible Is Nothing
+          span.brand-spec-pill
+            i.fa-solid.fa-trophy
+            | Bóng Thi Đấu World Cup
           p.brand-card__desc Bóng thi đấu FIFA World Cup Al Rihla, giày Predator và đồ tập chuyên nghiệp.
-          span.brand-card__badge
-            i.fa-solid.fa-circle-check
-            | Phân Phối Chính Hãng
+          .brand-card__footer
+            span.brand-card__badge
+              i.fa-solid.fa-circle-check
+              | Phân Phối Chính Hãng
+            span.brand-view-link
+              | Xem Sản Phẩm
+              i.fa-solid.fa-arrow-right
 
         a.brand-card(href="/?keyword=Puma")
-          .brand-card__icon-box
-            i.fa-solid.fa-trophy
+          .brand-card__logo-wrap
+            img.brand-card__logo-img(src="/client/assets/images/brands/puma.svg" alt="Puma Logo" loading="lazy")
           h4.brand-card__name PUMA
           span.brand-card__tagline Forever Faster
+          span.brand-spec-pill
+            i.fa-solid.fa-bolt-lightning
+            | Giày Tốc Độ Ultra/King
           p.brand-card__desc Dòng giày thi đấu đỉnh cao King Ultimate, Ultra siêu nhẹ với độ bám hoàn hảo.
-          span.brand-card__badge
-            i.fa-solid.fa-circle-check
-            | Phân Phối Chính Hãng
+          .brand-card__footer
+            span.brand-card__badge
+              i.fa-solid.fa-circle-check
+              | Phân Phối Chính Hãng
+            span.brand-view-link
+              | Xem Sản Phẩm
+              i.fa-solid.fa-arrow-right
 
         a.brand-card(href="/?keyword=Mikasa")
-          .brand-card__icon-box
-            i.fa-solid.fa-volleyball
+          .brand-card__logo-wrap
+            img.brand-card__logo-img(src="/client/assets/images/brands/mikasa.svg" alt="Mikasa Logo" loading="lazy")
           h4.brand-card__name MIKASA
           span.brand-card__tagline Official FIVB Ball
+          span.brand-spec-pill
+            i.fa-solid.fa-volleyball
+            | Bóng Chuyền Olympic FIVB
           p.brand-card__desc Bóng chuyền thi đấu chính thức Olympic và các giải đấu chuyên nghiệp toàn cầu.
-          span.brand-card__badge
-            i.fa-solid.fa-circle-check
-            | Phân Phối Chính Hãng
+          .brand-card__footer
+            span.brand-card__badge
+              i.fa-solid.fa-circle-check
+              | Phân Phối Chính Hãng
+            span.brand-view-link
+              | Xem Sản Phẩm
+              i.fa-solid.fa-arrow-right
 
         a.brand-card(href="/?keyword=Asics")
-          .brand-card__icon-box
-            i.fa-solid.fa-shoe-prints
+          .brand-card__logo-wrap
+            img.brand-card__logo-img(src="/client/assets/images/brands/asics.svg" alt="Asics Logo" loading="lazy")
           h4.brand-card__name ASICS
           span.brand-card__tagline Sound Mind, Sound Body
+          span.brand-spec-pill
+            i.fa-solid.fa-shoe-prints
+            | Đệm Giảm Chấn Gel Pro
           p.brand-card__desc Dòng giày bóng chuyền Gel-Rocket, Sky Elite với đệm Gel giảm chấn số 1.
-          span.brand-card__badge
-            i.fa-solid.fa-circle-check
-            | Phân Phối Chính Hãng
+          .brand-card__footer
+            span.brand-card__badge
+              i.fa-solid.fa-circle-check
+              | Phân Phối Chính Hãng
+            span.brand-view-link
+              | Xem Sản Phẩm
+              i.fa-solid.fa-arrow-right
 
         a.brand-card(href="/?keyword=Mizuno")
-          .brand-card__icon-box
-            i.fa-solid.fa-medal
+          .brand-card__logo-wrap
+            img.brand-card__logo-img(src="/client/assets/images/brands/mizuno.svg" alt="Mizuno Logo" loading="lazy")
           h4.brand-card__name MIZUNO
           span.brand-card__tagline Reach Beyond
+          span.brand-spec-pill
+            i.fa-solid.fa-medal
+            | Công Nghệ Wave Nhật Bản
           p.brand-card__desc Đẳng cấp công nghệ Nhật Bản với dòng Wave Momentum và Morelia siêu bền.
-          span.brand-card__badge
-            i.fa-solid.fa-circle-check
-            | Phân Phối Chính Hãng
+          .brand-card__footer
+            span.brand-card__badge
+              i.fa-solid.fa-circle-check
+              | Phân Phối Chính Hãng
+            span.brand-view-link
+              | Xem Sản Phẩm
+              i.fa-solid.fa-arrow-right
 
         a.brand-card(href="/?keyword=Molten")
-          .brand-card__icon-box
-            i.fa-solid.fa-award
+          .brand-card__logo-wrap
+            img.brand-card__logo-img(src="/client/assets/images/brands/molten.svg" alt="Molten Logo" loading="lazy")
           h4.brand-card__name MOLTEN
           span.brand-card__tagline For The Real Game
+          span.brand-spec-pill
+            i.fa-solid.fa-award
+            | Bóng Da Chuẩn Quốc Tế
           p.brand-card__desc Bóng da cao cấp V5M4500, còi thi đấu và thiết bị trọng tài tiêu chuẩn quốc tế.
-          span.brand-card__badge
-            i.fa-solid.fa-circle-check
-            | Phân Phối Chính Hãng
+          .brand-card__footer
+            span.brand-card__badge
+              i.fa-solid.fa-circle-check
+              | Phân Phối Chính Hãng
+            span.brand-view-link
+              | Xem Sản Phẩm
+              i.fa-solid.fa-arrow-right
 
         a.brand-card(href="/product")
-          .brand-card__icon-box
+          .brand-card__logo-wrap
+            if settingWebsiteInfo.logo
+              img.brand-card__logo-img(src=settingWebsiteInfo.logo alt=settingWebsiteInfo.websiteName loading="lazy")
+            else
+              i.fa-solid.fa-shield-halved(style="font-size: 32px; color: var(--red-main);")
+          h4.brand-card__name #{settingWebsiteInfo.websiteName || 'TITISPORT'} PRO
+          span.brand-card__tagline Official Store
+          span.brand-spec-pill
             i.fa-solid.fa-fire-flame-curved
-          h4.brand-card__name PVL SPECIAL
-          span.brand-card__tagline Premium Sports
+            | Dụng Cụ & Phụ Kiện
           p.brand-card__desc Phụ kiện thể thao chọn lọc, túi đựng bóng, tất thi đấu chống trơn cao cấp.
-          span.brand-card__badge
-            i.fa-solid.fa-arrow-right
-            | Xem Toàn Bộ Kho
+          .brand-card__footer
+            span.brand-card__badge.badge-vip
+              i.fa-solid.fa-star
+              | Gian Hàng Độc Quyền
+            span.brand-view-link
+              | Xem Toàn Bộ Kho
+              i.fa-solid.fa-arrow-right
