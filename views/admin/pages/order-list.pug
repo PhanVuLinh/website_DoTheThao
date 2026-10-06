@@ -73,9 +73,9 @@ block main
               each orderDetail in orderList
                 tr
                   td.text-center
-                    input(type="checkbox" value=orderDetail.id name="id" check-item)
+                    input(type="checkbox" value=orderDetail._id || orderDetail.id name="id" check-item)
                   td
-                    a.order-code(href=`/${pathAdmin}/order/edit/${orderDetail.id}`) #{orderDetail.orderCode}
+                    a.order-code(href=`/${pathAdmin}/order/edit/${orderDetail._id || orderDetail.id}`) #{orderDetail.orderCode}
                   td
                     .customer-info
                       span.font-weight-600 #{orderDetail.fullName}
@@ -100,15 +100,15 @@ block main
                           )
                           .prod-info
                             span.prod-name(title=item.title) #{item.title}
-                            span.prod-meta Size: #{item.size || 'Tiêu chuẩn'} | SL: #{item.quantity} | #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
+                            span.prod-meta Size: #{item.size || 'Tiêu chuẩn'} | SL: #{item.quantity} | #{(item.priceNewQuantity || (item.priceNew || item.price || 0) * (item.quantity || 1)).toLocaleString('vi-VN')} đ
                   td
                     .payment-summary
-                      span Tạm tính: #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
+                      span Tạm tính: #{(orderDetail.subtotal || 0).toLocaleString('vi-VN')} đ
                       if(orderDetail.discount)
-                        span Giảm giá: #{orderDetail.discount.toLocaleString('vi-VN')} đ
+                        span Giảm giá: #{(orderDetail.discount || 0).toLocaleString('vi-VN')} đ
                       if(orderDetail.couponCode)
                         span Mã giảm: #{orderDetail.couponCode}
-                      span.total-pay Thanh toán: #{orderDetail.total.toLocaleString('vi-VN')} đ
+                      span.total-pay Thanh toán: #{(orderDetail.total || 0).toLocaleString('vi-VN')} đ
                       span.badge-method #{orderDetail.paymentMethodName}
                       span.badge-pay-status #{orderDetail.paymentStatusName}
                   td
@@ -122,11 +122,11 @@ block main
                   if(role && role.permissions && (role.permissions.includes("order_edit") || role.permissions.includes("order_delete")))
                     td
                       .action-btns
-                        if(role && role.permissions && role.permissions.includes("order_edit"))
-                          a.btn-action.btn-edit(href=`/${pathAdmin}/order/edit/${orderDetail.id}` title="Chi tiết / Cập nhật")
+                        if(role && role.permissions && (role.permissions.includes("order_edit") || role.permissions.includes("order_view")))
+                          a.btn-action.btn-edit(href=`/${pathAdmin}/order/edit/${orderDetail._id || orderDetail.id}` title="Chi tiết / Cập nhật")
                             i.fa-regular.fa-pen-to-square
                         if(role && role.permissions && role.permissions.includes("order_delete"))
-                          button.btn-action.btn-delete(title="Hủy đơn hàng" button-delete data-id=orderDetail.id)
+                          button.btn-action.btn-delete(title="Hủy đơn hàng" button-delete data-id=orderDetail._id || orderDetail.id)
                             i.fa-regular.fa-trash-can
             else
               tr

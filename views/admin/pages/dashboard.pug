@@ -100,7 +100,7 @@ block main
               each orderDetail in orderList
                 tr
                   td
-                    a.order-code(href=`/${pathAdmin}/order/edit/${orderDetail.id}`) #{orderDetail.orderCode}
+                    a.order-code(href=`/${pathAdmin}/order/edit/${orderDetail._id || orderDetail.id}`) #{orderDetail.orderCode}
                   td
                     .customer-info
                       span.font-weight-600 #{orderDetail.fullName}
@@ -121,7 +121,7 @@ block main
                             if item.size || item.quantity
                               span.prod-meta Size: #{item.size || 'Tiêu chuẩn'} | SL: #{item.quantity}
                   td
-                    span.text-price #{orderDetail.total.toLocaleString('vi-VN')} đ
+                    span.text-price #{(orderDetail.total || 0).toLocaleString('vi-VN')} đ
                   td
                     - var statusClass = orderDetail.status ? `badge-${orderDetail.status}` : 'badge-pending'
                     span.badge-status(class=statusClass) #{orderDetail.statusName}
@@ -129,8 +129,8 @@ block main
                     span.text-muted #{orderDetail.createdAtFormat}
                   td
                     .action-btns
-                      if(role && role.permissions && role.permissions.includes("order_edit"))
-                        a.btn-action.btn-view(href=`/${pathAdmin}/order/edit/${orderDetail.id}` title="Xem chi tiết đơn")
+                      if(role && role.permissions && (role.permissions.includes("order_edit") || role.permissions.includes("order_view")))
+                        a.btn-action.btn-view(href=`/${pathAdmin}/order/edit/${orderDetail._id || orderDetail.id}` title="Xem chi tiết đơn")
                           i.fa-regular.fa-eye
             else
               tr

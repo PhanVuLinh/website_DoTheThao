@@ -87,6 +87,11 @@ module.exports.list = async (req, res) => {
     });
 
     for (const order of orderList) {
+      order.id = (order._id || "").toString();
+      order.subtotal = order.subtotal || 0;
+      order.discount = order.discount || 0;
+      order.total = order.total || 0;
+
       if (order.products && order.products.length > 0) {
         for (const item of order.products) {
           const infoProduct = productMap[item.product_id?.toString()];
@@ -446,7 +451,11 @@ module.exports.trash = async (req, res) => {
             item.priceNewQuantity = (item.priceNew || 0) * (item.quantity || 1);
           }
         }
-      }
+      order.id = (order._id || "").toString();
+      order.subtotal = order.subtotal || 0;
+      order.discount = order.discount || 0;
+      order.total = order.total || 0;
+
       if (order.deletedBy) {
         const infoAccountDeleted = accountMap[order.deletedBy?.toString()];
         order.deletedByFullName = infoAccountDeleted?.fullName;
