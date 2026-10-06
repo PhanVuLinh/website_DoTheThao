@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const moment = require("moment");
 const Order = require("../../models/order.model");
 const Product = require("../../models/product.model");
@@ -54,7 +55,7 @@ module.exports.list = async (req, res) => {
     let objectPagination = paginationHelper(
       {
         currentPage: 1,
-        limitItems: 10,
+        limitItems: 5,
       },
       req.query,
       countOrder,
@@ -221,34 +222,48 @@ module.exports.changeMulti = async (req, res) => {
 module.exports.edit = async (req, res) => {
   try {
     const id = req.params.id;
-    const orderDetail = await Order.findOne({
-      _id: id,
-      deleted: false,
-    });
+    let findQuery = { deleted: false };
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      findQuery._id = id;
+    } else {
+      findQuery.orderCode = id;
+    }
+
+    const orderDetail = await Order.findOne(findQuery).lean();
 
     if (!orderDetail) {
       req.flash("error", "Đơn hàng không tồn tại!");
       return res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
     }
 
-    for (const item of orderDetail.products) {
-      const infoProduct = await Product.findOne({
-        _id: item.product_id,
-        deleted: false,
-      });
-      if (infoProduct) {
-        const priceNewQuantity = item.priceNew * item.quantity;
-        item.priceNewQuantity = priceNewQuantity;
-        item.title = infoProduct.title;
-        item.slug = infoProduct.slug;
-        item.thumbnail = infoProduct.thumbnail;
+    if (orderDetail.products && Array.isArray(orderDetail.products)) {
+      for (const item of orderDetail.products) {
+        if (item.product_id && mongoose.Types.ObjectId.isValid(item.product_id)) {
+          const infoProduct = await Product.findOne({
+            _id: item.product_id,
+            deleted: false,
+          }).select("title slug thumbnail");
+
+          if (infoProduct) {
+            item.title = item.title || infoProduct.title;
+            item.slug = item.slug || infoProduct.slug;
+            item.thumbnail = item.thumbnail || infoProduct.thumbnail;
+          }
+        }
+        item.priceNew = item.priceNew !== undefined ? item.priceNew : (item.price || 0);
+        item.quantity = item.quantity || 1;
+        item.priceNewQuantity = item.priceNew * item.quantity;
       }
     }
+
+    orderDetail.subtotal = orderDetail.subtotal || 0;
+    orderDetail.discount = orderDetail.discount || 0;
+    orderDetail.total = orderDetail.total || 0;
 
     const pMethod = variableCongfig.paymentMethod.find(
       (item) => item.value === orderDetail.paymentMethod,
     );
-    orderDetail.paymentMethodName = pMethod ? pMethod.label : orderDetail.paymentMethod;
+    orderDetail.paymentMethodName = pMethod ? pMethod.label : (orderDetail.paymentMethod || "COD");
 
     orderDetail.createdAtFormat = moment(orderDetail.createdAt).format(
       "HH:mm - DD/MM/YYYY",
@@ -270,10 +285,14 @@ module.exports.edit = async (req, res) => {
 module.exports.editPatch = async (req, res) => {
   try {
     const id = req.params.id;
-    const order = await Order.findOne({
-      _id: id,
-      deleted: false,
-    });
+    let findQuery = { deleted: false };
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      findQuery._id = id;
+    } else {
+      findQuery.orderCode = id;
+    }
+
+    const order = await Order.findOne(findQuery);
     if (!order) {
       req.flash("error", "Đơn hàng không tồn tại!");
       return res.redirect(`/${variableCongfig.pathAdmin}/order/list`);

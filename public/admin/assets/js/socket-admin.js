@@ -74,7 +74,7 @@
         timerProgressBar: true,
       }).then((result) => {
         if (result.isConfirmed) {
-          window.location.href = `/admin/order/detail/${data.orderId}`;
+          window.location.href = `/admin/order/edit/${data.orderId}`;
         }
       });
     }
