@@ -12,6 +12,7 @@ const generateHelper = require("../../helpers/generate.helper");
 const variableCongfig = require("../../config/variable");
 const sortPayHelper = require("../../helpers/sortPay.helper");
 const jwtHelper = require("../../helpers/jwt.helper");
+const orderMailHelper = require("../../helpers/orderMail.helper");
 
 // Helper lấy user từ JWT / Cookie an toàn
 const getAuthUser = async (req) => {
@@ -166,6 +167,7 @@ module.exports.createPost = async (req, res) => {
 
     // 4. Lưu đơn hàng
     req.body.user_id = user.id;
+    req.body.email = req.body.email || user.email;
     req.body.orderCode = "DH" + generateHelper.generateOrderCode(10);
     req.body.cartId = cartId;
     req.body.products = products;
@@ -185,6 +187,24 @@ module.exports.createPost = async (req, res) => {
           { _id: cartId },
           { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
         );
+
+        // Bắn thông báo Realtime Socket.io cho Admin
+        if (global._io) {
+          global._io.emit("SERVER_RETURN_NEW_ORDER", {
+            orderId: newOrder.id,
+            orderCode: newOrder.orderCode,
+            fullName: newOrder.fullName,
+            total: newOrder.total,
+            createdAt: moment(newOrder.createdAt).format("HH:mm - DD/MM/YYYY"),
+            paymentMethod: "cod",
+          });
+        }
+
+        // Tự động gửi Email xác nhận hóa đơn (bất đồng bộ)
+        orderMailHelper
+          .sendOrderConfirmationEmail(newOrder, products)
+          .catch((err) => console.error("Gửi email thất bại:", err));
+
         req.flash("success", "Đặt hàng thành công!");
         return res.redirect(`/order/success/${newOrder.id}`);
 
@@ -407,6 +427,24 @@ module.exports.paymentZalopayReturn = async (req, res) => {
             { _id: orderDetail.cartId },
             { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
           );
+
+          // Bắn Socket.io thông báo đơn thanh toán thành công
+          if (global._io) {
+            global._io.emit("SERVER_RETURN_NEW_ORDER", {
+              orderId: orderDetail.id,
+              orderCode: orderDetail.orderCode,
+              fullName: orderDetail.fullName,
+              total: orderDetail.total,
+              createdAt: moment(orderDetail.createdAt).format("HH:mm - DD/MM/YYYY"),
+              paymentMethod: "zaloPay",
+            });
+          }
+
+          // Gửi email hóa đơn
+          orderMailHelper
+            .sendOrderConfirmationEmail(orderDetail, orderDetail.products)
+            .catch((err) => console.error("Email send err:", err));
+
           return res.redirect(`/order/success/${orderId}`);
         }
       } catch (err) {
@@ -570,6 +608,24 @@ module.exports.paymentVnpayResult = async (req, res) => {
           { _id: orderDetail.cartId },
           { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
         );
+
+        // Bắn Socket.io thông báo đơn thanh toán thành công
+        if (global._io) {
+          global._io.emit("SERVER_RETURN_NEW_ORDER", {
+            orderId: orderDetail.id,
+            orderCode: orderDetail.orderCode,
+            fullName: orderDetail.fullName,
+            total: orderDetail.total,
+            createdAt: moment(orderDetail.createdAt).format("HH:mm - DD/MM/YYYY"),
+            paymentMethod: "vnPay",
+          });
+        }
+
+        // Gửi email hóa đơn
+        orderMailHelper
+          .sendOrderConfirmationEmail(orderDetail, orderDetail.products)
+          .catch((err) => console.error("Email send err:", err));
+
         return res.redirect(`/order/success/${orderId}`);
       }
 

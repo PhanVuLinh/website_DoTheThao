@@ -13,8 +13,33 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("express-flash");
 
+const http = require("http");
+const { Server } = require("socket.io");
+
 const app = express();
-const port = process.env.PORT;
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+global._io = io;
+
+io.on("connection", (socket) => {
+  // Socket kết nối thành công
+  socket.on("JOIN_ADMIN_ROOM", () => {
+    socket.join("admin_room");
+  });
+
+  socket.on("JOIN_ORDER_ROOM", (orderId) => {
+    if (orderId) {
+      socket.join(`order_${orderId}`);
+    }
+  });
+});
+
+const port = process.env.PORT || 3000;
 app.use(methodOverride("_method"));
 app.use(express.json());
 
@@ -57,6 +82,6 @@ app.locals.pathAdmin = variableCongfig.pathAdmin;
 app.use(`/${variableCongfig.pathAdmin}`, adminRoutes);
 app.use("/", clientRoutes);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Website đang chạy trên cổng ${port}`);
 });

@@ -17,6 +17,40 @@ block main
           .order-code-box
             span Mã đơn hàng:
             strong.highlight-text #{orderDetail.orderCode}
+
+        //- Real-time Order Tracking Stepper
+        .order-tracker-card
+          .order-tracker-header
+            .tracker-title
+              i.fa-solid.fa-truck-fast
+              span Trạng Thái Giao Hàng (Cập nhật thời gian thực)
+            .tracker-live-indicator
+              span.pulse-dot
+              | Trực tiếp
+          .order-stepper#orderStepper(data-status=orderDetail.status)
+            .stepper-step(class=(orderDetail.status === 'initial' || orderDetail.status === 'shipping' || orderDetail.status === 'done' ? 'active current' : ''))
+              .step-icon
+                i.fa-solid.fa-file-invoice
+              .step-label Đã tiếp nhận
+              .step-time #{orderDetail.createdAtFormat}
+            .stepper-line(class=(orderDetail.status === 'shipping' || orderDetail.status === 'done' ? 'active' : ''))
+            .stepper-step(class=(orderDetail.status === 'shipping' ? 'active current' : (orderDetail.status === 'done' ? 'active' : '')))
+              .step-icon
+                i.fa-solid.fa-truck-ramp-box
+              .step-label Đang vận chuyển
+              .step-time= (orderDetail.status === 'shipping' || orderDetail.status === 'done') ? 'Đang trên đường giao' : 'Đang chuẩn bị hàng'
+            .stepper-line(class=(orderDetail.status === 'done' ? 'active' : ''))
+            .stepper-step(class=(orderDetail.status === 'done' ? 'active current' : ''))
+              .step-icon
+                i.fa-solid.fa-circle-check
+              .step-label Giao thành công
+              .step-time= orderDetail.status === 'done' ? 'Đã hoàn tất' : 'Dự kiến 2-3 ngày'
+
+          if orderDetail.status === 'cancel'
+            .order-cancel-alert
+              i.fa-solid.fa-triangle-exclamation
+              span Đơn hàng này đã bị hủy. Nếu có nhầm lẫn, vui lòng liên hệ bộ phận hỗ trợ khách hàng.
+
         .success-details-grid
           .success-card
             h3.success-card__title
@@ -92,3 +126,35 @@ block main
         .success-actions
           a.btn-submit-cart(href="/" style="width: auto; padding: 12px 35px; border-radius: 50px;") 
             | Tiếp tục mua sắm
+          button.btn-print-invoice(onclick="window.print()" style="margin-left: 12px; background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 12px 24px; border-radius: 50px; font-weight: 600; cursor: pointer;")
+            i.fa-solid.fa-print(style="margin-right: 6px;")
+            | In hóa đơn
+
+    script.
+      document.addEventListener("DOMContentLoaded", function () {
+        if (typeof io !== "undefined") {
+          const socket = io();
+          const currentOrderId = "#{orderDetail.id}";
+          
+          socket.emit("JOIN_ORDER_ROOM", currentOrderId);
+
+          socket.on("SERVER_UPDATE_ORDER_STATUS", function (data) {
+            if (data.orderId === currentOrderId) {
+              if (typeof Swal !== "undefined") {
+                Swal.fire({
+                  icon: "info",
+                  title: "Trạng thái đơn hàng cập nhật!",
+                  text: "Đơn hàng #" + data.orderCode + " đã chuyển sang: " + data.statusName,
+                  toast: true,
+                  position: "top-end",
+                  timer: 5000,
+                  showConfirmButton: false,
+                });
+              }
+              setTimeout(() => {
+                window.location.reload();
+              }, 1200);
+            }
+          });
+        }
+      });

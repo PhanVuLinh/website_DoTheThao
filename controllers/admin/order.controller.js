@@ -315,6 +315,18 @@ module.exports.editPatch = async (req, res) => {
       updateData,
     );
 
+    // Bắn thông báo Realtime Socket.io cho khách hàng và Admin
+    if (global._io) {
+      const statusObj = variableCongfig.orderStatus.find((item) => item.value === status);
+      global._io.emit("SERVER_UPDATE_ORDER_STATUS", {
+        orderId: id,
+        orderCode: order.orderCode,
+        status: status,
+        statusName: statusObj ? statusObj.label : status,
+        paymentStatus: paymentStatus,
+      });
+    }
+
     req.flash("success", "Cập nhật trạng thái đơn hàng thành công");
     res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/list`);
   } catch (error) {

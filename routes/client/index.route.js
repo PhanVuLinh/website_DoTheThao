@@ -41,4 +41,7 @@ router.use("/search", searchRoutes);
 
 router.use("/user", userRoutes);
 
+const reviewRoutes = require("../client/review.route");
+router.use("/review", reviewRoutes);
+
 module.exports = router;
