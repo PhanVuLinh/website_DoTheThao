@@ -23,10 +23,7 @@ block main
           .order-tracker-header
             .tracker-title
               i.fa-solid.fa-truck-fast
-              span Trạng Thái Giao Hàng (Cập nhật thời gian thực)
-            .tracker-live-indicator
-              span.pulse-dot
-              | Trực tiếp
+              span Trạng Thái Giao Hàng
           .order-stepper#orderStepper(data-status=orderDetail.status)
             .stepper-step(class=(orderDetail.status === 'initial' || orderDetail.status === 'shipping' || orderDetail.status === 'done' ? 'active current' : ''))
               .step-icon
