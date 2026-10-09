@@ -4,66 +4,43 @@ include ../mixins/box-breadcrumb.pug
 block main
   +box-breadcrumb(breadcrumb)
 
-  section.policy-page-wrapper
+  section.product-detail-page
     .container
-      .policy-layout-grid
-        // Sidebar danh sách các chính sách
-        aside.policy-sidebar
-          .policy-sidebar-card
-            .policy-sidebar-header
-              i.fa-solid.fa-shield-halved
-              h3 Chính Sách & Hỗ Trợ
-            ul.policy-nav-list
-              if policyList && policyList.length > 0
-                each item in policyList
-                  li.policy-nav-item(class=(item.slug === policy.slug ? 'active' : ''))
-                    a.policy-nav-link(href=`/policy/${item.slug}`)
-                      i(class=(item.icon || "fa-solid fa-file-shield"))
-                      span= item.title
+      .detail-grid
+        .detail-left
+          .detail-card(style="padding: 40px;")
+            h1.article-title #{policy.title}
+            
+            .article-meta
+              span.meta-item
+                i(class=(policy.icon || "fa-solid fa-shield-halved"))
+                |  Cam kết dịch vụ chính hãng 100%
 
-            .policy-support-box
-              .support-icon
-                i.fa-solid.fa-headset
-              h4 Cần Hỗ Trợ Trực Tiếp?
-              p Hotline chăm sóc khách hàng:
-              if settingWebsiteInfo && (settingWebsiteInfo.hotline || settingWebsiteInfo.phone)
-                a.support-hotline-btn(href=`tel:${settingWebsiteInfo.hotline || settingWebsiteInfo.phone}`)
-                  i.fa-solid.fa-phone
-                  | #{settingWebsiteInfo.hotline || settingWebsiteInfo.phone}
-              if settingWebsiteInfo && settingWebsiteInfo.zalo
-                a.support-zalo-btn(href=settingWebsiteInfo.zalo target="_blank" rel="noopener noreferrer")
-                  i.fa-solid.fa-comment-dots
-                  | Chat Zalo ngay
-
-        // Nội dung chi tiết chính sách
-        main.policy-content-card
-          header.policy-header
-            .policy-badge
-              i(class=(policy.icon || "fa-solid fa-shield-halved"))
-              | Cam Kết Dịch Vụ Khách Hàng
-            h1.policy-title= policy.title
             if policy.description
-              p.policy-lead= policy.description
+              p.article-desc(style="font-size: 15px; color: #64748b; line-height: 1.6; margin: 16px 0 24px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0; font-style: italic;")
+                | #{policy.description}
 
-          .policy-divider
+            .article-content
+              if policy.content
+                | !{policy.content}
+              else
+                p.text-muted Nội dung chính sách đang được cập nhật.
 
-          article.policy-body
-            if policy.content
-              != policy.content
-            else
-              p.text-muted Nội dung chính sách đang được cập nhật.
-
-          footer.policy-footer
-            .policy-guarantee-strip
-              .guarantee-col
-                i.fa-solid.fa-certificate
-                span 100% Chính Hãng
-              .guarantee-col
-                i.fa-solid.fa-rotate-left
-                span Đổi Trả 30 Ngày
-              .guarantee-col
-                i.fa-solid.fa-truck-fast
-                span Giao Hàng Hỏa Tốc
-              .guarantee-col
-                i.fa-solid.fa-user-shield
-                span Bảo Mật Thanh Toán
+        .detail-right
+          aside.detail-card.article-sidebar
+            h3.subtitle(style="margin-top: 0; padding-top: 0; border: none; border-bottom: 2px solid var(--red-main); padding-bottom: 10px; display: inline-block;") Chính Sách Cửa Hàng
+            
+            .widget-content.mt-4
+              if policyList && policyList.length > 0
+                ul.recent-post-list
+                  each item in policyList
+                    li.recent-post-item(class=(item.slug === policy.slug ? 'active' : ''))
+                      a.post-thumb(href=`/policy/${item.slug}` style="display: flex; align-items: center; justify-content: center; background: #eff6ff; color: #2563eb;")
+                        i(class=(item.icon || "fa-solid fa-file-shield") style="font-size: 20px;")
+                      .post-info
+                        h4.post-title
+                          a(href=`/policy/${item.slug}`) #{item.title}
+                        span.post-date
+                          | #{item.description ? (item.description.length > 40 ? item.description.slice(0, 40) + '...' : item.description) : 'Chính sách áp dụng'}
+              else
+                p.empty-text Chưa có chính sách nào.
