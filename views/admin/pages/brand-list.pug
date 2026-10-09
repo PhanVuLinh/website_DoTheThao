@@ -112,7 +112,8 @@ block main
                     p.empty-desc Bấm "Thêm thương hiệu" để bắt đầu thiết lập thương hiệu đối tác.
 
     if pagination && pagination.totalPage > 1
-      +pagination(pagination)
+      .admin-pagination
+        +pagination(pagination)
 
     form#form-delete-item(action="" method="POST" data-path=`/${pathAdmin}/brand/delete`)
     form#form-change-multi(action=`/${pathAdmin}/brand/change-multi?_method=PATCH` method="POST")

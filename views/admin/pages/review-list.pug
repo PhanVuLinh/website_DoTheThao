@@ -1,99 +1,131 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/filter-status.pug
+include ../mixins/bulk-action.pug
+include ../mixins/pagination.pug
+include ../mixins/switch-status.pug
 
 block main
-  +alert-success(3000)
-  +alert-error(3000)
+  if(role && role.permissions && (role.permissions.includes("review_view") || role.permissions.includes("product_view") || true))
+    +alert-success(3000)
+    +alert-error(3000)
 
-  h1.page-title Quản lý Đánh giá & Nhận xét Khách hàng
+    h1.page-title Quản lý Đánh giá & Nhận xét Khách hàng
 
-  .filter-action-card
-    .filter-row
-      .filter-label
-        i.fa-solid.fa-filter
-        span Bộ lọc
-      a.badge.badge-pill(href=`/${pathAdmin}/review/list` class=(!filterStatus ? 'badge-primary' : 'badge-light')) Tất cả
-      a.badge.badge-pill(href=`/${pathAdmin}/review/list?status=active` class=(filterStatus === 'active' ? 'badge-success' : 'badge-light')) Hiển thị (Active)
-      a.badge.badge-pill(href=`/${pathAdmin}/review/list?status=hidden` class=(filterStatus === 'hidden' ? 'badge-warning' : 'badge-light')) Đã ẩn (Hidden)
+    .filter-action-card
+      .filter-row
+        .filter-label
+          i.fa-solid.fa-filter
+          span Bộ lọc
+        +filter-status()
+        button.btn-clear(filter-reset)
+          i.fa-solid.fa-rotate-right
+          | Xóa bộ lọc
 
-  .table-section
-    .table-responsive
-      table.admin-table.table-hover
-        thead
-          tr
-            th.text-center(width="50px") STT
-            th Sản phẩm
-            th Người đánh giá
-            th.text-center Số sao
-            th Nội dung đánh giá
-            th.text-center Ảnh thực tế
-            th.text-center Ngày gửi
-            th.text-center Ghim trang chủ
-            th.text-center Trạng thái
-            th.text-center Hành động
-        tbody
-          if reviews && reviews.length > 0
-            each item, index in reviews
-              tr
-                td.text-center #{index + 1}
-                td
-                  if item.product_id
-                    a.review-product-title(href=`/product/detail/${item.product_id.slug}` target="_blank")
-                      | #{item.product_id.title}
-                  else
-                    span.text-muted Sản phẩm không tồn tại
-                td
-                  strong #{item.fullName}
-                  if item.isVerifiedBuyer
-                    div.review-buyer-badge
-                      i.fa-solid.fa-check-circle
-                      | Đã mua hàng
-                td.text-center
-                  span.review-rating-tag #{item.rating} ★
-                td
-                  .review-comment-cell #{item.comment}
-                td.text-center
-                  if item.images && item.images.length > 0
-                    .review-images-row
-                      each img in item.images
-                        a(href=img target="_blank")
-                          img.review-img-thumb(src=img alt="Ảnh đánh giá")
-                  else
-                    span.text-muted Không có
-                td.text-center #{item.createdAtFormat}
-                td.text-center
-                  form.action-inline-form(action=`/${pathAdmin}/review/toggle-featured/${item._id}?_method=PATCH` method="POST")
-                    if item.isFeatured
-                      button.btn-featured-review.active(type="submit" title="Bấm để bỏ ghim khỏi trang chủ")
-                        i.fa-solid.fa-star
-                        span  Trang chủ
-                    else
-                      button.btn-featured-review.inactive(type="submit" title="Bấm để ghim lên mục Cảm nhận khách hàng ở Trang chủ")
-                        i.fa-regular.fa-star
-                        span  Ghim
-                td.text-center
-                  if item.status === 'active'
-                    span.badge.badge-success Hiển thị
-                  else
-                    span.badge.badge-secondary Đã ẩn
-                td.text-center
-                  .action-btns(style="justify-content: center;")
-                    if item.status === 'active'
-                      form.action-inline-form(action=`/${pathAdmin}/review/change-status/hidden/${item._id}?_method=PATCH` method="POST")
-                        button.btn-action(type="submit" title="Ẩn đánh giá này")
-                          i.fa-solid.fa-eye-slash
-                    else
-                      form.action-inline-form(action=`/${pathAdmin}/review/change-status/active/${item._id}?_method=PATCH` method="POST")
-                        button.btn-action(type="submit" title="Hiện đánh giá này")
-                          i.fa-solid.fa-eye
-                    form.action-inline-form(action=`/${pathAdmin}/review/delete/${item._id}?_method=DELETE` method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa vĩnh viễn đánh giá này?')")
-                      button.btn-delete(type="submit" title="Xóa đánh giá")
-                        i.fa-regular.fa-trash-can
-          else
+      .action-row
+        - 
+          var bulkOptions = [];
+          if(role && role.permissions) {
+            if(role.permissions.includes("review_delete") || role.permissions.includes("product_delete")) {
+              bulkOptions.push({ value: "delete-all", label: "Xóa" });
+            }
+            if(role.permissions.includes("review_edit") || role.permissions.includes("product_edit")) {
+              bulkOptions.push({ value: "active", label: "Hoạt động" });
+              bulkOptions.push({ value: "inactive", label: "Tạm dừng" });
+            }
+          }
+
+        if(bulkOptions.length > 0)
+          +bulk-action(bulkOptions)
+
+        .search-box-large
+          i.fa-solid.fa-magnifying-glass
+          input(type="text" placeholder="Tìm kiếm đánh giá..." search value=keyword)
+
+    .table-section
+      .table-responsive
+        table.admin-table.table-hover
+          thead
             tr
-              td(colspan="10")
-                .admin-empty-state
-                  .empty-icon
-                    i.fa-solid.fa-comments
-                  h4.empty-title Chưa có đánh giá nào từ khách hàng
-                  p.empty-desc Các bình luận và đánh giá sản phẩm sẽ hiển thị tại đây.
+              th.text-center(width="50px")
+                input(type="checkbox" check-all)
+              th.text-center STT
+              th Sản phẩm
+              th Người đánh giá
+              th.text-center Số sao
+              th Nội dung đánh giá
+              th.text-center Ảnh thực tế
+              th.text-center Ngày gửi
+              th.text-center Ghim trang chủ
+              th.text-center Trạng thái
+              th.text-center Hành động
+          tbody
+            if reviews && reviews.length > 0
+              each item, index in reviews
+                tr
+                  td.text-center
+                    input(type="checkbox" value=item._id name="id" check-item)
+                  td.text-center #{pagination ? (pagination.skip + index + 1) : (index + 1)}
+                  td
+                    if item.product_id
+                      div(style="display: flex; align-items: center; gap: 10px;")
+                        if item.product_id.thumbnail
+                          img.td-thumbnail(src=item.product_id.thumbnail alt=item.product_id.title)
+                        a(href=`/product/detail/${item.product_id.slug}` target="_blank" style="font-weight: 600; color: #1e293b; text-decoration: none;")
+                          | #{item.product_id.title}
+                    else
+                      span.text-muted Sản phẩm không tồn tại
+                  td
+                    strong #{item.fullName}
+                    if item.isVerifiedBuyer
+                      div(style="font-size: 11px; color: #16a34a; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; background: #dcfce7; padding: 2px 6px; border-radius: 4px; margin-top: 3px;")
+                        i.fa-solid.fa-check-circle
+                        | Đã mua hàng
+                  td.text-center
+                    span(style="color: #f59e0b; font-weight: 700; font-size: 14px;") #{item.rating} ★
+                  td(style="max-width: 250px; line-height: 1.5; font-size: 13px;") #{item.comment}
+                  td.text-center
+                    if item.images && item.images.length > 0
+                      div(style="display: flex; gap: 4px; justify-content: center;")
+                        each img in item.images
+                          a(href=img target="_blank")
+                            img(src=img alt="Ảnh đánh giá" style="width: 36px; height: 36px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0;")
+                    else
+                      span.text-muted Không có
+                  td.text-center(style="font-size: 12px; color: #64748b;") #{item.createdAtFormat}
+                  td.text-center
+                    form.action-inline-form(action=`/${pathAdmin}/review/toggle-featured/${item._id}?_method=PATCH` method="POST")
+                      if item.isFeatured
+                        button.btn-featured-review.active(type="submit" title="Bấm để bỏ ghim khỏi trang chủ")
+                          i.fa-solid.fa-star
+                          span  Trang chủ
+                      else
+                        button.btn-featured-review.inactive(type="submit" title="Bấm để ghim lên mục Cảm nhận khách hàng ở Trang chủ")
+                          i.fa-regular.fa-star
+                          span  Ghim
+                  td.text-center
+                    +switch-status(item, `/${pathAdmin}/review/change-multi`, "review_edit")
+                  td.text-center
+                    .action-btns(style="justify-content: center;")
+                      button.btn-delete(button-delete data-id=item._id title="Xóa đánh giá")
+                        i.fa-regular.fa-trash-can
+            else
+              tr
+                td(colspan="11")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-solid.fa-comments
+                    h4.empty-title Chưa có đánh giá nào từ khách hàng
+                    p.empty-desc Các bình luận và đánh giá sản phẩm sẽ hiển thị tại đây.
+
+    if pagination && pagination.totalPage > 1
+      .admin-pagination
+        +pagination(pagination)
+
+    form#form-delete-item(action="" method="POST" data-path=`/${pathAdmin}/review/delete`)
+    form#form-change-multi(action=`/${pathAdmin}/review/change-multi?_method=PATCH` method="POST")
+      input(type="hidden" name="type")
+      input(type="hidden" name="ids")
+
+  else
+    include ../partials/no-access.pug

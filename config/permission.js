@@ -132,6 +132,14 @@ module.exports.permissionList = [
     ],
   },
   {
+    group: "Quản lý đánh giá",
+    permissions: [
+      { label: "Xem danh sách", value: "review_view" },
+      { label: "Chỉnh sửa / Ẩn hiện", value: "review_edit" },
+      { label: "Xóa đánh giá", value: "review_delete" },
+    ],
+  },
+  {
     group: "Thông tin cá nhân",
     permissions: [{ label: "Xem", value: "profile_view" }],
   },

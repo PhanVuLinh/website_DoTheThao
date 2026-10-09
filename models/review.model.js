@@ -55,7 +55,7 @@ const reviewSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["active", "hidden"],
+      enum: ["active", "hidden", "inactive"],
       default: "active",
     },
     deleted: {
