@@ -2,7 +2,10 @@ const mongoose = require("mongoose");
 
 const contactSchema = new mongoose.Schema(
   {
+    fullName: String,
     email: String,
+    phone: String,
+    content: String,
     deleted: {
       type: Boolean,
       default: false,

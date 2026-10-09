@@ -3,7 +3,7 @@ footer.footer
     div(class="footer__newsletter")
       div(class="newsletter-info")
         h3 Đừng bỏ lỡ ưu đãi
-        p Đăng ký để nhận thông tin ưu đãi mới nhất
+        p Đăng ký để nhận thông tin ưu đãi mới nhất từ #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
       form(class="newsletter-form" action="/contact/create" method="POST")
         input(name="email" placeholder="Nhập email của bạn..." type="email" required)
         button(type="submit") 
@@ -14,47 +14,63 @@ footer.footer
       // Col 1: Brand Info
       div(class="footer__col brand-col")
         a.logo(href="/")
-          img(src=settingWebsiteInfo.logo, alt=settingWebsiteInfo.websiteName)
-        p Điểm đến số 1 cho những người đam mê thể thao. Cam kết hàng chính hãng 100%, chất lượng đỉnh cao, dịch vụ tận tâm.
+          if settingWebsiteInfo && settingWebsiteInfo.logo
+            img(src=settingWebsiteInfo.logo, alt=(settingWebsiteInfo.websiteName || "Logo"))
+          else
+            span.footer-logo-fallback #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
+        p #{settingWebsiteInfo && settingWebsiteInfo.aboutShort ? settingWebsiteInfo.aboutShort : (settingWebsiteInfo && settingWebsiteInfo.slogan ? settingWebsiteInfo.slogan : "Điểm đến số 1 cho những người đam mê thể thao. Cam kết hàng chính hãng 100%, chất lượng đỉnh cao, dịch vụ tận tâm.")}
+        
         div(class="footer__social")
-          a(href="#"): i.fa-brands.fa-facebook-f
-          a(href="#"): i.fa-brands.fa-instagram
-          a(href="#"): i.fa-brands.fa-twitter
-          a(href="#"): i.fa-brands.fa-youtube
+          if settingWebsiteInfo && settingWebsiteInfo.facebook
+            a(href=settingWebsiteInfo.facebook target="_blank" rel="noopener noreferrer" title="Facebook"): i.fa-brands.fa-facebook-f
+          if settingWebsiteInfo && settingWebsiteInfo.instagram
+            a(href=settingWebsiteInfo.instagram target="_blank" rel="noopener noreferrer" title="Instagram"): i.fa-brands.fa-instagram
+          if settingWebsiteInfo && settingWebsiteInfo.tiktok
+            a(href=settingWebsiteInfo.tiktok target="_blank" rel="noopener noreferrer" title="TikTok"): i.fa-brands.fa-tiktok
+          if settingWebsiteInfo && settingWebsiteInfo.youtube
+            a(href=settingWebsiteInfo.youtube target="_blank" rel="noopener noreferrer" title="YouTube"): i.fa-brands.fa-youtube
+          if settingWebsiteInfo && settingWebsiteInfo.zalo
+            a(href=settingWebsiteInfo.zalo target="_blank" rel="noopener noreferrer" title="Zalo"): i.fa-solid.fa-comment-dots
 
-
-      // Col 3: Support
+      // Col 2: Support
       div(class="footer__col")
         h4 Hỗ Trợ Khách Hàng
         ul.footer__links
-          li: a(href="#") Hướng dẫn mua hàng
-          li: a(href="#") Chính sách đổi trả
-          li: a(href="#") Chính sách bảo hành
-          li: a(href="#") Vận chuyển & Giao nhận
-          li: a(href="#") Bảo mật thông tin
-          li: a(href="#") Câu hỏi thường gặp
+          li: a(href="/policy/huong-dan-mua-hang") Hướng dẫn mua hàng
+          li: a(href="/policy/chinh-sach-doi-tra") Chính sách đổi trả
+          li: a(href="/policy/chinh-sach-bao-hanh") Chính sách bảo hành
+          li: a(href="/policy/chinh-sach-van-chuyen") Vận chuyển & Giao nhận
+          li: a(href="/policy/chinh-sach-bao-mat") Bảo mật thông tin
+          li: a(href="/contact") Liên hệ trực tiếp
 
-      // Col 4: Contact
+      // Col 3: Contact
       div(class="footer__col contact-col")
-        h4 Liên Hệ
+        h4 Thông Tin Liên Hệ
         ul.footer__contact
-          li
-            if(settingWebsiteInfo.address)
+          if settingWebsiteInfo && settingWebsiteInfo.address
+            li
               div.icon-wrapper
                 i.fa-solid.fa-location-dot
               span #{settingWebsiteInfo.address}
-          li
-            if(settingWebsiteInfo.phone)
+          if settingWebsiteInfo && (settingWebsiteInfo.hotline || settingWebsiteInfo.phone)
+            li
               div.icon-wrapper
                 i.fa-solid.fa-phone
-              span #{settingWebsiteInfo.phone}
-          li
-            if(settingWebsiteInfo.email)
+              span Hotline: #{settingWebsiteInfo.hotline || settingWebsiteInfo.phone}
+          if settingWebsiteInfo && settingWebsiteInfo.email
+            li
               div.icon-wrapper
                 i.fa-solid.fa-envelope
               span #{settingWebsiteInfo.email}
+          if settingWebsiteInfo && settingWebsiteInfo.workingHours
+            li
+              div.icon-wrapper
+                i.fa-regular.fa-clock
+              span Giờ mở cửa: #{settingWebsiteInfo.workingHours}
 
   // BOTTOM
   div(class="footer__bottom")
     div(class="footer__bottom-inner")
-      p © 2026 TitiSport. All rights reserved. Designed for athletes.
+      p #{settingWebsiteInfo && settingWebsiteInfo.copyright ? settingWebsiteInfo.copyright : `© ${new Date().getFullYear()} ${settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}. All rights reserved.`}
+      if settingWebsiteInfo && settingWebsiteInfo.businessLicense
+        p.footer-business-license #{settingWebsiteInfo.businessLicense}

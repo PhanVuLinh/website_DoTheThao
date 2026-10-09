@@ -57,13 +57,58 @@ const updateCartTotal = () => {
       "- " + discount.toLocaleString("vi-VN") + " đ";
   }
 
-  let total = subtotal - discount;
-  if (total < 0) total = 0;
+  let netAmount = subtotal - discount;
+  if (netAmount < 0) netAmount = 0;
+
+  // TÍNH PHÍ VẬN CHUYỂN ĐỘNG THEO CẤU HÌNH ADMIN
+  let shippingFee = 0;
+  const freeThresholdRaw = document.querySelector("#free-threshold-raw");
+  const standardShippingRaw = document.querySelector("#standard-shipping-raw");
+  const shippingValEl = document.querySelector("#shipping-val");
+  const freeshipHintBox = document.querySelector(".freeship-hint-box");
+
+  if (standardShippingRaw) {
+    const standardShipping = parseInt(standardShippingRaw.value) || 0;
+    const freeThreshold = freeThresholdRaw ? (parseInt(freeThresholdRaw.value) || 0) : 0;
+
+    if (subtotal === 0) {
+      shippingFee = 0;
+    } else if (freeThreshold > 0 && netAmount >= freeThreshold) {
+      shippingFee = 0;
+    } else {
+      shippingFee = standardShipping;
+    }
+
+    if (shippingValEl) {
+      if (shippingFee === 0) {
+        shippingValEl.innerText = "Miễn phí";
+        shippingValEl.className = "value text-freeship";
+        shippingValEl.setAttribute("data-fee", "0");
+      } else {
+        shippingValEl.innerText = shippingFee.toLocaleString("vi-VN") + " đ";
+        shippingValEl.className = "value text-shipping";
+        shippingValEl.setAttribute("data-fee", shippingFee);
+      }
+    }
+
+    if (freeshipHintBox) {
+      if (subtotal > 0 && shippingFee > 0 && freeThreshold > 0 && netAmount < freeThreshold) {
+        const diff = freeThreshold - netAmount;
+        freeshipHintBox.style.display = "flex";
+        freeshipHintBox.innerHTML = `<i class="fa-solid fa-truck-fast"></i><span>Mua thêm ${diff.toLocaleString("vi-VN")} đ để được <strong>Miễn phí vận chuyển</strong>!</span>`;
+      } else {
+        freeshipHintBox.style.display = "none";
+      }
+    }
+  }
+
+  let totalPayment = netAmount + shippingFee;
+  if (totalPayment < 0) totalPayment = 0;
 
   const cartTotals = document.querySelectorAll(".cart-total");
   if (cartTotals.length >= 2) {
     cartTotals[0].innerText = subtotal.toLocaleString("vi-VN") + " đ";
-    cartTotals[1].innerText = total.toLocaleString("vi-VN") + " đ";
+    cartTotals[1].innerText = totalPayment.toLocaleString("vi-VN") + " đ";
   }
 };
 

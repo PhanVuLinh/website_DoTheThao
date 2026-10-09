@@ -4,11 +4,15 @@ const Category = require("../../models/category.model");
 const Article = require("../../models/article.model");
 const Coupon = require("../../models/coupon.model");
 const Order = require("../../models/order.model");
+const Brand = require("../../models/brand.model");
+const Review = require("../../models/review.model");
 
 const productPriceHelper = require("../../helpers/getPriceNew.helper.js");
 
 module.exports.index = async (req, res) => {
   try {
+    const settingWebsiteInfo = res.locals.settingWebsiteInfo || {};
+
     // 1. Danh mục sản phẩm con (Sub-categories for visual exploration)
     const categoryChildren = await Category.find({
       deleted: false,
@@ -66,13 +70,20 @@ module.exports.index = async (req, res) => {
 
     const productListSection7 = productPriceHelper.priceNewProduct(productListSection7Raw);
 
-    // 6. Phân nhóm môn thể thao cho Interactive Category Tabs (Dữ liệu thực từ DB)
-    // - Bóng Đá (Football)
-    const footballParent = await Category.findOne({ title: { $regex: /Bóng Đá/i }, deleted: false });
+    // 6. Phân nhóm môn thể thao cho Interactive Category Tabs (Dữ liệu thực từ DB & Cấu hình Admin)
+    // - Tab 1 (Mặc định: Bóng Đá hoặc Category được Admin chọn)
+    let sportsTab1 = null;
+    if (settingWebsiteInfo.sportsTab1_id) {
+      sportsTab1 = await Category.findOne({ _id: settingWebsiteInfo.sportsTab1_id, deleted: false });
+    }
+    if (!sportsTab1) {
+      sportsTab1 = await Category.findOne({ title: { $regex: /Bóng Đá/i }, deleted: false });
+    }
+
     let footballCategoryIds = [];
-    if (footballParent) {
-      const footballChildren = await Category.find({ parent_id: footballParent._id.toString(), deleted: false });
-      footballCategoryIds = [footballParent._id.toString(), ...footballChildren.map((c) => c._id.toString())];
+    if (sportsTab1) {
+      const children1 = await Category.find({ parent_id: sportsTab1._id.toString(), deleted: false });
+      footballCategoryIds = [sportsTab1._id.toString(), ...children1.map((c) => c._id.toString())];
     }
     const footballProductsRaw = await Product.find({
       deleted: false,
@@ -81,12 +92,19 @@ module.exports.index = async (req, res) => {
     }).limit(8);
     const footballProducts = productPriceHelper.priceNewProduct(footballProductsRaw);
 
-    // - Bóng Chuyền (Volleyball)
-    const volleyballParent = await Category.findOne({ title: { $regex: /Bóng Chuyền/i }, deleted: false });
+    // - Tab 2 (Mặc định: Bóng Chuyền hoặc Category được Admin chọn)
+    let sportsTab2 = null;
+    if (settingWebsiteInfo.sportsTab2_id) {
+      sportsTab2 = await Category.findOne({ _id: settingWebsiteInfo.sportsTab2_id, deleted: false });
+    }
+    if (!sportsTab2) {
+      sportsTab2 = await Category.findOne({ title: { $regex: /Bóng Chuyền/i }, deleted: false });
+    }
+
     let volleyballCategoryIds = [];
-    if (volleyballParent) {
-      const volleyballChildren = await Category.find({ parent_id: volleyballParent._id.toString(), deleted: false });
-      volleyballCategoryIds = [volleyballParent._id.toString(), ...volleyballChildren.map((c) => c._id.toString())];
+    if (sportsTab2) {
+      const children2 = await Category.find({ parent_id: sportsTab2._id.toString(), deleted: false });
+      volleyballCategoryIds = [sportsTab2._id.toString(), ...children2.map((c) => c._id.toString())];
     }
     const volleyballProductsRaw = await Product.find({
       deleted: false,
@@ -111,7 +129,32 @@ module.exports.index = async (req, res) => {
     const newsLeft = articleListSection9.slice(1, 3);
     const newsRight = articleListSection9.slice(3, 5);
 
-    // 8. Thống kê thực tế từ DB để hiển thị Trust Bar (Real Store Stats)
+    // 8. Đánh giá nổi bật / Cảm nhận khách hàng (Testimonials từ DB)
+    let testimonialsList = await Review.find({
+      deleted: false,
+      status: "active",
+      isFeatured: true,
+    })
+      .sort({ createdAt: -1 })
+      .limit(6);
+
+    if (testimonialsList.length === 0) {
+      testimonialsList = await Review.find({
+        deleted: false,
+        status: "active",
+        rating: 5,
+      })
+        .sort({ createdAt: -1 })
+        .limit(3);
+    }
+
+    // 9. Danh sách thương hiệu đối tác (Brands từ DB)
+    const brandList = await Brand.find({
+      deleted: false,
+      status: "active",
+    }).sort({ position: 1, createdAt: 1 });
+
+    // 10. Thống kê thực tế từ DB để hiển thị Trust Bar (Real Store Stats)
     const totalProductsCount = await Product.countDocuments({ deleted: false, status: "active" });
     const totalOrdersCount = await Order.countDocuments({});
     const totalCategoriesCount = await Category.countDocuments({ deleted: false });
@@ -123,11 +166,15 @@ module.exports.index = async (req, res) => {
       productListSection3: productListSection3,
       productFeaturedSection5: productFeaturedSection5,
       productListSection7: productListSection7,
+      sportsTab1: sportsTab1,
+      sportsTab2: sportsTab2,
       footballProducts: footballProducts,
       volleyballProducts: volleyballProducts,
       newsCenter: newsCenter,
       newsLeft: newsLeft,
       newsRight: newsRight,
+      testimonialsList: testimonialsList,
+      brandList: brandList,
       storeStats: {
         totalProducts: totalProductsCount,
         totalOrders: totalOrdersCount,

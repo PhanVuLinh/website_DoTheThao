@@ -1,16 +1,16 @@
 const router = require("express").Router();
 
 const authController = require("../../controllers/client/auth.controller");
-
 const validate = require("../../validates/client/auth.validate");
+const { authLimiter } = require("../../middlewares/rateLimit.middleware");
 
 router.get("/login", authController.login);
 
-router.post("/login", validate.loginPost, authController.loginPost);
+router.post("/login", authLimiter, validate.loginPost, authController.loginPost);
 
 router.get("/register", authController.register);
 
-router.post("/register", validate.registerPost, authController.registerPost);
+router.post("/register", authLimiter, validate.registerPost, authController.registerPost);
 
 router.get("/logout", authController.logout);
 
@@ -18,6 +18,7 @@ router.get("/forgot-password", authController.forgotPassword);
 
 router.post(
   "/forgot-password",
+  authLimiter,
   validate.forgotPasswordPost,
   authController.forgotPasswordPost,
 );

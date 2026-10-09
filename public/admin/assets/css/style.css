@@ -2437,6 +2437,9 @@ textarea.is-invalid {
   line-height: 1.6;
   color: var(--admin-text-secondary);
 }
+.no-access-action {
+  margin-top: 22px;
+}
 
 /* --------------------------------------------------------------------------
    16. AUTH / LOGIN PAGE
@@ -2709,3 +2712,543 @@ textarea.is-invalid {
     justify-content: center;
   }
 }
+
+/* --------------------------------------------------------------------------
+   17. WEBSITE SETTINGS TABS & MASTER CONTROLS
+   -------------------------------------------------------------------------- */
+.website-settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.website-settings-title-group h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--admin-text, #0f172a);
+  margin: 0 0 6px;
+}
+
+.website-settings-title-group p {
+  font-size: 14px;
+  color: var(--admin-text-secondary, #64748b);
+  margin: 0;
+}
+
+.website-settings-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.website-settings-actions .btn-back {
+  margin: 0;
+  padding: 10px 18px;
+}
+
+/* TAB NAVIGATION BAR */
+.settings-tabs-wrapper {
+  background: var(--admin-surface, #ffffff);
+  border-radius: var(--admin-radius-lg, 16px);
+  padding: 8px;
+  border: 1px solid var(--admin-border, #e2e8f0);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  margin-bottom: 24px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.settings-tabs-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.settings-tabs-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.tab-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #475569;
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-nav-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.tab-nav-btn.active {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.28);
+}
+
+.tab-nav-btn i {
+  font-size: 15px;
+}
+
+/* TAB PANELS */
+.settings-tab-pane {
+  display: none;
+  animation: tabFadeIn 0.25s ease-out forwards;
+}
+
+.settings-tab-pane.active {
+  display: block;
+}
+
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* SECTION HEADER IN PANE */
+.pane-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1.5px solid #f1f5f9;
+}
+
+.pane-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.pane-header-icon.brand {
+  background: #fee2e2;
+  color: #e11d48;
+}
+
+.pane-header-icon.hero {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.pane-header-icon.trust {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.pane-header-icon.promo {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.pane-header-icon.social {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+
+.pane-header-icon.footer {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.pane-header-icon.seo {
+  background: #fdf2f8;
+  color: #db2777;
+}
+
+.pane-header-info h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+}
+
+.pane-header-info p {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* PANE BOTTOM ACTIONS */
+.pane-footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1.5px solid #f1f5f9;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pane-actions-right {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-next-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-next-tab:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.btn-save-pane {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
+  transition: all 0.2s;
+}
+
+.btn-save-pane:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.btn-save-pane-lg {
+  padding: 12px 32px;
+  font-size: 15px;
+}
+
+/* TRUST BADGES CONFIG GRID */
+.trust-badges-config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.trust-badge-card {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.trust-badge-card h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trust-badge-card h4 i.speed {
+  color: #e11d48;
+}
+
+.trust-badge-card h4 i.origin {
+  color: #2563eb;
+}
+
+.trust-badge-card h4 i.returns {
+  color: #16a34a;
+}
+
+.trust-badge-card h4 i.support {
+  color: #d97706;
+}
+
+@media (max-width: 768px) {
+  .trust-badges-config-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* CONTACT LIST TABLE STYLES */
+.contact-user-name {
+  font-weight: 600;
+  color: var(--admin-text, #0f172a);
+}
+
+.contact-user-phone {
+  font-size: 12px;
+  color: var(--admin-text-secondary, #64748b);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.contact-message-text {
+  margin: 0;
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.4;
+  max-width: 400px;
+}
+
+.contact-newsletter-note {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--admin-text-secondary, #64748b);
+}
+
+.action-btns-center {
+  justify-content: center;
+}
+
+/* ==========================================================================
+   FEATURED REVIEW TOGGLE
+   ========================================================================== */
+.btn-featured-review {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-featured-review.active {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.btn-featured-review.active i {
+  color: #f59e0b;
+}
+
+.btn-featured-review.active:hover {
+  background: #fde68a;
+}
+
+.btn-featured-review.inactive {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-featured-review.inactive:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+/* ==========================================================================
+   WEBSITE INFO TABS 8 & 9 (FLASH SALE & PAYMENT / SHIPPING)
+   ========================================================================== */
+.pane-header-icon.flash {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.pane-header-icon.payment {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.checkbox-card-wrap {
+  margin-bottom: 24px;
+}
+
+.checkbox-custom-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.checkbox-custom-card:hover {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+}
+
+.checkbox-custom-card input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--admin-primary, #2563eb);
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+.checkbox-card-info strong {
+  display: block;
+  font-size: 14px;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.checkbox-card-info span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.payment-methods-config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.payment-toggle-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.payment-toggle-card:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.payment-toggle-card input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--admin-primary, #2563eb);
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+.toggle-card-content {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.toggle-card-content i {
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+.toggle-card-content strong {
+  display: block;
+  font-size: 14px;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.toggle-card-content span {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.4;
+  display: block;
+}
+
+.text-pink {
+  color: #ec4899;
+}
+
+/* ==========================================================================
+   REVIEW LIST STYLES (STANDARDIZED)
+   ========================================================================== */
+.review-product-title {
+  font-weight: 600;
+  color: var(--admin-text, #0f172a);
+  transition: color 0.2s;
+}
+
+.review-product-title:hover {
+  color: var(--admin-primary, #2563eb);
+}
+
+.review-buyer-badge {
+  font-size: 11px;
+  color: #16a34a;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #dcfce7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 3px;
+}
+
+.review-rating-tag {
+  color: #f59e0b;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.review-comment-cell {
+  max-width: 260px;
+  line-height: 1.5;
+  font-size: 13px;
+  color: #334155;
+}
+
+.review-images-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.review-img-thumb {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--admin-border, #e2e8f0);
+  transition: transform 0.2s;
+}
+
+.review-img-thumb:hover {
+  transform: scale(1.15);
+}
+
+
+
+

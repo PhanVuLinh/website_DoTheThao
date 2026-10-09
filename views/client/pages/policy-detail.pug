@@ -1,0 +1,46 @@
+extends ../layouts/default.pug
+include ../mixins/box-breadcrumb.pug
+
+block main
+  +box-breadcrumb(breadcrumb)
+
+  section.product-detail-page
+    .container
+      .detail-grid
+        .detail-left
+          .detail-card(style="padding: 40px;")
+            h1.article-title #{policy.title}
+            
+            .article-meta
+              span.meta-item
+                i(class=(policy.icon || "fa-solid fa-shield-halved"))
+                |  Cam kết dịch vụ chính hãng 100%
+
+            if policy.description
+              p.article-desc(style="font-size: 15px; color: #64748b; line-height: 1.6; margin: 16px 0 24px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0; font-style: italic;")
+                | #{policy.description}
+
+            .article-content
+              if policy.content
+                | !{policy.content}
+              else
+                p.text-muted Nội dung chính sách đang được cập nhật.
+
+        .detail-right
+          aside.detail-card.article-sidebar
+            h3.subtitle(style="margin-top: 0; padding-top: 0; border: none; border-bottom: 2px solid var(--red-main); padding-bottom: 10px; display: inline-block;") Chính Sách Cửa Hàng
+            
+            .widget-content.mt-4
+              if policyList && policyList.length > 0
+                ul.recent-post-list
+                  each item in policyList
+                    li.recent-post-item(class=(item.slug === policy.slug ? 'active' : ''))
+                      a.post-thumb(href=`/policy/${item.slug}` style="display: flex; align-items: center; justify-content: center; background: #eff6ff; color: #2563eb;")
+                        i(class=(item.icon || "fa-solid fa-file-shield") style="font-size: 20px;")
+                      .post-info
+                        h4.post-title
+                          a(href=`/policy/${item.slug}`) #{item.title}
+                        span.post-date
+                          | #{item.description ? (item.description.length > 40 ? item.description.slice(0, 40) + '...' : item.description) : 'Chính sách áp dụng'}
+              else
+                p.empty-text Chưa có chính sách nào.

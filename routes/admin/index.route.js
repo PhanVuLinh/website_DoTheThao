@@ -16,6 +16,9 @@ const settingRoutes = require("../admin/setting.route");
 const profileRoutes = require("../admin/profile.route");
 const articleRoutes = require("../admin/article.route");
 const couponRoutes = require("../admin/coupon.route");
+const reviewRoutes = require("../admin/review.route");
+const brandRoutes = require("../admin/brand.route");
+const policyRoutes = require("../admin/policy.route");
 
 router.get("/", (req, res) => {
   res.redirect("/admin/dashboard");
@@ -42,5 +45,11 @@ router.use("/profile", authMiddleware.requireAuth, profileRoutes);
 router.use("/article", authMiddleware.requireAuth, articleRoutes);
 
 router.use("/coupon", authMiddleware.requireAuth, couponRoutes);
+
+router.use("/review", authMiddleware.requireAuth, reviewRoutes);
+
+router.use("/brand", authMiddleware.requireAuth, brandRoutes);
+
+router.use("/policy", authMiddleware.requireAuth, policyRoutes);
 
 module.exports = router;

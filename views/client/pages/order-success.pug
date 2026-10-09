@@ -5,7 +5,7 @@ block main
   +alert-success(3000)
   .cart-page
     .container
-      .success-wrapper
+      .success-wrapper(data-order-id=(orderDetail.id || orderDetail._id))
         .success-hero
           .success-icon-wrap
             i.fa-solid.fa-check
@@ -17,6 +17,37 @@ block main
           .order-code-box
             span Mã đơn hàng:
             strong.highlight-text #{orderDetail.orderCode}
+
+        //- Real-time Order Tracking Stepper
+        .order-tracker-card
+          .order-tracker-header
+            .tracker-title
+              i.fa-solid.fa-truck-fast
+              span Trạng Thái Giao Hàng
+          .order-stepper#orderStepper(data-status=orderDetail.status)
+            .stepper-step(class=(orderDetail.status === 'initial' || orderDetail.status === 'shipping' || orderDetail.status === 'done' ? 'active current' : ''))
+              .step-icon
+                i.fa-solid.fa-file-invoice
+              .step-label Đã tiếp nhận
+              .step-time #{orderDetail.createdAtFormat}
+            .stepper-line(class=(orderDetail.status === 'shipping' || orderDetail.status === 'done' ? 'active' : ''))
+            .stepper-step(class=(orderDetail.status === 'shipping' ? 'active current' : (orderDetail.status === 'done' ? 'active' : '')))
+              .step-icon
+                i.fa-solid.fa-truck-ramp-box
+              .step-label Đang vận chuyển
+              .step-time= (orderDetail.status === 'shipping' || orderDetail.status === 'done') ? 'Đang trên đường giao' : 'Đang chuẩn bị hàng'
+            .stepper-line(class=(orderDetail.status === 'done' ? 'active' : ''))
+            .stepper-step(class=(orderDetail.status === 'done' ? 'active current' : ''))
+              .step-icon
+                i.fa-solid.fa-circle-check
+              .step-label Giao thành công
+              .step-time= orderDetail.status === 'done' ? 'Đã hoàn tất' : 'Dự kiến 2-3 ngày'
+
+          if orderDetail.status === 'cancel'
+            .order-cancel-alert
+              i.fa-solid.fa-triangle-exclamation
+              span Đơn hàng này đã bị hủy. Nếu có nhầm lẫn, vui lòng liên hệ bộ phận hỗ trợ khách hàng.
+
         .success-details-grid
           .success-card
             h3.success-card__title
@@ -90,5 +121,10 @@ block main
                   .product-price
                     strong.price-red #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
         .success-actions
-          a.btn-submit-cart(href="/" style="width: auto; padding: 12px 35px; border-radius: 50px;") 
+          a.btn-submit-cart.btn-continue-shopping(href="/") 
             | Tiếp tục mua sắm
+          button.btn-print-invoice(onclick="window.print()")
+            i.fa-solid.fa-print
+            | In hóa đơn
+
+    script(src="/client/assets/js/order-success.js")

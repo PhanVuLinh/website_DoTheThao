@@ -1,0 +1,52 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+
+block main
+  if(role && role.permissions && (role.permissions.includes("policy_edit") || role.permissions.includes("setting_edit")))
+    +alert-success(3000)
+    +alert-error(3000)
+
+    .page-header
+      h1.page-title Chỉnh Sửa Chính Sách Cửa Hàng
+      a.btn-back(href=`/${pathAdmin}/policy/list`)
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
+
+    .form-card
+      form(action=`/${pathAdmin}/policy/edit/${policy._id}?_method=PATCH` method="POST")
+        .form-row-2
+          .form-group
+            label Tên chính sách <span class="text-danger">*</span>
+            input.form-control(type="text" name="title" value=policy.title required)
+
+          .form-group
+            label Biểu tượng FontAwesome (Icon Class)
+            input.form-control(type="text" name="icon" value=policy.icon placeholder="Ví dụ: fa-solid fa-truck-fast, fa-solid fa-rotate-left...")
+
+        .form-group
+          label Tóm tắt ngắn (Hiển thị đầu trang chính sách)
+          textarea.form-control(name="description" rows="2" placeholder="Tóm tắt thông điệp chính của chính sách này...")= policy.description
+
+        .form-row-2
+          .form-group
+            label Vị trí hiển thị (Số nhỏ đứng trước)
+            input.form-control(type="number" name="position" value=policy.position min="1")
+
+          .form-group
+            label Trạng thái
+            select.form-control(name="status")
+              option(value="active" selected=(policy.status === "active")) Hoạt động (Hiển thị)
+              option(value="inactive" selected=(policy.status === "inactive")) Tạm dừng (Ẩn)
+
+        .form-group
+          label Nội dung chi tiết chính sách (Soạn thảo văn bản đầy đủ)
+          textarea.form-control.textarea-mce(name="content" rows="18")= policy.content
+
+        .form-actions
+          a.btn-cancel(href=`/${pathAdmin}/policy/list`) Hủy bỏ
+          button.btn-submit(type="submit")
+            i.fa-solid.fa-floppy-disk
+            |  Lưu nội dung chính sách
+
+  else
+    include ../partials/no-access.pug

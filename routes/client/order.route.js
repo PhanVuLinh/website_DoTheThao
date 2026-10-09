@@ -2,8 +2,9 @@ const router = require("express").Router();
 
 const orderController = require("../../controllers/client/order.controller");
 const validate = require("../../validates/client/order.validate");
+const { orderLimiter } = require("../../middlewares/rateLimit.middleware");
 
-router.post("/create", validate.orderPost, orderController.createPost);
+router.post("/create", orderLimiter, validate.orderPost, orderController.createPost);
 
 router.get("/success/:orderId", orderController.orderSuccess);
 

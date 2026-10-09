@@ -1,0 +1,124 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+include ../mixins/filter-status.pug
+include ../mixins/bulk-action.pug
+include ../mixins/pagination.pug
+include ../mixins/switch-status.pug
+
+block main
+  if(role && role.permissions && role.permissions.includes("brand_view"))
+    +alert-success(3000)
+    +alert-error(3000)
+
+    h1.page-title Quản lý thương hiệu đối tác
+
+    .filter-action-card
+      .filter-row
+        .filter-label
+          i.fa-solid.fa-filter
+          span Bộ lọc
+        +filter-status()
+        button.btn-clear(filter-reset)
+          i.fa-solid.fa-rotate-right
+          | Xóa bộ lọc
+
+      .action-row
+        - 
+          var bulkOptions = [];
+          if(role && role.permissions) {
+            if(role.permissions.includes("brand_delete")) {
+              bulkOptions.push({ value: "delete-all", label: "Xóa" });
+            }
+            if(role.permissions.includes("brand_edit")) {
+              bulkOptions.push({ value: "active", label: "Hoạt động" });
+              bulkOptions.push({ value: "inactive", label: "Dừng hoạt động" });
+            }
+          }
+
+        if(bulkOptions.length > 0)
+          +bulk-action(bulkOptions)
+
+        .search-box-large
+          i.fa-solid.fa-magnifying-glass
+          input(type="text" placeholder="Tìm kiếm tên thương hiệu..." search value=keyword)
+
+        .action-buttons-right
+          if(role && role.permissions && role.permissions.includes("brand_create"))
+            a(href=`/${pathAdmin}/brand/create`).btn-create
+              i.fa-solid.fa-plus
+              | Thêm thương hiệu
+
+    .table-section
+      .table-responsive
+        table.admin-table.table-hover
+          thead
+            tr
+              th.text-center(width="50px")
+                input(type="checkbox" check-all)
+              th.text-center STT
+              th.text-center Logo
+              th Tên thương hiệu
+              th Khẩu hiệu / Slogan
+              th Điểm nổi bật
+              th.text-center Vị trí
+              th.text-center Trạng thái
+              if(role && role.permissions && (role.permissions.includes("brand_edit") || role.permissions.includes("brand_delete")))
+                th.text-center Hành động
+
+          tbody
+            if brands && brands.length > 0
+              each item, index in brands
+                tr
+                  td.text-center
+                    input(type="checkbox" value=item._id name="id" check-item)
+                  td.text-center #{pagination.skip + index + 1}
+                  td.text-center
+                    if item.logo
+                      img.td-thumbnail(src=item.logo alt=item.name)
+                    else
+                      span.text-muted Không có
+                  td
+                    strong #{item.name}
+                    if item.link
+                      div
+                        a(href=item.link target="_blank" style="font-size: 12px; color: var(--admin-primary); display: inline-flex; align-items: center; gap: 4px;")
+                          i.fa-solid.fa-arrow-up-right-from-square
+                          | #{item.link}
+                  td #{item.tagline || '---'}
+                  td
+                    if item.specPill
+                      span.badge.badge-primary #{item.specPill}
+                    else
+                      span.text-muted ---
+                  td.text-center #{item.position || 0}
+                  td.text-center
+                    +switch-status(item, `/${pathAdmin}/brand/change-multi`, "brand_edit")
+                  if(role && role.permissions && (role.permissions.includes("brand_edit") || role.permissions.includes("brand_delete")))
+                    td.text-center
+                      .action-btns(style="justify-content: center;")
+                        if(role.permissions.includes("brand_edit"))
+                          a.btn-edit(href=`/${pathAdmin}/brand/edit/${item._id}` title="Chỉnh sửa")
+                            i.fa-regular.fa-pen-to-square
+                        if(role.permissions.includes("brand_delete"))
+                          button.btn-delete(button-delete data-id=item._id title="Xóa")
+                            i.fa-regular.fa-trash-can
+            else
+              tr
+                td(colspan="10")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-solid.fa-certificate
+                    h4.empty-title Chưa có thương hiệu nào
+                    p.empty-desc Bấm "Thêm thương hiệu" để bắt đầu thiết lập thương hiệu đối tác.
+
+    if pagination && pagination.totalPage > 1
+      .admin-pagination
+        +pagination(pagination)
+
+    form#form-delete-item(action="" method="POST" data-path=`/${pathAdmin}/brand/delete`)
+    form#form-change-multi(action=`/${pathAdmin}/brand/change-multi?_method=PATCH` method="POST")
+      input(type="hidden" name="type" value="")
+      input(type="hidden" name="ids" value="")
+
+  else
+    include ../partials/no-access.pug

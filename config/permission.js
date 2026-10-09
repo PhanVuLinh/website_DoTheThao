@@ -109,10 +109,34 @@ module.exports.permissionList = [
     ],
   },
   {
+    group: "Quản lý thương hiệu",
+    permissions: [
+      { label: "Xem danh sách", value: "brand_view" },
+      { label: "Thêm mới", value: "brand_create" },
+      { label: "Chỉnh sửa", value: "brand_edit" },
+      { label: "Xóa", value: "brand_delete" },
+    ],
+  },
+  {
+    group: "Quản lý chính sách",
+    permissions: [
+      { label: "Xem danh sách", value: "policy_view" },
+      { label: "Chỉnh sửa", value: "policy_edit" },
+    ],
+  },
+  {
     group: "Cài đặt hệ thống",
     permissions: [
       { label: "Xem cấu hình", value: "setting_view" },
       { label: "Cập nhật cấu hình", value: "setting_edit" },
+    ],
+  },
+  {
+    group: "Quản lý đánh giá",
+    permissions: [
+      { label: "Xem danh sách", value: "review_view" },
+      { label: "Chỉnh sửa / Ẩn hiện", value: "review_edit" },
+      { label: "Xóa đánh giá", value: "review_delete" },
     ],
   },
   {

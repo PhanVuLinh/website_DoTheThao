@@ -36,6 +36,110 @@ block main
               | Thông Tin Chi Tiết
             .info-desc !{productDetail.description || 'Đang cập nhật thông tin chi tiết.'}
 
+          //- Đánh giá & Nhận xét sản phẩm (Verified Buyer Reviews)
+          .detail-card.reviews-card#reviews-section
+            .reviews-header
+              h3.card-title
+                i.fa-solid.fa-star-half-stroke
+                | Đánh Giá Từ Khách Hàng (#{totalReviews})
+              if isVerifiedBuyer
+                span.verified-badge-top
+                  i.fa-solid.fa-shield-heart
+                  | Đã mua sản phẩm này
+
+            .reviews-summary-grid
+              .summary-score-box
+                .big-score #{avgRating}
+                .score-stars
+                  - for (var i = 1; i <= 5; i++)
+                    i.fa-solid.fa-star(class=(i <= Math.round(parseFloat(avgRating)) ? 'filled' : 'empty'))
+                .total-count #{totalReviews} lượt đánh giá thực tế
+
+              .summary-bars-box
+                each starNum in [5, 4, 3, 2, 1]
+                  - var count = ratingBreakdown[starNum] || 0;
+                  - var percent = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+                  .rating-bar-row
+                    span.star-label #{starNum} ★
+                    .bar-track
+                      .bar-fill(style=`width: ${percent}%`)
+                    span.count-label #{count}
+
+            //- Form viết đánh giá
+            if isUserLoggedIn
+              .write-review-box
+                h4.write-title
+                  i.fa-solid.fa-pen-to-square
+                  | Gửi đánh giá của bạn
+                if isVerifiedBuyer
+                  p.verified-hint
+                    i.fa-solid.fa-circle-check
+                    | Bạn đã mua sản phẩm này. Đánh giá của bạn sẽ được gắn huy hiệu <strong>Người mua xác thực</strong>!
+                form.review-form(action="/review/create" method="POST" enctype="multipart/form-data")
+                  input(type="hidden" name="productId" value=productDetail._id)
+                  .form-group-rating
+                    label Chọn số sao đánh giá:
+                    .star-rating-select
+                      input#star5(type="radio" name="rating" value="5" checked)
+                      label(for="star5" title="5 sao - Tuyệt vời") ★
+                      input#star4(type="radio" name="rating" value="4")
+                      label(for="star4" title="4 sao - Rất tốt") ★
+                      input#star3(type="radio" name="rating" value="3")
+                      label(for="star3" title="3 sao - Bình thường") ★
+                      input#star2(type="radio" name="rating" value="2")
+                      label(for="star2" title="2 sao - Kém") ★
+                      input#star1(type="radio" name="rating" value="1")
+                      label(for="star1" title="1 sao - Rất tệ") ★
+
+                  .form-group
+                    label(for="reviewComment") Nhận xét chi tiết:
+                    textarea#reviewComment.form-control(name="comment" rows="3" placeholder="Chia sẻ cảm nhận về chất liệu, độ vừa vặn, độ bền của sản phẩm..." required)
+
+                  .form-group
+                    label Tải ảnh thực tế (Tối đa 3 ảnh):
+                    input#reviewImages(type="file" name="images" multiple accept="image/*" class="form-control-file")
+
+                  button.btn-submit-review(type="submit")
+                    i.fa-solid.fa-paper-plane
+                    | GỬI ĐÁNH GIÁ NGAY
+            else
+              .login-to-review-alert
+                i.fa-solid.fa-lock
+                span Vui lòng <a href="/auth/login">Đăng nhập</a> để viết đánh giá cho sản phẩm này.
+
+            //- Danh sách các đánh giá
+            .reviews-list
+              if reviews && reviews.length > 0
+                each item in reviews
+                  .review-item
+                    .review-item__header
+                      .user-info
+                        img.user-avatar(src=item.avatar || "/client/assets/images/default-avatar.png" alt=item.fullName)
+                        .user-meta
+                          strong.user-name #{item.fullName}
+                          if item.isVerifiedBuyer
+                            span.buyer-badge
+                              i.fa-solid.fa-circle-check
+                              | Đã mua hàng tại SportStore
+                      .review-time #{item.createdAtFormat}
+                    
+                    .review-item__rating
+                      - for (var i = 1; i <= 5; i++)
+                        i.fa-solid.fa-star(class=(i <= item.rating ? 'filled' : 'empty'))
+
+                    .review-item__content
+                      p #{item.comment}
+
+                    if item.images && item.images.length > 0
+                      .review-item__gallery
+                        each rImg in item.images
+                          a.gallery-thumb(href=rImg target="_blank")
+                            img(src=rImg alt="Ảnh đánh giá")
+              else
+                .no-reviews-box
+                  i.fa-regular.fa-comment-dots
+                  p Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên trải nghiệm và để lại nhận xét!
+
         // --- CỘT PHẢI: FORM ĐẶT HÀNG ---
         .detail-right
           form(
@@ -49,12 +153,9 @@ block main
                 
                 .product-meta-top
                   .stars
-                    i.fa-solid.fa-star
-                    i.fa-solid.fa-star
-                    i.fa-solid.fa-star
-                    i.fa-solid.fa-star
-                    i.fa-solid.fa-star
-                    span (Chưa có đánh giá)
+                    - for (var i = 1; i <= 5; i++)
+                      i.fa-solid.fa-star(class=(i <= Math.round(parseFloat(avgRating)) ? 'filled' : 'empty'))
+                    span.rating-score-text #{avgRating} (#{totalReviews} đánh giá)
                   span.divider |
                   .status
                     i.fa-solid.fa-check-circle
@@ -107,16 +208,22 @@ block main
               .trust-badges
                 .trust-item
                   .icon-box
-                    i.fa-solid.fa-shield-halved
-                  span Cam kết 100% chính hãng
+                    i.fa-solid.fa-truck-fast
+                  span= (settingWebsiteInfo && settingWebsiteInfo.trustBadge1_title) ? settingWebsiteInfo.trustBadge1_title : "Giao hàng hỏa tốc trong 2H"
+                
+                .trust-item
+                  .icon-box
+                    i.fa-solid.fa-certificate
+                  span= (settingWebsiteInfo && settingWebsiteInfo.trustBadge2_title) ? settingWebsiteInfo.trustBadge2_title : "100% Hàng chính hãng"
                 
                 .trust-item
                   .icon-box
                     i.fa-solid.fa-rotate-left
-                  span Đổi trả miễn phí trong 7 ngày
-                
-                .trust-item
-                  .icon-box
-                    i.fa-solid.fa-truck-fast
-                  span Miễn phí vận chuyển toàn quốc
+                  span= (settingWebsiteInfo && settingWebsiteInfo.trustBadge3_title) ? settingWebsiteInfo.trustBadge3_title : "Đổi trả miễn phí 30 ngày"
+
+                if settingWebsiteInfo && settingWebsiteInfo.trustBadge4_title
+                  .trust-item
+                    .icon-box
+                      i.fa-solid.fa-headset
+                    span= settingWebsiteInfo.trustBadge4_title
 

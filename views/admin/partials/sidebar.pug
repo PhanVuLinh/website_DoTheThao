@@ -64,6 +64,23 @@ aside.admin-sidebar#adminSidebar
             i.fa-solid.fa-newspaper
             span Quản lý bài viết
 
+      li
+        a(href=`/${pathAdmin}/review/list`)
+          i.fa-solid.fa-star
+          span Quản lý đánh giá
+
+      if(role && role.permissions && (role.permissions.includes("brand_view") || role.permissions.includes("setting_view")))
+        li
+          a(href=`/${pathAdmin}/brand/list`)
+            i.fa-solid.fa-certificate
+            span Quản lý thương hiệu
+
+      if(role && role.permissions && (role.permissions.includes("policy_view") || role.permissions.includes("setting_view")))
+        li
+          a(href=`/${pathAdmin}/policy/list`)
+            i.fa-solid.fa-file-shield
+            span Quản lý chính sách
+
   .sidebar-footer
     .sidebar-section-title CẤU HÌNH & TÀI KHOẢN
     ul.sidebar-menu.bottom-menu

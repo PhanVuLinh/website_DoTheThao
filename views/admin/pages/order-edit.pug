@@ -2,7 +2,7 @@ extends ../layouts/default.pug
 include ../mixins/alert.pug
 
 block main
-  if(role && role.permissions && role.permissions.includes("order_edit"))
+  if(role && role.permissions && (role.permissions.includes("order_edit") || role.permissions.includes("order_view")))
     +alert-error(3000)
     +alert-success(3000)
     .page-header
@@ -13,30 +13,33 @@ block main
         | Quay lại danh sách
 
     .order-details-container
-      form(action=`/${pathAdmin}/order/edit/${orderDetail.id}?_method=PATCH` method="POST")
+      form(action=`/${pathAdmin}/order/edit/${orderDetail._id || orderDetail.id}?_method=PATCH` method="POST")
         .order-main-content
           h3.section-title Sản phẩm
           .order-products-list.mb-4
-            each item in orderDetail.products
-              .product-list-item
-                img(
-                  src=item.thumbnail
-                  alt=item.title
-                  onerror="this.src='https://placehold.co/80x80/e2e8f0/64748b?text=SP'"
-                )
-                .prod-info-stack
-                  span.prod-name-main #{item.title}
-                  span.prod-meta-main #{item.size}
-                .prod-qty-price
-                  span.prod-qty #{item.quantity}
-                  span.prod-price #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
+            if orderDetail.products && orderDetail.products.length > 0
+              each item in orderDetail.products
+                .product-list-item
+                  img(
+                    src=item.thumbnail
+                    alt=item.title
+                    onerror="this.src='https://placehold.co/80x80/e2e8f0/64748b?text=SP'"
+                  )
+                  .prod-info-stack
+                    span.prod-name-main #{item.title || 'Sản phẩm'}
+                    span.prod-meta-main #{item.size || 'Tiêu chuẩn'}
+                  .prod-qty-price
+                    span.prod-qty x#{item.quantity || 1}
+                    span.prod-price #{(item.priceNewQuantity || (item.priceNew || item.price || 0) * (item.quantity || 1)).toLocaleString('vi-VN')} đ
+            else
+              p.text-muted Không có sản phẩm nào trong đơn hàng.
     
           h3.section-title Thanh toán
           .payment-summary.mb-4
-            span Tạm tính: #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
-            span Giảm giá: #{orderDetail.discount.toLocaleString('vi-VN')} đ
-            span Mã giảm: #{orderDetail.couponCode}
-            span.total-amount-display TỔNG CỘNG: #{orderDetail.total.toLocaleString('vi-VN')} đ
+            span Tạm tính: #{(orderDetail.subtotal || 0).toLocaleString('vi-VN')} đ
+            span Giảm giá: #{(orderDetail.discount || 0).toLocaleString('vi-VN')} đ
+            span Mã giảm: #{orderDetail.couponCode || 'Không áp dụng'}
+            span.total-amount-display TỔNG CỘNG: #{(orderDetail.total || 0).toLocaleString('vi-VN')} đ
         .order-side-content
           .order-section-box.mb-4
             label Thông tin khách
@@ -67,14 +70,4 @@ block main
                   option(value=item.value selected=(item.value === orderDetail.status ? true : false)) #{item.label} 
               button.btn-apply.w-auto(type="submit") Áp dụng
   else
-    .no-access-wrapper
-      .no-access-card
-        .no-access-icon
-          i.fa-solid.fa-lock
-
-        h2.no-access-title Truy cập bị từ chối
-
-        p.no-access-desc
-          | Bạn không có quyền truy cập vào trang này.
-          br
-          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
+    include ../partials/no-access.pug

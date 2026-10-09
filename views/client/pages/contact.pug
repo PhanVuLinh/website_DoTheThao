@@ -1,0 +1,130 @@
+extends ../layouts/default.pug
+include ../mixins/box-breadcrumb.pug
+
+block main
+  +box-breadcrumb(breadcrumb)
+
+  .contact-page
+    .contact-page__container
+      
+      //- Header
+      .contact-page__header
+        span.contact-tag
+          i.fa-solid.fa-headset
+          | TRUNG TÂM HỖ TRỢ KHÁCH HÀNG
+        h1.contact-title Liên Hệ Với #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "Chúng Tôi"}
+        p.contact-subtitle
+          | Chúng tôi luôn sẵn sàng lắng nghe và giải đáp mọi thắc mắc của quý khách 24/7. Hãy liên hệ với chúng tôi qua các kênh dưới đây hoặc để lại tin nhắn.
+
+      //- 2 Columns Grid
+      .contact-page__grid
+        
+        //- CỘT 1: THÔNG TIN CỬA HÀNG & BẢN ĐỒ
+        .contact-info-col
+          
+          //- Thẻ thông tin nhanh
+          .contact-cards-grid
+            
+            .contact-card
+              .contact-card__icon.hotline
+                i.fa-solid.fa-phone-volume
+              .contact-card__body
+                h4 Hotline tư vấn
+                p
+                  if settingWebsiteInfo && (settingWebsiteInfo.hotline || settingWebsiteInfo.phone)
+                    a.link-hotline(href=`tel:${settingWebsiteInfo.hotline || settingWebsiteInfo.phone}`) #{settingWebsiteInfo.hotline || settingWebsiteInfo.phone}
+                  else
+                    span 1900 6868
+
+            .contact-card
+              .contact-card__icon.email
+                i.fa-solid.fa-envelope-open-text
+              .contact-card__body
+                h4 Email hỗ trợ
+                p
+                  if settingWebsiteInfo && settingWebsiteInfo.email
+                    a.link-email(href=`mailto:${settingWebsiteInfo.email}`) #{settingWebsiteInfo.email}
+                  else
+                    span hotro@sportstore.vn
+
+            .contact-card
+              .contact-card__icon.hours
+                i.fa-solid.fa-clock
+              .contact-card__body
+                h4 Giờ mở cửa
+                p #{settingWebsiteInfo && settingWebsiteInfo.workingHours ? settingWebsiteInfo.workingHours : "08:00 - 22:00 (Tất cả các ngày)"}
+
+            .contact-card
+              .contact-card__icon.address
+                i.fa-solid.fa-location-dot
+              .contact-card__body
+                h4 Địa chỉ
+                p #{settingWebsiteInfo && settingWebsiteInfo.address ? settingWebsiteInfo.address : "Hệ thống cửa hàng thể thao trên toàn quốc"}
+
+          //- Kênh mạng xã hội
+          if settingWebsiteInfo && (settingWebsiteInfo.facebook || settingWebsiteInfo.instagram || settingWebsiteInfo.tiktok || settingWebsiteInfo.youtube || settingWebsiteInfo.zalo)
+            .social-connect-box
+              .social-connect-info
+                h4 Kết nối với chúng tôi
+                p Theo dõi các kênh chính thức để nhận ưu đãi
+              .social-connect-links
+                if settingWebsiteInfo.facebook
+                  a.social-connect-btn.facebook(href=settingWebsiteInfo.facebook target="_blank" rel="noopener noreferrer" title="Facebook")
+                    i.fa-brands.fa-facebook-f
+                if settingWebsiteInfo.instagram
+                  a.social-connect-btn.instagram(href=settingWebsiteInfo.instagram target="_blank" rel="noopener noreferrer" title="Instagram")
+                    i.fa-brands.fa-instagram
+                if settingWebsiteInfo.tiktok
+                  a.social-connect-btn.tiktok(href=settingWebsiteInfo.tiktok target="_blank" rel="noopener noreferrer" title="TikTok")
+                    i.fa-brands.fa-tiktok
+                if settingWebsiteInfo.youtube
+                  a.social-connect-btn.youtube(href=settingWebsiteInfo.youtube target="_blank" rel="noopener noreferrer" title="YouTube")
+                    i.fa-brands.fa-youtube
+                if settingWebsiteInfo.zalo
+                  a.social-connect-btn.zalo(href=settingWebsiteInfo.zalo target="_blank" rel="noopener noreferrer" title="Zalo")
+                    i.fa-solid.fa-comment-dots
+
+          //- Bản đồ Google Maps nhúng từ DB
+          .map-wrapper
+            if settingWebsiteInfo && settingWebsiteInfo.mapIframe
+              .map-iframe-container
+                | !{settingWebsiteInfo.mapIframe}
+            else
+              .map-placeholder
+                i.fa-solid.fa-map-location-dot
+                h4 #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
+                p #{settingWebsiteInfo && settingWebsiteInfo.address ? settingWebsiteInfo.address : "123 Đường Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh"}
+
+        //- CỘT 2: FORM LIÊN HỆ & GỬI TIN NHẮN
+        .contact-form-col
+          .contact-form-card
+            .card-header
+              h3 Gửi Tin Nhắn Cho Chúng Tôi
+              p Điền thông tin vào mẫu bên dưới, chúng tôi sẽ liên hệ lại trong vòng 30 phút.
+
+            form(action="/contact/create" method="POST")
+              .contact-form-group
+                label Họ và tên của bạn <span class="required">*</span>
+                .contact-input-wrap
+                  i.fa-solid.fa-user
+                  input.contact-input-control(type="text" name="fullName" placeholder="VD: Nguyễn Văn A" required)
+
+              .contact-form-group
+                label Số điện thoại liên hệ <span class="required">*</span>
+                .contact-input-wrap
+                  i.fa-solid.fa-phone
+                  input.contact-input-control(type="tel" name="phone" placeholder="VD: 0987 654 321" required)
+
+              .contact-form-group
+                label Địa chỉ Email <span class="required">*</span>
+                .contact-input-wrap
+                  i.fa-solid.fa-envelope
+                  input.contact-input-control(type="email" name="email" placeholder="VD: email@example.com" required)
+
+              .contact-form-group
+                label Nội dung tin nhắn / Yêu cầu tư vấn <span class="required">*</span>
+                textarea.contact-textarea-control(name="content" rows="4" placeholder="Nhập câu hỏi, thắc mắc về sản phẩm hoặc dịch vụ..." required)
+
+              button.btn-contact-submit(type="submit")
+                i.fa-solid.fa-paper-plane
+                | GỬI YÊU CẦU LIÊN HỆ

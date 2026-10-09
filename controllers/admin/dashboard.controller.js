@@ -98,6 +98,9 @@ module.exports.dashboard = async (req, res) => {
   const orderList = await Order.find(find).sort({ createdAt: "desc" }).limit(5);
 
   for (const order of orderList) {
+    order.id = (order._id || "").toString();
+    order.total = order.total || 0;
+
     if (order.products && order.products.length > 0) {
       for (const item of order.products) {
         const infoProduct = await Product.findOne({
@@ -105,7 +108,7 @@ module.exports.dashboard = async (req, res) => {
           deleted: false,
         });
         if (infoProduct) {
-          const priceNewQuantity = item.priceNew * item.quantity;
+          const priceNewQuantity = (item.priceNew || 0) * (item.quantity || 1);
           item.priceNewQuantity = priceNewQuantity;
           item.title = infoProduct.title;
           item.slug = infoProduct.slug;
@@ -113,15 +116,20 @@ module.exports.dashboard = async (req, res) => {
         }
       }
 
-      order.paymentMethodName = variableConfig.paymentMethod.find(
+      const pMethod = variableConfig.paymentMethod.find(
         (item) => item.value === order.paymentMethod,
-      ).label;
-      order.paymentStatusName = variableConfig.paymentStatus.find(
+      );
+      order.paymentMethodName = pMethod ? pMethod.label : order.paymentMethod;
+
+      const pStatus = variableConfig.paymentStatus.find(
         (item) => item.value === order.paymentStatus,
-      ).label;
-      order.statusName = variableConfig.orderStatus.find(
+      );
+      order.paymentStatusName = pStatus ? pStatus.label : order.paymentStatus;
+
+      const oStatus = variableConfig.orderStatus.find(
         (item) => item.value === order.status,
-      ).label;
+      );
+      order.statusName = oStatus ? oStatus.label : order.status;
 
       order.createdAtFormat = moment(order.createdAt).format(
         "HH:mm - DD/MM/YYYY",
