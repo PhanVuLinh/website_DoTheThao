@@ -5,301 +5,423 @@ block main
   if(role && role.permissions && (role.permissions.includes("setting_view") || role.permissions.includes("setting_edit")))
     +alert-error(3000)
     +alert-success(3000)
-    
-    .page-header
-      h1.page-title Cấu hình Toàn diện Website & Trang chủ
-      a.btn-back(href=`/${pathAdmin}/setting/list`) 
-        i.fa-solid.fa-arrow-left
-        | Quay lại cài đặt chung
 
-    .form-card
-      form(action=`/${pathAdmin}/setting/website-info?_method=PATCH` method="POST" enctype="multipart/form-data")
-        
-        //- ========================================================
-        //- PHẦN 1: THÔNG TIN DOANH NGHIỆP & NHẬN DIỆN THƯƠNG HIỆU
-        //- ========================================================
-        .setting-section-header
-          i.fa-solid.fa-building
-          h3 1. Thông Tin Doanh Nghiệp & Nhận Diện Thương Hiệu
-        
-        .form-row-2
-          .form-group
-            label Tên Website / Thương hiệu <span class="text-danger">*</span>
-            input.form-control(type="text" name="websiteName" value=(settingWebsiteInfo ? settingWebsiteInfo.websiteName : "") placeholder="VD: TitiSport" required)
-          
-          .form-group
-            label Khẩu hiệu / Slogan thương hiệu
-            input.form-control(type="text" name="slogan" value=(settingWebsiteInfo ? settingWebsiteInfo.slogan : "") placeholder="VD: Bứt Phá Mọi Giới Hạn Thể Thao")
+    //- TIÊU ĐỀ & NÚT LƯU CỐ ĐỊNH PHÍA TRÊN
+    .website-settings-header
+      .website-settings-title-group
+        h1 Cài Đặt Thông Tin & Giao Diện Website
+        p Tùy chỉnh thông tin liên hệ, banner quảng cáo, chính sách bán hàng và tối ưu tìm kiếm
 
-        .form-row-2
-          .form-group
-            label Hotline hỗ trợ 24/7
-            input.form-control(type="text" name="hotline" value=(settingWebsiteInfo ? settingWebsiteInfo.hotline : "") placeholder="VD: 1900 6868")
-          
-          .form-group
-            label Số điện thoại liên hệ
-            input.form-control(type="text" name="phone" value=(settingWebsiteInfo ? settingWebsiteInfo.phone : "") placeholder="VD: 0987 654 321")
-
-        .form-row-2
-          .form-group
-            label Email liên hệ / Chăm sóc khách hàng
-            input.form-control(type="email" name="email" value=(settingWebsiteInfo ? settingWebsiteInfo.email : "") placeholder="VD: contact@titisport.vn")
-          
-          .form-group
-            label Giờ làm việc / Mở cửa
-            input.form-control(type="text" name="workingHours" value=(settingWebsiteInfo ? settingWebsiteInfo.workingHours : "") placeholder="VD: 08:00 - 22:00 (Tất cả các ngày)")
-
-        .form-group
-          label Địa chỉ cửa hàng / Trụ sở chính
-          input.form-control(type="text" name="address" value=(settingWebsiteInfo ? settingWebsiteInfo.address : "") placeholder="VD: 123 Đường Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh")
-            
-        .form-row-2.upload-row
-          .form-group
-            label Logo Website
-            .upload-image-wrapper(upload-image-wrapper)
-              input#logo-upload.hidden-input(upload-image-input type="file" name="logo" accept="image/*")
-              label.upload-box(for="logo-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.logo ? "hidden" : ""))
-                i.fa-solid.fa-plus
-              .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.logo ? "" : "hidden"))
-                img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.logo ? settingWebsiteInfo.logo : "") alt="Preview Logo")
-                button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
-                  i.fa-solid.fa-xmark
-                  
-          .form-group
-            label Favicon (Icon tab trình duyệt)
-            .upload-image-wrapper(upload-image-wrapper)
-              input#favicon-upload.hidden-input(upload-image-input type="file" name="favicon" accept="image/*")
-              label.upload-box(for="favicon-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.favicon ? "hidden" : ""))
-                i.fa-solid.fa-plus
-              .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.favicon ? "" : "hidden"))
-                img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.favicon ? settingWebsiteInfo.favicon : "") alt="Preview Favicon")
-                button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
-                  i.fa-solid.fa-xmark
-
-        hr.section-divider
-
-        //- ========================================================
-        //- PHẦN 2: HERO BANNER TRANG CHỦ (ĐẦU TRANG)
-        //- ========================================================
-        .setting-section-header
-          i.fa-solid.fa-image
-          h3 2. Cấu Hình Hero Banner Trang Chủ (Vị trí đầu trang)
-
-        .form-row-2
-          .form-group
-            label Huy hiệu nổi bật (Badge)
-            input.form-control(type="text" name="heroBadge" value=(settingWebsiteInfo ? settingWebsiteInfo.heroBadge : "") placeholder="VD: THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG")
-          
-          .form-group
-            label Tiêu đề chính Banner (Hỗ trợ thẻ &lt;br&gt; ngắt dòng)
-            input.form-control(type="text" name="heroTitle" value=(settingWebsiteInfo ? settingWebsiteInfo.heroTitle : "") placeholder="VD: BỨT PHÁ<br>MỌI GIỚI HẠN")
-
-        .form-group
-          label Đoạn mô tả chi tiết Banner
-          textarea.form-control(name="heroDescription" rows="2" placeholder="Trải nghiệm đẳng cấp với bộ sưu tập thể thao mới nhất...") #{settingWebsiteInfo ? settingWebsiteInfo.heroDescription : ""}
-
-        .form-row-2
-          .form-group
-            label Chữ trên nút kêu gọi (CTA Button)
-            input.form-control(type="text" name="heroBtnText" value=(settingWebsiteInfo ? settingWebsiteInfo.heroBtnText : "") placeholder="VD: Khám Phá Ngay")
-          
-          .form-group
-            label Liên kết nút kêu gọi (CTA Link)
-            input.form-control(type="text" name="heroBtnLink" value=(settingWebsiteInfo ? settingWebsiteInfo.heroBtnLink : "") placeholder="VD: /product")
-
-        .form-group.upload-row
-          label Ảnh nền Banner chính (Khuyến nghị: 1920x800px)
-          .upload-image-wrapper(upload-image-wrapper)
-            input#hero-upload.hidden-input(upload-image-input type="file" name="heroImage" accept="image/*")
-            label.upload-box(for="hero-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? "hidden" : ""))
-              i.fa-solid.fa-plus
-            .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? "" : "hidden"))
-              img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? settingWebsiteInfo.heroImage : "") alt="Preview Banner")
-              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
-                i.fa-solid.fa-xmark
-
-        hr.section-divider
-
-        //- ========================================================
-        //- PHẦN 3: 4 CAM KẾT & LỢI THẾ THƯƠNG HIỆU (TRUST FEATURES)
-        //- ========================================================
-        .setting-section-header
-          i.fa-solid.fa-shield-halved
-          h3 3. 4 Cam Kết & Lợi Thế Thương Hiệu (Trust Features Trên Trang Chủ)
-
-        .trust-badges-config-grid(style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;")
-          .trust-badge-card(style="background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px solid #e2e8f0;")
-            h4(style="font-size: 14px; margin-bottom: 12px; color: #0f172a;")
-              i.fa-solid.fa-truck-fast(style="color: #e11d48; margin-right: 6px;")
-              | Cam kết 1: Vận chuyển
-            .form-group
-              label Tiêu đề:
-              input.form-control(type="text" name="trustBadge1_title" value=(settingWebsiteInfo ? settingWebsiteInfo.trustBadge1_title : "") placeholder="VD: Giao Hàng Hỏa Tốc 2H")
-            .form-group
-              label Mô tả:
-              textarea.form-control(name="trustBadge1_desc" rows="2" placeholder="VD: Nhận hàng ngay trong ngày, hỗ trợ kiểm hàng trước khi trả tiền...") #{settingWebsiteInfo ? settingWebsiteInfo.trustBadge1_desc : ""}
-
-          .trust-badge-card(style="background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px solid #e2e8f0;")
-            h4(style="font-size: 14px; margin-bottom: 12px; color: #0f172a;")
-              i.fa-solid.fa-certificate(style="color: #2563eb; margin-right: 6px;")
-              | Cam kết 2: Nguồn gốc xuất xứ
-            .form-group
-              label Tiêu đề:
-              input.form-control(type="text" name="trustBadge2_title" value=(settingWebsiteInfo ? settingWebsiteInfo.trustBadge2_title : "") placeholder="VD: 100% Hàng Chính Hãng")
-            .form-group
-              label Mô tả:
-              textarea.form-control(name="trustBadge2_desc" rows="2" placeholder="VD: Cam kết chất lượng quốc tế, đền bù gấp 10 lần nếu phát hiện hàng nhái...") #{settingWebsiteInfo ? settingWebsiteInfo.trustBadge2_desc : ""}
-
-          .trust-badge-card(style="background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px solid #e2e8f0;")
-            h4(style="font-size: 14px; margin-bottom: 12px; color: #0f172a;")
-              i.fa-solid.fa-rotate-left(style="color: #16a34a; margin-right: 6px;")
-              | Cam kết 3: Đổi trả linh hoạt
-            .form-group
-              label Tiêu đề:
-              input.form-control(type="text" name="trustBadge3_title" value=(settingWebsiteInfo ? settingWebsiteInfo.trustBadge3_title : "") placeholder="VD: Đổi Trả Miễn Phí 30 Ngày")
-            .form-group
-              label Mô tả:
-              textarea.form-control(name="trustBadge3_desc" rows="2" placeholder="VD: Hỗ trợ đổi size linh hoạt tận nơi, thủ tục đơn giản trong 1 phút...") #{settingWebsiteInfo ? settingWebsiteInfo.trustBadge3_desc : ""}
-
-          .trust-badge-card(style="background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px solid #e2e8f0;")
-            h4(style="font-size: 14px; margin-bottom: 12px; color: #0f172a;")
-              i.fa-solid.fa-headset(style="color: #d97706; margin-right: 6px;")
-              | Cam kết 4: Tư vấn & Chăm sóc
-            .form-group
-              label Tiêu đề:
-              input.form-control(type="text" name="trustBadge4_title" value=(settingWebsiteInfo ? settingWebsiteInfo.trustBadge4_title : "") placeholder="VD: Tư Vấn Chuyên Nghiệp 24/7")
-            .form-group
-              label Mô tả:
-              textarea.form-control(name="trustBadge4_desc" rows="2" placeholder="VD: Đội ngũ am hiểu sâu về dụng cụ và giày thể thao chuyên dụng...") #{settingWebsiteInfo ? settingWebsiteInfo.trustBadge4_desc : ""}
-
-        hr.section-divider
-
-        //- ========================================================
-        //- PHẦN 4: BANNER QUẢNG CÁO KHUYẾN MÃI (GIỮA TRANG)
-        //- ========================================================
-        .setting-section-header
-          i.fa-solid.fa-bullhorn
-          h3 4. Banner Quảng Cáo Khuyến Mãi (Vị trí giữa trang chủ)
-
-        .form-row-2
-          .form-group
-            label Tiêu đề Banner Khuyến Mãi
-            input.form-control(type="text" name="promoBannerTitle" value=(settingWebsiteInfo ? settingWebsiteInfo.promoBannerTitle : "") placeholder="VD: ĐẠI TIỆC SALE MÙA GIẢI - GIẢM ĐẾN 50%")
-          
-          .form-group
-            label Phụ đề / Mô tả ngắn
-            input.form-control(type="text" name="promoBannerSubtitle" value=(settingWebsiteInfo ? settingWebsiteInfo.promoBannerSubtitle : "") placeholder="VD: Áp dụng cho toàn bộ giày đá bóng và áo đấu CLB")
-
-        .form-group
-          label Liên kết Banner Khuyến Mãi
-          input.form-control(type="text" name="promoBannerLink" value=(settingWebsiteInfo ? settingWebsiteInfo.promoBannerLink : "") placeholder="VD: /product?featured=1")
-
-        .form-group.upload-row
-          label Ảnh Banner Khuyến Mãi (Khuyến nghị: 1200x400px)
-          .upload-image-wrapper(upload-image-wrapper)
-            input#promo-upload.hidden-input(upload-image-input type="file" name="promoBannerImage" accept="image/*")
-            label.upload-box(for="promo-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.promoBannerImage ? "hidden" : ""))
-              i.fa-solid.fa-plus
-            .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.promoBannerImage ? "" : "hidden"))
-              img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.promoBannerImage ? settingWebsiteInfo.promoBannerImage : "") alt="Preview Promo Banner")
-              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
-                i.fa-solid.fa-xmark
-
-        hr.section-divider
-
-        //- ========================================================
-        //- PHẦN 5: MẠNG XÃ HỘI & KÊNH LIÊN HỆ NỔI
-        //- ========================================================
-        .setting-section-header
-          i.fa-solid.fa-share-nodes
-          h3 5. Mạng Xã Hội & Kênh Liên Hệ Nổi (Floating Box)
-
-        .form-row-2
-          .form-group
-            label Facebook Fanpage URL
-            input.form-control(type="url" name="facebook" value=(settingWebsiteInfo ? settingWebsiteInfo.facebook : "") placeholder="https://facebook.com/titisport")
-          
-          .form-group
-            label Instagram URL
-            input.form-control(type="url" name="instagram" value=(settingWebsiteInfo ? settingWebsiteInfo.instagram : "") placeholder="https://instagram.com/titisport")
-
-        .form-row-2
-          .form-group
-            label TikTok Channel URL
-            input.form-control(type="url" name="tiktok" value=(settingWebsiteInfo ? settingWebsiteInfo.tiktok : "") placeholder="https://tiktok.com/@titisport")
-          
-          .form-group
-            label YouTube Channel URL
-            input.form-control(type="url" name="youtube" value=(settingWebsiteInfo ? settingWebsiteInfo.youtube : "") placeholder="https://youtube.com/@titisport")
-
-        .form-group
-          label Zalo OA / Số Zalo hỗ trợ
-          input.form-control(type="text" name="zalo" value=(settingWebsiteInfo ? settingWebsiteInfo.zalo : "") placeholder="https://zalo.me/0987654321")
-
-        hr.section-divider
-
-        //- ========================================================
-        //- PHẦN 6: CHÂN TRANG (FOOTER) & BẢN QUYỀN
-        //- ========================================================
-        .setting-section-header
-          i.fa-solid.fa-shoe-prints
-          h3 6. Thông Tin Chân Trang (Footer) & Pháp Lý
-
-        .form-group
-          label Giới thiệu ngắn về cửa hàng (Hiển thị chân trang)
-          textarea.form-control(name="aboutShort" rows="2" placeholder="VD: Điểm đến số 1 cho những người đam mê thể thao. Cam kết hàng chính hãng 100%, chất lượng đỉnh cao...") #{settingWebsiteInfo ? settingWebsiteInfo.aboutShort : ""}
-
-        .form-row-2
-          .form-group
-            label Dòng chữ bản quyền (Copyright)
-            input.form-control(type="text" name="copyright" value=(settingWebsiteInfo ? settingWebsiteInfo.copyright : "") placeholder="VD: © 2026 TitiSport. All rights reserved. Designed for athletes.")
-          
-          .form-group
-            label Giấy phép kinh doanh / Mã số thuế
-            input.form-control(type="text" name="businessLicense" value=(settingWebsiteInfo ? settingWebsiteInfo.businessLicense : "") placeholder="VD: GPKD số 0102030405 do Sở KH&ĐT cấp ngày 01/01/2026")
-
-        hr.section-divider
-
-        //- ========================================================
-        //- PHẦN 7: CẤU HÌNH SEO META & BẢN ĐỒ
-        //- ========================================================
-        .setting-section-header
-          i.fa-solid.fa-magnifying-glass-chart
-          h3 7. Cấu Hình SEO Meta & Bản Đồ Google Maps
-
-        .form-group
-          label Tiêu đề trang mặc định (Meta Title)
-          input.form-control(type="text" name="metaTitle" value=(settingWebsiteInfo ? settingWebsiteInfo.metaTitle : "") placeholder="VD: TitiSport - Hệ Thống Đồ Thể Thao Chính Hãng Hàng Đầu")
-
-        .form-group
-          label Mô tả trang mặc định (Meta Description)
-          textarea.form-control(name="metaDescription" rows="2" placeholder="VD: Mua sắm dụng cụ, giày đá bóng, áo đấu chính hãng tại TitiSport. Giao hàng hỏa tốc 2H, cam kết chính hãng 100%...") #{settingWebsiteInfo ? settingWebsiteInfo.metaDescription : ""}
-
-        .form-group
-          label Từ khóa SEO (Meta Keywords)
-          input.form-control(type="text" name="metaKeywords" value=(settingWebsiteInfo ? settingWebsiteInfo.metaKeywords : "") placeholder="VD: do the thao, giay da bong, ao dau, titisport, bong da")
-
-        .form-group
-          label Mã nhúng Bản đồ Google Maps (iframe HTML)
-          textarea.form-control(name="mapIframe" rows="3" placeholder="Dán thẻ <iframe src='https://www.google.com/maps/embed...'></iframe> tại đây") #{settingWebsiteInfo ? settingWebsiteInfo.mapIframe : ""}
-
-        //- ========================================================
-        //- NÚT SUBMIT LƯU THAY ĐỔI
-        //- ========================================================
+      .website-settings-actions
+        a.btn-back(href=`/${pathAdmin}/setting/list`) 
+          i.fa-solid.fa-arrow-left
+          | Cài đặt chung
         if(role && role.permissions && role.permissions.includes("setting_edit"))
-          .form-actions-stacked(style="margin-top: 36px; text-align: center;")
-            button.btn-submit.btn-submit-large(type="submit" style="padding: 14px 40px; font-size: 16px; font-weight: 700; border-radius: 50px;") 
-              i.fa-solid.fa-floppy-disk(style="margin-right: 8px;")
-              |  LƯU TOÀN BỘ CẤU HÌNH WEBSITE
+          button.btn-save-pane(type="button" onclick="document.getElementById('formWebsiteInfo').submit();")
+            i.fa-solid.fa-floppy-disk
+            | LƯU THAY ĐỔI
+
+    //- THANH ĐIỀU HƯỚNG TỪNG PHẦN (TAB NAVIGATION BAR)
+    .settings-tabs-wrapper#websiteTabsNav
+      button.tab-nav-btn.active(type="button" data-tab="tab-brand")
+        i.fa-solid.fa-store
+        span 1. Thông Tin Cửa Hàng
+      button.tab-nav-btn(type="button" data-tab="tab-hero")
+        i.fa-solid.fa-image
+        span 2. Banner Trang Chủ
+      button.tab-nav-btn(type="button" data-tab="tab-trust")
+        i.fa-solid.fa-shield-halved
+        span 3. Chính Sách & Cam Kết
+      button.tab-nav-btn(type="button" data-tab="tab-promo")
+        i.fa-solid.fa-bullhorn
+        span 4. Banner Khuyến Mãi
+      button.tab-nav-btn(type="button" data-tab="tab-social")
+        i.fa-solid.fa-share-nodes
+        span 5. Mạng Xã Hội & Tư Vấn
+      button.tab-nav-btn(type="button" data-tab="tab-footer")
+        i.fa-solid.fa-shoe-prints
+        span 6. Chân Trang Website
+      button.tab-nav-btn(type="button" data-tab="tab-seo")
+        i.fa-solid.fa-magnifying-glass-chart
+        span 7. Tối Ưu SEO & Bản Đồ
+
+    //- KHỐI FORM LƯU CHÍNH (Chứa toàn bộ 7 phân hệ)
+    .form-card
+      form#formWebsiteInfo(action=`/${pathAdmin}/setting/website-info?_method=PATCH` method="POST" enctype="multipart/form-data")
+        
+        //- ========================================================
+        //- PHẦN 1: THÔNG TIN CỬA HÀNG & NHẬN DIỆN THƯƠNG HIỆU
+        //- ========================================================
+        .settings-tab-pane.active#tab-brand
+          .pane-header
+            .pane-header-icon.brand
+              i.fa-solid.fa-store
+            .pane-header-info
+              h3 1. Thông Tin Cửa Hàng & Nhận Diện Thương Hiệu
+              p Thiết lập tên cửa hàng, hotline, email, địa chỉ và logo chính thức.
+          
+          .form-row-2
+            .form-group
+              label Tên cửa hàng / Thương hiệu <span class="text-danger">*</span>
+              input.form-control(type="text" name="websiteName" value=(settingWebsiteInfo ? settingWebsiteInfo.websiteName : "") placeholder="Ví dụ: TitiSport" required)
+            
+            .form-group
+              label Câu khẩu hiệu (Slogan)
+              input.form-control(type="text" name="slogan" value=(settingWebsiteInfo ? settingWebsiteInfo.slogan : "") placeholder="Ví dụ: Bứt Phá Mọi Giới Hạn Thể Thao")
+
+          .form-row-2
+            .form-group
+              label Hotline hỗ trợ (Hiển thị đầu trang & nút gọi nhanh)
+              input.form-control(type="text" name="hotline" value=(settingWebsiteInfo ? settingWebsiteInfo.hotline : "") placeholder="Ví dụ: 1900 6868")
+            
+            .form-group
+              label Số điện thoại tư vấn bán hàng
+              input.form-control(type="text" name="phone" value=(settingWebsiteInfo ? settingWebsiteInfo.phone : "") placeholder="Ví dụ: 0987 654 321")
+
+          .form-row-2
+            .form-group
+              label Email chăm sóc khách hàng
+              input.form-control(type="email" name="email" value=(settingWebsiteInfo ? settingWebsiteInfo.email : "") placeholder="Ví dụ: hotro@titisport.vn")
+            
+            .form-group
+              label Giờ mở cửa / Thời gian làm việc
+              input.form-control(type="text" name="workingHours" value=(settingWebsiteInfo ? settingWebsiteInfo.workingHours : "") placeholder="Ví dụ: 08:00 - 22:00 (Hằng ngày)")
+
+          .form-group
+            label Địa chỉ cửa hàng
+            input.form-control(type="text" name="address" value=(settingWebsiteInfo ? settingWebsiteInfo.address : "") placeholder="Ví dụ: 123 Đường Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh")
+              
+          .form-row-2.upload-row
+            .form-group
+              label Logo cửa hàng (Khuyên dùng ảnh PNG trong suốt)
+              .upload-image-wrapper(upload-image-wrapper)
+                input#logo-upload.hidden-input(upload-image-input type="file" name="logo" accept="image/*")
+                label.upload-box(for="logo-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.logo ? "hidden" : ""))
+                  i.fa-solid.fa-plus
+                .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.logo ? "" : "hidden"))
+                  img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.logo ? settingWebsiteInfo.logo : "") alt="Xem trước Logo")
+                  button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                    i.fa-solid.fa-xmark
+                    
+            .form-group
+              label Biểu tượng website (Favicon - hiển thị trên tab trình duyệt)
+              .upload-image-wrapper(upload-image-wrapper)
+                input#favicon-upload.hidden-input(upload-image-input type="file" name="favicon" accept="image/*")
+                label.upload-box(for="favicon-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.favicon ? "hidden" : ""))
+                  i.fa-solid.fa-plus
+                .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.favicon ? "" : "hidden"))
+                  img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.favicon ? settingWebsiteInfo.favicon : "") alt="Xem trước Favicon")
+                  button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                    i.fa-solid.fa-xmark
+
+          .pane-footer-actions
+            div
+            .pane-actions-right
+              if(role && role.permissions && role.permissions.includes("setting_edit"))
+                button.btn-save-pane(type="submit")
+                  i.fa-solid.fa-floppy-disk
+                  | Lưu thay đổi
+              button.btn-next-tab(type="button" data-next="tab-hero")
+                | Sang phần tiếp: Banner trang chủ
+                i.fa-solid.fa-arrow-right
+
+        //- ========================================================
+        //- PHẦN 2: BANNER CHÍNH TRANG CHỦ
+        //- ========================================================
+        .settings-tab-pane#tab-hero
+          .pane-header
+            .pane-header-icon.hero
+              i.fa-solid.fa-image
+            .pane-header-info
+              h3 2. Banner Chính Trang Chủ
+              p Tùy chỉnh thông điệp và hình ảnh nổi bật nhất khi khách hàng vừa vào website.
+
+          .form-row-2
+            .form-group
+              label Dòng chữ nổi bật trên banner
+              input.form-control(type="text" name="heroBadge" value=(settingWebsiteInfo ? settingWebsiteInfo.heroBadge : "") placeholder="Ví dụ: THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG")
+            
+            .form-group
+              label Tiêu đề chính của banner
+              input.form-control(type="text" name="heroTitle" value=(settingWebsiteInfo ? settingWebsiteInfo.heroTitle : "") placeholder="Ví dụ: BỨT PHÁ MỌI GIỚI HẠN")
+
+          .form-group
+            label Đoạn giới thiệu ngắn
+            textarea.form-control(name="heroDescription" rows="2" placeholder="Ví dụ: Trải nghiệm đẳng cấp với bộ sưu tập thể thao chính hãng mới nhất...") #{settingWebsiteInfo ? settingWebsiteInfo.heroDescription : ""}
+
+          .form-row-2
+            .form-group
+              label Tên nút bấm xem hàng
+              input.form-control(type="text" name="heroBtnText" value=(settingWebsiteInfo ? settingWebsiteInfo.heroBtnText : "") placeholder="Ví dụ: Khám Phá Ngay, Mua Ngay")
+            
+            .form-group
+              label Đường dẫn khi khách bấm nút (Link URL)
+              input.form-control(type="text" name="heroBtnLink" value=(settingWebsiteInfo ? settingWebsiteInfo.heroBtnLink : "") placeholder="Ví dụ: /product (Trang sản phẩm)")
+
+          .form-group.upload-row
+            label Hình ảnh banner chính (Khuyên dùng ảnh khổ ngang 1920x700px rõ nét)
+            .upload-image-wrapper(upload-image-wrapper)
+              input#hero-upload.hidden-input(upload-image-input type="file" name="heroImage" accept="image/*")
+              label.upload-box(for="hero-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? "hidden" : ""))
+                i.fa-solid.fa-plus
+              .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? "" : "hidden"))
+                img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? settingWebsiteInfo.heroImage : "") alt="Xem trước banner chính")
+                button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                  i.fa-solid.fa-xmark
+
+          .pane-footer-actions
+            button.btn-next-tab(type="button" data-next="tab-brand")
+              i.fa-solid.fa-arrow-left
+              | Quay lại: Thông tin cửa hàng
+            .pane-actions-right
+              if(role && role.permissions && role.permissions.includes("setting_edit"))
+                button.btn-save-pane(type="submit")
+                  i.fa-solid.fa-floppy-disk
+                  | Lưu thay đổi
+              button.btn-next-tab(type="button" data-next="tab-trust")
+                | Sang phần tiếp: Chính sách & Cam kết
+                i.fa-solid.fa-arrow-right
+
+        //- ========================================================
+        //- PHẦN 3: CHÍNH SÁCH & CAM KẾT VỚI KHÁCH HÀNG
+        //- ========================================================
+        .settings-tab-pane#tab-trust
+          .pane-header
+            .pane-header-icon.trust
+              i.fa-solid.fa-shield-halved
+            .pane-header-info
+              h3 3. Chính Sách & Cam Kết Với Khách Hàng
+              p 4 tiêu chí chất lượng tạo dựng niềm tin giúp khách hàng an tâm mua sắm.
+
+          .trust-badges-config-grid
+            .trust-badge-card
+              h4
+                i.fa-solid.fa-truck-fast.speed
+                | 1. Chính sách giao hàng
+              .form-group
+                label Tiêu đề ngắn:
+                input.form-control(type="text" name="trustBadge1_title" value=(settingWebsiteInfo ? settingWebsiteInfo.trustBadge1_title : "") placeholder="Ví dụ: Giao Hàng Hỏa Tốc 2H")
+              .form-group
+                label Nội dung cam kết:
+                textarea.form-control(name="trustBadge1_desc" rows="2" placeholder="Ví dụ: Nhận hàng ngay trong ngày, hỗ trợ kiểm tra hàng trước khi thanh toán...") #{settingWebsiteInfo ? settingWebsiteInfo.trustBadge1_desc : ""}
+
+            .trust-badge-card
+              h4
+                i.fa-solid.fa-certificate.origin
+                | 2. Cam kết nguồn gốc
+              .form-group
+                label Tiêu đề ngắn:
+                input.form-control(type="text" name="trustBadge2_title" value=(settingWebsiteInfo ? settingWebsiteInfo.trustBadge2_title : "") placeholder="Ví dụ: 100% Hàng Chính Hãng")
+              .form-group
+                label Nội dung cam kết:
+                textarea.form-control(name="trustBadge2_desc" rows="2" placeholder="Ví dụ: Cam kết chất lượng chuẩn quốc tế, đền bù gấp 10 lần nếu phát hiện hàng giả...") #{settingWebsiteInfo ? settingWebsiteInfo.trustBadge2_desc : ""}
+
+            .trust-badge-card
+              h4
+                i.fa-solid.fa-rotate-left.returns
+                | 3. Chính sách đổi trả
+              .form-group
+                label Tiêu đề ngắn:
+                input.form-control(type="text" name="trustBadge3_title" value=(settingWebsiteInfo ? settingWebsiteInfo.trustBadge3_title : "") placeholder="Ví dụ: Đổi Trả Miễn Phí 30 Ngày")
+              .form-group
+                label Nội dung cam kết:
+                textarea.form-control(name="trustBadge3_desc" rows="2" placeholder="Ví dụ: Hỗ trợ đổi size linh hoạt tận nơi, thủ tục đơn giản trong 1 phút...") #{settingWebsiteInfo ? settingWebsiteInfo.trustBadge3_desc : ""}
+
+            .trust-badge-card
+              h4
+                i.fa-solid.fa-headset.support
+                | 4. Dịch vụ chăm sóc khách hàng
+              .form-group
+                label Tiêu đề ngắn:
+                input.form-control(type="text" name="trustBadge4_title" value=(settingWebsiteInfo ? settingWebsiteInfo.trustBadge4_title : "") placeholder="Ví dụ: Tư Vấn Chuyên Nghiệp 24/7")
+              .form-group
+                label Nội dung cam kết:
+                textarea.form-control(name="trustBadge4_desc" rows="2" placeholder="Ví dụ: Đội ngũ am hiểu sâu về dụng cụ và trang phục thể thao chuyên dụng...") #{settingWebsiteInfo ? settingWebsiteInfo.trustBadge4_desc : ""}
+
+          .pane-footer-actions
+            button.btn-next-tab(type="button" data-next="tab-hero")
+              i.fa-solid.fa-arrow-left
+              | Quay lại: Banner trang chủ
+            .pane-actions-right
+              if(role && role.permissions && role.permissions.includes("setting_edit"))
+                button.btn-save-pane(type="submit")
+                  i.fa-solid.fa-floppy-disk
+                  | Lưu thay đổi
+              button.btn-next-tab(type="button" data-next="tab-promo")
+                | Sang phần tiếp: Banner khuyến mãi
+                i.fa-solid.fa-arrow-right
+
+        //- ========================================================
+        //- PHẦN 4: BANNER KHUYẾN MÃI (GIỮA TRANG CHỦ)
+        //- ========================================================
+        .settings-tab-pane#tab-promo
+          .pane-header
+            .pane-header-icon.promo
+              i.fa-solid.fa-bullhorn
+            .pane-header-info
+              h3 4. Banner Khuyến Mãi (Giữa Trang Chủ)
+              p Quảng bá đợt giảm giá, sự kiện hoặc bộ sưu tập nổi bật đến người mua sắm.
+
+          .form-row-2
+            .form-group
+              label Tiêu đề chương trình khuyến mãi
+              input.form-control(type="text" name="promoBannerTitle" value=(settingWebsiteInfo ? settingWebsiteInfo.promoBannerTitle : "") placeholder="Ví dụ: ĐẠI TIỆC SALE MÙA GIẢI - GIẢM ĐẾN 50%")
+            
+            .form-group
+              label Mô tả chi tiết ưu đãi
+              input.form-control(type="text" name="promoBannerSubtitle" value=(settingWebsiteInfo ? settingWebsiteInfo.promoBannerSubtitle : "") placeholder="Ví dụ: Áp dụng cho toàn bộ giày đá bóng và áo đấu")
+
+          .form-group
+            label Đường dẫn khi khách bấm vào ảnh khuyến mãi (Link URL)
+            input.form-control(type="text" name="promoBannerLink" value=(settingWebsiteInfo ? settingWebsiteInfo.promoBannerLink : "") placeholder="Ví dụ: /product (Hoặc trang chi tiết sự kiện)")
+
+          .form-group.upload-row
+            label Hình ảnh banner khuyến mãi (Khuyên dùng ảnh khổ ngang nổi bật)
+            .upload-image-wrapper(upload-image-wrapper)
+              input#promo-upload.hidden-input(upload-image-input type="file" name="promoBannerImage" accept="image/*")
+              label.upload-box(for="promo-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.promoBannerImage ? "hidden" : ""))
+                i.fa-solid.fa-plus
+              .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.promoBannerImage ? "" : "hidden"))
+                img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.promoBannerImage ? settingWebsiteInfo.promoBannerImage : "") alt="Xem trước banner khuyến mãi")
+                button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                  i.fa-solid.fa-xmark
+
+          .pane-footer-actions
+            button.btn-next-tab(type="button" data-next="tab-trust")
+              i.fa-solid.fa-arrow-left
+              | Quay lại: Chính sách & Cam kết
+            .pane-actions-right
+              if(role && role.permissions && role.permissions.includes("setting_edit"))
+                button.btn-save-pane(type="submit")
+                  i.fa-solid.fa-floppy-disk
+                  | Lưu thay đổi
+              button.btn-next-tab(type="button" data-next="tab-social")
+                | Sang phần tiếp: Mạng xã hội & Tư vấn
+                i.fa-solid.fa-arrow-right
+
+        //- ========================================================
+        //- PHẦN 5: CÁC KÊNH MẠNG XÃ HỘI & TƯ VẤN KHÁCH HÀNG
+        //- ========================================================
+        .settings-tab-pane#tab-social
+          .pane-header
+            .pane-header-icon.social
+              i.fa-solid.fa-share-nodes
+            .pane-header-info
+              h3 5. Kênh Mạng Xã Hội & Tư Vấn Khách Hàng
+              p Giúp khách hàng dễ dàng theo dõi fanpage và trò chuyện tư vấn trực tiếp với shop.
+
+          .form-row-2
+            .form-group
+              label Link Facebook Fanpage
+              input.form-control(type="url" name="facebook" value=(settingWebsiteInfo ? settingWebsiteInfo.facebook : "") placeholder="https://facebook.com/titisport")
+            
+            .form-group
+              label Link Instagram
+              input.form-control(type="url" name="instagram" value=(settingWebsiteInfo ? settingWebsiteInfo.instagram : "") placeholder="https://instagram.com/titisport")
+
+          .form-row-2
+            .form-group
+              label Link TikTok
+              input.form-control(type="url" name="tiktok" value=(settingWebsiteInfo ? settingWebsiteInfo.tiktok : "") placeholder="https://tiktok.com/@titisport")
+            
+            .form-group
+              label Link YouTube
+              input.form-control(type="url" name="youtube" value=(settingWebsiteInfo ? settingWebsiteInfo.youtube : "") placeholder="https://youtube.com/@titisport")
+
+          .form-group
+            label Số điện thoại hoặc Link Zalo tư vấn
+            input.form-control(type="text" name="zalo" value=(settingWebsiteInfo ? settingWebsiteInfo.zalo : "") placeholder="Ví dụ: https://zalo.me/0987654321 hoặc 0987654321")
+
+          .pane-footer-actions
+            button.btn-next-tab(type="button" data-next="tab-promo")
+              i.fa-solid.fa-arrow-left
+              | Quay lại: Banner khuyến mãi
+            .pane-actions-right
+              if(role && role.permissions && role.permissions.includes("setting_edit"))
+                button.btn-save-pane(type="submit")
+                  i.fa-solid.fa-floppy-disk
+                  | Lưu thay đổi
+              button.btn-next-tab(type="button" data-next="tab-footer")
+                | Sang phần tiếp: Chân trang website
+                i.fa-solid.fa-arrow-right
+
+        //- ========================================================
+        //- PHẦN 6: THÔNG TIN CHÂN TRANG WEBSITE (FOOTER)
+        //- ========================================================
+        .settings-tab-pane#tab-footer
+          .pane-header
+            .pane-header-icon.footer
+              i.fa-solid.fa-shoe-prints
+            .pane-header-info
+              h3 6. Thông Tin Chân Trang Website (Footer)
+              p Lời giới thiệu tổng quan, thông tin bản quyền và pháp lý của cửa hàng.
+
+          .form-group
+            label Giới thiệu ngắn về cửa hàng (Hiển thị dưới logo ở chân trang)
+            textarea.form-control(name="aboutShort" rows="3" placeholder="Ví dụ: Điểm đến tin cậy cho những người đam mê thể thao. Cam kết 100% hàng chính hãng, chất lượng hàng đầu...") #{settingWebsiteInfo ? settingWebsiteInfo.aboutShort : ""}
+
+          .form-row-2
+            .form-group
+              label Dòng chữ bản quyền (Copyright)
+              input.form-control(type="text" name="copyright" value=(settingWebsiteInfo ? settingWebsiteInfo.copyright : "") placeholder="Ví dụ: © 2026 TitiSport. Bảo lưu mọi quyền.")
+            
+            .form-group
+              label Mã số thuế / Giấy phép kinh doanh (Nếu có)
+              input.form-control(type="text" name="businessLicense" value=(settingWebsiteInfo ? settingWebsiteInfo.businessLicense : "") placeholder="Ví dụ: GPKD số 0102030405 do Sở KH&ĐT cấp ngày 01/01/2026")
+
+          .pane-footer-actions
+            button.btn-next-tab(type="button" data-next="tab-social")
+              i.fa-solid.fa-arrow-left
+              | Quay lại: Mạng xã hội & Tư vấn
+            .pane-actions-right
+              if(role && role.permissions && role.permissions.includes("setting_edit"))
+                button.btn-save-pane(type="submit")
+                  i.fa-solid.fa-floppy-disk
+                  | Lưu thay đổi
+              button.btn-next-tab(type="button" data-next="tab-seo")
+                | Sang phần tiếp: Tối ưu SEO & Bản đồ
+                i.fa-solid.fa-arrow-right
+
+        //- ========================================================
+        //- PHẦN 7: TỐI ƯU TÌM KIẾM GOOGLE & BẢN ĐỒ CỬA HÀNG
+        //- ========================================================
+        .settings-tab-pane#tab-seo
+          .pane-header
+            .pane-header-icon.seo
+              i.fa-solid.fa-magnifying-glass-chart
+            .pane-header-info
+              h3 7. Tối Ưu Tìm Kiếm Google & Bản Đồ Cửa Hàng
+              p Giúp khách hàng dễ dàng tìm thấy website trên Google và xem vị trí trực tiếp của shop.
+
+          .form-group
+            label Tiêu đề trang khi hiển thị trên Google (SEO Title)
+            input.form-control(type="text" name="metaTitle" value=(settingWebsiteInfo ? settingWebsiteInfo.metaTitle : "") placeholder="Ví dụ: TitiSport - Hệ Thống Đồ Thể Thao Chính Hãng Hàng Đầu")
+
+          .form-group
+            label Đoạn mô tả hiển thị trên Google (SEO Description)
+            textarea.form-control(name="metaDescription" rows="2" placeholder="Ví dụ: Mua sắm giày thể thao, áo đấu và dụng cụ thi đấu chính hãng. Giao hàng hỏa tốc trong 2 giờ, cam kết chất lượng...") #{settingWebsiteInfo ? settingWebsiteInfo.metaDescription : ""}
+
+          .form-group
+            label Từ khóa tìm kiếm (SEO Keywords - cách nhau bằng dấu phẩy)
+            input.form-control(type="text" name="metaKeywords" value=(settingWebsiteInfo ? settingWebsiteInfo.metaKeywords : "") placeholder="Ví dụ: do the thao, giay da bong, ao dau bong da, titisport")
+
+          .form-group
+            label Bản đồ chỉ đường Google Maps
+            p.form-text.text-muted Hướng dẫn: Mở Google Maps -> Tìm địa chỉ shop của bạn -> Bấm "Chia sẻ" -> Chọn "Nhúng bản đồ" -> Bấm "Sao chép HTML" rồi dán vào ô bên dưới.
+            textarea.form-control(name="mapIframe" rows="3" placeholder='Dán đoạn mã bản đồ từ Google Maps tại đây (bắt đầu bằng <iframe...)') #{settingWebsiteInfo ? settingWebsiteInfo.mapIframe : ""}
+
+          .pane-footer-actions
+            button.btn-next-tab(type="button" data-next="tab-footer")
+              i.fa-solid.fa-arrow-left
+              | Quay lại: Chân trang website
+            .pane-actions-right
+              if(role && role.permissions && role.permissions.includes("setting_edit"))
+                button.btn-save-pane.btn-save-pane-lg(type="submit")
+                  i.fa-solid.fa-floppy-disk
+                  | LƯU TOÀN BỘ CÀI ĐẶT
+
+
+    script(src="/admin/assets/js/website-info.js")
+
   else
-    .no-access-wrapper
-      .no-access-card
-        .no-access-icon
-          i.fa-solid.fa-lock
-
-        h2.no-access-title Truy cập bị từ chối
-
-        p.no-access-desc
-          | Bạn không có quyền truy cập vào trang này.
-          br
-          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
+    include ../partials/no-access.pug

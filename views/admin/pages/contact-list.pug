@@ -65,25 +65,25 @@ block main
                     input(type="checkbox" value=item.id name="id" check-item)
                   td
                     if item.fullName
-                      div(style="font-weight: 600; color: #0f172a;") #{item.fullName}
+                      .contact-user-name #{item.fullName}
                       if item.phone
-                        div(style="font-size: 12px; color: #64748b;")
-                          i.fa-solid.fa-phone(style="font-size: 11px; margin-right: 4px;")
-                          | #{item.phone}
+                        .contact-user-phone
+                          i.fa-solid.fa-phone
+                          span #{item.phone}
                     else
-                      span.badge.badge-info(style="font-size: 11px;") Bản tin ưu đãi
+                      span.badge.badge-info Bản tin ưu đãi
                   td.font-weight-600 #{item.email}
                   td
                     if item.content
-                      p(style="margin: 0; font-size: 13px; color: #334155; line-height: 1.4; max-width: 400px;") #{item.content}
+                      p.contact-message-text #{item.content}
                     else
-                      span.text-muted(style="font-size: 12px; font-style: italic;") Đăng ký nhận bản tin khuyến mãi
+                      span.contact-newsletter-note Đăng ký nhận bản tin khuyến mãi
                   td
                     .user-date
                       span.time #{item.createdAtFormat}
                   if(role && role.permissions && role.permissions.includes("contact_delete"))
                     td.text-center
-                      .action-btns(style="justify-content: center;")
+                      .action-btns.action-btns-center
                         button.btn-delete(button-delete data-id=item.id title="Xóa liên hệ này")
                           i.fa-regular.fa-trash-can
             else 
@@ -116,14 +116,4 @@ block main
         input(type="hidden" name="type")
         input(type="hidden" name="ids")
   else
-    .no-access-wrapper
-      .no-access-card
-        .no-access-icon
-          i.fa-solid.fa-lock
-
-        h2.no-access-title Truy cập bị từ chối
-
-        p.no-access-desc
-          | Bạn không có quyền truy cập vào trang này.
-          br
-          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
+    include ../partials/no-access.pug
