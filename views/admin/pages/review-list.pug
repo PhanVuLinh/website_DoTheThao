@@ -68,31 +68,33 @@ block main
                   td.text-center #{pagination ? (pagination.skip + index + 1) : (index + 1)}
                   td
                     if item.product_id
-                      div(style="display: flex; align-items: center; gap: 10px;")
+                      .product-mini-item
                         if item.product_id.thumbnail
                           img.td-thumbnail(src=item.product_id.thumbnail alt=item.product_id.title)
-                        a(href=`/product/detail/${item.product_id.slug}` target="_blank" style="font-weight: 600; color: #1e293b; text-decoration: none;")
+                        a.review-product-title(href=`/product/detail/${item.product_id.slug}` target="_blank")
                           | #{item.product_id.title}
                     else
                       span.text-muted Sản phẩm không tồn tại
                   td
                     strong #{item.fullName}
                     if item.isVerifiedBuyer
-                      div(style="font-size: 11px; color: #16a34a; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; background: #dcfce7; padding: 2px 6px; border-radius: 4px; margin-top: 3px;")
+                      span.review-buyer-badge
                         i.fa-solid.fa-check-circle
                         | Đã mua hàng
                   td.text-center
-                    span(style="color: #f59e0b; font-weight: 700; font-size: 14px;") #{item.rating} ★
-                  td(style="max-width: 250px; line-height: 1.5; font-size: 13px;") #{item.comment}
+                    span.review-rating-tag #{item.rating} ★
+                  td.review-comment-cell #{item.comment}
                   td.text-center
                     if item.images && item.images.length > 0
-                      div(style="display: flex; gap: 4px; justify-content: center;")
+                      .review-images-row
                         each img in item.images
                           a(href=img target="_blank")
-                            img(src=img alt="Ảnh đánh giá" style="width: 36px; height: 36px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0;")
+                            img.review-img-thumb(src=img alt="Ảnh đánh giá")
                     else
                       span.text-muted Không có
-                  td.text-center(style="font-size: 12px; color: #64748b;") #{item.createdAtFormat}
+                  td.text-center
+                    .user-date
+                      span.time #{item.createdAtFormat}
                   td.text-center
                     form.action-inline-form(action=`/${pathAdmin}/review/toggle-featured/${item._id}?_method=PATCH` method="POST")
                       if item.isFeatured
@@ -106,7 +108,7 @@ block main
                   td.text-center
                     +switch-status(item, `/${pathAdmin}/review/change-multi`, "review_edit")
                   td.text-center
-                    .action-btns(style="justify-content: center;")
+                    .action-btns.action-btns-center
                       button.btn-delete(button-delete data-id=item._id title="Xóa đánh giá")
                         i.fa-regular.fa-trash-can
             else

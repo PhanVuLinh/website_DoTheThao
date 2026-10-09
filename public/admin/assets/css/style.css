@@ -3249,6 +3249,10 @@ textarea.is-invalid {
   transform: scale(1.15);
 }
 
+.action-btns-center {
+  justify-content: center;
+}
+
 
 
 

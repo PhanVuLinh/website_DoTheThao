@@ -3835,6 +3835,126 @@ textarea.form-control {
   font-weight: 800;
 }
 
+.bank-transfer-card {
+  grid-column: 1 / -1;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.bank-qr-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed #cbd5e1;
+  text-align: center;
+}
+
+.bank-qr-img {
+  max-width: 170px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 8px;
+}
+
+.bank-qr-desc {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.bank-history-box {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.bank-history-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--blue-dark);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bank-history-title i {
+  color: #2563eb;
+}
+
+.bank-history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.bank-history-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bank-history-list li span {
+  color: #64748b;
+}
+
+.bank-history-list .highlight-acc {
+  color: #2563eb;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+.bank-history-list .highlight-code {
+  color: #e11d48;
+  background: #ffe4e6;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.policy-card-pad {
+  padding: 40px;
+}
+
+.policy-desc-italic {
+  font-size: 15px;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 16px 0 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  font-style: italic;
+}
+
+.sidebar-subtitle-underline {
+  margin-top: 0;
+  padding-top: 0;
+  border: none;
+  border-bottom: 2px solid var(--red-main, #e11d48);
+  padding-bottom: 10px;
+  display: inline-block;
+}
+
+.policy-thumb-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 20px;
+}
+
 .success-actions {
   display: flex;
   align-items: center;

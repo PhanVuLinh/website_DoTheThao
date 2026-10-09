@@ -25,14 +25,14 @@ block main
                 label(for="email") Email
                 input#email.form-control(type="email" name="email" value=user.email readonly )
                 
-              //- .form-group
-              //-   label(for="phone") Số điện thoại
-              //-   input#phone.form-control(type="text" name="phone" value=user.phone placeholder="Nhập số điện thoại của bạn")
+              .form-group
+                label(for="phone") Số điện thoại
+                input#phone.form-control(type="text" name="phone" value=(user.phone || "") placeholder="Nhập số điện thoại của bạn")
                 
-              //- .form-group
-              //-   label(for="address") Địa chỉ giao hàng
-              //-   input#address.form-control(type="text" name="address" value=user.address placeholder="Nhập địa chỉ nhận hàng mặc định")
+              .form-group
+                label(for="address") Địa chỉ giao hàng mặc định
+                input#address.form-control(type="text" name="address" value=(user.address || "") placeholder="Nhập địa chỉ nhận hàng mặc định")
                 
-            .form-grou
-              button.btn-submit-cart(type="submit" style="width: max-content; padding: 14px 40px; font-size: 16px;") 
+            .form-group.profile-actions
+              button.btn-submit-cart(type="submit") 
                 | Lưu Thay Đổi

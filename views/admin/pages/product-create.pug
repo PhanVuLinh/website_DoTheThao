@@ -36,6 +36,14 @@ block main
         
         .form-row-2
           .form-group
+            label Thương hiệu
+            select.form-control(name="brand")
+              option(value="") -- Chọn thương hiệu --
+              if brandList && brandList.length > 0
+                each b in brandList
+                  option(value=b.title selected=(oldData.brand === b.title)) #{b.title}
+
+          .form-group
             label Vị trí
             input.form-control(type="number" name="position" placeholder="Tự động tăng" value=oldData.position || "")
           

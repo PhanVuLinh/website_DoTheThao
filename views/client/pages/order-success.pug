@@ -100,6 +100,33 @@ block main
               li.total-row
                 span.label Tổng thanh toán:
                 span.value.price-red #{orderDetail.total.toLocaleString('vi-VN')} đ
+
+          if orderDetail.paymentMethod === 'bank'
+            .success-card.bank-transfer-card
+              h3.success-card__title
+                i.fa-solid.fa-building-columns
+                | Chuyển khoản ngân hàng
+              ul.success-info-list
+                li
+                  span.label Ngân hàng:
+                  span.value #{settingWebsiteInfo && settingWebsiteInfo.bankName ? settingWebsiteInfo.bankName : "Vietcombank"}
+                li
+                  span.label Số tài khoản:
+                  span.value.highlight-text #{settingWebsiteInfo && settingWebsiteInfo.bankAccountNumber ? settingWebsiteInfo.bankAccountNumber : "1029384756"}
+                li
+                  span.label Chủ tài khoản:
+                  span.value #{settingWebsiteInfo && settingWebsiteInfo.bankAccountName ? settingWebsiteInfo.bankAccountName : "TITISPORT STORE"}
+                li
+                  span.label Số tiền:
+                  span.value.price-red #{orderDetail.total.toLocaleString('vi-VN')} đ
+                li
+                  span.label Nội dung:
+                  span.value.highlight-text #{orderDetail.orderCode}
+              if settingWebsiteInfo && (settingWebsiteInfo.bankQrCode || (settingWebsiteInfo.bankAccountNumber && settingWebsiteInfo.bankName))
+                .bank-qr-box
+                  - const qrUrl = settingWebsiteInfo.bankQrCode || `https://img.vietqr.io/image/${encodeURIComponent(settingWebsiteInfo.bankName || 'VCB')}-${encodeURIComponent(settingWebsiteInfo.bankAccountNumber || '1029384756')}-compact2.png?amount=${orderDetail.total}&addInfo=${encodeURIComponent(orderDetail.orderCode)}&accountName=${encodeURIComponent(settingWebsiteInfo.bankAccountName || 'TITISPORT')}`;
+                  img.bank-qr-img(src=qrUrl alt="Mã VietQR Chuyển khoản")
+                  span.bank-qr-desc Quét mã VietQR để thanh toán nhanh
         if orderDetail.products && orderDetail.products.length > 0
           .success-products-section
             h3.success-card__title.text-center

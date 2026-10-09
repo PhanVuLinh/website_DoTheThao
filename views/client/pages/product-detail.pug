@@ -156,6 +156,11 @@ block main
                     - for (var i = 1; i <= 5; i++)
                       i.fa-solid.fa-star(class=(i <= Math.round(parseFloat(avgRating)) ? 'filled' : 'empty'))
                     span.rating-score-text #{avgRating} (#{totalReviews} đánh giá)
+                  if productDetail.brand
+                    span.divider |
+                    .brand-info
+                      span Thương hiệu: 
+                      strong #{productDetail.brand}
                   span.divider |
                   .status
                     i.fa-solid.fa-check-circle

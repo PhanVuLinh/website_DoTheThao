@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const moment = require("moment");
+const SettingWebsiteInfo = require("../models/setting-website-info.model");
 
 const formatPriceVND = (price) => {
   return new Intl.NumberFormat("vi-VN", {
@@ -55,6 +56,24 @@ module.exports.sendOrderConfirmationEmail = async (order, productsInfo = []) => 
     const orderTime = moment(order.createdAt || new Date()).format("HH:mm - DD/MM/YYYY");
     const domain = process.env.DOMAIN_WEBSITE || "http://localhost:3000";
 
+    let bankInfoHtml = "";
+    if (order.paymentMethod === "bank") {
+      const setting = await SettingWebsiteInfo.findOne({});
+      const bankName = setting?.bankName || "Vietcombank";
+      const bankAcc = setting?.bankAccountNumber || "1029384756";
+      const bankNameAcc = setting?.bankAccountName || "TITISPORT STORE";
+      bankInfoHtml = `
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px; margin-top: 12px;">
+          <p style="margin: 0 0 6px; font-weight: 700; color: #1e40af; font-size: 13px;">HƯỚNG DẪN CHUYỂN KHOẢN THANH TOÁN:</p>
+          <p style="margin: 0 0 4px; font-size: 13px;">Ngân hàng thụ hưởng: <strong>${bankName}</strong></p>
+          <p style="margin: 0 0 4px; font-size: 13px;">Số tài khoản: <strong style="color: #2563eb; font-size: 14px;">${bankAcc}</strong></p>
+          <p style="margin: 0 0 4px; font-size: 13px;">Chủ tài khoản: <strong>${bankNameAcc}</strong></p>
+          <p style="margin: 0 0 4px; font-size: 13px;">Số tiền: <strong style="color: #e11d48; font-size: 14px;">${formatPriceVND(order.total)}</strong></p>
+          <p style="margin: 0; font-size: 13px;">Nội dung chuyển khoản: <strong style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #0f172a;">${order.orderCode}</strong></p>
+        </div>
+      `;
+    }
+
     const emailHtml = `
     <!DOCTYPE html>
     <html lang="vi">
@@ -90,6 +109,7 @@ module.exports.sendOrderConfirmationEmail = async (order, productsInfo = []) => 
             <p style="margin: 0 0 8px;"><strong>Địa chỉ giao:</strong> ${order.address}</p>
             ${order.note ? `<p style="margin: 0 0 8px;"><strong>Ghi chú:</strong> <em style="color: #64748b;">${order.note}</em></p>` : ""}
             <p style="margin: 0;"><strong>Phương thức thanh toán:</strong> <span style="font-weight: 600; color: #2563eb;">${order.paymentMethodName || order.paymentMethod?.toUpperCase()}</span></p>
+            ${bankInfoHtml}
           </div>
 
           <!-- Chi tiết sản phẩm -->

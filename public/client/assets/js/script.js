@@ -504,3 +504,22 @@ if (sportsHubWrapper) {
     });
   });
 }
+
+/* =========================================
+   CLIENT PAGINATION HANDLER
+   ========================================= */
+const clientPaginationButtons = document.querySelectorAll("[button-pagination]");
+if (clientPaginationButtons.length > 0) {
+  clientPaginationButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const page = button.getAttribute("button-pagination");
+      const url = new URL(window.location.href);
+      if (page) {
+        url.searchParams.set("page", page);
+      } else {
+        url.searchParams.delete("page");
+      }
+      window.location.href = url.href;
+    });
+  });
+}

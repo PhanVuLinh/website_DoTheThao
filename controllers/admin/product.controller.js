@@ -2,6 +2,7 @@ const moment = require("moment");
 const slugify = require("slugify");
 const Product = require("../../models/product.model");
 const Category = require("../../models/category.model");
+const Brand = require("../../models/brand.model");
 const Account = require("../../models/account.model");
 const variableCongfig = require("../../config/variable");
 
@@ -163,10 +164,16 @@ module.exports.create = async (req, res) => {
   const categoryList = await Category.find({
     deleted: false,
   });
+  const brandList = await Brand.find({
+    deleted: false,
+    status: "active",
+  }).sort({ position: "desc", createdAt: "desc" });
+
   const categoryTree = categoryHelper.buildCategoryTree(categoryList);
   res.render("admin/pages/product-create.pug", {
     title: "Tạo sản phẩm mới",
     categoryList: categoryTree,
+    brandList: brandList,
   });
 };
 
@@ -219,10 +226,16 @@ module.exports.edit = async (req, res) => {
     const categoryList = await Category.find({
       deleted: false,
     });
+    const brandList = await Brand.find({
+      deleted: false,
+      status: "active",
+    }).sort({ position: "desc", createdAt: "desc" });
+
     const categoryTree = categoryHelper.buildCategoryTree(categoryList);
     res.render("admin/pages/product-edit.pug", {
       title: "Chỉnh sửa sản phẩm",
       categoryList: categoryTree,
+      brandList: brandList,
       productDetail: productDetail,
     });
   } catch (error) {

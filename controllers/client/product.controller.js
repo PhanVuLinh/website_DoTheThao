@@ -1,12 +1,114 @@
 const moment = require("moment");
 const Product = require("../../models/product.model");
 const Category = require("../../models/category.model");
+const Brand = require("../../models/brand.model");
 const Review = require("../../models/review.model");
 const Order = require("../../models/order.model");
 const User = require("../../models/user.model");
 const jwtHelper = require("../../helpers/jwt.helper");
-
+const paginationHelper = require("../../helpers/pagination.helper");
+const regexHelper = require("../../helpers/regex.helper");
 const productPriceHelper = require("../../helpers/getPriceNew.helper.js");
+
+module.exports.index = async (req, res) => {
+  try {
+    const find = {
+      deleted: false,
+      status: "active",
+    };
+
+    if (req.query.price) {
+      if (req.query.price === "under-1m") {
+        find.price = { $lt: 1000000 };
+      } else if (req.query.price === "1m-to-3m") {
+        find.price = { $gte: 1000000, $lte: 3000000 };
+      } else if (req.query.price === "over-3m") {
+        find.price = { $gt: 3000000 };
+      }
+    }
+
+    if (req.query.brand) {
+      const brands = Array.isArray(req.query.brand) ? req.query.brand : [req.query.brand];
+      find.brand = {
+        $in: brands.map((b) => new RegExp(regexHelper.escapeRegex(String(b).trim()), "i")),
+      };
+    }
+
+    const rawProducts = await Product.find(find).lean();
+    let productList = productPriceHelper.priceNewProduct(rawProducts);
+
+    if (req.query.sort) {
+      if (req.query.sort === "price-asc") {
+        productList.sort((a, b) => a.priceNew - b.priceNew);
+      } else if (req.query.sort === "price-desc") {
+        productList.sort((a, b) => b.priceNew - a.priceNew);
+      } else if (req.query.sort === "newest") {
+        productList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      }
+    } else {
+      productList.sort((a, b) => (b.position || 0) - (a.position || 0));
+    }
+
+    const countProduct = productList.length;
+    const objectPagination = paginationHelper(
+      {
+        currentPage: 1,
+        limitItems: 12,
+      },
+      req.query,
+      countProduct,
+    );
+
+    const paginatedProducts = productList.slice(
+      objectPagination.skip,
+      objectPagination.skip + objectPagination.limitItems,
+    );
+
+    const allChildCategories = await Category.find({
+      deleted: false,
+      status: "active",
+    }).sort({ position: "desc" });
+
+    const rawBrands = await Product.distinct("brand", {
+      deleted: false,
+      status: "active",
+    });
+    const brandDocs = await Brand.find({
+      deleted: false,
+      status: "active",
+    }).select("title");
+    const distinctBrandSet = new Set(
+      rawBrands.concat(brandDocs.map((b) => b.title)).filter((b) => b && typeof b === "string" && b.trim() !== ""),
+    );
+    const availableBrands = Array.from(distinctBrandSet);
+
+    const breadcrumb = {
+      title: "Tất Cả Sản Phẩm",
+      list: [
+        { link: "/", title: "Trang Chủ" },
+        { link: "/product", title: "Tất Cả Sản Phẩm" },
+      ],
+    };
+
+    res.render("client/pages/product-list.pug", {
+      title: "Tất cả sản phẩm thể thao",
+      breadcrumb: breadcrumb,
+      productCategory: paginatedProducts,
+      pagination: objectPagination,
+      allChildCategories: allChildCategories,
+      availableBrands: availableBrands,
+      queryPrice: req.query.price,
+      queryBrand: req.query.brand,
+      querySort: req.query.sort,
+      totalCount: countProduct,
+      category: null,
+    });
+  } catch (error) {
+    console.error("Product index error:", error);
+    req.flash("error", "Có lỗi xảy ra khi tải danh sách sản phẩm");
+    res.redirect("/");
+  }
+};
 
 module.exports.detail = async (req, res) => {
   try {

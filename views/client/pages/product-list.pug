@@ -9,7 +9,7 @@ block main
     .container
       .product-list-page__inner
         aside.product-filter
-          form(action=`/category/${category.slug}` method="GET" id="form-filter")
+          form(action=(category ? `/category/${category.slug}` : "/product") method="GET" id="form-filter")
             .product-filter__header
               i.fa-solid.fa-filter
               h3.filter-title Bộ Lọc Sản Phẩm
@@ -19,7 +19,7 @@ block main
               ul.filter-list
                 if allChildCategories && allChildCategories.length > 0
                   each item in allChildCategories
-                    li(class=(category.slug === item.slug ? "active" : ""))
+                    li(class=(category && category.slug === item.slug ? "active" : ""))
                       a(href=`/category/${item.slug}`)
                         i.fa-solid.fa-chevron-right
                         span #{item.title}
@@ -58,7 +58,7 @@ block main
                 i.fa-solid.fa-filter
                 | Áp Dụng
               
-              a.btn-clear-filter(href=`/category/${category.slug}`) 
+              a.btn-clear-filter(href=(category ? `/category/${category.slug}` : "/product")) 
                 i.fa-solid.fa-rotate-right
                 | Xóa Lọc
 
@@ -89,6 +89,6 @@ block main
                 i.fa-solid.fa-box-open
               h3 Không tìm thấy sản phẩm nào!
               p Vui lòng thử chọn khoảng giá hoặc thương hiệu khác để xem sản phẩm phù hợp.
-              a.btn-clear-filter-action(href=`/category/${category.slug}`)
+              a.btn-clear-filter-action(href=(category ? `/category/${category.slug}` : "/product"))
                 i.fa-solid.fa-rotate-right
-                | Xem tất cả sản phẩm danh mục này
+                | #{category ? "Xem tất cả sản phẩm danh mục này" : "Xem tất cả sản phẩm"}

@@ -88,10 +88,17 @@ module.exports.cart = async (req, res) => {
     cart.freeShippingThreshold = freeThreshold;
     cart.totalPayment = subtotalAfterDiscount + shippingFee;
 
+    const oldData = req.flash("oldData")[0] || {};
+    if (res.locals.user) {
+      if (!oldData.fullName && res.locals.user.fullName) oldData.fullName = res.locals.user.fullName;
+      if (!oldData.phone && res.locals.user.phone) oldData.phone = res.locals.user.phone;
+      if (!oldData.address && res.locals.user.address) oldData.address = res.locals.user.address;
+    }
+
     res.render("client/pages/cart.pug", {
       title: "Giỏ hàng",
       cartDetail: cart,
-      oldData: req.flash("oldData")[0] || {},
+      oldData: oldData,
     });
   } catch (error) {
     console.error("Cart error:", error);

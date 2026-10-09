@@ -64,10 +64,11 @@ aside.admin-sidebar#adminSidebar
             i.fa-solid.fa-newspaper
             span Quản lý bài viết
 
-      li
-        a(href=`/${pathAdmin}/review/list`)
-          i.fa-solid.fa-star
-          span Quản lý đánh giá
+      if(role && role.permissions && (role.permissions.includes("review_view") || role.permissions.includes("product_view")))
+        li
+          a(href=`/${pathAdmin}/review/list`)
+            i.fa-solid.fa-star
+            span Quản lý đánh giá
 
       if(role && role.permissions && (role.permissions.includes("brand_view") || role.permissions.includes("setting_view")))
         li
