@@ -5,12 +5,10 @@ const reviewSchema = new mongoose.Schema(
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     product_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
-      required: true,
     },
     order_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -46,6 +44,14 @@ const reviewSchema = new mongoose.Schema(
     likes: {
       type: Number,
       default: 0,
+    },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
+    tagline: {
+      type: String,
+      default: "",
     },
     status: {
       type: String,

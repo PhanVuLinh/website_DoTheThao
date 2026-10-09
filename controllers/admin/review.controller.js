@@ -64,3 +64,31 @@ module.exports.delete = async (req, res) => {
     res.redirect(`/${variableCongfig.pathAdmin}/review/list`);
   }
 };
+
+module.exports.toggleFeatured = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const review = await Review.findOne({ _id: id, deleted: false });
+
+    if (!review) {
+      req.flash("error", "Đánh giá không tồn tại!");
+      return res.redirect(`/${variableCongfig.pathAdmin}/review/list`);
+    }
+
+    const nextState = !review.isFeatured;
+    await Review.updateOne({ _id: id }, { isFeatured: nextState });
+
+    req.flash(
+      "success",
+      nextState
+        ? "Đã ghim đánh giá lên mục Cảm nhận khách hàng ở Trang chủ!"
+        : "Đã bỏ ghim đánh giá khỏi Trang chủ!",
+    );
+    res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/review/list`);
+  } catch (error) {
+    console.error("Toggle featured review error:", error);
+    req.flash("error", "Lỗi thay đổi trạng thái ghim trang chủ!");
+    res.redirect(`/${variableCongfig.pathAdmin}/review/list`);
+  }
+};
+

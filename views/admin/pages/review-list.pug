@@ -28,6 +28,7 @@ block main
             th Nội dung đánh giá
             th Ảnh thực tế
             th Ngày gửi
+            th.text-center Ghim trang chủ
             th Trạng thái
             th Hành động
         tbody
@@ -62,6 +63,16 @@ block main
                     span.text-muted Không có
                 td.text-center(style="font-size: 12px; color: #64748b;") #{item.createdAtFormat}
                 td.text-center
+                  form(action=`/${pathAdmin}/review/toggle-featured/${item._id}?_method=PATCH` method="POST" style="display: inline-block;")
+                    if item.isFeatured
+                      button.btn-featured-review.active(type="submit" title="Bấm để bỏ ghim khỏi trang chủ")
+                        i.fa-solid.fa-star
+                        span  Trang chủ
+                    else
+                      button.btn-featured-review.inactive(type="submit" title="Bấm để ghim lên mục Cảm nhận khách hàng ở Trang chủ")
+                        i.fa-regular.fa-star
+                        span  Ghim
+                td.text-center
                   if item.status === 'active'
                     span.badge.badge-success(style="background: #22c55e; color: #fff; padding: 4px 10px; border-radius: 50px; font-size: 12px;") Hiển thị
                   else
@@ -80,4 +91,4 @@ block main
                       i.fa-solid.fa-trash-can
           else
             tr
-              td.text-center(colspan="9" style="padding: 30px; color: #94a3b8;") Chưa có đánh giá nào từ khách hàng
+              td.text-center(colspan="10" style="padding: 30px; color: #94a3b8;") Chưa có đánh giá nào từ khách hàng
