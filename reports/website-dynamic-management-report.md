@@ -9,80 +9,80 @@
 
 ## 1. TỔNG QUAN YÊU CẦU & BỐI CẢNH
 
-Trước đợt nâng cấp, website vẫn còn nhiều thành phần thông tin quan trọng bị **gán cứng (hardcoded)** trực tiếp trong mã nguồn HTML/Pug, bao gồm:
-- Thông tin liên hệ ở Header (Hotline, Email, Địa chỉ, Giờ mở cửa).
-- Nội dung Hero Banner ở đầu trang chủ (Badge, Tiêu đề, Mô tả, Nút bấm kêu gọi hành động CTA và liên kết dẫn đến trang sản phẩm).
-- 4 Thẻ Cam kết uy tín & Lợi thế thương hiệu (Trust Features).
-- Banner Quảng cáo khuyến mãi giữa trang chủ (Tiêu đề, phụ đề, ảnh banner và link).
-- Toàn bộ thông tin chân trang (Footer), bản quyền (Copyright), giấy phép kinh doanh.
-- Các liên kết mạng xã hội (Facebook, Instagram, TikTok, YouTube, Zalo) ở Footer và Hộp liên hệ nổi (Floating Contact Box).
-- Cấu hình thẻ SEO Meta (Title, Description, Keywords, Open Graph).
-- Chưa có trang liên hệ chuyên biệt (`/contact`) tích hợp bản đồ Google Maps động.
+Trước đợt nâng cấp, website vẫn còn nhiều thành phần thông tin quan trọng bị **cố định trong mã nguồn**, người quản trị chưa thể tự đổi qua giao diện, bao gồm:
+- Thông tin liên hệ ở đầu trang (Hotline, Email, Địa chỉ, Giờ mở cửa).
+- Nội dung Banner chính ở đầu trang chủ (Nhãn thông điệp, Tiêu đề, Mô tả, Nút bấm mua sắm và liên kết chuyển trang).
+- 4 Cam kết dịch vụ & Chính sách bán hàng với khách hàng.
+- Banner quảng cáo khuyến mãi giữa trang chủ (Tiêu đề, mô tả ưu đãi, hình ảnh và liên kết).
+- Toàn bộ thông tin chân trang (Footer), dòng chữ bản quyền, giấy phép kinh doanh / mã số thuế.
+- Các liên kết mạng xã hội (Facebook, Instagram, TikTok, YouTube, Zalo) và Nút liên hệ nhanh.
+- Cấu hình hiển thị trang web trên công cụ tìm kiếm Google (SEO Title, Description, Keywords).
+- Chưa có trang liên hệ chuyên biệt (`/contact`) kèm bản đồ chỉ đường Google Maps.
 
 **Mục tiêu đã giải quyết:**
-Trao toàn quyền tối cao cho **Quản trị viên (Admin)** để có thể tùy biến, cập nhật 100% nội dung hiển thị của website và trang chủ trực tiếp từ giao diện Admin mà không cần can thiệp vào mã nguồn, tự động đồng bộ tức thời đến toàn bộ người dùng cuối.
+Trao toàn quyền cho **Quản trị viên (Chủ cửa hàng)** để có thể tùy biến, cập nhật 100% nội dung hiển thị của website và trang chủ trực tiếp từ giao diện Admin một cách dễ dàng, trực quan, không cần biết lập trình, tự động cập nhật ngay lập tức đến người mua sắm.
 
 ---
 
-## 2. NÂNG CẤP DATABASE SCHEMA (MONGODB)
+## 2. NÂNG CẤP DỮ LIỆU LƯU TRỮ (DATABASE)
 
-### 2.1. Bổ sung trường cho Model `SettingWebsiteInfo` (`models/setting-website-info.model.js`)
+### 2.1. Bổ sung các trường quản lý cho Cửa Hàng (`models/setting-website-info.model.js`)
 
-Mô hình dữ liệu cài đặt website đã được mở rộng toàn diện với các trường dữ liệu:
+Mô hình dữ liệu cài đặt website đã được mở rộng toàn diện với các trường phục vụ kinh doanh:
 
 ```javascript
 const settingwebsiteInfoSchema = new mongoose.Schema(
   {
-    // 1. Nhận diện thương hiệu & Thông tin doanh nghiệp
-    websiteName: String,       // Tên website / Thương hiệu (VD: TitiSport)
-    slogan: String,            // Slogan khẩu hiệu thương hiệu
-    phone: String,             // Số điện thoại liên hệ
-    hotline: String,           // Hotline hỗ trợ 24/7
+    // 1. Nhận diện thương hiệu & Thông tin liên hệ
+    websiteName: String,       // Tên cửa hàng / Thương hiệu (VD: TitiSport)
+    slogan: String,            // Khẩu hiệu của cửa hàng
+    phone: String,             // Số điện thoại tư vấn
+    hotline: String,           // Hotline hỗ trợ khách hàng
     email: String,             // Email chăm sóc khách hàng
-    address: String,           // Địa chỉ cửa hàng / Trụ sở chính
-    workingHours: String,      // Giờ làm việc mở cửa (VD: 08:00 - 22:00)
+    address: String,           // Địa chỉ cửa hàng
+    workingHours: String,      // Giờ mở cửa (VD: 08:00 - 22:00)
     aboutShort: String,        // Giới thiệu ngắn về cửa hàng ở chân trang
-    copyright: String,         // Dòng chữ bản quyền ở Footer
+    copyright: String,         // Dòng chữ bản quyền ở chân trang
     businessLicense: String,   // GPKD / Mã số thuế
-    mapIframe: String,         // Mã nhúng iframe Google Maps
-    logo: String,              // Link ảnh Logo (Upload Cloudinary)
-    favicon: String,           // Link ảnh Favicon (Upload Cloudinary)
+    mapIframe: String,         // Mã nhúng bản đồ Google Maps
+    logo: String,              // Ảnh Logo cửa hàng
+    favicon: String,           // Biểu tượng website trên trình duyệt
 
-    // 2. Mạng xã hội & Kênh kết nối
-    facebook: String,          // URL Facebook Fanpage
-    instagram: String,         // URL Instagram
-    tiktok: String,            // URL TikTok
-    youtube: String,           // URL YouTube
-    zalo: String,              // URL / Số điện thoại Zalo OA
+    // 2. Kênh mạng xã hội & Tư vấn
+    facebook: String,          // Link Facebook Fanpage
+    instagram: String,         // Link Instagram
+    tiktok: String,            // Link TikTok
+    youtube: String,           // Link YouTube
+    zalo: String,              // Số điện thoại / Link Zalo
 
-    // 3. Hero Banner Trang Chủ (Đầu trang)
-    heroImage: String,         // Ảnh nền banner chính (Upload Cloudinary)
-    heroBadge: String,         // Huy hiệu nổi bật (VD: THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG)
-    heroTitle: String,         // Tiêu đề chính Banner (Hỗ trợ <br>)
-    heroDescription: String,   // Đoạn mô tả chi tiết
-    heroBtnText: String,       // Chữ trên nút kêu gọi (VD: Khám Phá Ngay)
-    heroBtnLink: String,       // Đường dẫn khi bấm nút (VD: /product)
+    // 3. Banner Chính Trang Chủ (Đầu trang)
+    heroImage: String,         // Hình ảnh banner chính
+    heroBadge: String,         // Nhãn nổi bật trên banner (VD: THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG)
+    heroTitle: String,         // Tiêu đề chính của banner
+    heroDescription: String,   // Đoạn mô tả giới thiệu
+    heroBtnText: String,       // Tên nút bấm xem hàng (VD: Khám Phá Ngay)
+    heroBtnLink: String,       // Đường dẫn khi khách bấm nút (VD: /product)
 
-    // 4. Banner Quảng Cáo Khuyến Mãi (Giữa trang chủ)
-    promoBannerImage: String,  // Ảnh banner quảng cáo giữa trang
-    promoBannerTitle: String,  // Tiêu đề banner khuyến mãi
-    promoBannerSubtitle: String,// Phụ đề banner khuyến mãi
-    promoBannerLink: String,   // Liên kết khi bấm vào banner
+    // 4. Banner Khuyến Mãi (Giữa trang chủ)
+    promoBannerImage: String,  // Hình ảnh banner khuyến mãi
+    promoBannerTitle: String,  // Tiêu đề chương trình khuyến mãi
+    promoBannerSubtitle: String,// Mô tả chi tiết ưu đãi
+    promoBannerLink: String,   // Đường dẫn khi bấm vào banner
 
-    // 5. 4 Cam kết dịch vụ & Lợi thế thương hiệu (Trust Features)
-    trustBadge1_title: String, // Tiêu đề cam kết 1 (Vận chuyển)
+    // 5. Chính sách & Cam kết với khách hàng
+    trustBadge1_title: String, // Tiêu đề cam kết 1 (Giao hàng)
     trustBadge1_desc: String,  // Mô tả cam kết 1
     trustBadge2_title: String, // Tiêu đề cam kết 2 (Chính hãng)
     trustBadge2_desc: String,  // Mô tả cam kết 2
     trustBadge3_title: String, // Tiêu đề cam kết 3 (Đổi trả)
     trustBadge3_desc: String,  // Mô tả cam kết 3
-    trustBadge4_title: String, // Tiêu đề cam kết 4 (Tư vấn)
+    trustBadge4_title: String, // Tiêu đề cam kết 4 (Hỗ trợ)
     trustBadge4_desc: String,  // Mô tả cam kết 4
 
-    // 6. Cấu hình SEO Meta Tags
-    metaTitle: String,         // Tiêu đề SEO mặc định
-    metaDescription: String,   // Mô tả SEO mặc định
-    metaKeywords: String,      // Từ khóa SEO
+    // 6. Tối ưu tìm kiếm Google (SEO)
+    metaTitle: String,         // Tiêu đề trang hiển thị trên Google
+    metaDescription: String,   // Đoạn mô tả hiển thị trên Google
+    metaKeywords: String,      // Từ khóa tìm kiếm liên quan
   },
   {
     timestamps: true,
@@ -90,17 +90,17 @@ const settingwebsiteInfoSchema = new mongoose.Schema(
 );
 ```
 
-### 2.2. Nâng cấp Model `Contact` (`models/contact.model.js`)
+### 2.2. Nâng cấp Danh mục Liên Hệ Khách Hàng (`models/contact.model.js`)
 
-Mở rộng để hỗ trợ song song cả **Đăng ký nhận bản tin khuyến mãi (Newsletter)** và **Gửi thư liên hệ / yêu cầu tư vấn chuyên sâu** từ khách hàng:
+Mở rộng để tiếp nhận thông tin từ cả **Đăng ký nhận ưu đãi qua email** và **Khách hàng gửi yêu cầu tư vấn**:
 
 ```javascript
 const contactSchema = new mongoose.Schema(
   {
     fullName: String, // Họ và tên khách hàng
     email: String,    // Email liên hệ
-    phone: String,    // Số điện thoại
-    content: String,  // Nội dung tin nhắn / Yêu cầu tư vấn
+    phone: String,    // Số điện thoại liên hệ
+    content: String,  // Nội dung lời nhắn / Câu hỏi tư vấn
     deleted: {
       type: Boolean,
       default: false,
@@ -116,59 +116,58 @@ const contactSchema = new mongoose.Schema(
 
 ---
 
-## 3. GIAO DIỆN QUẢN TRỊ ADMIN (MASTER CONFIGURATION PANEL)
+## 3. GIAO DIỆN QUẢN TRỊ ADMIN (PHÂN CHIA 7 TAB TIỆN DỤNG)
 
 File giao diện cấu hình: `views/admin/pages/website-info.pug`  
-Được thiết kế lại theo tiêu chuẩn hiện đại, phân chia trực quan thành **7 phân hệ**:
+Được thiết kế giao diện theo dạng **7 Thẻ phân hệ (Tabs)** gọn gàng, thao tác lưu giữ vị trí làm việc thông minh:
 
-1. **Thông tin doanh nghiệp & Nhận diện thương hiệu:** Tên shop, Slogan, Hotline, Điện thoại, Email, Giờ làm việc, Địa chỉ, Upload Logo và Favicon xem trước tức thì (Preview).
-2. **Hero Banner Trang Chủ:** Cấu hình Badge, Tiêu đề chính, Đoạn mô tả, Chữ trên nút CTA, Link nút CTA, và Upload ảnh Banner chính.
-3. **4 Cam Kết & Lợi Thế Thương Hiệu (Trust Cards):** Bảng lưới 2x2 cho phép quản trị viên nhập tiêu đề và đoạn văn mô tả cam kết của shop (Giao hàng, Nguồn gốc xuất xứ, Chính sách đổi trả, Đội ngũ hỗ trợ).
-4. **Banner Quảng Cáo Khuyến Mãi (Giữa trang):** Quản lý ảnh Banner khuyến mãi, tiêu đề giật tít, phụ đề và liên kết điều hướng.
-5. **Mạng Xã Hội & Kênh Liên Hệ Nổi:** Cấu hình link Facebook, Instagram, TikTok, YouTube, Zalo OA.
-6. **Chân Trang (Footer) & Pháp Lý:** Giới thiệu ngắn về cửa hàng, dòng chữ Bản quyền (Copyright), Giấy phép kinh doanh / Mã số thuế.
-7. **Cấu Hình SEO Meta & Bản Đồ Google Maps:** Meta Title, Meta Description, Meta Keywords, và ô nhập mã nhúng iframe Google Maps.
+1. **1. Thông Tin Cửa Hàng:** Tên shop, Slogan, Hotline, Điện thoại, Email, Giờ làm việc, Địa chỉ, Logo và Biểu tượng Favicon với ảnh xem trước trực quan.
+2. **2. Banner Trang Chủ:** Dòng chữ nổi bật, Tiêu đề chính, Đoạn giới thiệu, Tên nút bấm, Đường dẫn liên kết, và Hình ảnh banner lớn.
+3. **3. Chính Sách & Cam Kết:** 4 tiêu chí chất lượng tạo dựng niềm tin (Giao hàng hỏa tốc, 100% chính hãng, Đổi trả 30 ngày, Tư vấn tận tâm).
+4. **4. Banner Khuyến Mãi:** Quảng bá sự kiện giảm giá đặc biệt giữa trang chủ (Tiêu đề, tóm tắt ưu đãi, hình ảnh và đường dẫn).
+5. **5. Mạng Xã Hội & Tư Vấn:** Kết nối các kênh Facebook, Instagram, TikTok, YouTube và Zalo OA.
+6. **6. Chân Trang Website:** Giới thiệu ngắn về cửa hàng, thông tin bản quyền và mã số thuế / giấy phép kinh doanh.
+7. **7. Tối Ưu SEO & Bản Đồ:** Tiêu đề và mô tả hiển thị trên Google, từ khóa tìm kiếm, cùng ô dán mã nhúng bản đồ Google Maps với hướng dẫn chi tiết.
 
 ---
 
-## 4. ĐỒNG BỘ DỮ LIỆU ĐỘNG TRÊN PHÍA CLIENT (NGƯỜI DÙNG CUỐI)
+## 4. HIỂN THỊ ĐỒNG BỘ PHÍA KHÁCH HÀNG (CLIENT)
 
-### 4.1. Thanh điều hướng & Header (`views/client/partials/header.pug`)
-- Top bar hiển thị tự động Hotline, Email, Địa chỉ, Giờ mở cửa lấy từ `settingWebsiteInfo`.
-- Logo thương hiệu lấy từ Cloudinary; nếu chưa tải ảnh lên sẽ tự động hiển thị chữ thương hiệu sang trọng.
-- Bật liên kết trang `/contact` trực tiếp trên menu điều hướng chính.
+### 4.1. Thanh điều hướng & Đầu trang (`views/client/partials/header.pug`)
+- Hiển thị đầy đủ Hotline, Email, Địa chỉ, Giờ mở cửa tự động từ cơ sở dữ liệu.
+- Logo cửa hàng tự động hiển thị ảnh hoặc chuyển sang kiểu chữ thương hiệu sang trọng khi chưa đăng tải ảnh.
+- Menu điều hướng có sẵn mục "Liên Hệ" dẫn đến trang chăm sóc khách hàng.
 
-### 4.2. Trang Chủ (`views/client/pages/home.pug`)
-- **Hero Revolution:** Tiêu đề, Badge, Mô tả, Nút bấm CTA "Khám Phá Ngay" và Link dẫn sản phẩm đều được render động từ DB với fallback an toàn.
-- **Trust Cards (4 cam kết):** Nội dung 4 thẻ đổi mới linh hoạt theo cấu hình của Admin.
-- **Banner Khuyến Mãi Cinematic:** Tự động hiển thị hình ảnh, tiêu đề và liên kết do Admin cấu hình.
-- **Thương hiệu đối tác & Testimonials:** Tự động gắn tên thương hiệu vào các tiêu đề và thẻ đối tác.
+### 4.2. Trang Chủ Bán Hàng (`views/client/pages/home.pug`)
+- **Banner chính đầu trang:** Hiển thị trọn vẹn hình ảnh, thông điệp và nút mua sắm do Admin quản lý.
+- **Chính sách & Cam kết:** 4 khối cam kết chất lượng đổi mới linh hoạt theo cài đặt.
+- **Banner khuyến mãi:** Nổi bật giữa trang, điều hướng khách hàng tới đúng danh mục sản phẩm giảm giá.
+- **Kho Voucher:** Trình bày mã ưu đãi rõ ràng, thân thiện, dễ sao chép chỉ với 1 thao tác bấm.
 
 ### 4.3. Chân trang (`views/client/partials/footer.pug`)
-- Newsletter mời đăng ký kèm tên thương hiệu động.
-- Logo và phần giới thiệu ngắn (About Short) lấy từ cài đặt.
-- Các icon mạng xã hội chỉ xuất hiện khi Admin có cấu hình link (ẩn tự động nếu để trống).
-- Thông tin Hotline, Địa chỉ, Email, Giờ mở cửa, Bản quyền và GPKD đồng bộ 100%.
+- Ô đăng ký nhận bản tin ưu đãi gắn liền tên thương hiệu.
+- Logo và phần giới thiệu ngắn về cửa hàng.
+- Các biểu tượng mạng xã hội chỉ xuất hiện khi có cấu hình đường dẫn.
+- Thông tin liên hệ, bản quyền và thông tin pháp lý được đồng bộ đầy đủ.
 
-### 4.4. Hộp Liên Hệ Nổi (`views/client/partials/box-contact.pug`)
-- Nút gọi nhanh `tel:` liên kết trực tiếp tới Hotline cửa hàng.
-- Nút Zalo, Facebook, Instagram, TikTok mở trực tiếp kênh của cửa hàng theo cấu hình.
+### 4.4. Nút Liên Hệ Nhanh (`views/client/partials/box-contact.pug`)
+- Nút gọi nhanh kết nối trực tiếp đến Hotline cửa hàng.
+- Nút Zalo, Facebook mở nhanh hộp thoại trò chuyện tư vấn với shop.
 
-### 4.5. Thẻ SEO & Header Layout (`views/client/layouts/default.pug`)
-- Thẻ `<title>` tự động ưu tiên Tiêu đề bài/trang -> Meta Title Admin -> Tên website -> Fallback chuẩn.
-- Thẻ `<meta name="description">` và `<meta name="keywords">` chèn tự động.
-- Thẻ Open Graph (`og:title`, `og:description`, `og:image`) phục vụ chia sẻ liên kết mạng xã hội chuẩn SEO.
-- Thẻ `<link rel="icon">` hiển thị Favicon tải lên từ Admin.
+### 4.5. Tối ưu tìm kiếm trên Google (`views/client/layouts/default.pug`)
+- Tiêu đề và đoạn mô tả trang web hiển thị chuẩn đẹp mắt trên kết quả tìm kiếm Google.
+- Biểu tượng Favicon hiển thị đồng bộ trên thanh tab trình duyệt của khách hàng.
 
-### 4.6. Trang Liên Hệ Mới (`views/client/pages/contact.pug`)
-- Thiết kế 2 cột chuẩn UI/UX:
-  - Cột trái: Thẻ thông tin nhanh (Hotline, Email, Giờ mở cửa, Địa chỉ), các kênh mạng xã hội chính thức, và bản đồ Google Maps nhúng từ DB qua iframe.
-  - Cột phải: Form liên hệ chuyên nghiệp (Họ tên, SĐT, Email, Nội dung cần tư vấn).
-- Tích hợp controller xử lý tại `controllers/client/contact.controller.js` với route GET `/contact` và POST `/contact/create`.
+### 4.6. Trang Liên Hệ & Bản Đồ (`views/client/pages/contact.pug`)
+- Thiết kế 2 cột trực quan:
+  - Cột 1: Thông tin nhanh (Hotline, Email, Giờ mở cửa, Địa chỉ), mạng xã hội và Bản đồ chỉ đường Google Maps.
+  - Cột 2: Mẫu gửi tin nhắn liên hệ (Họ tên, Số điện thoại, Email, Nội dung câu hỏi cần tư vấn).
+- Tiếp nhận và xử lý tin nhắn an toàn, nhanh chóng.
 
-### 4.7. Quản lý Khách Hàng Liên Hệ ở Admin (`views/admin/pages/contact-list.pug`)
-- Mở rộng bảng quản trị: hiển thị đầy đủ Họ tên, Số điện thoại, Email, Nội dung lời nhắn của khách hàng.
-- Nâng cấp bộ lọc tìm kiếm hỗ trợ tìm theo cả Họ tên, Số điện thoại, Email và Nội dung tin nhắn.
+### 4.7. Danh Sách Liên Hệ Trong Admin (`views/admin/pages/contact-list.pug`)
+- Hiển thị rõ ràng Họ tên, Số điện thoại, Email và Nội dung lời nhắn của khách.
+- Phân biệt rõ ràng giữa khách đăng ký nhận khuyến mãi và khách gửi yêu cầu tư vấn sản phẩm.
+
 
 ---
 
@@ -179,24 +178,32 @@ File giao diện cấu hình: `views/admin/pages/website-info.pug`
 | 1 | `models/setting-website-info.model.js` | Sửa đổi | Mở rộng schema cấu hình website với 25+ trường dữ liệu mới |
 | 2 | `models/contact.model.js` | Sửa đổi | Bổ sung `fullName`, `phone`, `content` vào bảng liên hệ |
 | 3 | `controllers/admin/setting.controller.js` | Kiểm tra | Xác nhận lưu dữ liệu tự động cho các trường mới |
-| 4 | `views/admin/pages/website-info.pug` | Viết lại | Master Configuration Panel với 7 nhóm cấu hình trực quan |
-| 5 | `views/admin/pages/contact-list.pug` | Cải tiến | Hiển thị chi tiết khách hàng và tin nhắn tư vấn |
-| 6 | `controllers/admin/contact.controller.js` | Cải tiến | Mở rộng tìm kiếm đa trường (name, phone, email, content) |
-| 7 | `controllers/client/contact.controller.js` | Cải tiến | Thêm hàm `index` (GET /contact) và xử lý form gửi tin nhắn |
-| 8 | `routes/client/contact.route.js` | Sửa đổi | Đăng ký route GET `/contact` |
-| 9 | `views/client/pages/contact.pug` | **Tạo mới** | Giao diện trang Liên hệ với Google Maps động và Form tư vấn |
-| 10 | `views/client/pages/home.pug` | Cải tiến | Chuyển đổi toàn bộ nút CTA, 4 cam kết, banner khuyến mãi sang DB |
-| 11 | `views/client/layouts/default.pug` | Cải tiến | Nhúng SEO Meta Tags, Open Graph và Title động từ DB |
-| 12 | `views/client/partials/header.pug` | Cải tiến | Hiển thị thông tin liên hệ động, logo động, bật menu Liên Hệ |
-| 13 | `views/client/partials/footer.pug` | Cải tiến | Đồng bộ toàn bộ thông tin thương hiệu, mạng xã hội, pháp lý |
-| 14 | `views/client/partials/box-contact.pug` | Cải tiến | Box liên hệ nổi kết nối trực tiếp với thông tin cấu hình DB |
-| 15 | `middlewares/client/setting.middleware.js` | Cải tiến | Bổ sung fallback an toàn chống crash trang khi chưa có bản ghi |
-| 16 | `controllers/admin/order.controller.js` | Sửa lỗi | Đặt `res.render` ngoài vòng lặp trong trang thùng rác đơn hàng |
+| 4 | `views/admin/pages/website-info.pug` | Viết lại | Master Configuration Panel với 7 Tab trực quan, sạch CSS/JS inline |
+| 5 | `public/admin/assets/js/website-info.js` | **Tạo mới** | Module JS điều khiển chuyển tab và lưu trạng thái sessionStorage |
+| 6 | `public/admin/assets/css/style.css` | Mở rộng | Bổ sung mục 17: Cấu hình Tabs Admin & Bảng liên hệ |
+| 7 | `views/admin/pages/contact-list.pug` | Cải tiến | Hiển thị chi tiết khách hàng và tin nhắn tư vấn bằng CSS class |
+| 8 | `controllers/admin/contact.controller.js` | Cải tiến | Mở rộng tìm kiếm đa trường (name, phone, email, content) |
+| 9 | `controllers/client/contact.controller.js` | Cải tiến | Thêm hàm `index` (GET /contact) và xử lý form gửi tin nhắn |
+| 10 | `routes/client/contact.route.js` | Sửa đổi | Đăng ký route GET `/contact` |
+| 11 | `views/client/pages/contact.pug` | **Tạo mới** | Giao diện trang Liên hệ (100% CSS class, không inline) |
+| 12 | `public/client/assets/css/style.css` | Mở rộng | Bổ sung khối CSS trang Liên hệ & Logo fallback |
+| 13 | `public/client/assets/js/order-success.js` | **Tạo mới** | Module JS theo dõi trạng thái đơn hàng thời gian thực qua Socket.IO |
+| 14 | `views/client/pages/order-success.pug` | Tối ưu | Tách toàn bộ JS inline và CSS inline sang file riêng |
+| 15 | `views/client/pages/home.pug` | Cải tiến | Chuyển đổi toàn bộ nút CTA, 4 cam kết, banner khuyến mãi sang DB |
+| 16 | `views/client/layouts/default.pug` | Cải tiến | Nhúng SEO Meta Tags, Open Graph và Title động từ DB |
+| 17 | `views/client/partials/header.pug` | Cải tiến | Hiển thị thông tin liên hệ động, logo động, bật menu Liên Hệ |
+| 18 | `views/client/partials/footer.pug` | Cải tiến | Đồng bộ toàn bộ thông tin thương hiệu, mạng xã hội, pháp lý |
+| 19 | `views/client/partials/box-contact.pug` | Cải tiến | Box liên hệ nổi kết nối trực tiếp với thông tin cấu hình DB |
+| 20 | `middlewares/client/setting.middleware.js` | Cải tiến | Bổ sung fallback an toàn chống crash trang khi chưa có bản ghi |
+| 21 | `controllers/admin/order.controller.js` | Sửa lỗi | Đặt `res.render` ngoài vòng lặp trong trang thùng rác đơn hàng |
+| 22 | `views/admin/partials/no-access.pug` | **Tạo mới** | Template dùng chung hiển thị thông báo "Truy cập bị từ chối" (DRY) |
+| 23 | Toàn bộ 38 trang admin (`views/admin/pages/*.pug`) | Tối ưu | Gom toàn bộ khối thông báo từ chối truy cập về `include ../partials/no-access.pug` |
 
 ---
 
 ## 6. KẾT LUẬN & KIỂM THỬ
 
 - **Kiểm thử cú pháp Node.js & Pug:** 100% các file JavaScript và Pug templates đã được biên dịch và kiểm tra cú pháp thành công không có lỗi.
+- **Tiêu chuẩn mã nguồn (Code Standards):** Đã tách biệt triệt để 100% CSS và JavaScript sang các thư mục `assets/css` và `assets/js` chuyên biệt, hoàn toàn không sử dụng CSS inline hay Script inline.
 - **Khả năng quản trị:** Quản trị viên giờ đây nắm toàn quyền quản lý nội dung thương hiệu, marketing và cấu hình hiển thị của website.
-- **Nhánh Git:** Toàn bộ công việc đã được lưu trữ an toàn trên nhánh `feature/commercial-ecommerce-upgrade`.
+- **Nhánh Git:** Toàn bộ công việc nằm trên nhánh `feature/commercial-ecommerce-upgrade`. Sẵn sàng commit khi có chỉ thị từ người dùng.
