@@ -52,6 +52,82 @@ const settingwebsiteInfoSchema = new mongoose.Schema(
     metaTitle: String,
     metaDescription: String,
     metaKeywords: String,
+
+    // Cấu hình Flash Sale & Đồng hồ đếm ngược
+    flashSaleActive: {
+      type: Boolean,
+      default: true,
+    },
+    flashSaleTitle: {
+      type: String,
+      default: "SĂN HÀNG GIÁ TỐT",
+    },
+    flashSaleBadge: {
+      type: String,
+      default: "GIỜ VÀNG GIÁ SỐC",
+    },
+    flashSaleSubTitle: {
+      type: String,
+      default: "ƯU ĐÃI CÓ HẠN",
+    },
+    flashSaleDesc: {
+      type: String,
+      default: "Giày thi đấu & trang bị thể thao tuyển chọn giảm sâu số lượng có hạn.",
+    },
+    flashSaleEndTime: Date,
+    flashSaleLink: {
+      type: String,
+      default: "/product",
+    },
+
+    // 2 Tab Môn Thể Thao nổi bật trên Trang Chủ (Sports Hub)
+    sportsTab1_id: String,
+    sportsTab2_id: String,
+
+    // Cổng thanh toán
+    paymentCodActive: {
+      type: Boolean,
+      default: true,
+    },
+    paymentZaloPayActive: {
+      type: Boolean,
+      default: true,
+    },
+    paymentVnPayActive: {
+      type: Boolean,
+      default: true,
+    },
+    paymentMomoActive: {
+      type: Boolean,
+      default: false,
+    },
+    paymentBankActive: {
+      type: Boolean,
+      default: true,
+    },
+    bankName: {
+      type: String,
+      default: "Vietcombank",
+    },
+    bankAccountNumber: {
+      type: String,
+      default: "1029384756",
+    },
+    bankAccountName: {
+      type: String,
+      default: "TITISPORT STORE",
+    },
+    bankQrCode: String,
+
+    // Chính sách phí vận chuyển
+    shippingFee: {
+      type: Number,
+      default: 30000,
+    },
+    freeShippingThreshold: {
+      type: Number,
+      default: 500000,
+    },
   },
   {
     timestamps: true,

@@ -2,6 +2,7 @@ const moment = require("moment");
 const Account = require("../../models/account.model");
 const Role = require("../../models/role.model");
 const SettingWebsiteInfo = require("../../models/setting-website-info.model");
+const Category = require("../../models/category.model");
 const variableCongfig = require("../../config/variable");
 const permissonConfig = require("../../config/permission");
 const passwordHelper = require("../../helpers/password.helper");
@@ -16,9 +17,15 @@ module.exports.list = (req, res) => {
 
 module.exports.websiteInfo = async (req, res) => {
   const settingWebsiteInfo = await SettingWebsiteInfo.findOne({});
+  const parentCategories = await Category.find({
+    deleted: false,
+    parent_id: "",
+  }).select("title _id").sort({ position: 1 });
+
   res.render("admin/pages/website-info.pug", {
     title: "Thông tin website",
     settingWebsiteInfo: settingWebsiteInfo,
+    parentCategories: parentCategories,
   });
 };
 
@@ -43,6 +50,33 @@ module.exports.websiteInfoPatch = async (req, res) => {
   } else {
     delete req.body.promoBannerImage;
   }
+  if (req.files && req.files.bankQrCode) {
+    req.body.bankQrCode = req.files.bankQrCode[0].path;
+  } else {
+    delete req.body.bankQrCode;
+  }
+
+  // Xử lý các trường boolean checkbox
+  req.body.flashSaleActive = req.body.flashSaleActive === "on" || req.body.flashSaleActive === "true" || req.body.flashSaleActive === true;
+  req.body.paymentCodActive = req.body.paymentCodActive === "on" || req.body.paymentCodActive === "true" || req.body.paymentCodActive === true;
+  req.body.paymentZaloPayActive = req.body.paymentZaloPayActive === "on" || req.body.paymentZaloPayActive === "true" || req.body.paymentZaloPayActive === true;
+  req.body.paymentVnPayActive = req.body.paymentVnPayActive === "on" || req.body.paymentVnPayActive === "true" || req.body.paymentVnPayActive === true;
+  req.body.paymentMomoActive = req.body.paymentMomoActive === "on" || req.body.paymentMomoActive === "true" || req.body.paymentMomoActive === true;
+  req.body.paymentBankActive = req.body.paymentBankActive === "on" || req.body.paymentBankActive === "true" || req.body.paymentBankActive === true;
+
+  // Xử lý phí vận chuyển
+  if (req.body.shippingFee !== undefined && req.body.shippingFee !== "") {
+    req.body.shippingFee = parseInt(req.body.shippingFee, 10);
+  }
+  if (req.body.freeShippingThreshold !== undefined && req.body.freeShippingThreshold !== "") {
+    req.body.freeShippingThreshold = parseInt(req.body.freeShippingThreshold, 10);
+  }
+
+  // Xử lý ngày kết thúc Flash Sale
+  if (req.body.flashSaleEndTime) {
+    req.body.flashSaleEndTime = new Date(req.body.flashSaleEndTime);
+  }
+
   const settingWebsiteInfo = await SettingWebsiteInfo.findOne({});
   if (settingWebsiteInfo) {
     await SettingWebsiteInfo.updateOne(

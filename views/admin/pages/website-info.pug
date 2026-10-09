@@ -44,6 +44,12 @@ block main
       button.tab-nav-btn(type="button" data-tab="tab-seo")
         i.fa-solid.fa-magnifying-glass-chart
         span 7. Tối Ưu SEO & Bản Đồ
+      button.tab-nav-btn(type="button" data-tab="tab-flash")
+        i.fa-solid.fa-bolt
+        span 8. Flash Sale & Giờ Vàng
+      button.tab-nav-btn(type="button" data-tab="tab-payment")
+        i.fa-solid.fa-credit-card
+        span 9. Thanh Toán & Vận Chuyển
 
     //- KHỐI FORM LƯU CHÍNH (Chứa toàn bộ 7 phân hệ)
     .form-card
@@ -168,6 +174,28 @@ block main
                 img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? settingWebsiteInfo.heroImage : "") alt="Xem trước banner chính")
                 button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
                   i.fa-solid.fa-xmark
+
+          .sports-hub-config-box
+            h4
+              i.fa-solid.fa-table-cells-large
+              | Cấu Hình 2 Danh Mục Thể Thao Nổi Bật Trang Chủ (Sports Hub)
+            p Chọn 2 danh mục thể thao cấp cha để hiển thị tab lọc sản phẩm nhanh giữa trang chủ.
+            .form-row-2
+              .form-group
+                label Môn thể thao Tab 1 (Mặc định: Bóng Đá)
+                select.form-control(name="sportsTab1_id")
+                  option(value="") -- Tự động nhận diện môn Bóng Đá --
+                  if parentCategories && parentCategories.length > 0
+                    each cat in parentCategories
+                      option(value=cat._id.toString() selected=(settingWebsiteInfo && settingWebsiteInfo.sportsTab1_id === cat._id.toString()))= cat.title
+
+              .form-group
+                label Môn thể thao Tab 2 (Mặc định: Bóng Chuyền)
+                select.form-control(name="sportsTab2_id")
+                  option(value="") -- Tự động nhận diện môn Bóng Chuyền --
+                  if parentCategories && parentCategories.length > 0
+                    each cat in parentCategories
+                      option(value=cat._id.toString() selected=(settingWebsiteInfo && settingWebsiteInfo.sportsTab2_id === cat._id.toString()))= cat.title
 
           .pane-footer-actions
             button.btn-next-tab(type="button" data-next="tab-brand")
@@ -414,6 +442,177 @@ block main
             button.btn-next-tab(type="button" data-next="tab-footer")
               i.fa-solid.fa-arrow-left
               | Quay lại: Chân trang website
+            .pane-actions-right
+              if(role && role.permissions && role.permissions.includes("setting_edit"))
+                button.btn-save-pane(type="submit")
+                  i.fa-solid.fa-floppy-disk
+                  | Lưu thay đổi
+              button.btn-next-tab(type="button" data-next="tab-flash")
+                | Sang phần tiếp: Flash Sale
+                i.fa-solid.fa-arrow-right
+
+        //- ========================================================
+        //- PHẦN 8: CẤU HÌNH FLASH SALE & ĐỒNG HỒ ĐẾM NGƯỢC
+        //- ========================================================
+        .settings-tab-pane#tab-flash
+          .pane-header
+            .pane-header-icon.flash
+              i.fa-solid.fa-bolt
+            .pane-header-info
+              h3 8. Cấu Hình Khuyến Mãi Flash Sale & Giờ Vàng
+              p Cài đặt thời gian đồng hồ đếm ngược, thông điệp và liên kết ưu đãi giờ vàng trên trang chủ.
+
+          .form-group.checkbox-card-wrap
+            label.checkbox-custom-card
+              input(type="checkbox" name="flashSaleActive" checked=(settingWebsiteInfo && settingWebsiteInfo.flashSaleActive !== false))
+              .checkbox-card-info
+                strong Kích hoạt hiển thị khu vực Flash Sale trên Trang Chủ
+                span Tắt tùy chọn này nếu cửa hàng tạm thời chưa có đợt giảm giá giờ vàng.
+
+          .form-row-2
+            .form-group
+              label Huy hiệu giờ vàng (Badge)
+              input.form-control(type="text" name="flashSaleBadge" value=(settingWebsiteInfo ? settingWebsiteInfo.flashSaleBadge : "GIỜ VÀNG GIÁ SỐC") placeholder="Ví dụ: GIỜ VÀNG GIÁ SỐC, SALE ĐỘC QUYỀN...")
+
+            .form-group
+              label Dòng chữ phụ đề (Subtitle)
+              input.form-control(type="text" name="flashSaleSubTitle" value=(settingWebsiteInfo ? settingWebsiteInfo.flashSaleSubTitle : "ƯU ĐÃI CÓ HẠN") placeholder="Ví dụ: ƯU ĐÃI CÓ HẠN, CHỈ TRONG HÔM NAY...")
+
+          .form-row-2
+            .form-group
+              label Tiêu đề chính chiến dịch
+              input.form-control(type="text" name="flashSaleTitle" value=(settingWebsiteInfo ? settingWebsiteInfo.flashSaleTitle : "SĂN HÀNG GIÁ TỐT") placeholder="Ví dụ: SĂN HÀNG GIÁ TỐT, BÙNG NỔ MÙA GIẢI...")
+
+            .form-group
+              label Thời gian kết thúc đợt Flash Sale (Đồng hồ đếm ngược tự động chạy theo mốc này)
+              - const endIso = settingWebsiteInfo && settingWebsiteInfo.flashSaleEndTime ? new Date(settingWebsiteInfo.flashSaleEndTime).toISOString().slice(0, 16) : ""
+              input.form-control(type="datetime-local" name="flashSaleEndTime" value=endIso)
+
+          .form-group
+            label Đoạn mô tả ưu đãi ngắn
+            textarea.form-control(name="flashSaleDesc" rows="2" placeholder="Ví dụ: Giày thi đấu & trang bị thể thao tuyển chọn giảm sâu số lượng có hạn...") #{settingWebsiteInfo ? settingWebsiteInfo.flashSaleDesc : "Giày thi đấu & trang bị thể thao tuyển chọn giảm sâu số lượng có hạn."}
+
+          .form-group
+            label Đường dẫn khi khách bấm "Xem Tất Cả Khuyến Mãi" (Link URL)
+            input.form-control(type="text" name="flashSaleLink" value=(settingWebsiteInfo ? settingWebsiteInfo.flashSaleLink : "/product") placeholder="Ví dụ: /product hoặc /product?sale=true")
+
+          .pane-footer-actions
+            button.btn-next-tab(type="button" data-next="tab-seo")
+              i.fa-solid.fa-arrow-left
+              | Quay lại: Tối ưu SEO
+            .pane-actions-right
+              if(role && role.permissions && role.permissions.includes("setting_edit"))
+                button.btn-save-pane(type="submit")
+                  i.fa-solid.fa-floppy-disk
+                  | Lưu thay đổi
+              button.btn-next-tab(type="button" data-next="tab-payment")
+                | Sang phần tiếp: Thanh toán & Vận chuyển
+                i.fa-solid.fa-arrow-right
+
+        //- ========================================================
+        //- PHẦN 9: CỔNG THANH TOÁN & CHÍNH SÁCH VẬN CHUYỂN
+        //- ========================================================
+        .settings-tab-pane#tab-payment
+          .pane-header
+            .pane-header-icon.payment
+              i.fa-solid.fa-credit-card
+            .pane-header-info
+              h3 9. Cổng Thanh Toán & Chính Sách Vận Chuyển
+              p Cấu hình bật/tắt các phương thức thanh toán, số tài khoản nhận tiền và quy định phí ship đơn hàng.
+
+          h4.settings-section-subtitle
+            i.fa-solid.fa-wallet
+            | 1. Các phương thức thanh toán khách hàng được chọn trong Giỏ hàng
+          
+          .payment-methods-config-grid
+            label.payment-toggle-card
+              input(type="checkbox" name="paymentCodActive" checked=(settingWebsiteInfo && settingWebsiteInfo.paymentCodActive !== false))
+              .toggle-card-content
+                i.fa-solid.fa-money-bill-wave.text-success
+                div
+                  strong Thanh toán khi nhận hàng (COD)
+                  span Khách nhận bưu phẩm, kiểm tra hàng rồi mới thanh toán tiền mặt
+
+            label.payment-toggle-card
+              input(type="checkbox" name="paymentZaloPayActive" checked=(settingWebsiteInfo && settingWebsiteInfo.paymentZaloPayActive !== false))
+              .toggle-card-content
+                i.fa-solid.fa-wallet.text-primary
+                div
+                  strong Cổng Ví điện tử ZaloPay
+                  span Quét mã QR tiện lợi qua ứng dụng Zalo & ZaloPay
+
+            label.payment-toggle-card
+              input(type="checkbox" name="paymentVnPayActive" checked=(settingWebsiteInfo && settingWebsiteInfo.paymentVnPayActive !== false))
+              .toggle-card-content
+                i.fa-solid.fa-qrcode.text-danger
+                div
+                  strong Cổng VNPay / QR Code Ngân Hàng
+                  span Quét mã tương thích với hơn 40 ứng dụng ngân hàng số Việt Nam
+
+            label.payment-toggle-card
+              input(type="checkbox" name="paymentMomoActive" checked=(settingWebsiteInfo && settingWebsiteInfo.paymentMomoActive === true))
+              .toggle-card-content
+                i.fa-solid.fa-mobile-screen-button.text-pink
+                div
+                  strong Cổng Ví MoMo
+                  span Thanh toán trực tuyến qua ứng dụng ví điện tử MoMo
+
+            label.payment-toggle-card
+              input(type="checkbox" name="paymentBankActive" checked=(settingWebsiteInfo && settingWebsiteInfo.paymentBankActive !== false))
+              .toggle-card-content
+                i.fa-solid.fa-building-columns.text-info
+                div
+                  strong Chuyển khoản ngân hàng trực tiếp
+                  span Khách chuyển khoản theo STK / mã QR của shop sau khi bấm đặt hàng
+
+          h4.settings-section-subtitle.mt-4
+            i.fa-solid.fa-building-columns
+            | 2. Thông tin tài khoản ngân hàng nhận tiền
+          
+          .form-row-2
+            .form-group
+              label Tên ngân hàng
+              input.form-control(type="text" name="bankName" value=(settingWebsiteInfo ? settingWebsiteInfo.bankName : "Vietcombank") placeholder="Ví dụ: Vietcombank, MB Bank, Techcombank...")
+
+            .form-group
+              label Số tài khoản ngân hàng
+              input.form-control(type="text" name="bankAccountNumber" value=(settingWebsiteInfo ? settingWebsiteInfo.bankAccountNumber : "1029384756") placeholder="Ví dụ: 1029384756")
+
+          .form-row-2
+            .form-group
+              label Tên chủ tài khoản (In hoa không dấu)
+              input.form-control(type="text" name="bankAccountName" value=(settingWebsiteInfo ? settingWebsiteInfo.bankAccountName : "TITISPORT STORE") placeholder="Ví dụ: NGUYEN VAN A")
+
+            .form-group.upload-row
+              label Ảnh mã QR nhận tiền (VietQR)
+              .upload-image-wrapper(upload-image-wrapper)
+                input#bank-qr-upload.hidden-input(upload-image-input type="file" name="bankQrCode" accept="image/*")
+                label.upload-box(for="bank-qr-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.bankQrCode ? "hidden" : ""))
+                  i.fa-solid.fa-plus
+                .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.bankQrCode ? "" : "hidden"))
+                  img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.bankQrCode ? settingWebsiteInfo.bankQrCode : "") alt="Xem trước mã QR")
+                  button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                    i.fa-solid.fa-xmark
+
+          h4.settings-section-subtitle.mt-4
+            i.fa-solid.fa-truck-fast
+            | 3. Chính sách tính phí vận chuyển đơn hàng
+          
+          .form-row-2
+            .form-group
+              label Phí vận chuyển tiêu chuẩn mặc định (VNĐ)
+              input.form-control(type="number" name="shippingFee" value=(settingWebsiteInfo && settingWebsiteInfo.shippingFee !== undefined ? settingWebsiteInfo.shippingFee : 30000) placeholder="30000" min="0" step="1000")
+              p.form-text.text-muted Mức phí ship cố định áp dụng khi đơn hàng chưa đạt mức miễn phí ship.
+
+            .form-group
+              label Mức đơn hàng tối thiểu để Miễn Phí Vận Chuyển (VNĐ)
+              input.form-control(type="number" name="freeShippingThreshold" value=(settingWebsiteInfo && settingWebsiteInfo.freeShippingThreshold !== undefined ? settingWebsiteInfo.freeShippingThreshold : 500000) placeholder="500000" min="0" step="10000")
+              p.form-text.text-muted Đơn hàng có tổng tiền từ mức này trở lên sẽ được tự động tính Free Ship (Phí vận chuyển = 0đ).
+
+          .pane-footer-actions
+            button.btn-next-tab(type="button" data-next="tab-flash")
+              i.fa-solid.fa-arrow-left
+              | Quay lại: Flash Sale
             .pane-actions-right
               if(role && role.permissions && role.permissions.includes("setting_edit"))
                 button.btn-save-pane.btn-save-pane-lg(type="submit")

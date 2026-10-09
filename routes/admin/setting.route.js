@@ -23,6 +23,7 @@ router.patch(
     { name: "favicon", maxCount: 1 },
     { name: "heroImage", maxCount: 1 },
     { name: "promoBannerImage", maxCount: 1 },
+    { name: "bankQrCode", maxCount: 1 },
   ]),
   settingController.websiteInfoPatch,
 );
