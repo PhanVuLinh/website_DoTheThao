@@ -2,9 +2,9 @@ extends ../layouts/default.pug
 include ../mixins/product-item.pug
 
 block main
-  // ==========================================
-  // SECTION 1: HERO REVOLUTION (ĐẲNG CẤP THỂ THAO)
-  // ==========================================
+  //- ==========================================
+  //- 1. BANNER CHÍNH ĐẦU TRANG
+  //- ==========================================
   section.hero
     img.hero__img(src=(settingWebsiteInfo.heroImage ? settingWebsiteInfo.heroImage : "") alt=settingWebsiteInfo.websiteName)
     .hero__overlay
@@ -46,9 +46,9 @@ block main
             i.fa-solid.fa-arrow-rotate-left
             span Đổi Trả 30 Ngày
 
-  // ==========================================
-  // SECTION 2: TRUST & VALUE PROPOSITIONS
-  // ==========================================
+  //- ==========================================
+  //- 2. CHÍNH SÁCH & CAM KẾT VỚI KHÁCH HÀNG
+  //- ==========================================
   section.trust-features
     .trust-features__container
       .trust-grid
@@ -80,10 +80,9 @@ block main
             h4.trust-title #{settingWebsiteInfo && settingWebsiteInfo.trustBadge4_title ? settingWebsiteInfo.trustBadge4_title : "Tư Vấn Chuyên Nghiệp 24/7"}
             p.trust-desc #{settingWebsiteInfo && settingWebsiteInfo.trustBadge4_desc ? settingWebsiteInfo.trustBadge4_desc : "Đội ngũ am hiểu sâu về dụng cụ và giày thể thao chuyên dụng."}
 
-  // ==========================================
-  // ==========================================
-  // SECTION 3: VÍ VOUCHER KHUYẾN MÃI (SPORT PASSBOOK)
-  // ==========================================
+  //- ==========================================
+  //- 3. KHO VOUCHER KHUYẾN MÃI
+  //- ==========================================
   if couponList && couponList.length > 0
     section.voucher-vault#voucher-vault
       .voucher-vault__container
@@ -91,9 +90,9 @@ block main
           .section-header-left
             .section-tag
               i.fa-solid.fa-wallet
-              | VÍ ĐẶC QUYỀN HỘI VIÊN
-            h2.section-title Ví Voucher Khuyến Mãi
-            p.section-subtitle Thu thập thẻ ưu đãi độc quyền để nhận chiết khấu trực tiếp khi thanh toán đơn hàng.
+              | ƯU ĐÃI DÀNH CHO BẠN
+            h2.section-title Kho Voucher Giảm Giá
+            p.section-subtitle Thu thập mã ưu đãi để nhận giảm giá trực tiếp khi thanh toán đơn hàng.
           
           .section-header-right
             .voucher-vault__summary-pill
@@ -101,7 +100,7 @@ block main
               span #{couponList.length} Mã khả dụng
             button.btn-vault-hot-copy(type="button" data-code=couponList[0].code title="Sao chép ngay mã giảm giá cao nhất")
               i.fa-solid.fa-bolt
-              span Lấy mã HOT nhất
+              span Sao chép mã HOT nhất
 
         .voucher-grid
           each coupon, index in couponList
@@ -110,7 +109,7 @@ block main
                 .voucher-ticket__badge-row
                   span.voucher-ticket__brand
                     i.fa-solid.fa-medal
-                    | TITISPORT PASS
+                    | VOUCHER ƯU ĐÃI
                   span.voucher-ticket__pct -#{coupon.discountPercentage}%
                 
                 .voucher-ticket__hero
@@ -142,9 +141,9 @@ block main
                   i.fa-regular.fa-copy
                   span.copy-text Sao chép mã
 
-  // ==========================================
-  // SECTION 4: KHÁM PHÁ DANH MỤC THỂ THAO
-  // ==========================================
+  //- ==========================================
+  //- 4. KHÁM PHÁ DANH MỤC SẢN PHẨM
+  //- ==========================================
   section.categories
     .categories__container
       .section-header-center
@@ -165,19 +164,19 @@ block main
                 | Khám phá
                 i.fa-solid.fa-chevron-right
 
-  // ==========================================
-  // SECTION 5: FLASH DEALS (GIẢM GIÁ CỰC SỐC)
-  // ==========================================
+  //- ==========================================
+  //- 5. GIỜ VÀNG GIÁ SỐC (FLASH SALE)
+  //- ==========================================
   if productListSection3 && productListSection3.length > 0
     section.flash-deals
       .flash-deals__container
         .flash-promo
           .flash-promo__badge
             span.live-pulse-dot
-            | FLASH SALE • LIVE
+            | GIỜ VÀNG GIÁ SỐC
           h2.flash-promo__title-new
-            span.title-sub ĐẶC QUYỀN HÔM NAY
-            span.title-main SĂN DEAL CHỚP NHOÁNG
+            span.title-sub ƯU ĐÃI CÓ HẠN
+            span.title-main SĂN HÀNG GIÁ TỐT
           p.flash-promo__desc Giày thi đấu & trang bị thể thao tuyển chọn giảm sâu số lượng có hạn.
           
           .flash-promo__timer-wrapper
@@ -198,7 +197,7 @@ block main
                 span.label GIÂY
 
           a.flash-promo__btn(href="/product")
-            span Khám Phá Tất Cả Deals
+            span Xem Tất Cả Khuyến Mãi
             i.fa-solid.fa-arrow-right
 
         .flash-products-wrapper
@@ -264,29 +263,29 @@ block main
                       i.fa-solid.fa-cart-shopping
                       span Mua ngay
 
-  // ==========================================
-  // SECTION 6: INTERACTIVE SPORTS HUB (TABS THEO BỘ MÔN)
-  // ==========================================
+  //- ==========================================
+  //- 6. SẢN PHẨM THEO BỘ MÔN THỂ THAO
+  //- ==========================================
   section.sports-hub-section
     .sports-hub-container
       .section-header-wrap
         .section-header-left
           .section-tag
             i.fa-solid.fa-medal
-            | TRANG BỊ ĐỈNH CAO
+            | BỘ SƯU TẬP CHÍNH HÃNG
           h2.section-title Sản Phẩm Theo Bộ Môn
-          p.section-subtitle Lựa chọn dụng cụ và phụ kiện phù hợp nhất cho môn thể thao yêu thích của bạn.
+          p.section-subtitle Lựa chọn trang phục và phụ kiện phù hợp nhất cho môn thể thao yêu thích của bạn.
         
         .sports-hub-tabs(sports-hub-tabs)
           button.hub-tab-btn.is-active(type="button" data-tab-target="tab-featured")
             i.fa-solid.fa-fire
-            | Nổi Bật Nhất
+            | Sản Phẩm Nổi Bật
           button.hub-tab-btn(type="button" data-tab-target="tab-football")
             i.fa-solid.fa-futbol
-            | Bóng Đá Pro
+            | Bóng Đá
           button.hub-tab-btn(type="button" data-tab-target="tab-volleyball")
             i.fa-solid.fa-volleyball
-            | Bóng Chuyền Star
+            | Bóng Chuyền
           button.hub-tab-btn(type="button" data-tab-target="tab-newest")
             i.fa-solid.fa-bolt
             | Hàng Mới Về
@@ -334,9 +333,9 @@ block main
           | Xem Toàn Bộ Sản Phẩm
           i.fa-solid.fa-arrow-right-long
 
-  // ==========================================
-  // SECTION 7: PROMO BANNER CINEMATIC (ẢNH TỪ DATABASE)
-  // ==========================================
+  //- ==========================================
+  //- 7. BANNER QUẢNG CÁO KHUYẾN MÃI
+  //- ==========================================
   if settingWebsiteInfo && (settingWebsiteInfo.promoBannerImage || settingWebsiteInfo.promoBannerTitle)
     section.banner-promo
       .banner-promo__container
@@ -349,9 +348,9 @@ block main
                 i.fa-solid.fa-star
                 span #{settingWebsiteInfo.promoBannerTitle} #{settingWebsiteInfo.promoBannerSubtitle ? ' - ' + settingWebsiteInfo.promoBannerSubtitle : ''}
 
-  // ==========================================
-  // SECTION 8: CẢM NHẬN KHÁCH HÀNG & CỘNG ĐỒNG THỂ THAO
-  // ==========================================
+  //- ==========================================
+  //- 8. ĐÁNH GIÁ TỪ KHÁCH HÀNG
+  //- ==========================================
   section.testimonials-section
     .testimonials-container
       .section-header-center
@@ -407,9 +406,9 @@ block main
               strong.author-name Lê Quang Minh
               span.author-tag Runner & GYM Enthusiast (Đã mua Áo Nike Dri-FIT)
 
-  // ==========================================
-  // SECTION 9: TIN TỨC THỂ THAO & HƯỚNG DẪN TẬP LUYỆN (TỪ DB)
-  // ==========================================
+  //- ==========================================
+  //- 9. BÀI VIẾT & KINH NGHIỆM THỂ THAO
+  //- ==========================================
   if articleListSection9 && articleListSection9.length > 0 || newsCenter
     section.news-section
       .news-section__container
@@ -465,9 +464,9 @@ block main
                       |  #{item.createdAtFormat}
                     h4.title= item.title
 
-  // ==========================================
-  // SECTION 10: THƯƠNG HIỆU THỂ THAO HÀNG ĐẦU (OFFICIAL BRANDS)
-  // ==========================================
+  //- ==========================================
+  //- 10. THƯƠNG HIỆU ĐỐI TÁC CHÍNH HÃNG
+  //- ==========================================
   section.brands-section
     .brands-container
       .section-header-center
@@ -602,9 +601,9 @@ block main
             if settingWebsiteInfo.logo
               img.brand-card__logo-img(src=settingWebsiteInfo.logo alt=settingWebsiteInfo.websiteName loading="lazy")
             else
-              i.fa-solid.fa-shield-halved(style="font-size: 32px; color: var(--red-main);")
+              i.fa-solid.fa-shield-halved.brand-card__fallback-icon
           h4.brand-card__name #{settingWebsiteInfo.websiteName || 'TITISPORT'} PRO
-          span.brand-card__tagline Official Store
+          span.brand-card__tagline Gian Hàng Chính Hãng
           span.brand-spec-pill
             i.fa-solid.fa-fire-flame-curved
             | Dụng Cụ & Phụ Kiện
@@ -612,7 +611,7 @@ block main
           .brand-card__footer
             span.brand-card__badge.badge-vip
               i.fa-solid.fa-star
-              | Gian Hàng Độc Quyền
+              | Độc Quyền
             span.brand-view-link
-              | Xem Toàn Bộ Kho
+              | Xem Sản Phẩm
               i.fa-solid.fa-arrow-right

@@ -17,7 +17,7 @@ footer.footer
           if settingWebsiteInfo && settingWebsiteInfo.logo
             img(src=settingWebsiteInfo.logo, alt=(settingWebsiteInfo.websiteName || "Logo"))
           else
-            span.logo-fallback(style="font-size: 24px; font-weight: 800; color: #fff;") #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
+            span.footer-logo-fallback #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
         p #{settingWebsiteInfo && settingWebsiteInfo.aboutShort ? settingWebsiteInfo.aboutShort : (settingWebsiteInfo && settingWebsiteInfo.slogan ? settingWebsiteInfo.slogan : "Điểm đến số 1 cho những người đam mê thể thao. Cam kết hàng chính hãng 100%, chất lượng đỉnh cao, dịch vụ tận tâm.")}
         
         div(class="footer__social")
@@ -73,4 +73,4 @@ footer.footer
     div(class="footer__bottom-inner")
       p #{settingWebsiteInfo && settingWebsiteInfo.copyright ? settingWebsiteInfo.copyright : `© ${new Date().getFullYear()} ${settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}. All rights reserved.`}
       if settingWebsiteInfo && settingWebsiteInfo.businessLicense
-        p(style="font-size: 11px; color: #94a3b8; margin-top: 4px;") #{settingWebsiteInfo.businessLicense}
+        p.footer-business-license #{settingWebsiteInfo.businessLicense}

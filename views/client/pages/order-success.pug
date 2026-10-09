@@ -5,7 +5,7 @@ block main
   +alert-success(3000)
   .cart-page
     .container
-      .success-wrapper
+      .success-wrapper(data-order-id=(orderDetail.id || orderDetail._id))
         .success-hero
           .success-icon-wrap
             i.fa-solid.fa-check
@@ -121,37 +121,10 @@ block main
                   .product-price
                     strong.price-red #{item.priceNewQuantity.toLocaleString('vi-VN')} đ
         .success-actions
-          a.btn-submit-cart(href="/" style="width: auto; padding: 12px 35px; border-radius: 50px;") 
+          a.btn-submit-cart.btn-continue-shopping(href="/") 
             | Tiếp tục mua sắm
-          button.btn-print-invoice(onclick="window.print()" style="margin-left: 12px; background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 12px 24px; border-radius: 50px; font-weight: 600; cursor: pointer;")
-            i.fa-solid.fa-print(style="margin-right: 6px;")
+          button.btn-print-invoice(onclick="window.print()")
+            i.fa-solid.fa-print
             | In hóa đơn
 
-    script.
-      document.addEventListener("DOMContentLoaded", function () {
-        if (typeof io !== "undefined") {
-          const socket = io();
-          const currentOrderId = "#{orderDetail.id}";
-          
-          socket.emit("JOIN_ORDER_ROOM", currentOrderId);
-
-          socket.on("SERVER_UPDATE_ORDER_STATUS", function (data) {
-            if (data.orderId === currentOrderId) {
-              if (typeof Swal !== "undefined") {
-                Swal.fire({
-                  icon: "info",
-                  title: "Trạng thái đơn hàng cập nhật!",
-                  text: "Đơn hàng #" + data.orderCode + " đã chuyển sang: " + data.statusName,
-                  toast: true,
-                  position: "top-end",
-                  timer: 5000,
-                  showConfirmButton: false,
-                });
-              }
-              setTimeout(() => {
-                window.location.reload();
-              }, 1200);
-            }
-          });
-        }
-      });
+    script(src="/client/assets/js/order-success.js")

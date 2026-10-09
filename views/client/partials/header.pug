@@ -29,7 +29,7 @@ nav.navbar
       if settingWebsiteInfo && settingWebsiteInfo.logo
         img.logo__img(src=settingWebsiteInfo.logo, alt=(settingWebsiteInfo.websiteName || "Logo"))
       else
-        span(style="font-weight: 800; font-size: 20px; color: #0f172a; text-transform: uppercase;") #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
+        span.logo__text-fallback #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
 
     .mobile-overlay
 
