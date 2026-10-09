@@ -19,8 +19,8 @@ block main
         p.hero__description #{settingWebsiteInfo.heroDescription || "Trải nghiệm đẳng cấp với bộ sưu tập thể thao chính hãng mới nhất. Chất lượng vượt trội, thiết kế tối ưu cho mọi chuyển động."}
         
         .hero__cta-group
-          a.btn-hero-primary(href="/product")
-            | Khám Phá Ngay
+          a.btn-hero-primary(href=(settingWebsiteInfo && settingWebsiteInfo.heroBtnLink ? settingWebsiteInfo.heroBtnLink : "/product"))
+            | #{settingWebsiteInfo && settingWebsiteInfo.heroBtnText ? settingWebsiteInfo.heroBtnText : "Khám Phá Ngay"}
             i.fa-solid.fa-arrow-right
           if couponList && couponList.length > 0
             a.btn-hero-secondary(href="#voucher-vault")
@@ -56,29 +56,29 @@ block main
           .trust-icon.trust-icon--speed
             i.fa-solid.fa-truck-fast
           .trust-info
-            h4.trust-title Giao Hàng Hỏa Tốc 2H
-            p.trust-desc Nhận hàng ngay trong ngày, hỗ trợ kiểm tra hàng trước khi thanh toán.
+            h4.trust-title #{settingWebsiteInfo && settingWebsiteInfo.trustBadge1_title ? settingWebsiteInfo.trustBadge1_title : "Giao Hàng Hỏa Tốc 2H"}
+            p.trust-desc #{settingWebsiteInfo && settingWebsiteInfo.trustBadge1_desc ? settingWebsiteInfo.trustBadge1_desc : "Nhận hàng ngay trong ngày, hỗ trợ kiểm tra hàng trước khi thanh toán."}
         
         .trust-card
           .trust-icon.trust-icon--shield
             i.fa-solid.fa-shield-halved
           .trust-info
-            h4.trust-title 100% Hàng Chính Hãng
-            p.trust-desc Cam kết chất lượng quốc tế, đền bù gấp 10 lần nếu phát hiện hàng nhái.
+            h4.trust-title #{settingWebsiteInfo && settingWebsiteInfo.trustBadge2_title ? settingWebsiteInfo.trustBadge2_title : "100% Hàng Chính Hãng"}
+            p.trust-desc #{settingWebsiteInfo && settingWebsiteInfo.trustBadge2_desc ? settingWebsiteInfo.trustBadge2_desc : "Cam kết chất lượng quốc tế, đền bù gấp 10 lần nếu phát hiện hàng nhái."}
         
         .trust-card
           .trust-icon.trust-icon--return
             i.fa-solid.fa-arrow-rotate-left
           .trust-info
-            h4.trust-title Đổi Trả Miễn Phí 30 Ngày
-            p.trust-desc Hỗ trợ đổi size linh hoạt tận nơi, thủ tục đơn giản trong 1 phút.
+            h4.trust-title #{settingWebsiteInfo && settingWebsiteInfo.trustBadge3_title ? settingWebsiteInfo.trustBadge3_title : "Đổi Trả Miễn Phí 30 Ngày"}
+            p.trust-desc #{settingWebsiteInfo && settingWebsiteInfo.trustBadge3_desc ? settingWebsiteInfo.trustBadge3_desc : "Hỗ trợ đổi size linh hoạt tận nơi, thủ tục đơn giản trong 1 phút."}
         
         .trust-card
           .trust-icon.trust-icon--support
             i.fa-solid.fa-headset
           .trust-info
-            h4.trust-title Tư Vấn Chuyên Nghiệp 24/7
-            p.trust-desc Đội ngũ am hiểu sâu về dụng cụ và giày thể thao chuyên dụng.
+            h4.trust-title #{settingWebsiteInfo && settingWebsiteInfo.trustBadge4_title ? settingWebsiteInfo.trustBadge4_title : "Tư Vấn Chuyên Nghiệp 24/7"}
+            p.trust-desc #{settingWebsiteInfo && settingWebsiteInfo.trustBadge4_desc ? settingWebsiteInfo.trustBadge4_desc : "Đội ngũ am hiểu sâu về dụng cụ và giày thể thao chuyên dụng."}
 
   // ==========================================
   // ==========================================
@@ -337,15 +337,17 @@ block main
   // ==========================================
   // SECTION 7: PROMO BANNER CINEMATIC (ẢNH TỪ DATABASE)
   // ==========================================
-  if settingWebsiteInfo && settingWebsiteInfo.promoBannerImage
+  if settingWebsiteInfo && (settingWebsiteInfo.promoBannerImage || settingWebsiteInfo.promoBannerTitle)
     section.banner-promo
       .banner-promo__container
         .banner-promo__inner
-          a.banner-promo__link(href="/product")
-            img(src=settingWebsiteInfo.promoBannerImage alt="Banner Khuyến Mãi Đặc Biệt" loading="lazy")
-            .banner-promo__glass-tag
-              i.fa-solid.fa-star
-              span Bộ Sưu Tập Giày Thi Đấu Mùa Giải 2026 - Giảm Đến 30%
+          a.banner-promo__link(href=(settingWebsiteInfo.promoBannerLink || "/product"))
+            if settingWebsiteInfo.promoBannerImage
+              img(src=settingWebsiteInfo.promoBannerImage alt=(settingWebsiteInfo.promoBannerTitle || "Banner Khuyến Mãi Đặc Biệt") loading="lazy")
+            if settingWebsiteInfo.promoBannerTitle
+              .banner-promo__glass-tag
+                i.fa-solid.fa-star
+                span #{settingWebsiteInfo.promoBannerTitle} #{settingWebsiteInfo.promoBannerSubtitle ? ' - ' + settingWebsiteInfo.promoBannerSubtitle : ''}
 
   // ==========================================
   // SECTION 8: CẢM NHẬN KHÁCH HÀNG & CỘNG ĐỒNG THỂ THAO

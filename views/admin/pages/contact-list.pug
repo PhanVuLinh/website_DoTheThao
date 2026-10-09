@@ -9,7 +9,7 @@ block main
     +alert-success(3000)
     +alert-error(3000)
     
-    h1.page-title Quản lý Email Đăng Ký
+    h1.page-title Quản lý Liên Hệ & Khách Hàng Tư Vấn
     .filter-action-card
       .filter-row
         .filter-label
@@ -50,10 +50,12 @@ block main
             tr
               th.text-center(width="50px")
                 input(type="checkbox" check-all)
-              th Email đăng ký
-              th Ngày đăng ký
+              th(width="180px") Khách hàng
+              th(width="200px") Email
+              th Nội dung / Lời nhắn
+              th(width="150px") Ngày gửi
               if(role && role.permissions && role.permissions.includes("contact_delete"))
-                th Hành động
+                th.text-center(width="100px") Hành động
           
           tbody
             if contactList && contactList.length > 0
@@ -61,18 +63,32 @@ block main
                 tr
                   td.text-center
                     input(type="checkbox" value=item.id name="id" check-item)
+                  td
+                    if item.fullName
+                      div(style="font-weight: 600; color: #0f172a;") #{item.fullName}
+                      if item.phone
+                        div(style="font-size: 12px; color: #64748b;")
+                          i.fa-solid.fa-phone(style="font-size: 11px; margin-right: 4px;")
+                          | #{item.phone}
+                    else
+                      span.badge.badge-info(style="font-size: 11px;") Bản tin ưu đãi
                   td.font-weight-600 #{item.email}
+                  td
+                    if item.content
+                      p(style="margin: 0; font-size: 13px; color: #334155; line-height: 1.4; max-width: 400px;") #{item.content}
+                    else
+                      span.text-muted(style="font-size: 12px; font-style: italic;") Đăng ký nhận bản tin khuyến mãi
                   td
                     .user-date
                       span.time #{item.createdAtFormat}
                   if(role && role.permissions && role.permissions.includes("contact_delete"))
-                    td
-                      .action-btns
-                        button.btn-delete(button-delete data-id=item.id title="Xóa email này")
+                    td.text-center
+                      .action-btns(style="justify-content: center;")
+                        button.btn-delete(button-delete data-id=item.id title="Xóa liên hệ này")
                           i.fa-regular.fa-trash-can
             else 
               tr
-                td(colspan="4")
+                td(colspan="6")
                   .admin-empty-state
                     .empty-icon
                       i.fa-solid.fa-envelope-open-text

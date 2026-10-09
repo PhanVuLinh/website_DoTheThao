@@ -15,7 +15,12 @@ module.exports.list = async (req, res) => {
     const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
     const regexKeyword = new RegExp(keyword, "i");
 
-    find.$or = [{ email: regexKeyword }];
+    find.$or = [
+      { email: regexKeyword },
+      { fullName: regexKeyword },
+      { phone: regexKeyword },
+      { content: regexKeyword },
+    ];
   }
   //lọc theo ngày tạo
   const dateFilter = {};

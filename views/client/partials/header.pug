@@ -1,19 +1,24 @@
 .top-bar
   .top-bar__inner
-    if(settingWebsiteInfo.phone)
+    if(settingWebsiteInfo && (settingWebsiteInfo.hotline || settingWebsiteInfo.phone))
       .top-bar__item
         i.fa-solid.fa-phone
-        | #{settingWebsiteInfo.phone}
+        | #{settingWebsiteInfo.hotline || settingWebsiteInfo.phone}
 
-    if(settingWebsiteInfo.email)
+    if(settingWebsiteInfo && settingWebsiteInfo.email)
       .top-bar__item
         i.fa-solid.fa-envelope
         | #{settingWebsiteInfo.email}
   
-    if(settingWebsiteInfo.address)
+    if(settingWebsiteInfo && settingWebsiteInfo.address)
       .top-bar__item
         i.fa-solid.fa-location-dot
         | #{settingWebsiteInfo.address}
+
+    if(settingWebsiteInfo && settingWebsiteInfo.workingHours)
+      .top-bar__item
+        i.fa-regular.fa-clock
+        | #{settingWebsiteInfo.workingHours}
 
 nav.navbar
   .navbar__inner
@@ -21,7 +26,10 @@ nav.navbar
       i.fa-solid.fa-bars
 
     a.logo(href="/")
-      img.logo__img(src=settingWebsiteInfo.logo, alt=settingWebsiteInfo.websiteName)
+      if settingWebsiteInfo && settingWebsiteInfo.logo
+        img.logo__img(src=settingWebsiteInfo.logo, alt=(settingWebsiteInfo.websiteName || "Logo"))
+      else
+        span(style="font-weight: 800; font-size: 20px; color: #0f172a; text-transform: uppercase;") #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
 
     .mobile-overlay
 
@@ -47,8 +55,8 @@ nav.navbar
         li
           a(href="/article") Tin Tức
           
-        //- li
-        //-   a(href="") Liên Hệ
+        li
+          a(href="/contact") Liên Hệ
 
     .nav-actions
       button.action-btn.search-toggle-btn(type="button" title="Tìm kiếm sản phẩm" aria-label="Mở tìm kiếm")

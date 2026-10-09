@@ -451,34 +451,35 @@ module.exports.trash = async (req, res) => {
             item.priceNewQuantity = (item.priceNew || 0) * (item.quantity || 1);
           }
         }
-      order.id = (order._id || "").toString();
-      order.subtotal = order.subtotal || 0;
-      order.discount = order.discount || 0;
-      order.total = order.total || 0;
+        order.id = (order._id || "").toString();
+        order.subtotal = order.subtotal || 0;
+        order.discount = order.discount || 0;
+        order.total = order.total || 0;
 
-      if (order.deletedBy) {
-        const infoAccountDeleted = accountMap[order.deletedBy?.toString()];
-        order.deletedByFullName = infoAccountDeleted?.fullName;
+        if (order.deletedBy) {
+          const infoAccountDeleted = accountMap[order.deletedBy?.toString()];
+          order.deletedByFullName = infoAccountDeleted?.fullName;
+        }
+
+        const pMethod = variableCongfig.paymentMethod.find(
+          (item) => item.value === order.paymentMethod,
+        );
+        order.paymentMethodName = pMethod?.label || order.paymentMethod;
+
+        const pStatus = variableCongfig.paymentStatus.find(
+          (item) => item.value === order.paymentStatus,
+        );
+        order.paymentStatusName = pStatus?.label || order.paymentStatus;
+
+        const oStatus = variableCongfig.orderStatus.find(
+          (item) => item.value === order.status,
+        );
+        order.statusName = oStatus?.label || order.status;
+
+        order.deletedAtFormat = moment(order.deletedAt).format(
+          "HH:mm - DD/MM/YYYY",
+        );
       }
-
-      const pMethod = variableCongfig.paymentMethod.find(
-        (item) => item.value === order.paymentMethod,
-      );
-      order.paymentMethodName = pMethod?.label || order.paymentMethod;
-
-      const pStatus = variableCongfig.paymentStatus.find(
-        (item) => item.value === order.paymentStatus,
-      );
-      order.paymentStatusName = pStatus?.label || order.paymentStatus;
-
-      const oStatus = variableCongfig.orderStatus.find(
-        (item) => item.value === order.status,
-      );
-      order.statusName = oStatus?.label || order.status;
-
-      order.deletedAtFormat = moment(order.deletedAt).format(
-        "HH:mm - DD/MM/YYYY",
-      );
     }
 
     res.render("admin/pages/order-trash.pug", {
@@ -557,4 +558,3 @@ module.exports.changeMultiTrash = async (req, res) => {
     res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/trash`);
   }
 };
-

@@ -3,9 +3,20 @@ html(lang="vi")
   head 
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    title #{title }
+    title #{title ? title : (settingWebsiteInfo && settingWebsiteInfo.metaTitle ? settingWebsiteInfo.metaTitle : (settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName + ' - Đồ Thể Thao Chính Hãng' : 'SportStore'))}
 
-    if(settingWebsiteInfo.favicon)
+    if(settingWebsiteInfo && settingWebsiteInfo.metaDescription)
+      meta(name="description" content=settingWebsiteInfo.metaDescription)
+    if(settingWebsiteInfo && settingWebsiteInfo.metaKeywords)
+      meta(name="keywords" content=settingWebsiteInfo.metaKeywords)
+    
+    meta(property="og:title" content=(title || (settingWebsiteInfo && settingWebsiteInfo.metaTitle) || (settingWebsiteInfo && settingWebsiteInfo.websiteName) || "SportStore"))
+    if(settingWebsiteInfo && settingWebsiteInfo.metaDescription)
+      meta(property="og:description" content=settingWebsiteInfo.metaDescription)
+    if(settingWebsiteInfo && settingWebsiteInfo.logo)
+      meta(property="og:image" content=settingWebsiteInfo.logo)
+
+    if(settingWebsiteInfo && settingWebsiteInfo.favicon)
       link(rel="icon" type="image/x-icon" href=settingWebsiteInfo.favicon)
 
     link(rel="preconnect" href="https://fonts.googleapis.com")
