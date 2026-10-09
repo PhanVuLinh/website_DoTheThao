@@ -7,6 +7,7 @@ const Product = require("../../models/product.model");
 const Order = require("../../models/order.model");
 const User = require("../../models/user.model");
 const Coupon = require("../../models/coupon.model");
+const SettingWebsiteInfo = require("../../models/setting-website-info.model");
 
 const generateHelper = require("../../helpers/generate.helper");
 const variableCongfig = require("../../config/variable");
@@ -165,7 +166,32 @@ module.exports.createPost = async (req, res) => {
       }
     }
 
-    // 4. Lưu đơn hàng
+    // 4. Tính phí vận chuyển và kiểm tra phương thức thanh toán theo cấu hình Admin
+    const websiteInfo = await SettingWebsiteInfo.findOne({});
+    const standardShipping = (websiteInfo && websiteInfo.shippingFee !== undefined) ? websiteInfo.shippingFee : 30000;
+    const freeThreshold = (websiteInfo && websiteInfo.freeShippingThreshold !== undefined) ? websiteInfo.freeShippingThreshold : 500000;
+    const subtotalAfterDiscount = Math.max(0, subtotalValue - discountValue);
+    const shippingFee = subtotalAfterDiscount >= freeThreshold ? 0 : standardShipping;
+
+    const paymentMethod = req.body.paymentMethod;
+    if (paymentMethod === "cod" && websiteInfo && websiteInfo.paymentCodActive === false) {
+      req.flash("error", "Phương thức thanh toán COD hiện đang tạm dừng!");
+      return res.redirect("/cart");
+    }
+    if (paymentMethod === "zaloPay" && websiteInfo && websiteInfo.paymentZaloPayActive === false) {
+      req.flash("error", "Phương thức thanh toán ZaloPay hiện đang tạm dừng!");
+      return res.redirect("/cart");
+    }
+    if (paymentMethod === "vnPay" && websiteInfo && websiteInfo.paymentVnPayActive === false) {
+      req.flash("error", "Cổng thanh toán VNPay hiện đang tạm dừng!");
+      return res.redirect("/cart");
+    }
+    if (paymentMethod === "bank" && websiteInfo && websiteInfo.paymentBankActive === false) {
+      req.flash("error", "Phương thức chuyển khoản ngân hàng hiện đang tạm dừng!");
+      return res.redirect("/cart");
+    }
+
+    // Lưu đơn hàng
     req.body.user_id = user.id;
     req.body.email = req.body.email || user.email;
     req.body.orderCode = "DH" + generateHelper.generateOrderCode(10);
@@ -173,7 +199,8 @@ module.exports.createPost = async (req, res) => {
     req.body.products = products;
     req.body.subtotal = subtotalValue;
     req.body.discount = discountValue;
-    req.body.total = Math.max(0, subtotalValue - discountValue);
+    req.body.shippingFee = shippingFee;
+    req.body.total = Math.max(0, subtotalAfterDiscount + shippingFee);
     req.body.paymentStatus = "unpaid";
     req.body.status = "initial";
 
@@ -183,6 +210,7 @@ module.exports.createPost = async (req, res) => {
     // 5. Điều hướng theo phương thức thanh toán
     switch (req.body.paymentMethod) {
       case "cod":
+      case "bank":
         await Cart.updateOne(
           { _id: cartId },
           { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
@@ -196,7 +224,7 @@ module.exports.createPost = async (req, res) => {
             fullName: newOrder.fullName,
             total: newOrder.total,
             createdAt: moment(newOrder.createdAt).format("HH:mm - DD/MM/YYYY"),
-            paymentMethod: "cod",
+            paymentMethod: req.body.paymentMethod,
           });
         }
 
@@ -205,7 +233,11 @@ module.exports.createPost = async (req, res) => {
           .sendOrderConfirmationEmail(newOrder, products)
           .catch((err) => console.error("Gửi email thất bại:", err));
 
-        req.flash("success", "Đặt hàng thành công!");
+        if (req.body.paymentMethod === "bank") {
+          req.flash("success", "Đặt hàng thành công! Quý khách vui lòng chuyển khoản theo thông tin thanh toán.");
+        } else {
+          req.flash("success", "Đặt hàng thành công!");
+        }
         return res.redirect(`/order/success/${newOrder.id}`);
 
       case "zaloPay":
@@ -215,10 +247,9 @@ module.exports.createPost = async (req, res) => {
         return res.redirect(`/order/payment-vnpay/${newOrder.id}`);
 
       case "momo":
-      case "bank":
         req.flash(
           "error",
-          "Phương thức thanh toán này hiện chưa hỗ trợ trực tuyến, vui lòng chọn COD, ZaloPay hoặc VNPay!",
+          "Cổng MoMo hiện đang bảo trì, vui lòng chọn COD, ZaloPay, VNPay hoặc Chuyển khoản ngân hàng!",
         );
         return res.redirect("/cart");
 

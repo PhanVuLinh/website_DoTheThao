@@ -208,16 +208,22 @@ block main
               .trust-badges
                 .trust-item
                   .icon-box
-                    i.fa-solid.fa-shield-halved
-                  span Cam kết 100% chính hãng
+                    i.fa-solid.fa-truck-fast
+                  span= (settingWebsiteInfo && settingWebsiteInfo.trustBadge1_title) ? settingWebsiteInfo.trustBadge1_title : "Giao hàng hỏa tốc trong 2H"
+                
+                .trust-item
+                  .icon-box
+                    i.fa-solid.fa-certificate
+                  span= (settingWebsiteInfo && settingWebsiteInfo.trustBadge2_title) ? settingWebsiteInfo.trustBadge2_title : "100% Hàng chính hãng"
                 
                 .trust-item
                   .icon-box
                     i.fa-solid.fa-rotate-left
-                  span Đổi trả miễn phí trong 7 ngày
-                
-                .trust-item
-                  .icon-box
-                    i.fa-solid.fa-truck-fast
-                  span Miễn phí vận chuyển toàn quốc
+                  span= (settingWebsiteInfo && settingWebsiteInfo.trustBadge3_title) ? settingWebsiteInfo.trustBadge3_title : "Đổi trả miễn phí 30 ngày"
+
+                if settingWebsiteInfo && settingWebsiteInfo.trustBadge4_title
+                  .trust-item
+                    .icon-box
+                      i.fa-solid.fa-headset
+                    span= settingWebsiteInfo.trustBadge4_title
 

@@ -44,7 +44,8 @@ module.exports.cart = async (req, res) => {
     );
 
     cart.discountAmount = 0;
-    cart.totalPayment = cart.totalPrice;
+    let subtotalAfterDiscount = cart.totalPrice;
+
     if (cart.coupon && cart.coupon.code) {
       const couponInfo = await Coupon.findOne({
         code: cart.coupon.code,
@@ -62,7 +63,7 @@ module.exports.cart = async (req, res) => {
           discount = couponInfo.maxDiscountAmount;
         }
         cart.discountAmount = discount;
-        cart.totalPayment = Math.max(0, cart.totalPrice - discount);
+        subtotalAfterDiscount = Math.max(0, cart.totalPrice - discount);
         cart.couponInfo = couponInfo;
       } else {
         // Xóa mã nếu hết hạn hoặc không còn hiệu lực
@@ -73,6 +74,19 @@ module.exports.cart = async (req, res) => {
         cart.coupon.code = "";
       }
     }
+
+    // Tính phí vận chuyển theo cấu hình Admin (Setting Website)
+    const settingInfo = res.locals.settingWebsiteInfo || {};
+    const standardShipping = settingInfo.shippingFee !== undefined ? settingInfo.shippingFee : 30000;
+    const freeThreshold = settingInfo.freeShippingThreshold !== undefined ? settingInfo.freeShippingThreshold : 500000;
+
+    const isFreeShipping = cart.totalPrice > 0 && subtotalAfterDiscount >= freeThreshold;
+    const shippingFee = cart.totalPrice > 0 ? (isFreeShipping ? 0 : standardShipping) : 0;
+
+    cart.shippingFee = shippingFee;
+    cart.isFreeShipping = isFreeShipping;
+    cart.freeShippingThreshold = freeThreshold;
+    cart.totalPayment = subtotalAfterDiscount + shippingFee;
 
     res.render("client/pages/cart.pug", {
       title: "Giỏ hàng",

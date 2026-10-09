@@ -96,7 +96,19 @@ block main
                 
                 .summary-row
                   span.label Phí giao hàng:
-                  span.value.text-freeship Miễn phí
+                  if cartDetail.isFreeShipping
+                    span.value.text-freeship#shipping-val(data-fee="0") Miễn phí
+                  else
+                    span.value.text-shipping#shipping-val(data-fee=(cartDetail.shippingFee || 30000)) #{cartDetail.shippingFee ? cartDetail.shippingFee.toLocaleString('vi-VN') : 0} đ
+
+                input#shipping-fee-raw(type="hidden" value=(cartDetail.shippingFee || 0))
+                input#free-threshold-raw(type="hidden" value=(cartDetail.freeShippingThreshold || 500000))
+                input#standard-shipping-raw(type="hidden" value=(settingWebsiteInfo && settingWebsiteInfo.shippingFee !== undefined ? settingWebsiteInfo.shippingFee : 30000))
+
+                if !cartDetail.isFreeShipping && cartDetail.freeShippingThreshold && cartDetail.totalPrice > 0
+                  .freeship-hint-box
+                    i.fa-solid.fa-truck-fast
+                    span Mua thêm #{((cartDetail.freeShippingThreshold - (cartDetail.totalPrice - cartDetail.discountAmount))).toLocaleString('vi-VN')} đ để được <strong>Miễn phí vận chuyển</strong>!
                 
                 .summary-divider
                 
@@ -128,41 +140,55 @@ block main
                   .payment-methods-section
                     h4.payment-label Phương thức thanh toán
                     .payment-grid
-                      label.payment-card
-                        input(type="radio" name="paymentMethod" value="cod" checked)
-                        .payment-card__content
-                          .payment-icon
-                            i.fa-solid.fa-money-bill-wave
-                          .payment-text
-                            strong Thanh toán khi nhận hàng (COD)
-                            span Nhận hàng kiểm tra rồi mới thanh toán
+                      if settingWebsiteInfo.paymentCodActive !== false
+                        label.payment-card
+                          input(type="radio" name="paymentMethod" value="cod" checked)
+                          .payment-card__content
+                            .payment-icon
+                              i.fa-solid.fa-money-bill-wave
+                            .payment-text
+                              strong Thanh toán khi nhận hàng (COD)
+                              span Nhận hàng kiểm tra rồi mới thanh toán
                       
-                      label.payment-card
-                        input(type="radio" name="paymentMethod" value="zaloPay" checked=(oldData.paymentMethod === "zaloPay"))
-                        .payment-card__content
-                          .payment-icon.icon-zalopay
-                            i.fa-solid.fa-wallet
-                          .payment-text
-                            strong Ví điện tử ZaloPay
-                            span Quét mã QR tiện lợi & an toàn
+                      if settingWebsiteInfo.paymentZaloPayActive !== false
+                        label.payment-card
+                          input(type="radio" name="paymentMethod" value="zaloPay" checked=(oldData.paymentMethod === "zaloPay" || (settingWebsiteInfo.paymentCodActive === false)))
+                          .payment-card__content
+                            .payment-icon.icon-zalopay
+                              i.fa-solid.fa-wallet
+                            .payment-text
+                              strong Ví điện tử ZaloPay
+                              span Quét mã QR tiện lợi & an toàn
                       
-                      label.payment-card
-                        input(type="radio" name="paymentMethod" value="vnPay" checked=(oldData.paymentMethod === "vnPay"))
-                        .payment-card__content
-                          .payment-icon.icon-vnpay
-                            i.fa-solid.fa-qrcode
-                          .payment-text
-                            strong Cổng VNPay / QR Code
-                            span Hỗ trợ tất cả ứng dụng ngân hàng
-                      
-                      label.payment-card
-                        input(type="radio" name="paymentMethod" value="momo" checked=(oldData.paymentMethod === "momo"))
-                        .payment-card__content
-                          .payment-icon.icon-momo
-                            i.fa-solid.fa-mobile-screen-button
-                          .payment-text
-                            strong Ví MoMo
-                            span Thanh toán tức thì qua ứng dụng MoMo
+                      if settingWebsiteInfo.paymentVnPayActive !== false
+                        label.payment-card
+                          input(type="radio" name="paymentMethod" value="vnPay" checked=(oldData.paymentMethod === "vnPay"))
+                          .payment-card__content
+                            .payment-icon.icon-vnpay
+                              i.fa-solid.fa-qrcode
+                            .payment-text
+                              strong Cổng VNPay / QR Code
+                              span Hỗ trợ tất cả ứng dụng ngân hàng
+
+                      if settingWebsiteInfo.paymentBankActive !== false
+                        label.payment-card
+                          input(type="radio" name="paymentMethod" value="bank" checked=(oldData.paymentMethod === "bank"))
+                          .payment-card__content
+                            .payment-icon.icon-bank
+                              i.fa-solid.fa-building-columns
+                            .payment-text
+                              strong Chuyển khoản ngân hàng
+                              span Nhận STK và mã QR thanh toán sau khi đặt
+
+                      if settingWebsiteInfo.paymentMomoActive === true
+                        label.payment-card
+                          input(type="radio" name="paymentMethod" value="momo" checked=(oldData.paymentMethod === "momo"))
+                          .payment-card__content
+                            .payment-icon.icon-momo
+                              i.fa-solid.fa-mobile-screen-button
+                            .payment-text
+                              strong Ví MoMo
+                              span Thanh toán tức thì qua ứng dụng MoMo
 
                   button.btn-submit-order(type="submit")
                     i.fa-solid.fa-lock

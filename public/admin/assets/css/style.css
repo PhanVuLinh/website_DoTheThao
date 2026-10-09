@@ -3034,4 +3034,357 @@ textarea.is-invalid {
   justify-content: center;
 }
 
+/* ==========================================================================
+   BRAND & PARTNER MANAGEMENT
+   ========================================================================== */
+.brand-page-header,
+.brand-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.brand-title-group h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--admin-text, #0f172a);
+  margin-bottom: 4px;
+}
+
+.brand-title-group p {
+  font-size: 13px;
+  color: var(--admin-text-secondary, #64748b);
+}
+
+.btn-create-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--admin-primary, #2563eb);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: var(--admin-radius-sm, 8px);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: var(--admin-transition, all 0.2s);
+}
+
+.btn-create-brand:hover {
+  background: var(--admin-primary-hover, #1d4ed8);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.brand-table-logo-box {
+  width: 54px;
+  height: 54px;
+  background: #ffffff;
+  border: 1px solid var(--admin-border, #e2e8f0);
+  border-radius: 8px;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--admin-shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.05));
+}
+
+.brand-table-logo-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.brand-table-name {
+  color: var(--admin-text, #0f172a);
+  font-size: 14px;
+  display: block;
+}
+
+.brand-table-link a {
+  font-size: 12px;
+  color: var(--admin-primary, #2563eb);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  word-break: break-all;
+}
+
+.brand-table-link a:hover {
+  text-decoration: underline;
+}
+
+.brand-spec-tag {
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid #bfdbfe;
+  display: inline-block;
+}
+
+.brand-pos-badge {
+  display: inline-block;
+  min-width: 28px;
+  padding: 2px 8px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #334155;
+}
+
+.btn-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-status-badge.active {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.btn-status-badge.active:hover {
+  background: #bbf7d0;
+}
+
+.btn-status-badge.inactive {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.btn-status-badge.inactive:hover {
+  background: #fde68a;
+}
+
+/* ==========================================================================
+   POLICY MANAGEMENT
+   ========================================================================== */
+.policy-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.policy-table-title {
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.policy-slug-tag {
+  font-family: monospace;
+  font-size: 12px;
+  color: #475569;
+  background: #f8fafc;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.policy-table-desc {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 320px;
+}
+
+.empty-table-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: #94a3b8;
+}
+
+.empty-table-state i {
+  font-size: 36px;
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+
+.empty-table-state p {
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ==========================================================================
+   FEATURED REVIEW TOGGLE
+   ========================================================================== */
+.btn-featured-review {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-featured-review.active {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.btn-featured-review.active i {
+  color: #f59e0b;
+}
+
+.btn-featured-review.active:hover {
+  background: #fde68a;
+}
+
+.btn-featured-review.inactive {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-featured-review.inactive:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+/* ==========================================================================
+   WEBSITE INFO TABS 8 & 9 (FLASH SALE & PAYMENT / SHIPPING)
+   ========================================================================== */
+.pane-header-icon.flash {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.pane-header-icon.payment {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.checkbox-card-wrap {
+  margin-bottom: 24px;
+}
+
+.checkbox-custom-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.checkbox-custom-card:hover {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+}
+
+.checkbox-custom-card input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--admin-primary, #2563eb);
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+.checkbox-card-info strong {
+  display: block;
+  font-size: 14px;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.checkbox-card-info span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.payment-methods-config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.payment-toggle-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.payment-toggle-card:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.payment-toggle-card input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--admin-primary, #2563eb);
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+.toggle-card-content {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.toggle-card-content i {
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+.toggle-card-content strong {
+  display: block;
+  font-size: 14px;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.toggle-card-content span {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.4;
+  display: block;
+}
+
+.text-pink {
+  color: #ec4899;
+}
+
+
 
