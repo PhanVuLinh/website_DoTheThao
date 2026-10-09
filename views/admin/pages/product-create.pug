@@ -124,14 +124,4 @@ block main
         window.oldSizes = !{JSON.stringify(oldData.sizes || [])};
       script(src="/admin/assets/js/product.js")
   else
-    .no-access-wrapper
-      .no-access-card
-        .no-access-icon
-          i.fa-solid.fa-lock
-
-        h2.no-access-title Truy cập bị từ chối
-
-        p.no-access-desc
-          | Bạn không có quyền truy cập vào trang này.
-          br
-          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
+    include ../partials/no-access.pug
