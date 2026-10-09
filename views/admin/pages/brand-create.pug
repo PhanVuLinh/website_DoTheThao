@@ -1,0 +1,75 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+
+block main
+  if(role && role.permissions && role.permissions.includes("brand_create"))
+    +alert-success(3000)
+    +alert-error(3000)
+
+    .brand-form-header
+      .brand-title-group
+        h1 Thêm Mới Thương Hiệu Đối Tác
+        p Điền thông tin nhãn hàng thể thao chính hãng hiển thị trên website
+
+      a.btn-back(href=`/${pathAdmin}/brand/list`)
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
+
+    .form-card
+      form(action=`/${pathAdmin}/brand/create` method="POST" enctype="multipart/form-data")
+        .form-row-2
+          .form-group
+            label Tên thương hiệu <span class="text-danger">*</span>
+            input.form-control(type="text" name="name" placeholder="Ví dụ: NIKE, ADIDAS, MIKASA..." required)
+
+          .form-group
+            label Câu khẩu hiệu (Tagline / Slogan)
+            input.form-control(type="text" name="tagline" placeholder="Ví dụ: Just Do It, Impossible Is Nothing...")
+
+        .form-row-2
+          .form-group
+            label Đặc điểm nổi bật (Spec Pill)
+            input.form-control(type="text" name="specPill" placeholder="Ví dụ: Giày Đá Bóng & Áo Đấu, Bóng Chuẩn FIVB...")
+
+          .form-group
+            label Đường dẫn xem sản phẩm (URL)
+            input.form-control(type="text" name="link" placeholder="Ví dụ: /?keyword=Nike hoặc /product?brand=Nike")
+
+        .form-group
+          label Mô tả ngắn gọn về thương hiệu
+          textarea.form-control(name="description" rows="3" placeholder="Giới thiệu nhanh về thế mạnh sản phẩm, công nghệ đặc trưng của hãng...")
+
+        .form-row-2
+          .form-group
+            label Vị trí hiển thị (Số nhỏ đứng trước)
+            input.form-control(type="number" name="position" placeholder="Tự động tăng nếu để trống" min="1")
+
+          .form-group
+            label Trạng thái ban đầu
+            .status-radio-group
+              label.status-radio-label
+                input(type="radio" name="status" value="active" checked)
+                span.radio-badge.active Hiển thị ngay
+              label.status-radio-label
+                input(type="radio" name="status" value="inactive")
+                span.radio-badge.inactive Tạm ẩn
+
+        .form-group.upload-row
+          label Logo thương hiệu (Khuyên dùng SVG hoặc PNG nền trong suốt)
+          .upload-image-wrapper(upload-image-wrapper)
+            input#brand-logo-upload.hidden-input(upload-image-input type="file" name="logo" accept="image/*")
+            label.upload-box(for="brand-logo-upload" upload-image-label)
+              i.fa-solid.fa-plus
+            .image-preview-container.hidden(upload-image-preview-container)
+              img(upload-image-preview src="" alt="Xem trước logo")
+              button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                i.fa-solid.fa-xmark
+
+        .form-actions-bar
+          a.btn-cancel(href=`/${pathAdmin}/brand/list`) Hủy bỏ
+          button.btn-submit(type="submit")
+            i.fa-solid.fa-floppy-disk
+            | Thêm thương hiệu
+
+  else
+    include ../partials/no-access.pug

@@ -109,6 +109,22 @@ module.exports.permissionList = [
     ],
   },
   {
+    group: "Quản lý thương hiệu",
+    permissions: [
+      { label: "Xem danh sách", value: "brand_view" },
+      { label: "Thêm mới", value: "brand_create" },
+      { label: "Chỉnh sửa", value: "brand_edit" },
+      { label: "Xóa", value: "brand_delete" },
+    ],
+  },
+  {
+    group: "Quản lý chính sách",
+    permissions: [
+      { label: "Xem danh sách", value: "policy_view" },
+      { label: "Chỉnh sửa", value: "policy_edit" },
+    ],
+  },
+  {
     group: "Cài đặt hệ thống",
     permissions: [
       { label: "Xem cấu hình", value: "setting_view" },

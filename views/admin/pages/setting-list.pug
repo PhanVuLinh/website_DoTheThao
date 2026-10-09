@@ -11,6 +11,16 @@ block main
             i.fa-solid.fa-info
           span.setting-title Thông tin website
 
+        a.setting-card(href=`/${pathAdmin}/brand/list`)
+          .setting-icon
+            i.fa-solid.fa-certificate
+          span.setting-title Thương hiệu đối tác
+
+        a.setting-card(href=`/${pathAdmin}/policy/list`)
+          .setting-icon
+            i.fa-solid.fa-file-shield
+          span.setting-title Chính sách cửa hàng
+
       if(role.permissions.includes("account_admin_view"))
         a.setting-card(href=`/${pathAdmin}/setting/account-admin/list`)
           .setting-icon
