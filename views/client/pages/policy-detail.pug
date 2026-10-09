@@ -1,0 +1,81 @@
+extends ../layouts/default.pug
+
+block main
+  .policy-page-wrapper
+    .container
+      // Breadcrumb
+      nav.custom-breadcrumb(aria-label="breadcrumb")
+        ol.breadcrumb-list
+          li.breadcrumb-item
+            a(href="/")
+              i.fa-solid.fa-house
+              |  Trang chủ
+          li.breadcrumb-separator
+            i.fa-solid.fa-chevron-right
+          li.breadcrumb-item
+            span Chính sách cửa hàng
+          li.breadcrumb-separator
+            i.fa-solid.fa-chevron-right
+          li.breadcrumb-item.active(aria-current="page")= policy.title
+
+      .policy-layout-grid
+        // Sidebar danh sách các chính sách
+        aside.policy-sidebar
+          .policy-sidebar-card
+            .policy-sidebar-header
+              i.fa-solid.fa-shield-halved
+              h3 Chính Sách & Hỗ Trợ
+            ul.policy-nav-list
+              if policyList && policyList.length > 0
+                each item in policyList
+                  li.policy-nav-item(class=(item.slug === policy.slug ? 'active' : ''))
+                    a.policy-nav-link(href=`/policy/${item.slug}`)
+                      i(class=(item.icon || "fa-solid fa-file-shield"))
+                      span= item.title
+
+            .policy-support-box
+              .support-icon
+                i.fa-solid.fa-headset
+              h4 Cần Hỗ Trợ Trực Tiếp?
+              p Hotline chăm sóc khách hàng:
+              if settingWebsiteInfo && (settingWebsiteInfo.hotline || settingWebsiteInfo.phone)
+                a.support-hotline-btn(href=`tel:${settingWebsiteInfo.hotline || settingWebsiteInfo.phone}`)
+                  i.fa-solid.fa-phone
+                  | #{settingWebsiteInfo.hotline || settingWebsiteInfo.phone}
+              if settingWebsiteInfo && settingWebsiteInfo.zalo
+                a.support-zalo-btn(href=settingWebsiteInfo.zalo target="_blank" rel="noopener noreferrer")
+                  i.fa-solid.fa-comment-dots
+                  | Chat Zalo ngay
+
+        // Nội dung chi tiết chính sách
+        main.policy-content-card
+          header.policy-header
+            .policy-badge
+              i(class=(policy.icon || "fa-solid fa-shield-halved"))
+              | Cam Kết Dịch Vụ Khách Hàng
+            h1.policy-title= policy.title
+            if policy.description
+              p.policy-lead= policy.description
+
+          .policy-divider
+
+          article.policy-body
+            if policy.content
+              != policy.content
+            else
+              p.text-muted Nội dung chính sách đang được cập nhật.
+
+          footer.policy-footer
+            .policy-guarantee-strip
+              .guarantee-col
+                i.fa-solid.fa-certificate
+                span 100% Chính Hãng
+              .guarantee-col
+                i.fa-solid.fa-rotate-left
+                span Đổi Trả 30 Ngày
+              .guarantee-col
+                i.fa-solid.fa-truck-fast
+                span Giao Hàng Hỏa Tốc
+              .guarantee-col
+                i.fa-solid.fa-user-shield
+                span Bảo Mật Thanh Toán

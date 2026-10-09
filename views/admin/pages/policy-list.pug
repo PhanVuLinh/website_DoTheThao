@@ -1,0 +1,66 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+
+block main
+  if(role && role.permissions && (role.permissions.includes("policy_view") || role.permissions.includes("setting_view")))
+    +alert-success(3000)
+    +alert-error(3000)
+
+    .brand-page-header
+      .brand-title-group
+        h1 Quản Lý Chính Sách Cửa Hàng
+        p Soạn thảo nội dung điều khoản, chính sách đổi trả, bảo hành và vận chuyển hiển thị ở chân trang
+
+      a.btn-back(href=`/${pathAdmin}/setting/list`)
+        i.fa-solid.fa-arrow-left
+        | Cài đặt chung
+
+    .table-section
+      .table-responsive
+        table.admin-table.table-hover
+          thead
+            tr
+              th.text-center STT
+              th.text-center Biểu tượng
+              th Tên chính sách
+              th Đường dẫn (Slug)
+              th Tóm tắt nội dung
+              th.text-center Cập nhật lần cuối
+              th.text-center Trạng thái
+              th.text-center Hành động
+          tbody
+            if policies && policies.length > 0
+              each item, index in policies
+                tr
+                  td.text-center #{index + 1}
+                  td.text-center
+                    .policy-icon-badge
+                      i(class=(item.icon || "fa-solid fa-file-shield"))
+                  td
+                    strong.policy-table-title #{item.title}
+                  td
+                    span.policy-slug-tag /policy/#{item.slug}
+                  td
+                    span.policy-table-desc #{item.description || 'Chưa có tóm tắt'}
+                  td.text-center(style="font-size: 13px; color: #64748b;") #{item.updatedAtFormat}
+                  td.text-center
+                    if item.status === 'active'
+                      span.badge.badge-success Đang áp dụng
+                    else
+                      span.badge.badge-secondary Tạm ẩn
+                  td.text-center
+                    if(role.permissions.includes("policy_edit") || role.permissions.includes("setting_edit"))
+                      a.btn-action-edit(href=`/${pathAdmin}/policy/edit/${item._id}` title="Chỉnh sửa nội dung")
+                        i.fa-solid.fa-pen-to-square
+                        |  Soạn thảo
+                    a.btn-action-view(href=`/policy/${item.slug}` target="_blank" title="Xem trên web")
+                      i.fa-solid.fa-arrow-up-right-from-square
+            else
+              tr
+                td.text-center(colspan="8")
+                  .empty-table-state
+                    i.fa-solid.fa-file-shield
+                    p Chưa có chính sách nào
+
+  else
+    include ../partials/no-access.pug
