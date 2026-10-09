@@ -3386,5 +3386,64 @@ textarea.is-invalid {
   color: #ec4899;
 }
 
+/* ==========================================================================
+   REVIEW LIST STYLES (STANDARDIZED)
+   ========================================================================== */
+.review-product-title {
+  font-weight: 600;
+  color: var(--admin-text, #0f172a);
+  transition: color 0.2s;
+}
+
+.review-product-title:hover {
+  color: var(--admin-primary, #2563eb);
+}
+
+.review-buyer-badge {
+  font-size: 11px;
+  color: #16a34a;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #dcfce7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 3px;
+}
+
+.review-rating-tag {
+  color: #f59e0b;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.review-comment-cell {
+  max-width: 260px;
+  line-height: 1.5;
+  font-size: 13px;
+  color: #334155;
+}
+
+.review-images-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.review-img-thumb {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--admin-border, #e2e8f0);
+  transition: transform 0.2s;
+}
+
+.review-img-thumb:hover {
+  transform: scale(1.15);
+}
+
+
 
 

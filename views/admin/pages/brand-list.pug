@@ -1,47 +1,60 @@
 extends ../layouts/default.pug
 include ../mixins/alert.pug
+include ../mixins/filter-status.pug
+include ../mixins/bulk-action.pug
 include ../mixins/pagination.pug
+include ../mixins/switch-status.pug
 
 block main
   if(role && role.permissions && role.permissions.includes("brand_view"))
     +alert-success(3000)
     +alert-error(3000)
 
-    .brand-page-header
-      .brand-title-group
-        h1 Quản Lý Thương Hiệu Đối Tác
-        p Danh sách các nhãn hàng thể thao chính hãng hiển thị trên trang chủ và bộ lọc cửa hàng
+    h1.page-title Quản lý thương hiệu đối tác
 
-      if(role.permissions.includes("brand_create"))
-        a.btn-create-brand(href=`/${pathAdmin}/brand/create`)
-          i.fa-solid.fa-plus
-          | Thêm thương hiệu
-
-    //- BỘ LỌC VÀ TÌM KIẾM
     .filter-action-card
       .filter-row
         .filter-label
           i.fa-solid.fa-filter
-          span Trạng thái:
-        a.badge.badge-pill(href=`/${pathAdmin}/brand/list` class=(!filterStatus ? 'badge-primary' : 'badge-light')) Tất cả
-        a.badge.badge-pill(href=`/${pathAdmin}/brand/list?status=active` class=(filterStatus === 'active' ? 'badge-success' : 'badge-light')) Đang hiển thị
-        a.badge.badge-pill(href=`/${pathAdmin}/brand/list?status=inactive` class=(filterStatus === 'inactive' ? 'badge-warning' : 'badge-light')) Tạm ẩn
+          span Bộ lọc
+        +filter-status()
+        button.btn-clear(filter-reset)
+          i.fa-solid.fa-rotate-right
+          | Xóa bộ lọc
 
-      .search-box-brand
-        form(action=`/${pathAdmin}/brand/list` method="GET")
-          if filterStatus
-            input(type="hidden" name="status" value=filterStatus)
-          .input-group
-            input.form-control(type="text" name="keyword" value=keyword placeholder="Tìm theo tên thương hiệu...")
-            button.btn-search-brand(type="submit")
-              i.fa-solid.fa-magnifying-glass
+      .action-row
+        - 
+          var bulkOptions = [];
+          if(role && role.permissions) {
+            if(role.permissions.includes("brand_delete")) {
+              bulkOptions.push({ value: "delete-all", label: "Xóa" });
+            }
+            if(role.permissions.includes("brand_edit")) {
+              bulkOptions.push({ value: "active", label: "Hoạt động" });
+              bulkOptions.push({ value: "inactive", label: "Dừng hoạt động" });
+            }
+          }
 
-    //- BẢNG DANH SÁCH
+        if(bulkOptions.length > 0)
+          +bulk-action(bulkOptions)
+
+        .search-box-large
+          i.fa-solid.fa-magnifying-glass
+          input(type="text" placeholder="Tìm kiếm tên thương hiệu..." search value=keyword)
+
+        .action-buttons-right
+          if(role && role.permissions && role.permissions.includes("brand_create"))
+            a(href=`/${pathAdmin}/brand/create`).btn-create
+              i.fa-solid.fa-plus
+              | Thêm thương hiệu
+
     .table-section
       .table-responsive
         table.admin-table.table-hover
           thead
             tr
+              th.text-center(width="50px")
+                input(type="checkbox" check-all)
               th.text-center STT
               th.text-center Logo
               th Tên thương hiệu
@@ -49,70 +62,62 @@ block main
               th Điểm nổi bật
               th.text-center Vị trí
               th.text-center Trạng thái
-              th.text-center Hành động
+              if(role && role.permissions && (role.permissions.includes("brand_edit") || role.permissions.includes("brand_delete")))
+                th.text-center Hành động
+
           tbody
             if brands && brands.length > 0
               each item, index in brands
                 tr
+                  td.text-center
+                    input(type="checkbox" value=item._id name="id" check-item)
                   td.text-center #{pagination.skip + index + 1}
                   td.text-center
                     if item.logo
-                      .brand-table-logo-box
-                        img(src=item.logo alt=item.name)
+                      img.td-thumbnail(src=item.logo alt=item.name)
                     else
                       span.text-muted Không có
                   td
-                    strong.brand-table-name #{item.name}
+                    strong #{item.name}
                     if item.link
-                      div.brand-table-link
-                        a(href=item.link target="_blank")
+                      div
+                        a(href=item.link target="_blank" style="font-size: 12px; color: var(--admin-primary); display: inline-flex; align-items: center; gap: 4px;")
                           i.fa-solid.fa-arrow-up-right-from-square
                           | #{item.link}
                   td #{item.tagline || '---'}
                   td
                     if item.specPill
-                      span.brand-spec-tag #{item.specPill}
+                      span.badge.badge-primary #{item.specPill}
                     else
                       span.text-muted ---
+                  td.text-center #{item.position || 0}
                   td.text-center
-                    span.brand-pos-badge #{item.position || 0}
-                  td.text-center
-                    if(role.permissions.includes("brand_edit"))
-                      if item.status === 'active'
-                        form.action-inline-form(action=`/${pathAdmin}/brand/change-status/inactive/${item._id}?_method=PATCH` method="POST")
-                          button.btn-status-badge.active(type="submit" title="Bấm để ẩn")
-                            i.fa-solid.fa-circle-check
-                            | Hiển thị
-                      else
-                        form.action-inline-form(action=`/${pathAdmin}/brand/change-status/active/${item._id}?_method=PATCH` method="POST")
-                          button.btn-status-badge.inactive(type="submit" title="Bấm để hiện")
-                            i.fa-solid.fa-circle-xmark
-                            | Tạm ẩn
-                    else
-                      if item.status === 'active'
-                        span.badge.badge-success Hiển thị
-                      else
-                        span.badge.badge-secondary Tạm ẩn
-
-                  td.text-center
-                    .table-actions-group
-                      if(role.permissions.includes("brand_edit"))
-                        a.btn-action-edit(href=`/${pathAdmin}/brand/edit/${item._id}` title="Chỉnh sửa")
-                          i.fa-solid.fa-pen-to-square
-                      if(role.permissions.includes("brand_delete"))
-                        form.action-inline-form(action=`/${pathAdmin}/brand/delete/${item._id}?_method=DELETE` method="POST" onsubmit="return confirm('Bạn có chắc muốn chuyển thương hiệu này vào thùng rác?')")
-                          button.btn-action-delete(type="submit" title="Xóa thương hiệu")
-                            i.fa-solid.fa-trash-can
+                    +switch-status(item, `/${pathAdmin}/brand/change-multi`, "brand_edit")
+                  if(role && role.permissions && (role.permissions.includes("brand_edit") || role.permissions.includes("brand_delete")))
+                    td.text-center
+                      .action-btns(style="justify-content: center;")
+                        if(role.permissions.includes("brand_edit"))
+                          a.btn-edit(href=`/${pathAdmin}/brand/edit/${item._id}` title="Chỉnh sửa")
+                            i.fa-regular.fa-pen-to-square
+                        if(role.permissions.includes("brand_delete"))
+                          button.btn-delete(button-delete data-id=item._id title="Xóa")
+                            i.fa-regular.fa-trash-can
             else
               tr
-                td.text-center(colspan="8")
-                  .empty-table-state
-                    i.fa-solid.fa-certificate
-                    p Chưa có thương hiệu nào phù hợp
+                td(colspan="10")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-solid.fa-certificate
+                    h4.empty-title Chưa có thương hiệu nào
+                    p.empty-desc Bấm "Thêm thương hiệu" để bắt đầu thiết lập thương hiệu đối tác.
 
-    //- PHÂN TRANG
     if pagination && pagination.totalPage > 1
       +pagination(pagination)
+
+    form#form-delete-item(action="" method="POST" data-path=`/${pathAdmin}/brand/delete`)
+    form#form-change-multi(action=`/${pathAdmin}/brand/change-multi?_method=PATCH` method="POST")
+      input(type="hidden" name="type" value="")
+      input(type="hidden" name="ids" value="")
 
   else
     include ../partials/no-access.pug

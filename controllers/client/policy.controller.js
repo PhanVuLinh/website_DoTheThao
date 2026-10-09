@@ -25,6 +25,14 @@ module.exports.detail = async (req, res) => {
       title: policy.title,
       policy: policy,
       policyList: policyList,
+      breadcrumb: {
+        title: policy.title,
+        list: [
+          { title: "Trang chủ", link: "/" },
+          { title: "Chính sách", link: "#" },
+          { title: policy.title, link: `/policy/${policy.slug}` },
+        ],
+      },
     });
   } catch (error) {
     console.error("Client policy detail error:", error);

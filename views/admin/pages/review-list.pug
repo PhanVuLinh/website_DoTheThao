@@ -12,25 +12,25 @@ block main
       .filter-label
         i.fa-solid.fa-filter
         span Bộ lọc
-      a.badge.badge-pill(href=`/${pathAdmin}/review/list` class=(!filterStatus ? 'badge-primary' : 'badge-light') style="margin-right: 8px; padding: 6px 14px;") Tất cả
-      a.badge.badge-pill(href=`/${pathAdmin}/review/list?status=active` class=(filterStatus === 'active' ? 'badge-success' : 'badge-light') style="margin-right: 8px; padding: 6px 14px;") Hiển thị (Active)
-      a.badge.badge-pill(href=`/${pathAdmin}/review/list?status=hidden` class=(filterStatus === 'hidden' ? 'badge-warning' : 'badge-light') style="margin-right: 8px; padding: 6px 14px;") Đã ẩn (Hidden)
+      a.badge.badge-pill(href=`/${pathAdmin}/review/list` class=(!filterStatus ? 'badge-primary' : 'badge-light')) Tất cả
+      a.badge.badge-pill(href=`/${pathAdmin}/review/list?status=active` class=(filterStatus === 'active' ? 'badge-success' : 'badge-light')) Hiển thị (Active)
+      a.badge.badge-pill(href=`/${pathAdmin}/review/list?status=hidden` class=(filterStatus === 'hidden' ? 'badge-warning' : 'badge-light')) Đã ẩn (Hidden)
 
   .table-section
     .table-responsive
       table.admin-table.table-hover
         thead
           tr
-            th STT
+            th.text-center(width="50px") STT
             th Sản phẩm
             th Người đánh giá
-            th Số sao
+            th.text-center Số sao
             th Nội dung đánh giá
-            th Ảnh thực tế
-            th Ngày gửi
+            th.text-center Ảnh thực tế
+            th.text-center Ngày gửi
             th.text-center Ghim trang chủ
-            th Trạng thái
-            th Hành động
+            th.text-center Trạng thái
+            th.text-center Hành động
         tbody
           if reviews && reviews.length > 0
             each item, index in reviews
@@ -38,32 +38,31 @@ block main
                 td.text-center #{index + 1}
                 td
                   if item.product_id
-                    a(href=`/product/detail/${item.product_id.slug}` target="_blank" style="font-weight: 600; color: #1e293b;")
+                    a.review-product-title(href=`/product/detail/${item.product_id.slug}` target="_blank")
                       | #{item.product_id.title}
                   else
                     span.text-muted Sản phẩm không tồn tại
                 td
                   strong #{item.fullName}
                   if item.isVerifiedBuyer
-                    div(style="font-size: 11px; color: #16a34a; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; background: #dcfce7; padding: 2px 6px; border-radius: 4px; margin-top: 2px;")
+                    div.review-buyer-badge
                       i.fa-solid.fa-check-circle
                       | Đã mua hàng
                 td.text-center
-                  span(style="color: #f59e0b; font-weight: 700; font-size: 14px;")
-                    | #{item.rating} ★
-                td(style="max-width: 250px; line-height: 1.5; font-size: 13px;")
-                  | #{item.comment}
+                  span.review-rating-tag #{item.rating} ★
                 td
+                  .review-comment-cell #{item.comment}
+                td.text-center
                   if item.images && item.images.length > 0
-                    div(style="display: flex; gap: 4px;")
+                    .review-images-row
                       each img in item.images
                         a(href=img target="_blank")
-                          img(src=img alt="Review img" style="width: 36px; height: 36px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0;")
+                          img.review-img-thumb(src=img alt="Ảnh đánh giá")
                   else
                     span.text-muted Không có
-                td.text-center(style="font-size: 12px; color: #64748b;") #{item.createdAtFormat}
+                td.text-center #{item.createdAtFormat}
                 td.text-center
-                  form(action=`/${pathAdmin}/review/toggle-featured/${item._id}?_method=PATCH` method="POST" style="display: inline-block;")
+                  form.action-inline-form(action=`/${pathAdmin}/review/toggle-featured/${item._id}?_method=PATCH` method="POST")
                     if item.isFeatured
                       button.btn-featured-review.active(type="submit" title="Bấm để bỏ ghim khỏi trang chủ")
                         i.fa-solid.fa-star
@@ -74,21 +73,27 @@ block main
                         span  Ghim
                 td.text-center
                   if item.status === 'active'
-                    span.badge.badge-success(style="background: #22c55e; color: #fff; padding: 4px 10px; border-radius: 50px; font-size: 12px;") Hiển thị
+                    span.badge.badge-success Hiển thị
                   else
-                    span.badge.badge-secondary(style="background: #94a3b8; color: #fff; padding: 4px 10px; border-radius: 50px; font-size: 12px;") Đã ẩn
+                    span.badge.badge-secondary Đã ẩn
                 td.text-center
-                  if item.status === 'active'
-                    form(action=`/${pathAdmin}/review/change-status/hidden/${item._id}?_method=PATCH` method="POST" style="display: inline-block; margin-right: 6px;")
-                      button.btn.btn-sm.btn-warning(type="submit" title="Ẩn đánh giá này" style="background: #f59e0b; border: none; color: #fff; padding: 4px 10px; border-radius: 6px; cursor: pointer;")
-                        i.fa-solid.fa-eye-slash
-                  else
-                    form(action=`/${pathAdmin}/review/change-status/active/${item._id}?_method=PATCH` method="POST" style="display: inline-block; margin-right: 6px;")
-                      button.btn.btn-sm.btn-success(type="submit" title="Hiện đánh giá này" style="background: #10b981; border: none; color: #fff; padding: 4px 10px; border-radius: 6px; cursor: pointer;")
-                        i.fa-solid.fa-eye
-                  form(action=`/${pathAdmin}/review/delete/${item._id}?_method=DELETE` method="POST" style="display: inline-block;" onsubmit="return confirm('Bạn có chắc muốn xóa vĩnh viễn đánh giá này?')")
-                    button.btn.btn-sm.btn-danger(type="submit" title="Xóa đánh giá" style="background: #ef4444; border: none; color: #fff; padding: 4px 10px; border-radius: 6px; cursor: pointer;")
-                      i.fa-solid.fa-trash-can
+                  .action-btns(style="justify-content: center;")
+                    if item.status === 'active'
+                      form.action-inline-form(action=`/${pathAdmin}/review/change-status/hidden/${item._id}?_method=PATCH` method="POST")
+                        button.btn-action(type="submit" title="Ẩn đánh giá này")
+                          i.fa-solid.fa-eye-slash
+                    else
+                      form.action-inline-form(action=`/${pathAdmin}/review/change-status/active/${item._id}?_method=PATCH` method="POST")
+                        button.btn-action(type="submit" title="Hiện đánh giá này")
+                          i.fa-solid.fa-eye
+                    form.action-inline-form(action=`/${pathAdmin}/review/delete/${item._id}?_method=DELETE` method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa vĩnh viễn đánh giá này?')")
+                      button.btn-delete(type="submit" title="Xóa đánh giá")
+                        i.fa-regular.fa-trash-can
           else
             tr
-              td.text-center(colspan="10" style="padding: 30px; color: #94a3b8;") Chưa có đánh giá nào từ khách hàng
+              td(colspan="10")
+                .admin-empty-state
+                  .empty-icon
+                    i.fa-solid.fa-comments
+                  h4.empty-title Chưa có đánh giá nào từ khách hàng
+                  p.empty-desc Các bình luận và đánh giá sản phẩm sẽ hiển thị tại đây.

@@ -36,6 +36,12 @@ router.patch(
   brandController.changeStatus,
 );
 
+router.patch(
+  "/change-multi",
+  authMiddleware.checkPermission("brand_edit"),
+  brandController.changeMulti,
+);
+
 router.delete("/delete/:id", authMiddleware.checkPermission("brand_delete"), brandController.delete);
 
 module.exports = router;

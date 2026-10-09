@@ -6,11 +6,8 @@ block main
     +alert-success(3000)
     +alert-error(3000)
 
-    .brand-form-header
-      .brand-title-group
-        h1 Chỉnh Sửa Thương Hiệu Đối Tác
-        p Cập nhật thông tin nhận diện, slogan hoặc logo thương hiệu #{brand.name}
-
+    .page-header
+      h1.page-title Chỉnh Sửa Thương Hiệu Đối Tác
       a.btn-back(href=`/${pathAdmin}/brand/list`)
         i.fa-solid.fa-arrow-left
         | Quay lại danh sách
@@ -45,17 +42,13 @@ block main
             input.form-control(type="number" name="position" value=brand.position min="1")
 
           .form-group
-            label Trạng thái hiển thị
-            .status-radio-group
-              label.status-radio-label
-                input(type="radio" name="status" value="active" checked=(brand.status === "active"))
-                span.radio-badge.active Hiển thị
-              label.status-radio-label
-                input(type="radio" name="status" value="inactive" checked=(brand.status === "inactive"))
-                span.radio-badge.inactive Tạm ẩn
+            label Trạng thái
+            select.form-control(name="status")
+              option(value="active" selected=(brand.status === "active")) Hoạt động (Hiển thị)
+              option(value="inactive" selected=(brand.status === "inactive")) Tạm dừng (Ẩn)
 
-        .form-group.upload-row
-          label Logo thương hiệu (Khuyên dùng SVG hoặc PNG nền trong suốt)
+        .form-group
+          label Logo thương hiệu (SVG hoặc PNG nền trong suốt)
           .upload-image-wrapper(upload-image-wrapper)
             input#brand-logo-edit.hidden-input(upload-image-input type="file" name="logo" accept="image/*")
             label.upload-box(for="brand-logo-edit" upload-image-label class=(brand.logo ? "hidden" : ""))
@@ -65,11 +58,11 @@ block main
               button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
                 i.fa-solid.fa-xmark
 
-        .form-actions-bar
+        .form-actions
           a.btn-cancel(href=`/${pathAdmin}/brand/list`) Hủy bỏ
           button.btn-submit(type="submit")
             i.fa-solid.fa-floppy-disk
-            | Cập nhật thương hiệu
+            |  Cập nhật thương hiệu
 
   else
     include ../partials/no-access.pug

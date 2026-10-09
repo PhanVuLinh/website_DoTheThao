@@ -1,23 +1,11 @@
 extends ../layouts/default.pug
+include ../mixins/box-breadcrumb.pug
 
 block main
-  .policy-page-wrapper
-    .container
-      // Breadcrumb
-      nav.custom-breadcrumb(aria-label="breadcrumb")
-        ol.breadcrumb-list
-          li.breadcrumb-item
-            a(href="/")
-              i.fa-solid.fa-house
-              |  Trang chủ
-          li.breadcrumb-separator
-            i.fa-solid.fa-chevron-right
-          li.breadcrumb-item
-            span Chính sách cửa hàng
-          li.breadcrumb-separator
-            i.fa-solid.fa-chevron-right
-          li.breadcrumb-item.active(aria-current="page")= policy.title
+  +box-breadcrumb(breadcrumb)
 
+  section.policy-page-wrapper
+    .container
       .policy-layout-grid
         // Sidebar danh sách các chính sách
         aside.policy-sidebar

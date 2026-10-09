@@ -6,14 +6,11 @@ block main
     +alert-success(3000)
     +alert-error(3000)
 
-    .brand-form-header
-      .brand-title-group
-        h1 Chỉnh Sửa Chính Sách Cửa Hàng
-        p Soạn thảo nội dung điều khoản áp dụng cho: <strong>#{policy.title}</strong>
-
+    .page-header
+      h1.page-title Chỉnh Sửa Chính Sách Cửa Hàng
       a.btn-back(href=`/${pathAdmin}/policy/list`)
         i.fa-solid.fa-arrow-left
-        | Quay lại danh sách chính sách
+        | Quay lại danh sách
 
     .form-card
       form(action=`/${pathAdmin}/policy/edit/${policy._id}?_method=PATCH` method="POST")
@@ -38,18 +35,18 @@ block main
           .form-group
             label Trạng thái
             select.form-control(name="status")
-              option(value="active" selected=(policy.status === "active")) Đang áp dụng (Hiển thị)
-              option(value="inactive" selected=(policy.status === "inactive")) Tạm dừng áp dụng (Ẩn)
+              option(value="active" selected=(policy.status === "active")) Hoạt động (Hiển thị)
+              option(value="inactive" selected=(policy.status === "inactive")) Tạm dừng (Ẩn)
 
         .form-group
           label Nội dung chi tiết chính sách (Soạn thảo văn bản đầy đủ)
           textarea.form-control.textarea-mce(name="content" rows="18")= policy.content
 
-        .form-actions-bar
+        .form-actions
           a.btn-cancel(href=`/${pathAdmin}/policy/list`) Hủy bỏ
           button.btn-submit(type="submit")
             i.fa-solid.fa-floppy-disk
-            | Lưu nội dung chính sách
+            |  Lưu nội dung chính sách
 
   else
     include ../partials/no-access.pug

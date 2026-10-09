@@ -157,6 +157,51 @@ module.exports.changeStatus = async (req, res) => {
   }
 };
 
+// [PATCH] /admin/brand/change-multi
+module.exports.changeMulti = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = req.account ? req.account.id : "";
+
+    switch (type) {
+      case "active":
+      case "inactive":
+        await Brand.updateMany(
+          { _id: { $in: ids } },
+          {
+            status: type,
+            updatedBy: updatedBy,
+            updatedAt: new Date(),
+          },
+        );
+        req.flash("success", `Đã cập nhật trạng thái ${ids.length} thương hiệu!`);
+        break;
+
+      case "delete-all":
+        await Brand.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: updatedBy,
+            deletedAt: new Date(),
+          },
+        );
+        req.flash("success", `Đã xóa ${ids.length} thương hiệu!`);
+        break;
+
+      default:
+        break;
+    }
+
+    res.redirect(req.get("Referer") || `/${variableConfig.pathAdmin}/brand/list`);
+  } catch (error) {
+    console.error("Change multi brand error:", error);
+    req.flash("error", "Lỗi cập nhật nhiều thương hiệu!");
+    res.redirect(`/${variableConfig.pathAdmin}/brand/list`);
+  }
+};
+
 // [DELETE] /admin/brand/delete/:id
 module.exports.delete = async (req, res) => {
   try {
