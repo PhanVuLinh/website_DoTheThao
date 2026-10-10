@@ -1,0 +1,255 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+
+block main
+  if(role && role.permissions && (role.permissions.includes("flash_sale_edit") || role.permissions.includes("product_edit")))
+    +alert-error(3000)
+    +alert-success(3000)
+    
+    .page-header
+      h1.page-title Chỉnh sửa chiến dịch Flash Sale
+      a.btn-back(href=`/${pathAdmin}/flash-sale/list`) 
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách
+
+    form(action=`/${pathAdmin}/flash-sale/edit/${campaign.id}?_method=PATCH` method="POST")
+      .form-card
+        .form-row-2
+          .form-group
+            label Tên chiến dịch Flash Sale <span class="text-danger">*</span>
+            input.form-control(
+              type="text" 
+              name="title" 
+              placeholder="Ví dụ: Siêu Sale Giờ Vàng 10.10" 
+              value=campaign.title
+              required
+            )
+          
+          .form-group
+            label Trạng thái chiến dịch <span class="text-danger">*</span>
+            select.form-control(name="status")
+              option(value="active" selected=(campaign.status === "active")) Kích hoạt ngay
+              option(value="inactive" selected=(campaign.status === "inactive")) Tạm dừng (Chưa công khai)
+
+        .form-row-2
+          .form-group
+            label Huy hiệu (Badge nổi bật)
+            input.form-control(
+              type="text" 
+              name="badge" 
+              placeholder="Ví dụ: GIỜ VÀNG GIÁ SỐC" 
+              value=campaign.badge
+            )
+          
+          .form-group
+            label Tiêu đề phụ (Sub-title)
+            input.form-control(
+              type="text" 
+              name="subTitle" 
+              placeholder="Ví dụ: ƯU ĐÃI CÓ HẠN" 
+              value=campaign.subTitle
+            )
+
+        .form-group
+          label Mô tả ngắn chiến dịch
+          textarea.form-control(
+            name="description" 
+            rows="2" 
+            placeholder="Ví dụ: Giày thi đấu & trang bị thể thao tuyển chọn giảm sâu số lượng có hạn..."
+          ) #{campaign.description}
+
+        .form-row-2
+          .form-group
+            label Thời gian bắt đầu <span class="text-danger">*</span>
+            input.form-control(
+              type="datetime-local" 
+              name="startTime" 
+              value=campaign.startTimeInput
+              required
+            )
+          
+          .form-group
+            label Thời gian kết thúc <span class="text-danger">*</span>
+            input.form-control(
+              type="datetime-local" 
+              name="endTime" 
+              value=campaign.endTimeInput
+              required
+            )
+
+      //- KHU VỰC QUẢN LÝ SẢN PHẨM THAM GIA FLASH SALE
+      .flash-items-picker-card
+        .flash-items-header
+          div
+            h2.flash-items-title
+              i.fa-solid.fa-bolt.text-danger
+              span Sản phẩm tham gia Flash Sale
+              span.selected-count-badge#selectedProductsCount #{(campaign.items ? campaign.items.length : 0)} sản phẩm
+            p.flash-items-desc Quản lý chiết khấu giá bán và số lượng phân bổ cho từng sản phẩm trong chiến dịch.
+          
+          button.btn-create#btnOpenProductPicker(type="button")
+            i.fa-solid.fa-layer-group
+            | + Chọn thêm sản phẩm từ kho
+
+        //- Thanh công cụ áp dụng hàng loạt (Bulk Apply Toolbar)
+        .bulk-apply-bar
+          .bulk-apply-title
+            i.fa-solid.fa-wand-magic-sparkles
+            span Thiết lập nhanh cho toàn bộ sản phẩm đã chọn:
+          .bulk-apply-controls
+            .bulk-input-group
+              label % Giảm chung:
+              input#bulkDiscount(type="number" min="1" max="99" placeholder="VD: 20")
+              span %
+            .bulk-input-group
+              label Số lượng bán chung:
+              input#bulkQuantity(type="number" min="1" placeholder="VD: 50")
+            button.btn-apply-bulk#btnApplyBulk(type="button")
+              i.fa-solid.fa-check
+              span Áp dụng tất cả
+
+        //- Empty State
+        .admin-empty-state(class=(campaign.items && campaign.items.length > 0 ? "d-none" : ""))#flashSaleEmptyState
+          .empty-icon
+            i.fa-solid.fa-box-open
+          p Chưa có sản phẩm nào được chọn tham gia chiến dịch
+          button.btn-create#btnOpenProductPickerEmpty(type="button")
+            i.fa-solid.fa-plus
+            | Mở danh sách chọn sản phẩm ngay
+
+        //- Bảng danh sách sản phẩm
+        .table-responsive(class=(campaign.items && campaign.items.length > 0 ? "" : "d-none"))#flashSaleTableSection
+          table.admin-table#flashSaleItemsTable
+            thead
+              tr
+                th.text-center(width="60px") Ảnh
+                th Tên sản phẩm & Thương hiệu
+                th(width="130px") % Giảm giá
+                th(width="170px") Giá Flash Sale
+                th(width="130px") Số lượng mở bán
+                th.text-center(width="60px") Xóa
+            tbody
+              if campaign.items && campaign.items.length > 0
+                each it in campaign.items
+                  - var prodData = it.product_id || {}
+                  - var pPrice = prodData.price || 0
+                  - var disc = it.discountPercentage || 0
+                  - var fPrice = it.flashSalePrice || Math.round(pPrice * (100 - disc) / 100)
+                  - var diff = Math.max(0, pPrice - fPrice)
+                  tr.flash-item-row(data-product-id=(prodData._id ? prodData._id.toString() : "") data-price=pPrice)
+                    td.text-center(width="60px")
+                      input(type="hidden" name="product_id" value=(prodData._id ? prodData._id.toString() : ""))
+                      img.table-thumb-sm(src=(prodData.thumbnail || "/client/assets/images/default.png") alt=prodData.title)
+                    td
+                      .product-picker-meta
+                        span.font-weight-600.text-dark #{prodData.title}
+                        .text-muted.text-xs.mt-1
+                          span.badge-tag #{prodData.brand || 'CHÍNH HÃNG'}
+                          span Gốc: #{pPrice.toLocaleString('vi-VN')} đ
+                    td(width="130px")
+                      .input-suffix-wrapper
+                        input.form-control.input-discount-item(
+                          type="number" 
+                          name="discountPercentage" 
+                          min="1" 
+                          max="99" 
+                          value=disc 
+                          required
+                        )
+                        span.suffix-text %
+                    td(width="170px")
+                      span.display-sale-price.font-weight-700.text-primary #{fPrice.toLocaleString('vi-VN')} đ
+                      div
+                        span.price-diff-pill Tiết kiệm #{diff.toLocaleString('vi-VN')} đ
+                    td(width="130px")
+                      input.form-control.input-quantity-item(
+                        type="number" 
+                        name="quantity" 
+                        min="1" 
+                        value=it.quantity 
+                        required
+                      )
+                      .text-muted.text-xs.mt-1
+                        i.fa-solid.fa-fire-flame-curved.text-danger.mr-1
+                        | Đã bán: #{it.sold || 0}
+                    td.text-center(width="60px")
+                      button.btn-action-icon.btn-remove-item(type="button" title="Xóa khỏi chiến dịch")
+                        i.fa-regular.fa-trash-can
+
+      .form-actions
+        button.btn-submit(type="submit")
+          i.fa-solid.fa-check
+          | Cập nhật chiến dịch Flash Sale
+
+    //- ==========================================================
+    //- MODAL CHỌN SẢN PHẨM TỪ KHO (PRODUCT PICKER MODAL)
+    //- ==========================================================
+    .admin-modal-backdrop#productPickerModal
+      .admin-modal
+        .admin-modal-header
+          h3.admin-modal-title
+            i.fa-solid.fa-boxes-stacked.text-primary
+            span Chọn sản phẩm tham gia Flash Sale
+          button.admin-modal-close#btnCloseProductModal(type="button" aria-label="Đóng")
+            i.fa-solid.fa-xmark
+
+        .admin-modal-filter-bar
+          .admin-modal-search
+            i.fa-solid.fa-magnifying-glass
+            input.form-control#modalSearchProduct(type="text" placeholder="Tìm nhanh theo tên sản phẩm, thương hiệu...")
+          
+          if categories && categories.length > 0
+            select.form-control.modal-category-select#modalFilterCategory
+              option(value="") -- Tất cả danh mục --
+              each cat in categories
+                option(value=cat.id) #{cat.title}
+
+        .admin-modal-body
+          table.admin-table.admin-modal-table
+            thead
+              tr
+                th.text-center(width="45px")
+                  input#modalCheckAll(type="checkbox")
+                th.text-center(width="55px") Ảnh
+                th Tên sản phẩm
+                th Thương hiệu
+                th Giá niêm yết
+            tbody
+              if products && products.length > 0
+                each prod in products
+                  tr.modal-product-row(
+                    data-id=prod.id 
+                    data-title=prod.title 
+                    data-price=(prod.price || 0) 
+                    data-thumb=(prod.thumbnail || "/client/assets/images/default.png") 
+                    data-brand=(prod.brand || "CHÍNH HÃNG") 
+                    data-category=(prod.category_id || "")
+                  )
+                    td.text-center
+                      input.modal-product-checkbox(type="checkbox")
+                    td.text-center
+                      img.table-thumb-sm(src=(prod.thumbnail || "/client/assets/images/default.png") alt=prod.title)
+                    td
+                      span.font-weight-600.text-dark #{prod.title}
+                      span.badge-tag.badge-already-added.d-none Đã có trong chiến dịch
+                    td
+                      span.text-muted.text-sm #{prod.brand || 'CHÍNH HÃNG'}
+                    td
+                      span.font-weight-600.text-primary #{(prod.price || 0).toLocaleString('vi-VN')} đ
+              else
+                tr
+                  td(colspan="5").text-center.py-4
+                    span.text-muted Không có sản phẩm nào khả dụng
+
+        .admin-modal-footer
+          div
+            span.text-muted Đã chọn: 
+            strong.text-primary#modalSelectedCount 0
+            span.text-muted  sản phẩm
+          .action-btns
+            button.btn-clear#btnCancelProductModal(type="button") Hủy bỏ
+            button.btn-submit#btnConfirmAddProducts(type="button")
+              i.fa-solid.fa-plus
+              span Thêm vào chiến dịch
+
+    script(src="/admin/assets/js/flash-sale.js")

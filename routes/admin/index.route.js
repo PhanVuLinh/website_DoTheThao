@@ -20,6 +20,8 @@ const reviewRoutes = require("../admin/review.route");
 const brandRoutes = require("../admin/brand.route");
 const policyRoutes = require("../admin/policy.route");
 
+const flashSaleRoutes = require("../admin/flash-sale.route");
+
 router.get("/", (req, res) => {
   res.redirect("/admin/dashboard");
 });
@@ -31,6 +33,8 @@ router.use("/dashboard", authMiddleware.requireAuth, dashboardRoutes);
 router.use("/category", authMiddleware.requireAuth, categoryRoutes);
 
 router.use("/product", authMiddleware.requireAuth, productRoutes);
+
+router.use("/flash-sale", authMiddleware.requireAuth, flashSaleRoutes);
 
 router.use("/order", authMiddleware.requireAuth, orderRoutes);
 
