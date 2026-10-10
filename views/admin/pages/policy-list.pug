@@ -31,7 +31,7 @@ block main
                 tr
                   td.text-center #{index + 1}
                   td.text-center
-                    span.icon-box(style="display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; background: #eff6ff; color: #2563eb; border-radius: 8px;")
+                    span.policy-icon-box
                       i(class=(item.icon || "fa-solid fa-file-shield"))
                   td
                     strong #{item.title}
@@ -39,14 +39,14 @@ block main
                     span.badge.badge-light /policy/#{item.slug}
                   td
                     span.text-muted #{item.description || 'Chưa có tóm tắt'}
-                  td.text-center(style="font-size: 13px; color: #64748b;") #{item.updatedAtFormat}
+                  td.text-center.text-muted.text-sm #{item.updatedAtFormat}
                   td.text-center
                     if item.status === 'active'
-                      span.badge.badge-success Hoạt động
+                      span.badge-status.badge-active Hoạt động
                     else
-                      span.badge.badge-secondary Tạm dừng
+                      span.badge-status.badge-inactive Tạm dừng
                   td.text-center
-                    .action-btns(style="justify-content: center;")
+                    .action-btns.action-btns-center
                       if(role.permissions.includes("policy_edit") || role.permissions.includes("setting_edit"))
                         a.btn-edit(href=`/${pathAdmin}/policy/edit/${item._id}` title="Chỉnh sửa nội dung")
                           i.fa-regular.fa-pen-to-square

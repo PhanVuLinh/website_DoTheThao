@@ -81,7 +81,7 @@ block main
                     strong #{item.name}
                     if item.link
                       div
-                        a(href=item.link target="_blank" style="font-size: 12px; color: var(--admin-primary); display: inline-flex; align-items: center; gap: 4px;")
+                        a.table-link-preview(href=item.link target="_blank")
                           i.fa-solid.fa-arrow-up-right-from-square
                           | #{item.link}
                   td #{item.tagline || '---'}
@@ -95,7 +95,7 @@ block main
                     +switch-status(item, `/${pathAdmin}/brand/change-multi`, "brand_edit")
                   if(role && role.permissions && (role.permissions.includes("brand_edit") || role.permissions.includes("brand_delete")))
                     td.text-center
-                      .action-btns(style="justify-content: center;")
+                      .action-btns.action-btns-center
                         if(role.permissions.includes("brand_edit"))
                           a.btn-edit(href=`/${pathAdmin}/brand/edit/${item._id}` title="Chỉnh sửa")
                             i.fa-regular.fa-pen-to-square

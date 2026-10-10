@@ -16,7 +16,7 @@ block main
       form(action=`/${pathAdmin}/article/create` method="POST" enctype="multipart/form-data")
         
         .form-group
-          label Tiêu đề bài viết <span style="color:#ef4444">*</span>
+          label Tiêu đề bài viết <span class="text-danger">*</span>
           input.form-control(
             type="text" 
             name="title" 
@@ -38,7 +38,7 @@ block main
               option(value="inactive" selected=(oldData.status === "inactive")) Tạm dừng
 
         .form-group
-          label Ảnh đại diện (Thumbnail) <span style="color:#ef4444">*</span>
+          label Ảnh đại diện (Thumbnail) <span class="text-danger">*</span>
           .upload-image-wrapper(upload-image-wrapper)
             input#thumbnail-upload.hidden-input(upload-image-input type="file" name="thumbnail" accept="image/*")
             label.upload-box(for="thumbnail-upload" upload-image-label)
@@ -53,7 +53,7 @@ block main
           textarea.form-control(name="description" rows="3" placeholder="Nhập đoạn mô tả ngắn hiển thị bên ngoài danh sách bài viết...")= oldData.description || ""
 
         .form-group
-          label Nội dung chi tiết <span style="color:#ef4444">*</span>
+          label Nội dung chi tiết <span class="text-danger">*</span>
           textarea.form-control.textarea-mce(name="content" rows="15" placeholder="Viết nội dung chi tiết của bài viết tại đây...")= oldData.content || ""
 
         .form-actions

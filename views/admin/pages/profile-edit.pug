@@ -29,7 +29,7 @@ block main
             label Nhóm quyền
             input.form-control(type="text" value=(role ? role.title : "Chưa phân quyền") readonly)
 
-        .form-group(style="margin-top: 10px;")
+        .form-group.mt-2
           label Ảnh đại diện
           .upload-image-wrapper(upload-image-wrapper)
             input#avatar-upload.hidden-input(upload-image-input type="file" name="avatar" accept="image/*")

@@ -14,7 +14,7 @@ block main
       form(action=`/${pathAdmin}/setting/account-admin/create` method="POST" enctype="multipart/form-data")
         .form-row-2
           .form-group
-            label Họ tên <span style="color:#ef4444">*</span>
+            label Họ tên <span class="text-danger">*</span>
             input.form-control(
               type="text" 
               name="fullName" 
@@ -25,7 +25,7 @@ block main
             )
           
           .form-group
-            label Email <span style="color:#ef4444">*</span>
+            label Email <span class="text-danger">*</span>
             input.form-control(
               type="email" 
               name="email" 
@@ -40,7 +40,7 @@ block main
             input.form-control(type="text" name="phone" placeholder="Nhập số điện thoại" value=oldData.phone || "")
           
           .form-group
-            label Nhóm quyền <span style="color:#ef4444">*</span>
+            label Nhóm quyền <span class="text-danger">*</span>
             select.form-control(name="role_id" required)
               option(value="" disabled selected=!oldData.role_id) -- Chọn nhóm quyền --
               each item in roles
@@ -59,7 +59,7 @@ block main
 
         .form-row-2
           .form-group
-            label Mật khẩu <span style="color:#ef4444">*</span>
+            label Mật khẩu <span class="text-danger">*</span>
             input.form-control(
               type="password" 
               name="password" 
@@ -70,7 +70,7 @@ block main
           
           .form-group 
 
-        .form-group(style="margin-top: 10px;")
+        .form-group.mt-2
           label Ảnh đại diện
           .upload-image-wrapper
             input#avatar-upload.hidden-input(type="file" name="avatar" accept="image/*" onchange="previewImage(event, 'preview-avatar', 'avatar-container', 'avatar-label')")

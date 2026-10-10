@@ -13,7 +13,7 @@ block main
         
         .form-row-2
           .form-group
-            label Tên nhóm quyền <span style="color:#ef4444">*</span>
+            label Tên nhóm quyền <span class="text-danger">*</span>
             input.form-control(
               type="text" 
               name="name" 
@@ -56,7 +56,7 @@ block main
                   
         .form-actions-stacked
           button.btn-submit.btn-submit-large(type="submit") 
-            i.fa-solid.fa-plus(style="margin-right: 8px;")
+            i.fa-solid.fa-plus.mr-2
             | Tạo mới nhóm quyền
   else
     include ../partials/no-access.pug

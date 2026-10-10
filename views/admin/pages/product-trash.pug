@@ -93,7 +93,11 @@ block main
                             i.fa-regular.fa-trash-can
             else 
               tr
-                td(colspan="10" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có sản phẩm nào bị xóa!
+                td(colspan="10")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-regular.fa-trash-can
+                    p Thùng rác trống! Không có sản phẩm nào bị xóa!
 
     .admin-pagination
       +pagination(pagination)

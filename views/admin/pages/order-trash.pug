@@ -30,7 +30,7 @@ block main
         if(bulkOptions.length > 0)
           +bulk-action(bulkOptions)
           
-        .search-box-large(style="max-width: 500px;")
+        .search-box-large
           i.fa-solid.fa-magnifying-glass
           input(
             type="text"
@@ -70,7 +70,7 @@ block main
                       span.phone SĐT: #{orderDetail.phone}
                       span.phone Địa chỉ: #{orderDetail.address}
                       if(orderDetail.note)
-                        span.phone(style="color: var(--red-main)") Ghi chú: #{orderDetail.note}
+                        span.phone.text-danger Ghi chú: #{orderDetail.note}
                   
                   td
                     .order-products-list
@@ -112,7 +112,11 @@ block main
                             i.fa-regular.fa-trash-can
             else
               tr
-                td.text-center(colspan="8") Không có đơn hàng nào trong thùng rác.
+                td(colspan="8")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-regular.fa-trash-can
+                    p Thùng rác trống! Không có đơn hàng nào bị xóa!
 
     .admin-pagination
       if pagination

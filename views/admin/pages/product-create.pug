@@ -18,7 +18,7 @@ block main
         
         .form-row-2
           .form-group
-            label Tên sản phẩm <span style="color:#ef4444">*</span>
+            label Tên sản phẩm <span class="text-danger">*</span>
             input.form-control(
               type="text" 
               name="title" 
@@ -88,7 +88,7 @@ block main
         
         .form-row-2
           .form-group
-            label Giá bán (VNĐ) <span style="color:#ef4444">*</span>
+            label Giá bán (VNĐ) <span class="text-danger">*</span>
             .input-currency-wrapper
               input.form-control(
                 type="text" 
@@ -114,7 +114,7 @@ block main
             )
 
         .form-group
-          label Kho hàng theo size / kích cỡ <span style="color:#ef4444">*</span>
+          label Kho hàng theo size / kích cỡ <span class="text-danger">*</span>
           #dynamic-size-list
 
           button.btn-add-size(type="button" onclick="addSizeField()")
