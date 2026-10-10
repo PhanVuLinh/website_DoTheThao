@@ -8,6 +8,7 @@ const Order = require("../../models/order.model");
 const User = require("../../models/user.model");
 const Coupon = require("../../models/coupon.model");
 const SettingWebsiteInfo = require("../../models/setting-website-info.model");
+const FlashSale = require("../../models/flash-sale.model");
 
 const generateHelper = require("../../helpers/generate.helper");
 const variableCongfig = require("../../config/variable");
@@ -206,6 +207,33 @@ module.exports.createPost = async (req, res) => {
 
     const newOrder = new Order(req.body);
     await newOrder.save();
+
+    // Tự động tăng số lượng 'sold' trong chiến dịch Flash Sale đang diễn ra (nếu có sản phẩm trùng khớp)
+    try {
+      const activeFlashSale = await FlashSale.findOne({
+        status: "active",
+        deleted: false,
+        startTime: { $lte: new Date() },
+        endTime: { $gte: new Date() },
+      });
+      if (activeFlashSale && Array.isArray(activeFlashSale.items)) {
+        let hasUpdated = false;
+        for (const p of products) {
+          const saleItem = activeFlashSale.items.find(
+            (item) => item.product_id.toString() === p.product_id.toString()
+          );
+          if (saleItem) {
+            saleItem.sold = (saleItem.sold || 0) + (p.quantity || 1);
+            hasUpdated = true;
+          }
+        }
+        if (hasUpdated) {
+          await activeFlashSale.save();
+        }
+      }
+    } catch (fsErr) {
+      console.error("Lỗi cập nhật flash sale sold:", fsErr);
+    }
 
     // 5. Điều hướng theo phương thức thanh toán
     switch (req.body.paymentMethod) {

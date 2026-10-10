@@ -144,17 +144,17 @@ block main
   //- ==========================================
   //- 4. KHÁM PHÁ DANH MỤC SẢN PHẨM
   //- ==========================================
-  section.categories
-    .categories__container
-      .section-header-center
-        .section-tag
-          i.fa-solid.fa-layer-group
-          | BỘ SƯU TẬP
-        h2.categories__title Khám Phá Bộ Môn Thể Thao
-        p.section-subtitle Đầy đủ trang thiết bị chuyên dụng phục vụ mọi cấp độ từ phong trào đến thi đấu chuyên nghiệp.
+  if categoryChildren && categoryChildren.length > 0
+    section.categories
+      .categories__container
+        .section-header-center
+          .section-tag
+            i.fa-solid.fa-layer-group
+            | BỘ SƯU TẬP
+          h2.categories__title Khám Phá Bộ Môn Thể Thao
+          p.section-subtitle Đầy đủ trang thiết bị chuyên dụng phục vụ mọi cấp độ từ phong trào đến thi đấu chuyên nghiệp.
 
-      .categories__grid
-        if categoryChildren && categoryChildren.length > 0
+        .categories__grid
           each cat in categoryChildren
             a.category-card(href=`/category/${cat.slug}`)
               .category-card__img-wrap
@@ -167,23 +167,23 @@ block main
   //- ==========================================
   //- 5. GIỜ VÀNG GIÁ SỐC (FLASH SALE)
   //- ==========================================
-  if (settingWebsiteInfo.flashSaleActive !== false) && productListSection3 && productListSection3.length > 0
+  if activeFlashSale && productListSection3 && productListSection3.length > 0
     section.flash-deals
       .flash-deals__container
         .flash-promo
           .flash-promo__badge
             span.live-pulse-dot
-            | #{settingWebsiteInfo.flashSaleBadge || 'GIỜ VÀNG GIÁ SỐC'}
+            | #{activeFlashSale.badge || 'GIỜ VÀNG GIÁ SỐC'}
           h2.flash-promo__title-new
-            span.title-sub #{settingWebsiteInfo.flashSaleSubTitle || 'ƯU ĐÃI CÓ HẠN'}
-            span.title-main #{settingWebsiteInfo.flashSaleTitle || 'SĂN HÀNG GIÁ TỐT'}
-          p.flash-promo__desc #{settingWebsiteInfo.flashSaleDesc || 'Giày thi đấu & trang bị thể thao tuyển chọn giảm sâu số lượng có hạn.'}
+            span.title-sub #{activeFlashSale.subTitle || 'ƯU ĐÃI CÓ HẠN'}
+            span.title-main #{activeFlashSale.title}
+          p.flash-promo__desc #{activeFlashSale.description || 'Ưu đãi có hạn, nhanh tay săn deal!'}
           
           .flash-promo__timer-wrapper
             p.flash-promo__countdown-label
               i.fa-regular.fa-clock
               | KẾT THÚC TRONG
-            .flash-promo__countdown#flashCountdown(data-end=(settingWebsiteInfo && settingWebsiteInfo.flashSaleEndTime ? new Date(settingWebsiteInfo.flashSaleEndTime).toISOString() : ""))
+            .flash-promo__countdown#flashCountdown(data-end=(activeFlashSale.endTime ? new Date(activeFlashSale.endTime).toISOString() : ""))
               .countdown-box
                 span.num#cdHours 00
                 span.label GIỜ
@@ -196,7 +196,7 @@ block main
                 span.num#cdSeconds 00
                 span.label GIÂY
 
-          a.flash-promo__btn(href=(settingWebsiteInfo.flashSaleLink || "/product"))
+          a.flash-promo__btn(href="/product")
             span Xem Tất Cả Khuyến Mãi
             i.fa-solid.fa-arrow-right
 
@@ -244,12 +244,18 @@ block main
 
                   .deal-progress-wrap
                     .deal-progress-bar
-                      .deal-progress-fill(style=`width: ${65 + ((index * 11) % 30)}%`)
+                      .deal-progress-fill(style=`width: ${item.percentSold || 0}%`)
                     .deal-progress-text
                       span.sold-text
                         i.fa-solid.fa-fire-flame-curved
-                        | Đã bán #{15 + index * 7}
-                      span.stock-tag Sắp cháy hàng
+                        if item.quantityQuota > 0
+                          | Đã bán #{item.soldCount || 0} / #{item.quantityQuota}
+                        else
+                          | Đã bán #{item.soldCount || 0}
+                      if ((item.percentSold || 0) >= 80)
+                        span.stock-tag Sắp cháy hàng
+                      else
+                        span.stock-tag Đang mở bán
 
                   .flash-deal-card__footer
                     .flash-deal-card__price-group
@@ -351,17 +357,17 @@ block main
   //- ==========================================
   //- 8. ĐÁNH GIÁ TỪ KHÁCH HÀNG
   //- ==========================================
-  section.testimonials-section
-    .testimonials-container
-      .section-header-center
-        .section-tag
-          i.fa-solid.fa-heart
-          | ĐÁNH GIÁ THỰC TẾ
-        h2.section-title Khách Hàng Nói Về #{settingWebsiteInfo.websiteName || 'TitiSport'}
-        p.section-subtitle Hàng ngàn vận động viên và người yêu thể thao đã tin tưởng đồng hành.
+  if testimonialsList && testimonialsList.length > 0
+    section.testimonials-section
+      .testimonials-container
+        .section-header-center
+          .section-tag
+            i.fa-solid.fa-heart
+            | ĐÁNH GIÁ THỰC TẾ
+          h2.section-title Khách Hàng Nói Về #{settingWebsiteInfo.websiteName || 'TitiSport'}
+          p.section-subtitle Hàng ngàn vận động viên và người yêu thể thao đã tin tưởng đồng hành.
 
-      .testimonials-grid
-        if testimonialsList && testimonialsList.length > 0
+        .testimonials-grid
           each item in testimonialsList
             .testimonial-card
               .testimonial-rating
@@ -440,17 +446,17 @@ block main
   //- ==========================================
   //- 10. THƯƠNG HIỆU ĐỐI TÁC CHÍNH HÃNG
   //- ==========================================
-  section.brands-section
-    .brands-container
-      .section-header-center
-        .section-tag
-          i.fa-solid.fa-certificate
-          | THƯƠNG HIỆU ĐỐI TÁC
-        h2.section-title Đối Tác Thể Thao Toàn Cầu
-        p.section-subtitle #{settingWebsiteInfo.websiteName || 'TitiSport'} tự hào phân phối chính hãng các thương hiệu dụng cụ và trang phục thi đấu hàng đầu thế giới.
+  if brandList && brandList.length > 0
+    section.brands-section
+      .brands-container
+        .section-header-center
+          .section-tag
+            i.fa-solid.fa-certificate
+            | THƯƠNG HIỆU ĐỐI TÁC
+          h2.section-title Đối Tác Thể Thao Toàn Cầu
+          p.section-subtitle #{settingWebsiteInfo.websiteName || 'TitiSport'} tự hào phân phối chính hãng các thương hiệu dụng cụ và trang phục thi đấu hàng đầu thế giới.
 
-      .brands-grid
-        if brandList && brandList.length > 0
+        .brands-grid
           each item in brandList
             a.brand-card(href=(item.link || `/?keyword=${item.name}`))
               .brand-card__logo-wrap
@@ -474,25 +480,5 @@ block main
                 span.brand-view-link
                   | Xem Sản Phẩm
                   i.fa-solid.fa-arrow-right
-
-        a.brand-card(href="/product")
-          .brand-card__logo-wrap
-            if settingWebsiteInfo.logo
-              img.brand-card__logo-img(src=settingWebsiteInfo.logo alt=settingWebsiteInfo.websiteName loading="lazy")
-            else
-              i.fa-solid.fa-shield-halved.brand-card__fallback-icon
-          h4.brand-card__name #{settingWebsiteInfo.websiteName || 'TITISPORT'} PRO
-          span.brand-card__tagline Gian Hàng Chính Hãng
-          span.brand-spec-pill
-            i.fa-solid.fa-fire-flame-curved
-            | Dụng Cụ & Phụ Kiện
-          p.brand-card__desc Phụ kiện thể thao chọn lọc, túi đựng bóng, tất thi đấu chống trơn cao cấp.
-          .brand-card__footer
-            span.brand-card__badge.badge-vip
-              i.fa-solid.fa-star
-              | Độc Quyền
-            span.brand-view-link
-              | Xem Sản Phẩm
-              i.fa-solid.fa-arrow-right
 
   script(src="/client/assets/js/flash-sale.js")
