@@ -28,6 +28,18 @@ module.exports.permissionList = [
     ],
   },
   {
+    group: "Quản lý Flash Sale",
+    permissions: [
+      { label: "Xem danh sách", value: "flash_sale_view" },
+      { label: "Thêm mới", value: "flash_sale_create" },
+      { label: "Chỉnh sửa", value: "flash_sale_edit" },
+      { label: "Xóa (Tạm thời)", value: "flash_sale_delete" },
+      { label: "Xem thùng rác", value: "flash_sale_trash" },
+      { label: "Khôi phục", value: "flash_sale_restore" },
+      { label: "Xóa vĩnh viễn", value: "flash_sale_destroy" },
+    ],
+  },
+  {
     group: "Quản lý mã giảm giá ",
     permissions: [
       { label: "Xem danh sách", value: "coupon_view" },

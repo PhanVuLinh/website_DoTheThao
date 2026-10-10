@@ -15,7 +15,7 @@ block main
       form(action=`/${pathAdmin}/coupon/create` method="POST")
         .form-row-2
           .form-group
-            label Tên sự kiện <span style="color:#ef4444">*</span>
+            label Tên sự kiện <span class="text-danger">*</span>
             input.form-control(
               type="text" 
               name="title" 
@@ -25,7 +25,7 @@ block main
             )
           
           .form-group
-            label Mã giảm giá <span style="color:#ef4444">*</span>
+            label Mã giảm giá <span class="text-danger">*</span>
             input.form-control.text-uppercase(
               type="text" 
               name="code" 
@@ -36,7 +36,7 @@ block main
 
         .form-row-2
           .form-group
-            label % Giảm giá <span style="color:#ef4444">*</span>
+            label % Giảm giá <span class="text-danger">*</span>
             input.form-control(
               type="number" 
               name="discountPercentage" 
@@ -62,7 +62,7 @@ block main
 
         .form-row-2
           .form-group
-            label Số lượng <span style="color:#ef4444">*</span>
+            label Số lượng <span class="text-danger">*</span>
             input.form-control(
               type="number" 
               name="quantity" 
@@ -72,7 +72,7 @@ block main
             )
           
           .form-group
-            label Ngày hết hạn <span style="color:#ef4444">*</span>
+            label Ngày hết hạn <span class="text-danger">*</span>
             input.form-control(
               type="date" 
               name="expirationDate" 

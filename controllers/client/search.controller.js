@@ -1,6 +1,7 @@
 const slugify = require("slugify");
 const Product = require("../../models/product.model");
 const regexHelper = require("../../helpers/regex.helper");
+const paginationHelper = require("../../helpers/pagination.helper");
 const productPriceHelper = require("../../helpers/getPriceNew.helper.js");
 
 module.exports.searchList = async (req, res) => {
@@ -55,6 +56,21 @@ module.exports.searchList = async (req, res) => {
     }
   }
 
+  const countProduct = productList.length;
+  const objectPagination = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 12,
+    },
+    req.query,
+    countProduct,
+  );
+
+  const paginatedProducts = productList.slice(
+    objectPagination.skip,
+    objectPagination.skip + objectPagination.limitItems,
+  );
+
   // Get available brands for filtering
   const rawBrands = await Product.distinct("brand", {
     deleted: false,
@@ -64,7 +80,9 @@ module.exports.searchList = async (req, res) => {
 
   res.render("client/pages/search.pug", {
     title: "Kết quả tìm kiếm",
-    productList: productList,
+    productList: paginatedProducts,
+    totalCount: countProduct,
+    pagination: objectPagination,
     keyword: req.query.keyword,
     queryPrice: req.query.price,
     queryBrand: req.query.brand,

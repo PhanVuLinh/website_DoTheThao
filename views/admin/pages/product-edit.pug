@@ -26,6 +26,14 @@ block main
               +options(categoryList,0,productDetail.category_id)
         .form-row-2
           .form-group
+            label Thương hiệu
+            select.form-control(name="brand")
+              option(value="") -- Chọn thương hiệu --
+              if brandList && brandList.length > 0
+                each b in brandList
+                  option(value=b.title selected=(productDetail.brand === b.title)) #{b.title}
+
+          .form-group
             label Vị trí
             input.form-control(type="number" name="position" placeholder="Tự động tăng" value=productDetail.position)
           
@@ -75,7 +83,7 @@ block main
                     input(type="hidden" name="old_images" value=img)
         .form-row-2
           .form-group
-            label Giá bán (VNĐ) <span style="color:#ef4444">*</span>
+            label Giá bán (VNĐ) <span class="text-danger">*</span>
             .input-currency-wrapper
               input.form-control(
                 type="text" 

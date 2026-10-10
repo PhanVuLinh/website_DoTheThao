@@ -3,16 +3,19 @@ const Contact = require("../../models/contact.model");
 module.exports.index = async (req, res) => {
   res.render("client/pages/contact.pug", {
     title: "Liên hệ & Hỗ trợ khách hàng",
-    breadcrumb: [
-      {
-        title: "Trang chủ",
-        link: "/",
-      },
-      {
-        title: "Liên hệ",
-        link: "/contact",
-      },
-    ],
+    breadcrumb: {
+      title: "Liên Hệ",
+      list: [
+        {
+          title: "Trang chủ",
+          link: "/",
+        },
+        {
+          title: "Liên hệ",
+          link: "/contact",
+        },
+      ],
+    },
   });
 };
 

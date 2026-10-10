@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/product-item.pug
+include ../mixins/pagination.pug
 
 block main
   section.product-list-page.search-result-page
@@ -61,13 +62,13 @@ block main
               span.keyword "#{keyword || 'Tất cả sản phẩm'}"
             p.search-count 
               | Tìm thấy 
-              strong #{productList ? productList.length : 0} 
+              strong #{totalCount !== undefined ? totalCount : (productList ? productList.length : 0)} 
               | sản phẩm phù hợp
 
           if productList && productList.length > 0
             .product-content__header.search-sort-header
               .header-info
-                p.desc Hiển thị #{productList.length} sản phẩm
+                p.desc Hiển thị <strong>#{productList.length}</strong> trên tổng số <strong>#{totalCount !== undefined ? totalCount : productList.length}</strong> sản phẩm
               .header-sort
                 span Sắp xếp theo:
                 select.sort-select(name="sort" id="sort-select")
@@ -79,15 +80,7 @@ block main
               each item in productList
                 +productItem(item)
 
-            if pagination
-              .box-pagination
-                ul.pagination-list
-                  li.pagination-item.prev.disabled: a(href="#"): i.fa-solid.fa-angle-left
-                  li.pagination-item.active: a(href="#") 1
-                  li.pagination-item: a(href="#") 2
-                  li.pagination-item: a(href="#") 3
-                  li.pagination-item.dot ...
-                  li.pagination-item.next: a(href="#"): i.fa-solid.fa-angle-right
+            +pagination(pagination)
           
           else
             .empty-search

@@ -14,31 +14,14 @@ aside.admin-sidebar#adminSidebar
       i.fa-solid.fa-xmark
   
   .sidebar-body
-    .sidebar-section-title ĐIỀU HƯỚNG CHÍNH
+    //- NHÓM 1: TỔNG QUAN & BÁN HÀNG
+    .sidebar-section-title TỔNG QUAN & BÁN HÀNG
     ul.sidebar-menu
       if(role && role.permissions && role.permissions.includes("dashboard_view"))
         li
           a(href=`/${pathAdmin}/dashboard`)
             i.fa-solid.fa-chart-pie
             span Tổng quan
-
-      if(role && role.permissions && role.permissions.includes("category_view"))
-        li
-          a(href=`/${pathAdmin}/category/list`)
-            i.fa-solid.fa-table-cells-large
-            span Quản lý danh mục
-
-      if(role && role.permissions && role.permissions.includes("product_view"))
-        li
-          a(href=`/${pathAdmin}/product/list`)
-            i.fa-solid.fa-box-open
-            span Quản lý sản phẩm
-
-      if(role && role.permissions && role.permissions.includes("coupon_view"))
-        li
-          a(href=`/${pathAdmin}/coupon/list`)
-            i.fa-solid.fa-ticket
-            span Quản lý mã giảm giá
 
       if(role && role.permissions && role.permissions.includes("order_view"))
         li
@@ -52,11 +35,48 @@ aside.admin-sidebar#adminSidebar
             i.fa-solid.fa-users
             span Quản lý khách hàng
 
-      if(role && role.permissions && role.permissions.includes("contact_view"))
+    //- NHÓM 2: SẢN PHẨM & KHUYẾN MÃI
+    .sidebar-section-title SẢN PHẨM & KHUYẾN MÃI
+    ul.sidebar-menu
+      if(role && role.permissions && role.permissions.includes("product_view"))
         li
-          a(href=`/${pathAdmin}/contact/list`)
-            i.fa-solid.fa-address-book
-            span Thông tin liên hệ
+          a(href=`/${pathAdmin}/product/list`)
+            i.fa-solid.fa-box-open
+            span Quản lý sản phẩm
+
+      if(role && role.permissions && role.permissions.includes("category_view"))
+        li
+          a(href=`/${pathAdmin}/category/list`)
+            i.fa-solid.fa-table-cells-large
+            span Quản lý danh mục
+
+      if(role && role.permissions && (role.permissions.includes("flash_sale_view") || role.permissions.includes("product_view")))
+        li
+          a(href=`/${pathAdmin}/flash-sale/list`)
+            i.fa-solid.fa-bolt
+            span Chiến dịch Flash Sale
+            span.sidebar-badge-hot HOT
+
+      if(role && role.permissions && role.permissions.includes("coupon_view"))
+        li
+          a(href=`/${pathAdmin}/coupon/list`)
+            i.fa-solid.fa-ticket
+            span Quản lý mã giảm giá
+
+      if(role && role.permissions && (role.permissions.includes("brand_view") || role.permissions.includes("setting_view")))
+        li
+          a(href=`/${pathAdmin}/brand/list`)
+            i.fa-solid.fa-certificate
+            span Quản lý thương hiệu
+
+    //- NHÓM 3: NỘI DUNG & CSKH
+    .sidebar-section-title NỘI DUNG & CSKH
+    ul.sidebar-menu
+      if(role && role.permissions && (role.permissions.includes("review_view") || role.permissions.includes("product_view")))
+        li
+          a(href=`/${pathAdmin}/review/list`)
+            i.fa-solid.fa-star
+            span Quản lý đánh giá
 
       if(role && role.permissions && role.permissions.includes("article_view"))
         li
@@ -64,16 +84,11 @@ aside.admin-sidebar#adminSidebar
             i.fa-solid.fa-newspaper
             span Quản lý bài viết
 
-      li
-        a(href=`/${pathAdmin}/review/list`)
-          i.fa-solid.fa-star
-          span Quản lý đánh giá
-
-      if(role && role.permissions && (role.permissions.includes("brand_view") || role.permissions.includes("setting_view")))
+      if(role && role.permissions && role.permissions.includes("contact_view"))
         li
-          a(href=`/${pathAdmin}/brand/list`)
-            i.fa-solid.fa-certificate
-            span Quản lý thương hiệu
+          a(href=`/${pathAdmin}/contact/list`)
+            i.fa-solid.fa-address-book
+            span Thông tin liên hệ
 
       if(role && role.permissions && (role.permissions.includes("policy_view") || role.permissions.includes("setting_view")))
         li
@@ -82,7 +97,7 @@ aside.admin-sidebar#adminSidebar
             span Quản lý chính sách
 
   .sidebar-footer
-    .sidebar-section-title CẤU HÌNH & TÀI KHOẢN
+    .sidebar-section-title HỆ THỐNG & TÀI KHOẢN
     ul.sidebar-menu.bottom-menu
       if(role && role.permissions && (role.permissions.includes("setting_view") || role.permissions.includes("account_admin_view") || role.permissions.includes("role_view")))
         li

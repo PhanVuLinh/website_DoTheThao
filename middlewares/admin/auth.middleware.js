@@ -65,7 +65,11 @@ module.exports.checkPermission = (requiredPermission) => {
     const role = (res && res.locals && res.locals.role) || (req && req.role);
     const permissions = (role && role.permissions) ? role.permissions : [];
 
-    if (!permissions.includes(requiredPermission)) {
+    const isAllowed = Array.isArray(requiredPermission)
+      ? requiredPermission.some((p) => permissions.includes(p))
+      : permissions.includes(requiredPermission);
+
+    if (!isAllowed) {
       if (req.xhr || (req.headers && req.headers.accept && req.headers.accept.includes("json"))) {
         return res.status(403).json({
 

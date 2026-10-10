@@ -72,12 +72,12 @@ block main
                 .discount-input-wrap
                   if cartDetail.coupon && cartDetail.coupon.code
                     input#coupon-input.coupon-field(type="text" value=cartDetail.coupon.code readonly)
-                    button.btn-apply#btn-apply-coupon(type="button" style="display: none;") Áp dụng
-                    button.btn-cancel-coupon#btn-cancel-coupon(type="button" style="display: block;") Hủy mã
+                    button.btn-apply.d-none#btn-apply-coupon(type="button") Áp dụng
+                    button.btn-cancel-coupon.d-block#btn-cancel-coupon(type="button") Hủy mã
                   else
                     input#coupon-input.coupon-field(type="text" placeholder="Nhập mã giảm giá (VD: SALE10)")
-                    button.btn-apply#btn-apply-coupon(type="button" style="display: block;") Áp dụng
-                    button.btn-cancel-coupon#btn-cancel-coupon(type="button" style="display: none;") Hủy mã
+                    button.btn-apply.d-block#btn-apply-coupon(type="button") Áp dụng
+                    button.btn-cancel-coupon.d-none#btn-cancel-coupon(type="button") Hủy mã
 
               // TỔNG TIỀN CHI TIẾT
               .cart-summary 
@@ -87,7 +87,7 @@ block main
                   span.value.cart-total #{cartDetail.totalPrice.toLocaleString('vi-VN')} đ
                 
                 .summary-row#discount-row(
-                  style=(cartDetail.discountAmount > 0 ? "display: flex;" : "display: none;")
+                  class=(cartDetail.discountAmount > 0 ? "d-flex" : "d-none")
                   data-percent=(cartDetail.couponInfo ? cartDetail.couponInfo.discountPercentage : 0)
                   data-max=(cartDetail.couponInfo ? cartDetail.couponInfo.maxDiscountAmount : 0)
                 )

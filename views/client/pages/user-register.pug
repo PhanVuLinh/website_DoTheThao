@@ -9,7 +9,7 @@ block main
         
         form(action="/auth/register" method="POST")
           .form-group
-            label(for="fullName") Họ và Tên <span style="color:#ef4444">*</span>
+            label(for="fullName") Họ và Tên <span class="text-danger">*</span>
             input#fullName.form-control(
               type="text" 
               name="fullName" 
@@ -20,7 +20,7 @@ block main
             )
 
           .form-group
-            label(for="email") Email <span style="color:#ef4444">*</span>
+            label(for="email") Email <span class="text-danger">*</span>
             input#email.form-control(
               type="email" 
               name="email" 
@@ -30,7 +30,7 @@ block main
             )
             
           .form-group
-            label(for="password") Mật khẩu <span style="color:#ef4444">*</span>
+            label(for="password") Mật khẩu <span class="text-danger">*</span>
             input#password.form-control(
               type="password" 
               name="password" 
@@ -40,7 +40,7 @@ block main
             )
 
           .form-group
-            label(for="confirmPassword") Xác nhận mật khẩu <span style="color:#ef4444">*</span>
+            label(for="confirmPassword") Xác nhận mật khẩu <span class="text-danger">*</span>
             input#confirmPassword.form-control(
               type="password" 
               name="confirmPassword" 

@@ -6,6 +6,7 @@ const Coupon = require("../../models/coupon.model");
 const Order = require("../../models/order.model");
 const Brand = require("../../models/brand.model");
 const Review = require("../../models/review.model");
+const FlashSale = require("../../models/flash-sale.model");
 
 const productPriceHelper = require("../../helpers/getPriceNew.helper.js");
 
@@ -33,21 +34,48 @@ module.exports.index = async (req, res) => {
         : "Vô thời hạn";
     }
 
-    // 3. Flash Sale: Sản phẩm có giảm giá cao nhất (Flash Deals)
-    const flashDealsRaw = await Product.find({
+    // 3. Flash Sale: Tìm chiến dịch Flash Sale thực tế đang diễn ra
+    const now = new Date();
+    const activeFlashSale = await FlashSale.findOne({
       deleted: false,
       status: "active",
-      discountPercentage: { $gt: 0 },
-    })
-      .sort({ discountPercentage: "desc" })
-      .limit(6);
+      startTime: { $lte: now },
+      endTime: { $gte: now },
+    }).populate({
+      path: "items.product_id",
+      select: "_id title slug price thumbnail brand featured isNew",
+    });
 
-    // Fallback nếu chưa có nhiều sản phẩm giảm giá
-    const productListSection3 = productPriceHelper.priceNewProduct(
-      flashDealsRaw.length > 0
-        ? flashDealsRaw
-        : await Product.find({ deleted: false, status: "active" }).sort({ position: "desc" }).limit(6)
-    );
+    let productListSection3 = [];
+
+    if (activeFlashSale && Array.isArray(activeFlashSale.items) && activeFlashSale.items.length > 0) {
+      for (const item of activeFlashSale.items) {
+        if (!item.product_id) continue;
+        const p = item.product_id;
+        const originalPrice = p.price || 0;
+        const discount = item.discountPercentage || 0;
+        const salePrice = item.flashSalePrice || Math.round((originalPrice * (100 - discount)) / 100);
+        const quantity = item.quantity || 0;
+        const sold = item.sold || 0;
+        const percentSold = quantity > 0 ? Math.min(100, Math.round((sold / quantity) * 100)) : 0;
+
+        productListSection3.push({
+          _id: p._id,
+          title: p.title,
+          slug: p.slug,
+          thumbnail: p.thumbnail,
+          brand: p.brand,
+          featured: p.featured,
+          isNew: p.isNew,
+          price: originalPrice,
+          priceNew: salePrice,
+          discountPercentage: discount,
+          quantityQuota: quantity,
+          soldCount: sold,
+          percentSold: percentSold,
+        });
+      }
+    }
 
     // 4. Sản phẩm Nổi bật (Featured Products)
     const productFeaturedSection5Raw = await Product.find({
@@ -163,6 +191,7 @@ module.exports.index = async (req, res) => {
       title: "Trang chủ",
       categoryChildren: categoryChildren,
       couponList: couponList,
+      activeFlashSale: activeFlashSale,
       productListSection3: productListSection3,
       productFeaturedSection5: productFeaturedSection5,
       productListSection7: productListSection7,
