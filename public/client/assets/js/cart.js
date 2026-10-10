@@ -46,7 +46,7 @@ const updateCartTotal = () => {
   // TÍNH LẠI GIẢM GIÁ NẾU CÓ MÃ
   let discount = 0;
   const discountRow = document.querySelector("#discount-row");
-  if (discountRow && discountRow.style.display !== "none") {
+  if (discountRow && !discountRow.classList.contains("d-none") && discountRow.style.display !== "none") {
     const percent = parseInt(discountRow.getAttribute("data-percent")) || 0;
     const max = parseInt(discountRow.getAttribute("data-max")) || 0;
 
