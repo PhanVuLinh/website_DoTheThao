@@ -523,3 +523,28 @@ if (clientPaginationButtons.length > 0) {
     });
   });
 }
+
+/* =========================================
+   HOMEPAGE ALTERNATING SECTIONS (XÁM - TRẮNG)
+   ========================================= */
+function applyAlternatingSectionBgs() {
+  const sections = document.querySelectorAll(".home-section");
+  if (!sections || sections.length === 0) return;
+
+  let isGray = true; // Bắt đầu bằng Xám (Kho Voucher)
+  sections.forEach((sec) => {
+    const style = window.getComputedStyle(sec);
+    if (style.display !== "none" && !sec.hidden && !sec.classList.contains("d-none")) {
+      if (isGray) {
+        sec.classList.remove("section-bg-white");
+        sec.classList.add("section-bg-gray");
+      } else {
+        sec.classList.remove("section-bg-gray");
+        sec.classList.add("section-bg-white");
+      }
+      isGray = !isGray;
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", applyAlternatingSectionBgs);

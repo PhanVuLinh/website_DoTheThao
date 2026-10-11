@@ -8658,4 +8658,114 @@ textarea.is-invalid {
   padding: 14px 40px !important;
   font-size: 16px !important;
 }
+
+/* ==========================================================================
+   HOMEPAGE DYNAMIC ALTERNATING SECTIONS (ZEBRA STRIPING: XÁM - TRẮNG)
+   ========================================================================== */
+.home-section {
+  transition: background-color 0.25s ease;
+}
+
+.home-section.section-bg-gray,
+.section-bg-gray {
+  background-color: #f8fafc !important;
+  border-top: 1px solid #edf2f7;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.home-section.section-bg-white,
+.section-bg-white {
+  background-color: #ffffff !important;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Fallback default background when JS is loading */
+.voucher-vault {
+  background: #f8fafc;
+  border-top: 1px solid #edf2f7;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.categories {
+  background: #ffffff;
+}
+
+.flash-deals {
+  background: #f8fafc;
+  border-top: 1px solid #edf2f7;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.sports-hub-section {
+  background: #ffffff;
+}
+
+.banner-promo {
+  padding: 44px 0;
+  background: #f8fafc;
+  border-top: 1px solid #edf2f7;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.testimonials-section {
+  background: #ffffff;
+}
+
+.news-section {
+  background: #f8fafc;
+  border-top: 1px solid #edf2f7;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.brands-section {
+  background: #ffffff;
+  border-top: 1px solid #edf2f7;
+}
+
+/* Card & Content Adaptive Contrast Based on Section Background */
+/* Testimonials */
+.testimonials-section.section-bg-white .testimonial-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+}
+.testimonials-section.section-bg-white .testimonial-card:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 14px 30px rgba(0, 0, 77, 0.08);
+}
+.testimonials-section.section-bg-gray .testimonial-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+}
+
+/* Brands Showcase */
+.brands-section.section-bg-white .brand-logo-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02);
+}
+.brands-section.section-bg-white .brand-logo-item:hover {
+  background: #ffffff;
+  border-color: #ff4722;
+  box-shadow: 0 16px 32px rgba(255, 71, 34, 0.12), 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+.brands-section.section-bg-gray .brand-logo-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+/* Sports Hub Products */
+.sports-hub-section.section-bg-white .flash-product-card {
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+}
+.sports-hub-section.section-bg-gray .flash-product-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
 

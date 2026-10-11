@@ -84,7 +84,7 @@ block main
   //- 3. KHO VOUCHER KHUYẾN MÃI
   //- ==========================================
   if couponList && couponList.length > 0
-    section.voucher-vault#voucher-vault
+    section.voucher-vault.home-section#voucher-vault
       .voucher-vault__container
         .section-header-wrap
           .section-header-left
@@ -145,7 +145,7 @@ block main
   //- 4. KHÁM PHÁ DANH MỤC SẢN PHẨM
   //- ==========================================
   if categoryChildren && categoryChildren.length > 0
-    section.categories
+    section.categories.home-section
       .categories__container
         .section-header-center
           .section-tag
@@ -168,7 +168,7 @@ block main
   //- 5. GIỜ VÀNG GIÁ SỐC (FLASH SALE)
   //- ==========================================
   if activeFlashSale && productListSection3 && productListSection3.length > 0
-    section.flash-deals
+    section.flash-deals.home-section
       .flash-deals__container
         .flash-promo
           .flash-promo__badge
@@ -282,7 +282,7 @@ block main
   //- ==========================================
   //- 6. SẢN PHẨM THEO BỘ MÔN THỂ THAO
   //- ==========================================
-  section.sports-hub-section
+  section.sports-hub-section.home-section
     .sports-hub-container
       .section-header-wrap
         .section-header-left
@@ -353,7 +353,7 @@ block main
   //- 7. BANNER QUẢNG CÁO KHUYẾN MÃI
   //- ==========================================
   if settingWebsiteInfo && (settingWebsiteInfo.promoBannerImage || settingWebsiteInfo.promoBannerTitle)
-    section.banner-promo
+    section.banner-promo.home-section
       .banner-promo__container
         .banner-promo__inner
           a.banner-promo__link(href=(settingWebsiteInfo.promoBannerLink || "/product"))
@@ -368,7 +368,7 @@ block main
   //- 8. ĐÁNH GIÁ TỪ KHÁCH HÀNG
   //- ==========================================
   if testimonialsList && testimonialsList.length > 0
-    section.testimonials-section
+    section.testimonials-section.home-section
       .testimonials-container
         .section-header-center
           .section-tag
@@ -399,7 +399,7 @@ block main
   //- 9. BÀI VIẾT & KINH NGHIỆM THỂ THAO
   //- ==========================================
   if articleListSection9 && articleListSection9.length > 0 || newsCenter
-    section.news-section
+    section.news-section.home-section
       .news-section__container
         .section-header-wrap
           .section-header-left
@@ -457,7 +457,7 @@ block main
   //- 10. THƯƠNG HIỆU ĐỐI TÁC CHÍNH HÃNG
   //- ==========================================
   if brandList && brandList.length > 0
-    section.brands-section
+    section.brands-section.home-section
       .brands-container
         .section-header-center
           .section-tag
