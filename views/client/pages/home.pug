@@ -209,19 +209,38 @@ block main
             each item, index in productListSection3
               .flash-product-item
                 .flash-deal-card
+                  button.btn-wishlist-toggle(
+                    type="button"
+                    data-id=(item.id || item._id)
+                    data-title=item.title
+                    data-slug=item.slug
+                    data-price=(item.priceNew || item.price)
+                    data-price-old=item.price
+                    data-thumbnail=(item.thumbnail || (item.images && item.images[0]) || "")
+                    title="Yêu thích sản phẩm"
+                    aria-label="Yêu thích"
+                  )
+                    i.fa-regular.fa-heart
+
                   a.flash-deal-card__link(href=`/product/detail/${item.slug}`)
                     .flash-deal-card__img-box
-                      if item.discountPercentage > 0
-                        span.flash-badge-discount
-                          i.fa-solid.fa-bolt
-                          | -#{item.discountPercentage}%
-                      if item.featured == "1"
-                        span.flash-badge-hot HOT
-                      else if item.isNew == true
-                        span.flash-badge-new MỚI
+                      .card-badges-stack
+                        if item.discountPercentage > 0
+                          span.flash-badge-discount
+                            i.fa-solid.fa-bolt
+                            | -#{item.discountPercentage}%
+                        if item.featured == "1"
+                          span.flash-badge-hot HOT
+                        else if item.isNew == true
+                          span.flash-badge-new MỚI
                       
-                      img.flash-deal-card__img(src=item.thumbnail, alt=item.title, loading="lazy")
-                      
+                      img.flash-deal-card__img(
+                        src=(item.thumbnail || (item.images && item.images[0]) || "https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT")
+                        alt=item.title
+                        loading="lazy"
+                        onerror="this.onerror=null; this.src='https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT'"
+                      )
+
                       .flash-deal-card__quick-overlay
                         span.quick-view-pill
                           i.fa-solid.fa-eye

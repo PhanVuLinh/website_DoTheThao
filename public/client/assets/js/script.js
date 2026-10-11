@@ -35,6 +35,7 @@ if (header) {
 
 // floating island header scroll handler (Kiểu 2 - Zero Jitter with rAF & Hysteresis)
 const siteNavbar = document.getElementById("siteNavbar") || document.querySelector(".navbar");
+const siteNavbarWrapper = document.getElementById("siteNavbarWrapper");
 if (siteNavbar) {
   let isScrolled = false;
   let ticking = false;
@@ -44,9 +45,11 @@ if (siteNavbar) {
     if (!isScrolled && scrollY > 50) {
       isScrolled = true;
       siteNavbar.classList.add("is-scrolled");
+      if (siteNavbarWrapper) siteNavbarWrapper.classList.add("is-scrolled");
     } else if (isScrolled && scrollY < 20) {
       isScrolled = false;
       siteNavbar.classList.remove("is-scrolled");
+      if (siteNavbarWrapper) siteNavbarWrapper.classList.remove("is-scrolled");
     }
     ticking = false;
   };
@@ -204,6 +207,9 @@ if (qtyInput && btnPlus && btnMinus) {
       priceOldEl.textContent = (basePrice * qty).toLocaleString("vi-VN") + "đ";
   }
 
+  const lowStockAlert = document.getElementById("low-stock-alert");
+  const btnAddToCart = document.getElementById("btnAddToCart") || document.querySelector(".btn-submit-cart");
+
   function getCurrentStock() {
     const checkedSize = document.querySelector('input[name="size"]:checked');
     return checkedSize ? parseInt(checkedSize.dataset.stock) : 1;
@@ -213,6 +219,44 @@ if (qtyInput && btnPlus && btnMinus) {
     if (stockDisplay) stockDisplay.textContent = stock;
     qtyInput.value = 1;
     updateTotalPrice();
+
+    const stockInfoWrap = document.getElementById("stock-info-wrap");
+    if (stock <= 0) {
+      if (stockInfoWrap) stockInfoWrap.style.display = "none";
+      if (lowStockAlert) {
+        lowStockAlert.style.display = "inline-flex";
+        lowStockAlert.className = "low-stock-pill pill-danger";
+        lowStockAlert.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> <span class="pill-text">Tạm hết hàng</span>';
+      }
+      if (btnAddToCart) {
+        btnAddToCart.disabled = true;
+        btnAddToCart.classList.add("disabled");
+        const spanText = btnAddToCart.querySelector("span");
+        if (spanText) spanText.textContent = "Tạm Hết Hàng";
+      }
+    } else if (stock <= 3) {
+      if (stockInfoWrap) stockInfoWrap.style.display = "none";
+      if (lowStockAlert) {
+        lowStockAlert.style.display = "inline-flex";
+        lowStockAlert.className = "low-stock-pill pill-warning pill-pulse";
+        lowStockAlert.innerHTML = `<i class="fa-solid fa-fire-flame-curved"></i> <span class="pill-text">Chỉ còn ${stock} sản phẩm - Nhanh tay kẻo lỡ!</span>`;
+      }
+      if (btnAddToCart) {
+        btnAddToCart.disabled = false;
+        btnAddToCart.classList.remove("disabled");
+        const spanText = btnAddToCart.querySelector("span");
+        if (spanText) spanText.textContent = "Thêm Vào Giỏ Hàng";
+      }
+    } else {
+      if (stockInfoWrap) stockInfoWrap.style.display = "inline-flex";
+      if (lowStockAlert) lowStockAlert.style.display = "none";
+      if (btnAddToCart) {
+        btnAddToCart.disabled = false;
+        btnAddToCart.classList.remove("disabled");
+        const spanText = btnAddToCart.querySelector("span");
+        if (spanText) spanText.textContent = "Thêm Vào Giỏ Hàng";
+      }
+    }
   }
 
   sizeInputs.forEach((input) => {
@@ -237,6 +281,8 @@ if (qtyInput && btnPlus && btnMinus) {
     if (activeLabel) activeLabel.classList.add("active");
   }
 
+  // Trigger initial stock check
+  updateStock(getCurrentStock());
 
   btnPlus.addEventListener("click", () => {
     const max = getCurrentStock();
@@ -258,6 +304,153 @@ if (qtyInput && btnPlus && btnMinus) {
   });
 }
 // end product quantity and size
+
+/* =========================================
+   SIZE GUIDE MODAL & INTERACTIVE CALCULATOR
+   ========================================= */
+const btnOpenSizeGuide = document.getElementById("btnOpenSizeGuide");
+const btnCloseSizeGuide = document.getElementById("btnCloseSizeGuide");
+const sizeGuideModal = document.getElementById("sizeGuideModal");
+
+if (btnOpenSizeGuide && sizeGuideModal) {
+  const openModal = () => {
+    sizeGuideModal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+  };
+  const closeModal = () => {
+    sizeGuideModal.style.display = "none";
+    document.body.style.overflow = "auto";
+  };
+
+  btnOpenSizeGuide.addEventListener("click", openModal);
+  if (btnCloseSizeGuide) {
+    btnCloseSizeGuide.addEventListener("click", closeModal);
+  }
+  sizeGuideModal.addEventListener("click", (e) => {
+    if (e.target === sizeGuideModal) closeModal();
+  });
+
+  // Tab switching
+  const guideTabBtns = sizeGuideModal.querySelectorAll(".guide-tab-btn");
+  const guideTabContents = sizeGuideModal.querySelectorAll(".guide-tab-content");
+  const calcFootwearInputs = document.getElementById("calcFootwearInputs");
+  const calcApparelInputs = document.getElementById("calcApparelInputs");
+  const calcResultBox = document.getElementById("calcResultBox");
+  const suggestedSizeBadge = document.getElementById("suggestedSizeBadge");
+  const btnApplySuggestedSize = document.getElementById("btnApplySuggestedSize");
+
+  guideTabBtns.forEach((tabBtn) => {
+    tabBtn.addEventListener("click", () => {
+      const targetId = tabBtn.getAttribute("data-target");
+      guideTabBtns.forEach((b) => b.classList.remove("active"));
+      guideTabContents.forEach((c) => c.classList.remove("active"));
+
+      tabBtn.classList.add("active");
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) targetEl.classList.add("active");
+
+      if (targetId === "tabFootwear") {
+        if (calcFootwearInputs) calcFootwearInputs.style.display = "flex";
+        if (calcApparelInputs) calcApparelInputs.style.display = "none";
+      } else {
+        if (calcFootwearInputs) calcFootwearInputs.style.display = "none";
+        if (calcApparelInputs) calcApparelInputs.style.display = "flex";
+      }
+      if (calcResultBox) calcResultBox.style.display = "none";
+    });
+  });
+
+  // Calculate Shoe Size
+  const btnCalcShoeSize = document.getElementById("btnCalcShoeSize");
+  const inputFootLength = document.getElementById("calcFootLength");
+
+  if (btnCalcShoeSize && inputFootLength) {
+    btnCalcShoeSize.addEventListener("click", () => {
+      const cm = parseFloat(inputFootLength.value);
+      if (isNaN(cm) || cm < 20 || cm > 32) {
+        alert("Vui lòng nhập chiều dài bàn chân hợp lệ từ 20cm đến 32cm!");
+        return;
+      }
+      let suggested = "41";
+      if (cm <= 23.0) suggested = "36";
+      else if (cm <= 23.5) suggested = "37";
+      else if (cm <= 24.0) suggested = "38";
+      else if (cm <= 24.5) suggested = "39";
+      else if (cm <= 25.0) suggested = "40";
+      else if (cm <= 25.5) suggested = "41";
+      else if (cm <= 26.0) suggested = "42";
+      else if (cm <= 26.5) suggested = "43";
+      else if (cm <= 27.0) suggested = "44";
+      else suggested = "45";
+
+      if (suggestedSizeBadge) suggestedSizeBadge.textContent = suggested;
+      if (calcResultBox) calcResultBox.style.display = "flex";
+      if (btnApplySuggestedSize) btnApplySuggestedSize.setAttribute("data-size", suggested);
+    });
+  }
+
+  // Calculate Apparel Size
+  const btnCalcApparelSize = document.getElementById("btnCalcApparelSize");
+  const inputHeight = document.getElementById("calcHeight");
+  const inputWeight = document.getElementById("calcWeight");
+
+  if (btnCalcApparelSize && inputHeight && inputWeight) {
+    btnCalcApparelSize.addEventListener("click", () => {
+      const h = parseFloat(inputHeight.value);
+      const w = parseFloat(inputWeight.value);
+      if (isNaN(h) || isNaN(w) || h < 140 || h > 210 || w < 35 || w > 130) {
+        alert("Vui lòng nhập chiều cao và cân nặng hợp lệ!");
+        return;
+      }
+      let suggested = "L";
+      if (w < 56 && h <= 165) suggested = "S";
+      else if (w <= 65 && h <= 172) suggested = "M";
+      else if (w <= 74 && h <= 177) suggested = "L";
+      else if (w <= 84 && h <= 183) suggested = "XL";
+      else suggested = "XXL";
+
+      if (suggestedSizeBadge) suggestedSizeBadge.textContent = suggested;
+      if (calcResultBox) calcResultBox.style.display = "flex";
+      if (btnApplySuggestedSize) btnApplySuggestedSize.setAttribute("data-size", suggested);
+    });
+  }
+
+  // Apply suggested size to form
+  if (btnApplySuggestedSize) {
+    btnApplySuggestedSize.addEventListener("click", () => {
+      const suggested = btnApplySuggestedSize.getAttribute("data-size");
+      if (!suggested) return;
+
+      const sizeRadios = document.querySelectorAll('input[name="size"]');
+      let found = false;
+      sizeRadios.forEach((radio) => {
+        const val = radio.value.toLowerCase().replace(/size:\s*/i, "").trim();
+        if (val === suggested.toLowerCase() && !radio.disabled) {
+          radio.checked = true;
+          radio.dispatchEvent(new Event("change"));
+          found = true;
+        }
+      });
+
+      closeModal();
+
+      if (found) {
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            icon: "success",
+            title: "Đã chọn kích cỡ!",
+            text: `Hệ thống đã chọn Size ${suggested} phù hợp với bạn.`,
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+      } else {
+        alert(`Đã gợi ý Size ${suggested}, nhưng rất tiếc size này hiện đang tạm hết hàng.`);
+      }
+    });
+  }
+}
+
 
 //form search
 const formSearch = document.querySelector("[form-search]");
@@ -580,3 +773,373 @@ function applyAlternatingSectionBgs() {
 }
 
 document.addEventListener("DOMContentLoaded", applyAlternatingSectionBgs);
+
+/* =========================================
+   CANCEL ORDER HANDLER (CLIENT)
+   ========================================= */
+const cancelOrderBtns = document.querySelectorAll(".btn-cancel-order");
+if (cancelOrderBtns.length > 0) {
+  cancelOrderBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const orderId = btn.getAttribute("data-id");
+      const orderCode = btn.getAttribute("data-code") || "";
+      if (!orderId) return;
+
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          title: "Hủy đơn hàng?",
+          html: `
+            <p style="font-size: 14px; color: #64748b; margin-bottom: 14px; text-align: left;">
+              Bạn có chắc muốn hủy đơn hàng <strong>#${orderCode}</strong>? Toàn bộ số lượng sản phẩm và mã ưu đãi (nếu có) sẽ được hoàn lại tự động.
+            </p>
+            <div style="text-align: left;">
+              <label style="font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; color: #1e293b;">
+                Vui lòng chọn lý do hủy:
+              </label>
+              <select id="swalCancelReasonSelect" class="swal2-select" style="width: 100%; margin: 0 0 10px 0; font-size: 14px; border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px;">
+                <option value="Tôi muốn thay đổi địa chỉ nhận hàng">Tôi muốn thay đổi địa chỉ nhận hàng</option>
+                <option value="Tôi muốn thay đổi kích cỡ / sản phẩm">Tôi muốn thay đổi kích cỡ / sản phẩm</option>
+                <option value="Tôi tìm thấy giá tốt hơn ở nơi khác">Tôi tìm thấy giá tốt hơn ở nơi khác</option>
+                <option value="Tôi không có nhu cầu mua nữa">Tôi không có nhu cầu mua nữa</option>
+                <option value="other">Lý do khác (tự nhập)...</option>
+              </select>
+              <input id="swalCancelReasonCustom" class="swal2-input" placeholder="Nhập lý do chi tiết..." style="display: none; width: 100%; margin: 0; font-size: 14px; border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px;" />
+            </div>
+          `,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#ef4444",
+          cancelButtonColor: "#94a3b8",
+          confirmButtonText: "Xác nhận hủy",
+          cancelButtonText: "Đóng",
+          didOpen: () => {
+            const selectEl = document.getElementById("swalCancelReasonSelect");
+            const customInput = document.getElementById("swalCancelReasonCustom");
+            if (selectEl && customInput) {
+              selectEl.addEventListener("change", () => {
+                if (selectEl.value === "other") {
+                  customInput.style.display = "block";
+                  customInput.focus();
+                } else {
+                  customInput.style.display = "none";
+                }
+              });
+            }
+          },
+          preConfirm: () => {
+            const selectEl = document.getElementById("swalCancelReasonSelect");
+            const customInput = document.getElementById("swalCancelReasonCustom");
+            let reason = selectEl ? selectEl.value : "";
+            if (reason === "other") {
+              reason = (customInput && customInput.value.trim()) ? customInput.value.trim() : "Khách hàng đổi ý";
+            }
+            return reason;
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const cancelReason = result.value || "Khách yêu cầu hủy đơn";
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = `/order/cancel/${orderId}`;
+            form.style.display = "none";
+
+            const methodInput = document.createElement("input");
+            methodInput.type = "hidden";
+            methodInput.name = "_method";
+            methodInput.value = "PATCH";
+            form.appendChild(methodInput);
+
+            const reasonInput = document.createElement("input");
+            reasonInput.type = "hidden";
+            reasonInput.name = "cancelReason";
+            reasonInput.value = cancelReason;
+            form.appendChild(reasonInput);
+
+            document.body.appendChild(form);
+            form.submit();
+          }
+        });
+      } else {
+        if (confirm(`Bạn có chắc muốn hủy đơn hàng #${orderCode}?`)) {
+          const reason = prompt("Lý do hủy đơn hàng:", "Đổi ý không mua nữa");
+          if (reason !== null) {
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = `/order/cancel/${orderId}`;
+            form.style.display = "none";
+
+            const reasonInput = document.createElement("input");
+            reasonInput.type = "hidden";
+            reasonInput.name = "cancelReason";
+            reasonInput.value = reason || "Khách hàng hủy đơn";
+            form.appendChild(reasonInput);
+
+            document.body.appendChild(form);
+            form.submit();
+          }
+        }
+      }
+    });
+  });
+}
+
+/* =========================================
+   WISHLIST SYSTEM (LOCALSTORAGE SYNC)
+   ========================================= */
+const WISHLIST_KEY = "titisport_wishlist";
+
+function getWishlist() {
+  try {
+    const raw = localStorage.getItem(WISHLIST_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveWishlist(list) {
+  try {
+    localStorage.setItem(WISHLIST_KEY, JSON.stringify(list));
+  } catch (e) {
+    console.error("Lỗi lưu wishlist:", e);
+  }
+}
+
+function updateWishlistCounter() {
+  const counterEl = document.getElementById("wishlist-counter");
+  if (!counterEl) return;
+  const list = getWishlist();
+  if (list.length > 0) {
+    counterEl.textContent = list.length;
+    counterEl.style.display = "inline-flex";
+  } else {
+    counterEl.style.display = "none";
+  }
+}
+
+function syncWishlistHeartStates() {
+  const list = getWishlist();
+  const ids = new Set(list.map((item) => String(item.id)));
+
+  // Update card toggle buttons
+  const toggleBtns = document.querySelectorAll(".btn-wishlist-toggle");
+  toggleBtns.forEach((btn) => {
+    const id = btn.getAttribute("data-id");
+    const icon = btn.querySelector("i");
+    if (ids.has(String(id))) {
+      btn.classList.add("is-active");
+      if (icon) {
+        icon.className = "fa-solid fa-heart";
+      }
+    } else {
+      btn.classList.remove("is-active");
+      if (icon) {
+        icon.className = "fa-regular fa-heart";
+      }
+    }
+  });
+
+  // Update product detail page button
+  const detailBtn = document.getElementById("btnWishlistDetail");
+  if (detailBtn) {
+    const id = detailBtn.getAttribute("data-id");
+    const icon = detailBtn.querySelector("i");
+    const textSpan = detailBtn.querySelector("span");
+    if (ids.has(String(id))) {
+      detailBtn.classList.add("is-active");
+      if (icon) icon.className = "fa-solid fa-heart";
+      if (textSpan) textSpan.textContent = "Đã Yêu Thích";
+    } else {
+      detailBtn.classList.remove("is-active");
+      if (icon) icon.className = "fa-regular fa-heart";
+      if (textSpan) textSpan.textContent = "Yêu Thích";
+    }
+  }
+}
+
+function renderWishlistPage() {
+  const gridEl = document.getElementById("wishlistGrid");
+  const emptyEl = document.getElementById("wishlistEmpty");
+  const clearBtn = document.getElementById("btnClearWishlist");
+  if (!gridEl) return;
+
+  const list = getWishlist();
+  if (list.length === 0) {
+    gridEl.innerHTML = "";
+    if (emptyEl) emptyEl.style.display = "flex";
+    if (clearBtn) clearBtn.style.display = "none";
+    return;
+  }
+
+  if (emptyEl) emptyEl.style.display = "none";
+  if (clearBtn) clearBtn.style.display = "inline-flex";
+
+  let html = "";
+  list.forEach((item) => {
+    const priceFormatted = Number(item.price || 0).toLocaleString("vi-VN") + "đ";
+    const priceOldFormatted = item.priceOld && Number(item.priceOld) > Number(item.price)
+      ? Number(item.priceOld).toLocaleString("vi-VN") + "đ"
+      : "";
+
+    html += `
+      <div class="wishlist-card" data-id="${item.id}">
+        <div class="wishlist-card__img-wrap">
+          <a href="/product/detail/${item.slug}">
+            <img src="${item.thumbnail}" alt="${item.title}" onerror="this.src='https://placehold.co/300x300/f1f5f9/94a3b8?text=Sport'" />
+          </a>
+          <button class="btn-remove-wishlist-item" data-id="${item.id}" type="button" title="Xóa khỏi yêu thích">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="wishlist-card__info">
+          <h3 class="wishlist-card__title">
+            <a href="/product/detail/${item.slug}" title="${item.title}">${item.title}</a>
+          </h3>
+          <div class="wishlist-card__price">
+            <span class="price-current">${priceFormatted}</span>
+            ${priceOldFormatted ? `<span class="price-old">${priceOldFormatted}</span>` : ""}
+          </div>
+          <div class="wishlist-card__actions">
+            <a href="/product/detail/${item.slug}" class="btn-wishlist-view">
+              <i class="fa-solid fa-cart-shopping"></i> Xem & Đặt Mua
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  gridEl.innerHTML = html;
+
+  // Add click listener to individual remove buttons on wishlist page
+  const removeBtns = gridEl.querySelectorAll(".btn-remove-wishlist-item");
+  removeBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      let currentList = getWishlist();
+      currentList = currentList.filter((x) => String(x.id) !== String(id));
+      saveWishlist(currentList);
+      updateWishlistCounter();
+      syncWishlistHeartStates();
+      renderWishlistPage();
+
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "info",
+          title: "Đã xóa khỏi danh sách yêu thích",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    });
+  });
+}
+
+// Global click event delegation for wishlist toggles
+document.addEventListener("click", (e) => {
+  const toggleBtn = e.target.closest(".btn-wishlist-toggle, #btnWishlistDetail");
+  if (!toggleBtn) return;
+  e.preventDefault();
+  e.stopPropagation();
+
+  const id = toggleBtn.getAttribute("data-id");
+  if (!id) return;
+
+  const title = toggleBtn.getAttribute("data-title") || "";
+  const slug = toggleBtn.getAttribute("data-slug") || "";
+  const price = toggleBtn.getAttribute("data-price") || 0;
+  const priceOld = toggleBtn.getAttribute("data-price-old") || "";
+  const thumbnail = toggleBtn.getAttribute("data-thumbnail") || "";
+
+  let list = getWishlist();
+  const existingIdx = list.findIndex((item) => String(item.id) === String(id));
+
+  if (existingIdx > -1) {
+    // Remove
+    list.splice(existingIdx, 1);
+    saveWishlist(list);
+    updateWishlistCounter();
+    syncWishlistHeartStates();
+    if (document.getElementById("wishlistGrid")) {
+      renderWishlistPage();
+    }
+    if (typeof Swal !== "undefined") {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "info",
+        title: "Đã bỏ yêu thích",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  } else {
+    // Add
+    list.unshift({
+      id: id,
+      title: title,
+      slug: slug,
+      price: price,
+      priceOld: priceOld,
+      thumbnail: thumbnail,
+    });
+    saveWishlist(list);
+    updateWishlistCounter();
+    syncWishlistHeartStates();
+    if (document.getElementById("wishlistGrid")) {
+      renderWishlistPage();
+    }
+    if (typeof Swal !== "undefined") {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "Đã lưu vào danh sách yêu thích!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  }
+});
+
+// Clear all wishlist button
+const btnClearWishlist = document.getElementById("btnClearWishlist");
+if (btnClearWishlist) {
+  btnClearWishlist.addEventListener("click", () => {
+    if (typeof Swal !== "undefined") {
+      Swal.fire({
+        title: "Xóa toàn bộ danh sách yêu thích?",
+        text: "Bạn có chắc muốn xóa tất cả sản phẩm đã lưu không?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#ef4444",
+        cancelButtonColor: "#94a3b8",
+        confirmButtonText: "Xóa tất cả",
+        cancelButtonText: "Hủy",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          saveWishlist([]);
+          updateWishlistCounter();
+          syncWishlistHeartStates();
+          renderWishlistPage();
+        }
+      });
+    } else {
+      if (confirm("Bạn có chắc muốn xóa tất cả sản phẩm yêu thích?")) {
+        saveWishlist([]);
+        updateWishlistCounter();
+        syncWishlistHeartStates();
+        renderWishlistPage();
+      }
+    }
+  });
+}
+
+// Initial Wishlist Setup on DOM load
+document.addEventListener("DOMContentLoaded", () => {
+  updateWishlistCounter();
+  syncWishlistHeartStates();
+  renderWishlistPage();
+});

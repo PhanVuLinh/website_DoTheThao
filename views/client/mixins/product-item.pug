@@ -1,16 +1,34 @@
 mixin productItem(item) 
   .flash-product-card
+    button.btn-wishlist-toggle(
+      type="button"
+      data-id=(item.id || item._id)
+      data-title=item.title
+      data-slug=item.slug
+      data-price=(item.priceNew || item.price)
+      data-price-old=item.price
+      data-thumbnail=(item.thumbnail || (item.images && item.images[0]) || "")
+      title="Yêu thích sản phẩm"
+      aria-label="Yêu thích"
+    )
+      i.fa-regular.fa-heart
+
     a.card-link-wrapper(href=`/product/detail/${item.slug}`)
       .flash-product-card__img-wrap
-        if item.discountPercentage > 0
-          span.badge.badge-left.badge-pink -#{item.discountPercentage}%
-        
-        if item.featured == "1"
-          span.badge.badge-right.badge-orange HOT
-        else if item.isNew == true
-          span.badge.badge-right.badge-dark MỚI
+        .card-badges-stack
+          if item.discountPercentage > 0
+            span.badge.badge-pink -#{item.discountPercentage}%
+          if item.featured == "1"
+            span.badge.badge-orange HOT
+          else if item.isNew == true
+            span.badge.badge-dark MỚI
           
-        img(src=item.thumbnail, alt=item.title, loading="lazy")
+        img(
+          src=(item.thumbnail || (item.images && item.images[0]) || "https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT")
+          alt=item.title
+          loading="lazy"
+          onerror="this.onerror=null; this.src='https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT'"
+        )
         
       span.flash-product-card__brand #{item.brand || 'CHÍNH HÃNG'}
       h3.flash-product-card__title(title=item.title) #{item.title}

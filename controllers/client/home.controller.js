@@ -43,7 +43,7 @@ module.exports.index = async (req, res) => {
       endTime: { $gte: now },
     }).populate({
       path: "items.product_id",
-      select: "_id title slug price thumbnail brand featured isNew",
+      select: "_id title slug price thumbnail images brand featured isNew",
     });
 
     let productListSection3 = [];
@@ -63,7 +63,8 @@ module.exports.index = async (req, res) => {
           _id: p._id,
           title: p.title,
           slug: p.slug,
-          thumbnail: p.thumbnail,
+          thumbnail: p.thumbnail || (Array.isArray(p.images) && p.images[0]) || "",
+          images: p.images || [],
           brand: p.brand,
           featured: p.featured,
           isNew: p.isNew,
@@ -78,13 +79,26 @@ module.exports.index = async (req, res) => {
     }
 
     // 4. Sản phẩm Nổi bật (Featured Products)
-    const productFeaturedSection5Raw = await Product.find({
+    let productFeaturedSection5Raw = await Product.find({
       deleted: false,
       status: "active",
       featured: "1",
     })
       .sort({ position: "desc" })
       .limit(8);
+
+    if (productFeaturedSection5Raw.length < 8) {
+      const existingIds = productFeaturedSection5Raw.map((p) => p._id);
+      const additionalProducts = await Product.find({
+        deleted: false,
+        status: "active",
+        _id: { $nin: existingIds },
+      })
+        .sort({ position: "desc", createdAt: "desc" })
+        .limit(8 - productFeaturedSection5Raw.length);
+
+      productFeaturedSection5Raw = [...productFeaturedSection5Raw, ...additionalProducts];
+    }
 
     const productFeaturedSection5 = productPriceHelper.priceNewProduct(productFeaturedSection5Raw);
 
