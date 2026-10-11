@@ -153,13 +153,15 @@ ul {
 }
 
 /* =========================================
-        HEADER & NAVIGATION
+   HEADER & NAVIGATION (FLOATING ISLAND PILL - KIỂU 2)
    ========================================= */
 .top-bar {
   background: linear-gradient(90deg, var(--blue-dark), var(--blue-soft));
   color: var(--white);
   font-size: 13px;
   padding: 8px 0;
+  position: relative;
+  z-index: 10;
 }
 
 .top-bar__inner {
@@ -181,73 +183,112 @@ ul {
   transform: translateY(-1px);
 }
 
-.navbar {
-  background: var(--white);
-  box-shadow: 0 6px 25px rgba(0, 0, 77, 0.08);
+/* Floating Pill Wrapper - Pure Native Sticky, Zero Jitter */
+.navbar-floating-wrapper {
   position: sticky;
-  top: 0;
-  z-index: 100;
-  border-bottom: 3px solid var(--red-main);
+  top: 10px;
+  z-index: 1000;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 8px 24px;
+  pointer-events: none;
+  width: 100%;
+}
+
+/* Floating Island Pill Navbar */
+.navbar {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 9999px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 
+    0 10px 30px -5px rgba(15, 23, 42, 0.08),
+    0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  position: relative;
+  pointer-events: auto;
+  overflow: visible;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.navbar.is-scrolled {
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-color: rgba(255, 71, 34, 0.3);
+  box-shadow: 
+    0 16px 36px -6px rgba(15, 23, 42, 0.12),
+    0 4px 14px rgba(255, 71, 34, 0.08),
+    0 0 0 1px rgba(255, 71, 34, 0.1);
 }
 
 .navbar__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 72px;
+  height: 64px;
+  max-width: 100%;
+  padding: 0 20px 0 26px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .logo__img {
-  height: 45px;
+  height: 40px;
   object-fit: contain;
-  transition: 0.3s;
+  transition: transform 0.25s ease;
 }
 
 .logo:hover .logo__img {
   transform: scale(1.05);
 }
 
+.logo__text-fallback {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--blue-dark);
+}
+
+/* Nav Menu Links */
 .nav-links {
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
+  gap: 4px;
 }
 
-.nav-links>li {
+.nav-links > li {
   position: relative;
   flex-shrink: 0;
 }
 
-.nav-links>li>a {
+.nav-links > li > a {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 0 16px;
-  height: 30px;
+  padding: 8px 16px;
+  border-radius: 50px;
   font-size: 14.5px;
   font-weight: 600;
-  color: #333;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -3px;
-  transition: 0.25s;
+  color: #334155;
+  transition: all 0.22s ease;
   white-space: nowrap;
 }
 
-.nav-links>li>a::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 2px;
-  background: var(--red-main);
-  transition: 0.3s;
+.nav-links > li > a:hover {
+  color: var(--red-main);
+  background: rgba(255, 71, 34, 0.06);
 }
 
-.nav-links>li>a:hover::after,
-.nav-links>li>a.active::after {
-  width: 60%;
+.nav-links > li > a.active {
+  color: var(--red-main);
+  background: rgba(255, 71, 34, 0.09);
+  font-weight: 700;
 }
 
 .arrow {
@@ -256,24 +297,37 @@ ul {
   transition: 0.25s;
 }
 
-.nav-links>li:hover .arrow {
+.nav-links > li:hover .arrow {
   transform: rotate(180deg);
 }
 
+/* Dropdown Menu */
 .dropdown {
   display: none;
   position: absolute;
-  top: calc(100% + 3px);
+  top: calc(100% + 14px);
   left: 0;
-  background: var(--white);
-  border-radius: 12px;
-  box-shadow: 0 12px 30px rgba(0, 0, 77, 0.12);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14), 0 0 0 1px rgba(226, 232, 240, 0.85);
   min-width: 220px;
   overflow: hidden;
   border-top: 3px solid var(--red-main);
+  z-index: 1002;
 }
 
-.nav-links>li:hover .dropdown {
+.dropdown::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 0;
+  right: 0;
+  height: 14px;
+}
+
+.nav-links > li:hover .dropdown {
   display: block;
   animation: dropdownFade 0.25s ease;
 }
@@ -292,15 +346,16 @@ ul {
 
 .dropdown a {
   display: block;
-  padding: 12px 18px;
+  padding: 12px 20px;
   font-size: 13.5px;
+  font-weight: 500;
   color: var(--text-dark);
   transition: 0.25s;
 }
 
 .dropdown a:hover {
-  background: rgba(235, 84, 56, 0.08);
-  color: var(--blue-dark);
+  background: rgba(255, 71, 34, 0.08);
+  color: var(--red-main);
   padding-left: 24px;
 }
 
@@ -387,16 +442,27 @@ ul {
 .user-dropdown {
   display: none;
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 14px);
   right: 0;
-  background: #ffffff;
-  min-width: 220px;
-  border-radius: 14px;
-  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.12), 0 5px 15px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  min-width: 230px;
+  border-radius: 18px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.14), 0 0 0 1px rgba(226, 232, 240, 0.85);
+  border: 1px solid rgba(226, 232, 240, 0.8);
   padding: 8px 0;
-  z-index: 1000;
+  z-index: 1002;
   animation: dropdownFade 0.2s ease;
+}
+
+.user-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 0;
+  right: 0;
+  height: 14px;
 }
 
 .user-dropdown-header {
@@ -455,19 +521,23 @@ ul {
    ========================================= */
 .header-search-drawer {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 12px);
   left: 0;
+  right: 0;
   width: 100%;
-  background: #ffffff;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 3px solid var(--red-main);
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
-  padding: 24px 0 20px;
-  z-index: 99;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 26px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(255, 71, 34, 0.1);
+  padding: 22px 24px 18px;
+  z-index: 1001;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-12px);
+  transform: translateY(-8px);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
 }
 
 .header-search-drawer.is-open {
@@ -595,23 +665,36 @@ ul {
   transform: translateY(-1px);
 }
 
+/* =========================================
+   MODAL & BACKDROP STYLES (CLIENT)
+   Nền chỉ tối đen, KHÔNG làm mờ (no blur)
+   ========================================= */
 .header-search-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(2px);
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   z-index: 98;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s ease;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
 .header-search-backdrop.is-open {
   opacity: 1;
   visibility: visible;
+}
+
+/* Modal Backdrops & SweetAlert2 in Client: Nền chỉ tối, KHÔNG làm mờ */
+.modal-backdrop,
+.swal2-container.swal2-backdrop-show {
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 /* =========================================
@@ -5114,9 +5197,29 @@ textarea.form-control {
     min-width: 100%;
   }
 
-  /* Sắp xếp lại Header cho Mobile */
+  /* Sắp xếp lại Header cho Mobile (Floating Pill Island) */
+  .navbar-floating-wrapper {
+    top: 6px;
+    padding: 6px 12px;
+  }
+
+  .navbar {
+    border-radius: 20px;
+    padding: 0 4px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   .navbar__inner {
+    height: 56px;
+    padding: 0 12px;
     justify-content: space-between;
+  }
+
+  .header-search-drawer {
+    border-radius: 20px;
+    padding: 16px 14px 14px;
   }
 
   .hide-on-mobile {

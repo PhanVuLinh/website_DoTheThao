@@ -20,78 +20,78 @@
         i.fa-regular.fa-clock
         | #{settingWebsiteInfo.workingHours}
 
-nav.navbar
-  .navbar__inner
-    button.mobile-toggle-btn
-      i.fa-solid.fa-bars
+.navbar-floating-wrapper#siteNavbarWrapper
+  nav.navbar#siteNavbar
+    .navbar__inner
+      button.mobile-toggle-btn
+        i.fa-solid.fa-bars
 
-    a.logo(href="/")
-      if settingWebsiteInfo && settingWebsiteInfo.logo
-        img.logo__img(src=settingWebsiteInfo.logo, alt=(settingWebsiteInfo.websiteName || "Logo"))
-      else
-        span.logo__text-fallback #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
+      a.logo(href="/")
+        if settingWebsiteInfo && settingWebsiteInfo.logo
+          img.logo__img(src=settingWebsiteInfo.logo, alt=(settingWebsiteInfo.websiteName || "Logo"))
+        else
+          span.logo__text-fallback #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
 
-    .mobile-overlay
+      .mobile-overlay
 
-    .nav-menu-wrapper
-      button.mobile-close-btn
-        i.fa-solid.fa-xmark
-        
-      ul.nav-links
-        li
-          a(href="/") Trang Chủ
+      .nav-menu-wrapper
+        button.mobile-close-btn
+          i.fa-solid.fa-xmark
           
-        each item in categoryList
+        ul.nav-links
           li
-            a(href=`/category/${item.slug}`) #{item.title}
+            a(href="/") Trang Chủ
+            
+          each item in categoryList
+            li
+              a(href=`/category/${item.slug}`) #{item.title}
+                if(item.children && item.children.length > 0)
+                  i.fa-solid.fa-chevron-down.arrow
+                  
               if(item.children && item.children.length > 0)
-                i.fa-solid.fa-chevron-down.arrow
+                .dropdown
+                  each itemChild in item.children 
+                    a(href=`/category/${itemChild.slug}`) #{itemChild.title}
                 
-            if(item.children && item.children.length > 0)
-              .dropdown
-                each itemChild in item.children 
-                  a(href=`/category/${itemChild.slug}`) #{itemChild.title}
-              
-        li
-          a(href="/article") Tin Tức
-          
-        li
-          a(href="/contact") Liên Hệ
+          li
+            a(href="/article") Tin Tức
+            
+          li
+            a(href="/contact") Liên Hệ
 
-    .nav-actions
-      button.action-btn.search-toggle-btn(type="button" title="Tìm kiếm sản phẩm" aria-label="Mở tìm kiếm")
-        i.fa-solid.fa-magnifying-glass
+      .nav-actions
+        button.action-btn.search-toggle-btn(type="button" title="Tìm kiếm sản phẩm" aria-label="Mở tìm kiếm")
+          i.fa-solid.fa-magnifying-glass
 
-      a(href="/cart" title="Giỏ hàng").action-btn.cart-action-btn
-        i.fa-solid.fa-cart-shopping
-        if (miniCart > 0)
-          span.action-badge.badge-red #{miniCart}
+        a(href="/cart" title="Giỏ hàng").action-btn.cart-action-btn
+          i.fa-solid.fa-cart-shopping
+          if (miniCart > 0)
+            span.action-badge.badge-red #{miniCart}
 
-      if (user) 
-        .user-profile-menu
-          button.action-btn.user-action-btn.user-logged-btn(type="button" title=user.fullName aria-label="Tài khoản")
-            i.fa-solid.fa-circle-user
-          .user-dropdown
-            .user-dropdown-header
-              span.user-greeting Xin chào,
-              strong #{user.fullName}
-            a.user-dropdown-item(href="/user/profile") 
-              i.fa-regular.fa-id-card
-              | Thông tin tài khoản
-            a.user-dropdown-item(href="/user/order-history") 
-              i.fa-solid.fa-box-open
-              | Đơn hàng của tôi
-            hr
-            a.user-dropdown-item.text-danger(href="/auth/logout")
-              i.fa-solid.fa-arrow-right-from-bracket
-              | Đăng xuất
-      else
-        a.action-btn.user-action-btn(href="/auth/login" title="Đăng nhập tài khoản" aria-label="Đăng nhập")
-          i.fa-regular.fa-user
+        if (user) 
+          .user-profile-menu
+            button.action-btn.user-action-btn.user-logged-btn(type="button" title=user.fullName aria-label="Tài khoản")
+              i.fa-solid.fa-circle-user
+            .user-dropdown
+              .user-dropdown-header
+                span.user-greeting Xin chào,
+                strong #{user.fullName}
+              a.user-dropdown-item(href="/user/profile") 
+                i.fa-regular.fa-id-card
+                | Thông tin tài khoản
+              a.user-dropdown-item(href="/user/order-history") 
+                i.fa-solid.fa-box-open
+                | Đơn hàng của tôi
+              hr
+              a.user-dropdown-item.text-danger(href="/auth/logout")
+                i.fa-solid.fa-arrow-right-from-bracket
+                | Đăng xuất
+        else
+          a.action-btn.user-action-btn(href="/auth/login" title="Đăng nhập tài khoản" aria-label="Đăng nhập")
+            i.fa-regular.fa-user
 
-  //- EXPANDABLE SEARCH DRAWER (Lúc dùng / khi click icon tìm kiếm)
-  .header-search-drawer#headerSearchDrawer
-    .container
+    //- EXPANDABLE SEARCH DRAWER (Lúc dùng / khi click icon tìm kiếm)
+    .header-search-drawer#headerSearchDrawer
       .search-drawer__content
         form.search-drawer__form(action="/search" method="GET")
           i.fa-solid.fa-magnifying-glass.drawer-search-icon

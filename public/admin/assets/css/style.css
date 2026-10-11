@@ -156,9 +156,9 @@ body.admin-body {
 .sidebar-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   z-index: 990;
   opacity: 0;
   pointer-events: none;
@@ -3712,8 +3712,9 @@ textarea.is-invalid {
 .admin-modal-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(4px);
+  background-color: rgba(15, 23, 42, 0.7) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   z-index: 1050;
   display: flex;
   align-items: center;
@@ -3727,6 +3728,14 @@ textarea.is-invalid {
 .admin-modal-backdrop.show {
   opacity: 1;
   visibility: visible;
+}
+
+/* All Modal Backdrops in Admin: Nền chỉ tối, KHÔNG làm mờ */
+.modal-backdrop,
+.swal2-container.swal2-backdrop-show {
+  background: rgba(15, 23, 42, 0.7) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .admin-modal {
