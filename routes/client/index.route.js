@@ -47,4 +47,7 @@ router.use("/review", reviewRoutes);
 const policyRoutes = require("../client/policy.route");
 router.use("/policy", policyRoutes);
 
+const wishlistRoutes = require("../client/wishlist.route");
+router.use("/wishlist", wishlistRoutes);
+
 module.exports = router;

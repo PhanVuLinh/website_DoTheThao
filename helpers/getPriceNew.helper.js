@@ -2,7 +2,12 @@ module.exports.priceNewProduct = (productList) => {
   const newProductPriceNew = productList.map((item) => {
     if (item.discountPercentage > 0) {
       item.priceNew =
-        item.price - ((item.price * item.discountPercentage) / 100).toFixed(0);
+        item.price - Math.round((item.price * item.discountPercentage) / 100);
+    } else {
+      item.priceNew = item.price;
+    }
+    if (!item.thumbnail && Array.isArray(item.images) && item.images.length > 0) {
+      item.thumbnail = item.images[0];
     }
     return item;
   });

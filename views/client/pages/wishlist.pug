@@ -1,0 +1,29 @@
+extends ../layouts/default.pug
+
+block main
+  .wishlist-page
+    .container
+      .wishlist-header
+        .wishlist-header-left
+          .wishlist-title-badge
+            i.fa-solid.fa-heart
+            span Yêu thích của bạn
+          h1.wishlist-main-title Danh Sách Sản Phẩm Yêu Thích
+          p.wishlist-subtext Lưu lại những sản phẩm bạn quan tâm để dễ dàng theo dõi và mua sắm bất cứ lúc nào.
+        .wishlist-header-right
+          button.btn-clear-wishlist#btnClearWishlist(type="button" style="display: none;")
+            i.fa-regular.fa-trash-can
+            | Xóa tất cả
+
+      //- Grid chứa danh sách sản phẩm yêu thích (Render bằng JS từ localStorage)
+      .wishlist-grid#wishlistGrid
+
+      //- Trạng thái rỗng khi chưa lưu sản phẩm nào
+      .wishlist-empty#wishlistEmpty(style="display: none;")
+        .empty-heart-icon
+          i.fa-regular.fa-heart
+        h2.empty-title Danh sách yêu thích còn trống
+        p.empty-desc Hãy dạo quanh cửa hàng và nhấn vào biểu tượng trái tim để lưu lại các mẫu giày, trang phục thể thao bạn ưng ý nhất nhé!
+        a.btn-explore-now(href="/product")
+          i.fa-solid.fa-cart-shopping
+          | Khám Phá Sản Phẩm Ngay
