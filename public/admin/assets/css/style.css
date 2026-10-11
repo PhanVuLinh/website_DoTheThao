@@ -1378,6 +1378,30 @@ select.filter-select {
   transform: translateY(-1px);
 }
 
+.btn-export-excel {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  padding: 9px 18px;
+  border-radius: var(--admin-radius-sm);
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--admin-transition);
+  text-decoration: none;
+}
+
+.btn-export-excel:hover {
+  background-color: #10b981;
+  color: #ffffff;
+  border-color: #10b981;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
 
 /* --------------------------------------------------------------------------
    9. DATA TABLE DESIGN & COMPONENTS
@@ -4419,4 +4443,60 @@ body.swal2-toast-shown .swal2-container,
   .admin-pagination {
     justify-content: center;
   }
+}
+
+/* =========================================
+   LOW STOCK WIDGET & BADGES (DASHBOARD)
+   ========================================= */
+.badge-count-warning {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fcd34d;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sizes-stock-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badge-size-warning {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.badge-size-warning.is-out {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.badge-size-warning strong {
+  margin-left: 3px;
+}
+
+.product-lowstock-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.product-lowstock-item img {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #e2e8f0;
 }

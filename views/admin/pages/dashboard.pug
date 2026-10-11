@@ -141,5 +141,68 @@ block main
                     h4.empty-title Chưa có đơn hàng mới
                     p.empty-desc Hiện tại chưa ghi nhận đơn hàng phát sinh nào trong hệ thống.
 
+    .table-section.low-stock-section
+      .section-header
+        .section-header-left
+          .d-flex.align-items-center.gap-2
+            h2.section-title Cảnh báo tồn kho thấp
+            if lowStockCount > 0
+              span.badge-count-warning #{lowStockCount} sản phẩm
+          p.section-desc Các kích cỡ sản phẩm còn dưới 5 sản phẩm cần nhập thêm hoặc điều chỉnh nguồn hàng
+        if(role && role.permissions && role.permissions.includes("product_view"))
+          .section-header-right
+            a.btn-link-action(href=`/${pathAdmin}/product/list`)
+              span Quản lý kho sản phẩm
+              i.fa-solid.fa-arrow-right
+
+      .table-responsive
+        table.admin-table.table-hover
+          thead
+            tr
+              th Sản phẩm
+              th Size & Số lượng cảnh báo
+              th Tổng tồn kho
+              th Tình trạng
+              th Thao tác
+          tbody
+            if lowStockList && lowStockList.length
+              each prod in lowStockList
+                tr
+                  td
+                    .product-mini-item.product-lowstock-item
+                      img(
+                        src=prod.thumbnail 
+                        alt=prod.title 
+                        onerror="this.src='https://placehold.co/80x80/e2e8f0/64748b?text=SP'"
+                      )
+                      .prod-info
+                        span.prod-name(title=prod.title) #{prod.title}
+                  td
+                    .sizes-stock-badges
+                      each s in prod.criticalSizes
+                        span.badge-size-warning(class=(s.stock <= 0 ? 'is-out' : ''))
+                          | Size #{s.size.replace(/^size[:\s]*/i, "")}: 
+                          strong #{s.stock <= 0 ? 'Hết hàng (0)' : `còn ${s.stock}`}
+                  td
+                    span.font-weight-600 #{prod.totalStock} sp
+                  td
+                    if prod.totalStock <= 0
+                      span.badge-status.badge-danger Hết toàn bộ
+                    else
+                      span.badge-status.badge-warning Sắp hết hàng
+                  td
+                    .action-btns
+                      if(role && role.permissions && role.permissions.includes("product_edit"))
+                        a.btn-action.btn-edit(href=`/${pathAdmin}/product/edit/${prod._id}` title="Nhập thêm hàng / Sửa")
+                          i.fa-solid.fa-pen-to-square
+            else
+              tr
+                td(colspan="5")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-solid.fa-boxes-stacked
+                    h4.empty-title Kho hàng ổn định
+                    p.empty-desc Hiện tại tất cả sản phẩm đều có số lượng tồn kho an toàn (> 5 sản phẩm/size).
+
   else
     include ../partials/no-access.pug

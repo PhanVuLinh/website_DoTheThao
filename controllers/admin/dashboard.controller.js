@@ -138,10 +138,37 @@ module.exports.dashboard = async (req, res) => {
   }
   //End section 3
 
+  // Section 4 - Cảnh báo tồn kho thấp
+  const lowStockProductsRaw = await Product.find({
+    deleted: false,
+    status: "active",
+    "sizes.stock": { $lte: 5 },
+  }).select("title slug thumbnail price priceNew sizes").lean();
+
+  const lowStockProducts = [];
+  for (const prod of lowStockProductsRaw) {
+    const criticalSizes = (prod.sizes || []).filter((s) => s.stock <= 5);
+    if (criticalSizes.length > 0) {
+      const totalStock = (prod.sizes || []).reduce((sum, s) => sum + (s.stock || 0), 0);
+      lowStockProducts.push({
+        _id: prod._id.toString(),
+        title: prod.title,
+        slug: prod.slug,
+        thumbnail: prod.thumbnail,
+        criticalSizes: criticalSizes,
+        totalStock: totalStock,
+      });
+    }
+  }
+  lowStockProducts.sort((a, b) => a.totalStock - b.totalStock);
+  const lowStockDisplay = lowStockProducts.slice(0, 8);
+
   res.render("admin/pages/dashboard.pug", {
     title: "Tổng quan",
     section1: section1,
     orderList: orderList,
+    lowStockList: lowStockDisplay,
+    lowStockCount: lowStockProducts.length,
     chart: {
       currentMonth: chartMonth,
       currentYear: chartYear,
