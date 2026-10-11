@@ -1,16 +1,24 @@
 // Box Contact
 .box-contact
   ul
-    li
-      a(target="_blank" href="#")
-        i.fa-brands.fa-facebook-f
-    li
-      a(target="_blank" href="#")
-        i.fa-brands.fa-instagram
-    li
-      a(target="_blank" href="#")
-        i.fa-brands.fa-viber
-    li
-      a(target="_blank" href="#")
-        i.fa-brands.fa-youtube
+    if settingWebsiteInfo && settingWebsiteInfo.facebook
+      li
+        a(target="_blank" rel="noopener noreferrer" href=settingWebsiteInfo.facebook title="Facebook")
+          i.fa-brands.fa-facebook-f
+    if settingWebsiteInfo && settingWebsiteInfo.instagram
+      li
+        a(target="_blank" rel="noopener noreferrer" href=settingWebsiteInfo.instagram title="Instagram")
+          i.fa-brands.fa-instagram
+    if settingWebsiteInfo && settingWebsiteInfo.tiktok
+      li
+        a(target="_blank" rel="noopener noreferrer" href=settingWebsiteInfo.tiktok title="TikTok")
+          i.fa-brands.fa-tiktok
+    if settingWebsiteInfo && settingWebsiteInfo.zalo
+      li
+        a(target="_blank" rel="noopener noreferrer" href=settingWebsiteInfo.zalo title="Zalo")
+          i.fa-solid.fa-comment-dots
+    if settingWebsiteInfo && (settingWebsiteInfo.hotline || settingWebsiteInfo.phone)
+      li
+        a(href=`tel:${settingWebsiteInfo.hotline || settingWebsiteInfo.phone}` title="Gọi ngay")
+          i.fa-solid.fa-phone
 // End Box Contact

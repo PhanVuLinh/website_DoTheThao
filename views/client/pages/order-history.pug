@@ -40,16 +40,23 @@ block main
                     
                 if (order.products.length > 1)
                   .order-more-items
-                    i.fa-solid.fa-layer-group(style="margin-right: 6px; color: #ccc;")
+                    i.fa-solid.fa-layer-group
                     | Đơn hàng còn 
-                    strong(style="color: #333;") #{order.products.length - 1}
+                    strong #{order.products.length - 1}
                     |  sản phẩm khác (Vui lòng xem chi tiết)
                 
                 .order-footer
                   .total
                     span.order-total-label Tổng tiền: 
                     span.order-total-price #{order.totalPriceFormat}đ
-                  a.btn-view-all-outline(href=`/user/order-history/detail/${order.id}` style="padding: 8px 25px; font-size: 14px;") Xem Chi Tiết
+                  a.btn-view-all-outline(href=`/user/order-history/detail/${order.id}`) Xem Chi Tiết
           else
-            span chưa có đơn hàng nào
+            .empty-filter-state
+              .empty-icon
+                i.fa-solid.fa-receipt
+              h3 Chưa có đơn hàng nào
+              p Quý khách chưa phát sinh đơn hàng nào trên hệ thống.
+              a.btn-clear-filter-action(href="/product")
+                i.fa-solid.fa-cart-plus
+                | Khám phá sản phẩm ngay
              

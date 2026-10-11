@@ -6,6 +6,7 @@ const productSchema = new mongoose.Schema(
   {
     title: String,
     category_id: String,
+    brand: String,
     position: Number,
     status: String,
     featured: String,

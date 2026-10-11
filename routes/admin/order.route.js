@@ -6,7 +6,8 @@ router.get("/list", authMiddleware.checkPermission("order_view"), orderControlle
 
 router.patch("/change-multi", authMiddleware.checkPermission("order_edit"), orderController.changeMulti);
 
-router.get("/edit/:id", authMiddleware.checkPermission("order_edit"), orderController.edit);
+router.get("/edit/:id", authMiddleware.checkPermission("order_view"), orderController.edit);
+router.get("/detail/:id", authMiddleware.checkPermission("order_view"), orderController.edit);
 
 router.patch("/edit/:id", authMiddleware.checkPermission("order_edit"), orderController.editPatch);
 

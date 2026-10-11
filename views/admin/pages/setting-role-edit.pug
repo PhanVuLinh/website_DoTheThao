@@ -46,14 +46,4 @@ block main
         .form-actions-stacked
           button.btn-submit.btn-submit-large(type="submit") Chỉnh sửa
   else
-    .no-access-wrapper
-      .no-access-card
-        .no-access-icon
-          i.fa-solid.fa-lock
-
-        h2.no-access-title Truy cập bị từ chối
-
-        p.no-access-desc
-          | Bạn không có quyền truy cập vào trang này.
-          br
-          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
+    include ../partials/no-access.pug

@@ -1,0 +1,125 @@
+extends ../layouts/default.pug
+include ../mixins/alert.pug
+include ../mixins/filter-status.pug
+include ../mixins/bulk-action.pug
+include ../mixins/pagination.pug
+include ../mixins/switch-status.pug
+
+block main
+  if(role && role.permissions && (role.permissions.includes("flash_sale_view") || role.permissions.includes("product_view")))
+    +alert-success(3000)
+    +alert-error(3000)
+
+    h1.page-title Quản lý Chiến dịch Flash Sale
+
+    .filter-action-card
+      .filter-row
+        .filter-label
+          i.fa-solid.fa-filter
+          span Bộ lọc
+          
+        +filter-status()
+          
+        button.btn-clear(filter-reset)
+          i.fa-solid.fa-rotate-right
+          | Xóa bộ lọc
+
+      .action-row
+        - 
+          var bulkOptions = [];
+          if(role && role.permissions) {
+            if(role.permissions.includes("flash_sale_delete") || role.permissions.includes("product_delete")) {
+              bulkOptions.push({ value: "delete-all", label: "Xóa" });
+            }
+            if(role.permissions.includes("flash_sale_edit") || role.permissions.includes("product_edit")) {
+              bulkOptions.push({ value: "active", label: "Kích hoạt" });
+              bulkOptions.push({ value: "inactive", label: "Tạm dừng" });
+            }
+          }
+
+        if(bulkOptions.length > 0)
+          +bulk-action(bulkOptions)
+          
+        .search-box-large
+          i.fa-solid.fa-magnifying-glass
+          input(type="text" placeholder="Tìm kiếm chiến dịch flash sale..." search)
+
+        .action-buttons-right
+          if(role && role.permissions && (role.permissions.includes("flash_sale_create") || role.permissions.includes("product_create")))
+            a(href=`/${pathAdmin}/flash-sale/create`).btn-create
+              i.fa-solid.fa-plus
+              | Tạo chiến dịch mới
+          if(role && role.permissions && (role.permissions.includes("flash_sale_trash") || role.permissions.includes("product_trash")))
+            a(href=`/${pathAdmin}/flash-sale/trash`).btn-trash
+              i.fa-regular.fa-trash-can
+              | Thùng rác
+
+    .table-section
+      .table-responsive
+        table.admin-table.table-hover
+          thead
+            tr
+              th.text-center(width="50px")
+                input(type="checkbox" check-all)
+              th Chiến dịch
+              th Thời gian bắt đầu - kết thúc
+              th Tiến độ diễn ra
+              th Sản phẩm / Đã bán
+              th Trạng thái
+              if(role && role.permissions && (role.permissions.includes("flash_sale_edit") || role.permissions.includes("flash_sale_delete") || role.permissions.includes("product_edit") || role.permissions.includes("product_delete")))
+                th Hành động
+          
+          tbody
+            if flashSaleList && flashSaleList.length > 0
+              each item in flashSaleList
+                tr
+                  td.text-center
+                    input(type="checkbox" value=item.id name="id" check-item)
+                  td
+                    .admin-campaign-info
+                      span.font-weight-600.text-primary #{item.title}
+                      .text-muted.text-sm
+                        span.badge-tag #{item.badge}
+                        if item.subTitle
+                          span.badge-sub #{item.subTitle}
+                  td
+                    .time-range-wrap
+                      div
+                        i.fa-regular.fa-calendar-check.text-muted.mr-1
+                        span.text-sm #{item.startTimeFormat}
+                      div
+                        i.fa-regular.fa-calendar-xmark.text-muted.mr-1
+                        span.text-sm #{item.endTimeFormat}
+                  td
+                    span.badge-status(class=item.runtimeStatus.badgeClass) #{item.runtimeStatus.label}
+                  td
+                    .progress-stat-wrap
+                      span.font-weight-600 #{item.totalProducts} sản phẩm
+                      .text-muted.text-sm
+                        | Đã bán: #{item.totalSold} / #{item.totalAllocated} (#{item.soldPercentage}%)
+                  td
+                    +switch-status(item, `/${pathAdmin}/flash-sale/change-multi`, "flash_sale_edit")
+                  if(role && role.permissions && (role.permissions.includes("flash_sale_edit") || role.permissions.includes("flash_sale_delete") || role.permissions.includes("product_edit") || role.permissions.includes("product_delete")))
+                    td
+                      .action-btns
+                        if(role && role.permissions && (role.permissions.includes("flash_sale_edit") || role.permissions.includes("product_edit")))
+                          a.btn-edit(href=`/${pathAdmin}/flash-sale/edit/${item.id}` title="Chỉnh sửa")
+                            i.fa-regular.fa-pen-to-square
+                        if(role && role.permissions && (role.permissions.includes("flash_sale_delete") || role.permissions.includes("product_delete")))
+                          button.btn-delete(button-delete data-id=item.id title="Chuyển vào thùng rác")
+                            i.fa-regular.fa-trash-can
+            else
+              tr
+                td(colspan="7")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-solid.fa-bolt
+                    p Chưa có chiến dịch Flash Sale nào
+                    a.btn-create(href=`/${pathAdmin}/flash-sale/create`) Tạo chiến dịch đầu tiên
+
+      +pagination(pagination)
+
+    form#form-delete-item(action="" method="POST" data-path=`/${pathAdmin}/flash-sale/delete`)
+    form#form-change-multi(action="" method="POST" data-path=`/${pathAdmin}/flash-sale/change-multi`)
+      input(type="hidden" name="type" value="")
+      input(type="hidden" name="ids" value="")

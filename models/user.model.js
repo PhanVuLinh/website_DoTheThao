@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
     },
     password: String,
+    phone: String,
+    address: String,
+    avatar: String,
     token: {
       type: String,
       default: () => generate.generateRandomString(32),

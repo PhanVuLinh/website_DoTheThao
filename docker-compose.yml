@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sportstore_web
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - MONGO_URL=mongodb://mongodb:27017/project_sport
+      - SESSION_SECRET=PPCCLLAABB001_SECRET_KEY
+    depends_on:
+      - mongodb
+    networks:
+      - sportstore_network
+
+  mongodb:
+    image: mongo:7.0
+    container_name: sportstore_db
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - sportstore_network
+
+networks:
+  sportstore_network:
+    driver: bridge
+
+volumes:
+  mongo_data:
+    driver: local

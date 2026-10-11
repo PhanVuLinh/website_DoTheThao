@@ -26,6 +26,14 @@ block main
               +options(categoryList,0,productDetail.category_id)
         .form-row-2
           .form-group
+            label Thương hiệu
+            select.form-control(name="brand")
+              option(value="") -- Chọn thương hiệu --
+              if brandList && brandList.length > 0
+                each b in brandList
+                  option(value=b.title selected=(productDetail.brand === b.title)) #{b.title}
+
+          .form-group
             label Vị trí
             input.form-control(type="number" name="position" placeholder="Tự động tăng" value=productDetail.position)
           
@@ -75,7 +83,7 @@ block main
                     input(type="hidden" name="old_images" value=img)
         .form-row-2
           .form-group
-            label Giá bán (VNĐ) <span style="color:#ef4444">*</span>
+            label Giá bán (VNĐ) <span class="text-danger">*</span>
             .input-currency-wrapper
               input.form-control(
                 type="text" 
@@ -111,14 +119,4 @@ block main
         window.productSizes = !{JSON.stringify(productDetail.sizes || [])};
       script(src="/admin/assets/js/product.js")
   else
-    .no-access-wrapper
-      .no-access-card
-        .no-access-icon
-          i.fa-solid.fa-lock
-
-        h2.no-access-title Truy cập bị từ chối
-
-        p.no-access-desc
-          | Bạn không có quyền truy cập vào trang này.
-          br
-          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
+    include ../partials/no-access.pug

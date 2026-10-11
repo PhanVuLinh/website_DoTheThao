@@ -30,7 +30,7 @@ block main
         if(bulkOptions.length > 0)
           +bulk-action(bulkOptions)
           
-        .search-box-large(style="max-width: 500px;")
+        .search-box-large
           i.fa-solid.fa-magnifying-glass
           input(
             type="text"
@@ -60,7 +60,7 @@ block main
               each orderDetail in orderList
                 tr
                   td.text-center
-                    input(type="checkbox" name="id" value=orderDetail.id check-item)
+                    input(type="checkbox" name="id" value=orderDetail._id || orderDetail.id check-item)
                   
                   td.order-code #{orderDetail.orderCode}
                   
@@ -70,7 +70,7 @@ block main
                       span.phone SĐT: #{orderDetail.phone}
                       span.phone Địa chỉ: #{orderDetail.address}
                       if(orderDetail.note)
-                        span.phone(style="color: var(--red-main)") Ghi chú: #{orderDetail.note}
+                        span.phone.text-danger Ghi chú: #{orderDetail.note}
                   
                   td
                     .order-products-list
@@ -86,9 +86,9 @@ block main
                   
                   td
                     .payment-summary
-                      span Tạm tính: #{orderDetail.subtotal.toLocaleString('vi-VN')} đ
-                      span Giảm giá: #{orderDetail.discount.toLocaleString('vi-VN')} đ
-                      span.total-pay Thanh toán: #{orderDetail.total.toLocaleString('vi-VN')} đ
+                      span Tạm tính: #{(orderDetail.subtotal || 0).toLocaleString('vi-VN')} đ
+                      span Giảm giá: #{(orderDetail.discount || 0).toLocaleString('vi-VN')} đ
+                      span.total-pay Thanh toán: #{(orderDetail.total || 0).toLocaleString('vi-VN')} đ
                       span PTTT: #{orderDetail.paymentMethodName }
                       span TTTT: #{orderDetail.paymentStatusName }
                   
@@ -105,14 +105,18 @@ block main
                     td
                       .action-btns
                         if(role && role.permissions && role.permissions.includes("order_restore"))
-                          button.btn-restore(button-restore data-id=orderDetail.id title="Khôi phục")
+                          button.btn-restore(button-restore data-id=orderDetail._id || orderDetail.id title="Khôi phục")
                             i.fa-solid.fa-rotate-left
                         if(role && role.permissions && role.permissions.includes("order_destroy"))
-                          button.btn-delete(button-delete data-id=orderDetail.id title="Xóa vĩnh viễn")
+                          button.btn-delete(button-delete data-id=orderDetail._id || orderDetail.id title="Xóa vĩnh viễn")
                             i.fa-regular.fa-trash-can
             else
               tr
-                td.text-center(colspan="8") Không có đơn hàng nào trong thùng rác.
+                td(colspan="8")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-regular.fa-trash-can
+                    p Thùng rác trống! Không có đơn hàng nào bị xóa!
 
     .admin-pagination
       if pagination
@@ -142,14 +146,4 @@ block main
         input(type="hidden" name="type")
         input(type="hidden" name="ids")
   else
-    .no-access-wrapper
-      .no-access-card
-        .no-access-icon
-          i.fa-solid.fa-lock
-
-        h2.no-access-title Truy cập bị từ chối
-
-        p.no-access-desc
-          | Bạn không có quyền truy cập vào trang này.
-          br
-          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
+    include ../partials/no-access.pug

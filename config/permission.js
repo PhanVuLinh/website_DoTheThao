@@ -28,6 +28,18 @@ module.exports.permissionList = [
     ],
   },
   {
+    group: "Quản lý Flash Sale",
+    permissions: [
+      { label: "Xem danh sách", value: "flash_sale_view" },
+      { label: "Thêm mới", value: "flash_sale_create" },
+      { label: "Chỉnh sửa", value: "flash_sale_edit" },
+      { label: "Xóa (Tạm thời)", value: "flash_sale_delete" },
+      { label: "Xem thùng rác", value: "flash_sale_trash" },
+      { label: "Khôi phục", value: "flash_sale_restore" },
+      { label: "Xóa vĩnh viễn", value: "flash_sale_destroy" },
+    ],
+  },
+  {
     group: "Quản lý mã giảm giá ",
     permissions: [
       { label: "Xem danh sách", value: "coupon_view" },
@@ -109,10 +121,34 @@ module.exports.permissionList = [
     ],
   },
   {
+    group: "Quản lý thương hiệu",
+    permissions: [
+      { label: "Xem danh sách", value: "brand_view" },
+      { label: "Thêm mới", value: "brand_create" },
+      { label: "Chỉnh sửa", value: "brand_edit" },
+      { label: "Xóa", value: "brand_delete" },
+    ],
+  },
+  {
+    group: "Quản lý chính sách",
+    permissions: [
+      { label: "Xem danh sách", value: "policy_view" },
+      { label: "Chỉnh sửa", value: "policy_edit" },
+    ],
+  },
+  {
     group: "Cài đặt hệ thống",
     permissions: [
       { label: "Xem cấu hình", value: "setting_view" },
       { label: "Cập nhật cấu hình", value: "setting_edit" },
+    ],
+  },
+  {
+    group: "Quản lý đánh giá",
+    permissions: [
+      { label: "Xem danh sách", value: "review_view" },
+      { label: "Chỉnh sửa / Ẩn hiện", value: "review_edit" },
+      { label: "Xóa đánh giá", value: "review_delete" },
     ],
   },
   {

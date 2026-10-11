@@ -4,11 +4,16 @@ const Category = require("../../models/category.model");
 const Article = require("../../models/article.model");
 const Coupon = require("../../models/coupon.model");
 const Order = require("../../models/order.model");
+const Brand = require("../../models/brand.model");
+const Review = require("../../models/review.model");
+const FlashSale = require("../../models/flash-sale.model");
 
 const productPriceHelper = require("../../helpers/getPriceNew.helper.js");
 
 module.exports.index = async (req, res) => {
   try {
+    const settingWebsiteInfo = res.locals.settingWebsiteInfo || {};
+
     // 1. Danh mục sản phẩm con (Sub-categories for visual exploration)
     const categoryChildren = await Category.find({
       deleted: false,
@@ -29,21 +34,48 @@ module.exports.index = async (req, res) => {
         : "Vô thời hạn";
     }
 
-    // 3. Flash Sale: Sản phẩm có giảm giá cao nhất (Flash Deals)
-    const flashDealsRaw = await Product.find({
+    // 3. Flash Sale: Tìm chiến dịch Flash Sale thực tế đang diễn ra
+    const now = new Date();
+    const activeFlashSale = await FlashSale.findOne({
       deleted: false,
       status: "active",
-      discountPercentage: { $gt: 0 },
-    })
-      .sort({ discountPercentage: "desc" })
-      .limit(6);
+      startTime: { $lte: now },
+      endTime: { $gte: now },
+    }).populate({
+      path: "items.product_id",
+      select: "_id title slug price thumbnail brand featured isNew",
+    });
 
-    // Fallback nếu chưa có nhiều sản phẩm giảm giá
-    const productListSection3 = productPriceHelper.priceNewProduct(
-      flashDealsRaw.length > 0
-        ? flashDealsRaw
-        : await Product.find({ deleted: false, status: "active" }).sort({ position: "desc" }).limit(6)
-    );
+    let productListSection3 = [];
+
+    if (activeFlashSale && Array.isArray(activeFlashSale.items) && activeFlashSale.items.length > 0) {
+      for (const item of activeFlashSale.items) {
+        if (!item.product_id) continue;
+        const p = item.product_id;
+        const originalPrice = p.price || 0;
+        const discount = item.discountPercentage || 0;
+        const salePrice = item.flashSalePrice || Math.round((originalPrice * (100 - discount)) / 100);
+        const quantity = item.quantity || 0;
+        const sold = item.sold || 0;
+        const percentSold = quantity > 0 ? Math.min(100, Math.round((sold / quantity) * 100)) : 0;
+
+        productListSection3.push({
+          _id: p._id,
+          title: p.title,
+          slug: p.slug,
+          thumbnail: p.thumbnail,
+          brand: p.brand,
+          featured: p.featured,
+          isNew: p.isNew,
+          price: originalPrice,
+          priceNew: salePrice,
+          discountPercentage: discount,
+          quantityQuota: quantity,
+          soldCount: sold,
+          percentSold: percentSold,
+        });
+      }
+    }
 
     // 4. Sản phẩm Nổi bật (Featured Products)
     const productFeaturedSection5Raw = await Product.find({
@@ -66,13 +98,20 @@ module.exports.index = async (req, res) => {
 
     const productListSection7 = productPriceHelper.priceNewProduct(productListSection7Raw);
 
-    // 6. Phân nhóm môn thể thao cho Interactive Category Tabs (Dữ liệu thực từ DB)
-    // - Bóng Đá (Football)
-    const footballParent = await Category.findOne({ title: { $regex: /Bóng Đá/i }, deleted: false });
+    // 6. Phân nhóm môn thể thao cho Interactive Category Tabs (Dữ liệu thực từ DB & Cấu hình Admin)
+    // - Tab 1 (Mặc định: Bóng Đá hoặc Category được Admin chọn)
+    let sportsTab1 = null;
+    if (settingWebsiteInfo.sportsTab1_id) {
+      sportsTab1 = await Category.findOne({ _id: settingWebsiteInfo.sportsTab1_id, deleted: false });
+    }
+    if (!sportsTab1) {
+      sportsTab1 = await Category.findOne({ title: { $regex: /Bóng Đá/i }, deleted: false });
+    }
+
     let footballCategoryIds = [];
-    if (footballParent) {
-      const footballChildren = await Category.find({ parent_id: footballParent._id.toString(), deleted: false });
-      footballCategoryIds = [footballParent._id.toString(), ...footballChildren.map((c) => c._id.toString())];
+    if (sportsTab1) {
+      const children1 = await Category.find({ parent_id: sportsTab1._id.toString(), deleted: false });
+      footballCategoryIds = [sportsTab1._id.toString(), ...children1.map((c) => c._id.toString())];
     }
     const footballProductsRaw = await Product.find({
       deleted: false,
@@ -81,12 +120,19 @@ module.exports.index = async (req, res) => {
     }).limit(8);
     const footballProducts = productPriceHelper.priceNewProduct(footballProductsRaw);
 
-    // - Bóng Chuyền (Volleyball)
-    const volleyballParent = await Category.findOne({ title: { $regex: /Bóng Chuyền/i }, deleted: false });
+    // - Tab 2 (Mặc định: Bóng Chuyền hoặc Category được Admin chọn)
+    let sportsTab2 = null;
+    if (settingWebsiteInfo.sportsTab2_id) {
+      sportsTab2 = await Category.findOne({ _id: settingWebsiteInfo.sportsTab2_id, deleted: false });
+    }
+    if (!sportsTab2) {
+      sportsTab2 = await Category.findOne({ title: { $regex: /Bóng Chuyền/i }, deleted: false });
+    }
+
     let volleyballCategoryIds = [];
-    if (volleyballParent) {
-      const volleyballChildren = await Category.find({ parent_id: volleyballParent._id.toString(), deleted: false });
-      volleyballCategoryIds = [volleyballParent._id.toString(), ...volleyballChildren.map((c) => c._id.toString())];
+    if (sportsTab2) {
+      const children2 = await Category.find({ parent_id: sportsTab2._id.toString(), deleted: false });
+      volleyballCategoryIds = [sportsTab2._id.toString(), ...children2.map((c) => c._id.toString())];
     }
     const volleyballProductsRaw = await Product.find({
       deleted: false,
@@ -111,7 +157,32 @@ module.exports.index = async (req, res) => {
     const newsLeft = articleListSection9.slice(1, 3);
     const newsRight = articleListSection9.slice(3, 5);
 
-    // 8. Thống kê thực tế từ DB để hiển thị Trust Bar (Real Store Stats)
+    // 8. Đánh giá nổi bật / Cảm nhận khách hàng (Testimonials từ DB)
+    let testimonialsList = await Review.find({
+      deleted: false,
+      status: "active",
+      isFeatured: true,
+    })
+      .sort({ createdAt: -1 })
+      .limit(6);
+
+    if (testimonialsList.length === 0) {
+      testimonialsList = await Review.find({
+        deleted: false,
+        status: "active",
+        rating: 5,
+      })
+        .sort({ createdAt: -1 })
+        .limit(3);
+    }
+
+    // 9. Danh sách thương hiệu đối tác (Brands từ DB)
+    const brandList = await Brand.find({
+      deleted: false,
+      status: "active",
+    }).sort({ position: 1, createdAt: 1 });
+
+    // 10. Thống kê thực tế từ DB để hiển thị Trust Bar (Real Store Stats)
     const totalProductsCount = await Product.countDocuments({ deleted: false, status: "active" });
     const totalOrdersCount = await Order.countDocuments({});
     const totalCategoriesCount = await Category.countDocuments({ deleted: false });
@@ -120,14 +191,19 @@ module.exports.index = async (req, res) => {
       title: "Trang chủ",
       categoryChildren: categoryChildren,
       couponList: couponList,
+      activeFlashSale: activeFlashSale,
       productListSection3: productListSection3,
       productFeaturedSection5: productFeaturedSection5,
       productListSection7: productListSection7,
+      sportsTab1: sportsTab1,
+      sportsTab2: sportsTab2,
       footballProducts: footballProducts,
       volleyballProducts: volleyballProducts,
       newsCenter: newsCenter,
       newsLeft: newsLeft,
       newsRight: newsRight,
+      testimonialsList: testimonialsList,
+      brandList: brandList,
       storeStats: {
         totalProducts: totalProductsCount,
         totalOrders: totalOrdersCount,

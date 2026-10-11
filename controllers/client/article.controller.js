@@ -1,5 +1,7 @@
 const moment = require("moment");
 const Article = require("../../models/article.model");
+const paginationHelper = require("../../helpers/pagination.helper");
+
 module.exports.list = async (req, res) => {
   try {
     const breadcrumb = {
@@ -16,7 +18,21 @@ module.exports.list = async (req, res) => {
       ],
     };
 
-    const articles = await Article.find({ status: "active", deleted: false });
+    const countArticles = await Article.countDocuments({ status: "active", deleted: false });
+    const objectPagination = paginationHelper(
+      {
+        currentPage: 1,
+        limitItems: 6,
+      },
+      req.query,
+      countArticles,
+    );
+
+    const articles = await Article.find({ status: "active", deleted: false })
+      .sort({ createdAt: "desc" })
+      .limit(objectPagination.limitItems)
+      .skip(objectPagination.skip);
+
     for (const item of articles) {
       item.createdAtFormat = moment(item.createdAt).format(
         "HH:mm - DD/MM/YYYY",
@@ -26,9 +42,10 @@ module.exports.list = async (req, res) => {
       title: "Danh sách bài viết",
       breadcrumb: breadcrumb,
       articles: articles,
+      pagination: objectPagination,
     });
   } catch (error) {
-    req.flash("error", "Không tồn tài");
+    req.flash("error", "Không tồn tại");
     res.redirect(`/`);
   }
 };

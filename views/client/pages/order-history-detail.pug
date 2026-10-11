@@ -84,6 +84,12 @@ block main
                       | ZaloPay
                     else if order.paymentMethod == "vnPay"
                       | VNPay
+                    else if order.paymentMethod == "bank"
+                      | Chuyển khoản ngân hàng
+                    else if order.paymentMethod == "momo"
+                      | Ví MoMo
+                    else
+                      | #{order.paymentMethod || "Tiền mặt"}
                 
                 .payment-info-row
                   span Trạng thái:
@@ -91,3 +97,30 @@ block main
                     span.text-success Đã thanh toán
                   else
                     span.text-warning Chưa thanh toán
+
+              if order.paymentMethod == "bank" && order.paymentStatus != "paid"
+                .bank-history-box
+                  h4.bank-history-title
+                    i.fa-solid.fa-building-columns
+                    | Thông tin chuyển khoản thanh toán
+                  ul.bank-history-list
+                    li
+                      span Ngân hàng:
+                      strong #{settingWebsiteInfo && settingWebsiteInfo.bankName ? settingWebsiteInfo.bankName : "Vietcombank"}
+                    li
+                      span Số tài khoản:
+                      strong.highlight-acc #{settingWebsiteInfo && settingWebsiteInfo.bankAccountNumber ? settingWebsiteInfo.bankAccountNumber : "1029384756"}
+                    li
+                      span Chủ tài khoản:
+                      strong #{settingWebsiteInfo && settingWebsiteInfo.bankAccountName ? settingWebsiteInfo.bankAccountName : "TITISPORT STORE"}
+                    li
+                      span Số tiền:
+                      strong.price-red #{order.total.toLocaleString("vi-VN")} đ
+                    li
+                      span Nội dung:
+                      strong.highlight-code #{order.orderCode}
+                  if settingWebsiteInfo && (settingWebsiteInfo.bankQrCode || (settingWebsiteInfo.bankAccountNumber && settingWebsiteInfo.bankName))
+                    .bank-qr-box
+                      - const qrUrl = settingWebsiteInfo.bankQrCode || `https://img.vietqr.io/image/${encodeURIComponent(settingWebsiteInfo.bankName || 'VCB')}-${encodeURIComponent(settingWebsiteInfo.bankAccountNumber || '1029384756')}-compact2.png?amount=${order.total}&addInfo=${encodeURIComponent(order.orderCode)}&accountName=${encodeURIComponent(settingWebsiteInfo.bankAccountName || 'TITISPORT')}`;
+                      img.bank-qr-img(src=qrUrl alt="Mã VietQR Chuyển khoản")
+                      span.bank-qr-desc Quét mã VietQR để thanh toán nhanh

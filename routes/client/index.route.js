@@ -41,4 +41,10 @@ router.use("/search", searchRoutes);
 
 router.use("/user", userRoutes);
 
+const reviewRoutes = require("../client/review.route");
+router.use("/review", reviewRoutes);
+
+const policyRoutes = require("../client/policy.route");
+router.use("/policy", policyRoutes);
+
 module.exports = router;

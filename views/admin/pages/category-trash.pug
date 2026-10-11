@@ -76,7 +76,11 @@ block main
                             i.fa-regular.fa-trash-can
             else
               tr
-                td(colspan="7" class="text-center" style="padding: 30px; color: #777;") Thùng rác trống. Không có danh mục nào bị xóa!
+                td(colspan="7")
+                  .admin-empty-state
+                    .empty-icon
+                      i.fa-regular.fa-trash-can
+                    p Thùng rác trống! Không có danh mục nào bị xóa!
 
     .admin-pagination
       +pagination(pagination)
@@ -107,14 +111,4 @@ block main
         input(type="hidden" name="type")
         input(type="hidden" name="ids")
   else
-    .no-access-wrapper
-      .no-access-card
-        .no-access-icon
-          i.fa-solid.fa-lock
-
-        h2.no-access-title Truy cập bị từ chối
-
-        p.no-access-desc
-          | Bạn không có quyền truy cập vào trang này.
-          br
-          | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
+    include ../partials/no-access.pug

@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const moment = require("moment");
 const Order = require("../../models/order.model");
 const Product = require("../../models/product.model");
@@ -54,7 +55,7 @@ module.exports.list = async (req, res) => {
     let objectPagination = paginationHelper(
       {
         currentPage: 1,
-        limitItems: 10,
+        limitItems: 5,
       },
       req.query,
       countOrder,
@@ -86,6 +87,11 @@ module.exports.list = async (req, res) => {
     });
 
     for (const order of orderList) {
+      order.id = (order._id || "").toString();
+      order.subtotal = order.subtotal || 0;
+      order.discount = order.discount || 0;
+      order.total = order.total || 0;
+
       if (order.products && order.products.length > 0) {
         for (const item of order.products) {
           const infoProduct = productMap[item.product_id?.toString()];
@@ -221,34 +227,48 @@ module.exports.changeMulti = async (req, res) => {
 module.exports.edit = async (req, res) => {
   try {
     const id = req.params.id;
-    const orderDetail = await Order.findOne({
-      _id: id,
-      deleted: false,
-    });
+    let findQuery = { deleted: false };
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      findQuery._id = id;
+    } else {
+      findQuery.orderCode = id;
+    }
+
+    const orderDetail = await Order.findOne(findQuery).lean();
 
     if (!orderDetail) {
       req.flash("error", "Đơn hàng không tồn tại!");
       return res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
     }
 
-    for (const item of orderDetail.products) {
-      const infoProduct = await Product.findOne({
-        _id: item.product_id,
-        deleted: false,
-      });
-      if (infoProduct) {
-        const priceNewQuantity = item.priceNew * item.quantity;
-        item.priceNewQuantity = priceNewQuantity;
-        item.title = infoProduct.title;
-        item.slug = infoProduct.slug;
-        item.thumbnail = infoProduct.thumbnail;
+    if (orderDetail.products && Array.isArray(orderDetail.products)) {
+      for (const item of orderDetail.products) {
+        if (item.product_id && mongoose.Types.ObjectId.isValid(item.product_id)) {
+          const infoProduct = await Product.findOne({
+            _id: item.product_id,
+            deleted: false,
+          }).select("title slug thumbnail");
+
+          if (infoProduct) {
+            item.title = item.title || infoProduct.title;
+            item.slug = item.slug || infoProduct.slug;
+            item.thumbnail = item.thumbnail || infoProduct.thumbnail;
+          }
+        }
+        item.priceNew = item.priceNew !== undefined ? item.priceNew : (item.price || 0);
+        item.quantity = item.quantity || 1;
+        item.priceNewQuantity = item.priceNew * item.quantity;
       }
     }
+
+    orderDetail.subtotal = orderDetail.subtotal || 0;
+    orderDetail.discount = orderDetail.discount || 0;
+    orderDetail.total = orderDetail.total || 0;
 
     const pMethod = variableCongfig.paymentMethod.find(
       (item) => item.value === orderDetail.paymentMethod,
     );
-    orderDetail.paymentMethodName = pMethod ? pMethod.label : orderDetail.paymentMethod;
+    orderDetail.paymentMethodName = pMethod ? pMethod.label : (orderDetail.paymentMethod || "COD");
 
     orderDetail.createdAtFormat = moment(orderDetail.createdAt).format(
       "HH:mm - DD/MM/YYYY",
@@ -270,10 +290,14 @@ module.exports.edit = async (req, res) => {
 module.exports.editPatch = async (req, res) => {
   try {
     const id = req.params.id;
-    const order = await Order.findOne({
-      _id: id,
-      deleted: false,
-    });
+    let findQuery = { deleted: false };
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      findQuery._id = id;
+    } else {
+      findQuery.orderCode = id;
+    }
+
+    const order = await Order.findOne(findQuery);
     if (!order) {
       req.flash("error", "Đơn hàng không tồn tại!");
       return res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
@@ -314,6 +338,18 @@ module.exports.editPatch = async (req, res) => {
       },
       updateData,
     );
+
+    // Bắn thông báo Realtime Socket.io cho khách hàng và Admin
+    if (global._io) {
+      const statusObj = variableCongfig.orderStatus.find((item) => item.value === status);
+      global._io.emit("SERVER_UPDATE_ORDER_STATUS", {
+        orderId: id,
+        orderCode: order.orderCode,
+        status: status,
+        statusName: statusObj ? statusObj.label : status,
+        paymentStatus: paymentStatus,
+      });
+    }
 
     req.flash("success", "Cập nhật trạng thái đơn hàng thành công");
     res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/list`);
@@ -415,30 +451,35 @@ module.exports.trash = async (req, res) => {
             item.priceNewQuantity = (item.priceNew || 0) * (item.quantity || 1);
           }
         }
+        order.id = (order._id || "").toString();
+        order.subtotal = order.subtotal || 0;
+        order.discount = order.discount || 0;
+        order.total = order.total || 0;
+
+        if (order.deletedBy) {
+          const infoAccountDeleted = accountMap[order.deletedBy?.toString()];
+          order.deletedByFullName = infoAccountDeleted?.fullName;
+        }
+
+        const pMethod = variableCongfig.paymentMethod.find(
+          (item) => item.value === order.paymentMethod,
+        );
+        order.paymentMethodName = pMethod?.label || order.paymentMethod;
+
+        const pStatus = variableCongfig.paymentStatus.find(
+          (item) => item.value === order.paymentStatus,
+        );
+        order.paymentStatusName = pStatus?.label || order.paymentStatus;
+
+        const oStatus = variableCongfig.orderStatus.find(
+          (item) => item.value === order.status,
+        );
+        order.statusName = oStatus?.label || order.status;
+
+        order.deletedAtFormat = moment(order.deletedAt).format(
+          "HH:mm - DD/MM/YYYY",
+        );
       }
-      if (order.deletedBy) {
-        const infoAccountDeleted = accountMap[order.deletedBy?.toString()];
-        order.deletedByFullName = infoAccountDeleted?.fullName;
-      }
-
-      const pMethod = variableCongfig.paymentMethod.find(
-        (item) => item.value === order.paymentMethod,
-      );
-      order.paymentMethodName = pMethod?.label || order.paymentMethod;
-
-      const pStatus = variableCongfig.paymentStatus.find(
-        (item) => item.value === order.paymentStatus,
-      );
-      order.paymentStatusName = pStatus?.label || order.paymentStatus;
-
-      const oStatus = variableCongfig.orderStatus.find(
-        (item) => item.value === order.status,
-      );
-      order.statusName = oStatus?.label || order.status;
-
-      order.deletedAtFormat = moment(order.deletedAt).format(
-        "HH:mm - DD/MM/YYYY",
-      );
     }
 
     res.render("admin/pages/order-trash.pug", {
@@ -517,4 +558,3 @@ module.exports.changeMultiTrash = async (req, res) => {
     res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/trash`);
   }
 };
-

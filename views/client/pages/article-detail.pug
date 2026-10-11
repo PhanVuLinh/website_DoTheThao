@@ -9,7 +9,7 @@ block main
       .detail-grid
         
         .detail-left
-          .detail-card(style="padding: 40px;") 
+          .detail-card.policy-card-pad 
             h1.article-title #{article.title}
             
             .article-meta
@@ -31,7 +31,7 @@ block main
 
         .detail-right
           aside.detail-card.article-sidebar
-            h3.subtitle(style="margin-top: 0; padding-top: 0; border: none; border-bottom: 2px solid var(--red-main); padding-bottom: 10px; display: inline-block;") Bài Viết Mới
+            h3.subtitle.sidebar-subtitle-underline Bài Viết Mới
             
             .widget-content.mt-4
               if newArticles && newArticles.length > 0
