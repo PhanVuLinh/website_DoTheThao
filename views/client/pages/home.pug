@@ -173,16 +173,16 @@ block main
         .flash-promo
           .flash-promo__badge
             span.live-pulse-dot
-            | #{activeFlashSale.badge || 'GIỜ VÀNG GIÁ SỐC'}
+            | #{activeFlashSale.badge || '⚡ DEAL CHỚP NHOÁNG'}
           h2.flash-promo__title-new
-            span.title-sub #{activeFlashSale.subTitle || 'ƯU ĐÃI CÓ HẠN'}
+            span.title-sub #{activeFlashSale.subTitle || 'SỐ LƯỢNG CÓ HẠN'}
             span.title-main #{activeFlashSale.title}
-          p.flash-promo__desc #{activeFlashSale.description || 'Ưu đãi có hạn, nhanh tay săn deal!'}
+          p.flash-promo__desc #{activeFlashSale.description || 'Trang bị thể thao chính hãng giá tốt nhất - Số lượng có hạn, săn ngay hôm nay!'}
           
           .flash-promo__timer-wrapper
             p.flash-promo__countdown-label
               i.fa-regular.fa-clock
-              | KẾT THÚC TRONG
+              | ƯU ĐÃI KẾT THÚC SAU
             .flash-promo__countdown#flashCountdown(data-end=(activeFlashSale.endTime ? new Date(activeFlashSale.endTime).toISOString() : ""))
               .countdown-box
                 span.num#cdHours 00
@@ -197,7 +197,7 @@ block main
                 span.label GIÂY
 
           a.flash-promo__btn(href="/product")
-            span Xem Tất Cả Khuyến Mãi
+            span Khám Phá Toàn Bộ Deal Hot
             i.fa-solid.fa-arrow-right
 
         .flash-products-wrapper
@@ -225,7 +225,7 @@ block main
                       .flash-deal-card__quick-overlay
                         span.quick-view-pill
                           i.fa-solid.fa-eye
-                          | Chi tiết sản phẩm
+                          | Xem nhanh
                     
                     .flash-deal-card__info
                       span.flash-deal-card__brand
@@ -249,11 +249,21 @@ block main
                       span.sold-text
                         i.fa-solid.fa-fire-flame-curved
                         if item.quantityQuota > 0
-                          | Đã bán #{item.soldCount || 0} / #{item.quantityQuota}
+                          if (item.soldCount > 0)
+                            | Đã bán #{item.soldCount}/#{item.quantityQuota}
+                          else
+                            | Mở bán #{item.quantityQuota} suất
                         else
-                          | Đã bán #{item.soldCount || 0}
+                          if (item.soldCount > 0)
+                            | Đã bán #{item.soldCount}
+                          else
+                            | Đang mở bán
                       if ((item.percentSold || 0) >= 80)
                         span.stock-tag Sắp cháy hàng
+                      else if ((item.percentSold || 0) >= 40)
+                        span.stock-tag Bán cực chạy
+                      else if (!item.soldCount || item.soldCount === 0)
+                        span.stock-tag Vừa mở bán
                       else
                         span.stock-tag Đang mở bán
 
@@ -265,9 +275,9 @@ block main
                       else
                         span.deal-new-price #{(item.price || 0).toLocaleString('vi-VN')}đ
                     
-                    a.btn-deal-cart(href=`/product/detail/${item.slug}` title="Xem chi tiết & Mua ngay")
-                      i.fa-solid.fa-cart-shopping
-                      span Mua ngay
+                    a.btn-deal-cart(href=`/product/detail/${item.slug}` title="Xem chi tiết & Săn ngay")
+                      i.fa-solid.fa-bolt
+                      span Săn ngay
 
   //- ==========================================
   //- 6. SẢN PHẨM THEO BỘ MÔN THỂ THAO
