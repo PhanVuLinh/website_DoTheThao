@@ -1,229 +1,175 @@
-# 🏆 TITISPORT - WEBSITE THƯƠNG MẠI ĐIỆN TỬ ĐỒ THỂ THAO CAO CẤP
+<div align="center">
 
-> **Đồ án Thực tập tốt nghiệp**  
-> **Sinh viên thực hiện:** Phan Vũ Linh  
-> **Mã sinh viên:** `200000xxxx` | **Email:** `linhphanzzz04@gmail.com`  
-> **Giảng viên hướng dẫn:** Thầy Nghĩa  
-> 🌐 **Live Demo Website:** [https://titisport.onrender.com](https://titisport.onrender.com)  
-> 🛡️ **Trang Quản trị (Admin):** [https://titisport.onrender.com/admin](https://titisport.onrender.com/admin)
+# ⚡ TITISPORT — THƯƠNG MẠI ĐIỆN TỬ THỂ THAO CAO CẤP
+### *Nền tảng mua sắm trang thiết bị & vận hành bán lẻ thể thao hiện đại, tích hợp Realtime và Đa cổng thanh toán số*
 
----
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-titisport.onrender.com-00C7B7?style=for-the-badge&logo=render&logoColor=white)](https://titisport.onrender.com)
+[![Admin Portal](https://img.shields.io/badge/🛡️_Admin_Portal-/admin-1E293B?style=for-the-badge&logo=shield&logoColor=white)](https://titisport.onrender.com/admin)
+[![Uptime 24/7](https://img.shields.io/badge/⚡_Uptime-Active_24/7-10B981?style=for-the-badge&logo=uptimerobot&logoColor=white)](https://titisport.onrender.com)
 
-## 📌 GIỚI THIỆU DỰ ÁN
-
-**TITISPORT** là hệ thống website thương mại điện tử chuyên cung cấp trang thiết bị, phụ kiện và trang phục thể thao chính hãng (Bóng đá, Bóng chuyền, Cầu lông, Chạy bộ,...). Hệ thống được xây dựng hoàn chỉnh từ giao diện bán hàng hiện đại dành cho khách hàng (**Storefront Client**) đến trung tâm điều hành chuyên nghiệp dành cho quản trị viên (**Admin Dashboard**).
-
-Dự án áp dụng kiến trúc phân tầng chuẩn mực, giao diện thiết kế theo phong cách hiện đại với **Floating Pill Island Header**, hiệu ứng chuyển động mượt mà, đồng bộ dữ liệu thời gian thực qua **Socket.IO** và tích hợp đa cổng thanh toán trực tuyến (**VNPay**, **ZaloPay**, **VietQR**).
-
----
-
-## 🚀 CÔNG NGHỆ SỬ DỤNG (TECH STACK)
-
-### 1. Backend & Server
-- **Runtime Environment:** [Node.js](https://nodejs.org/) (v20+)
-- **Web Framework:** [Express.js](https://expressjs.com/) (v5)
-- **Database & ODM:** [MongoDB Atlas](https://www.mongodb.com/atlas) & [Mongoose](https://mongoosejs.com/) (v9)
-- **Real-time Engine:** [Socket.IO](https://socket.io/) (Cập nhật đơn hàng & thông báo thời gian thực)
-- **Template Engine:** [Pug (Jade)](https://pugjs.org/) (Server-Side Rendering tối ưu SEO và tốc độ tải trang)
-
-### 2. Frontend & Giao diện
-- **Ngôn ngữ:** HTML5, CSS3, Vanilla JavaScript (ES6+)
-- **Kiến trúc CSS:** Modular Design System độc lập, biến màu `:root` Design Tokens, hoàn toàn không phụ thuộc TailwindCSS, tối ưu hiệu năng render.
-- **Responsive:** Đồng bộ 5 Breakpoint chuẩn quốc tế (`1200px`, `992px`, `768px`, `576px`, `480px`).
-- **Thư viện giao diện bổ trợ:** [Swiper.js](https://swiperjs.com/) (Gallery chi tiết sản phẩm), [SweetAlert2](https://sweetalert2.github.io/) (Thông báo Toast & Modal), [Font Awesome 6](https://fontawesome.com/).
-
-### 3. Tích hợp & Dịch vụ bên thứ ba (Integrations)
-- **Cổng thanh toán:** 
-  - VNPay Sandbox (Cổng thanh toán thẻ ATM / QR-Code)
-  - ZaloPay Sandbox (Thanh toán ví điện tử ZaloPay)
-  - Chuyển khoản ngân hàng VietQR tự động tạo mã QR chính xác nội dung đơn hàng
-- **Lưu trữ đám mây:** [Cloudinary](https://cloudinary.com/) (Quản lý và tối ưu hóa hình ảnh tải lên)
-- **Gửi Email tự động:** [Nodemailer](https://nodemailer.com/) (Xác thực OTP, hóa đơn và email thông báo đặt hàng thành công)
-- **Soạn thảo nội dung:** [TinyMCE](https://www.tinymce.com/) (Trình soạn thảo văn bản phong phú cho bài viết và mô tả sản phẩm)
+<p align="center">
+  <img src="https://img.shields.io/badge/Node.js-v20+-339933?style=flat-square&logo=node.js&logoColor=white" />
+  <img src="https://img.shields.io/badge/Express.js-v5.0-000000?style=flat-square&logo=express&logoColor=white" />
+  <img src="https://img.shields.io/badge/MongoDB_Atlas-Database-47A248?style=flat-square&logo=mongodb&logoColor=white" />
+  <img src="https://img.shields.io/badge/Socket.IO-Realtime-010101?style=flat-square&logo=socket.io&logoColor=white" />
+  <img src="https://img.shields.io/badge/Payment-VNPay_|_ZaloPay_|_VietQR-0068FF?style=flat-square" />
+  <img src="https://img.shields.io/badge/Storage-Cloudinary_CDN-3448C5?style=flat-square&logo=cloudinary&logoColor=white" />
+</p>
 
 ---
 
-## ✨ CÁC TÍNH NĂNG NỔI BẬT
+</div>
 
-### 🛍️ Phân hệ Khách hàng (Client Storefront)
-1. **Trang chủ thể thao cao cấp:**
-   - **Header treo dạng viên nang (Floating Pill Island):** Giữ cố định thông minh, chống rung lag (zero-jitter), hiệu ứng trong suốt mờ nhẹ sang trọng.
-   - **Banner Hero động:** Tích hợp bộ tìm kiếm nhanh và thanh cam kết dịch vụ (**Trust Features Bar**).
-   - **Ví Voucher giảm giá (Sport Passbook):** Hiển thị danh sách mã ưu đãi đa dạng màu sắc, hỗ trợ sao chép mã 1-click có thông báo trực quan.
-   - **Chiến dịch Flash Sale thời gian thực:** Đồng hồ đếm ngược ngược giờ vàng, thanh tiến độ số lượng mở bán và cập nhật trừ tồn kho tự động.
-   - **Bố cục xen kẽ hài hòa (Zebra Striping):** Các phân khu tự động xen kẽ nền Xám - Trắng tinh tế, không gây mỏi mắt.
-   - **Đối tác thể thao toàn cầu:** Hiển thị lưới logo chính hãng chuẩn SVG tối giản.
-2. **Danh mục & Sản phẩm:**
-   - Cây danh mục đa cấp (Đồng phục, Giày, Bóng thi đấu, Phụ kiện...).
-   - Lọc sản phẩm theo danh mục, mức giá, sắp xếp theo độ mới/giá tăng/giảm.
-   - Trang chi tiết sản phẩm: Thư viện ảnh Swiper Gallery tương tác, chọn biến thể size/màu, kiểm tra tồn kho tức thì.
-   - Hệ thống đánh giá & nhận xét đã mua hàng (**Verified Buyer Reviews**) kèm chấm điểm sao và bộ lọc đánh giá.
-3. **Giỏ hàng & Đặt hàng:**
-   - Thanh tiến độ Freeship thông minh theo giá trị đơn hàng.
-   - Áp dụng mã Voucher giảm giá trực tiếp vào đơn hàng.
-   - Đa dạng hình thức thanh toán: COD, VNPay, ZaloPay, Chuyển khoản ngân hàng có mã QR.
-   - **Theo dõi tiến trình đơn hàng (Realtime Stepper):** Hiển thị trực quan 5 bước xử lý từ Đặt hàng ➔ Xác nhận ➔ Đang giao ➔ Giao thành công / Hủy.
-4. **Tài khoản người dùng & Bảo mật:**
-   - Đăng ký, đăng nhập bảo mật bằng JWT và mã hóa mật khẩu `bcryptjs` / `md5`.
-   - Quên mật khẩu & cấp lại mật khẩu qua mã xác thực OTP gửi về Email.
-   - Quản lý hồ sơ cá nhân, lịch sử đơn hàng, xem chi tiết hóa đơn và in hóa đơn trực tiếp.
+## 📖 GIỚI THIỆU DỰ ÁN (PROJECT OVERVIEW)
+
+**TITISPORT** là đồ án thực tập tốt nghiệp xây dựng hệ sinh thái thương mại điện tử chuyên ngành thể thao đa môn (Bóng đá, Bóng chuyền, Cầu lông, Giày thi đấu và Phụ kiện cao cấp). 
+
+Dự án ra đời nhằm giải quyết bài toán trải nghiệm mua sắm trực tuyến liền mạch, tốc độ cao với giao diện phong cách thể thao hiện đại, đồng thời trang bị hệ thống quản trị vận hành (**Admin Backoffice**) khép kín, tự động hóa từ khâu săn ưu đãi, đặt hàng, xử lý kho, trừ tồn kho thời gian thực đến đối soát thanh toán điện tử.
 
 ---
 
-### 🛡️ Phân hệ Quản trị (Admin Dashboard)
-1. **Tổng quan hệ thống (Dashboard Analytics):**
-   - Thống kê doanh thu theo tháng/ngày, tổng đơn hàng, khách hàng mới và quản trị viên.
-   - Biểu đồ tăng trưởng doanh thu trực quan, so sánh các kỳ kinh doanh.
-2. **Chiến dịch Flash Sale độc quyền:**
-   - Tạo chiến dịch Flash Sale với tiêu đề, thời gian bắt đầu - kết thúc.
-   - Popup chọn sản phẩm từ kho nhanh chóng theo danh mục.
-   - Công cụ thiết lập hàng loạt: Áp dụng chung % giảm giá và số lượng mở bán cho toàn bộ sản phẩm tham gia.
-3. **Quản lý Sản phẩm & Danh mục:**
-   - Cấu trúc cây danh mục linh hoạt.
-   - Thêm/sửa/xóa sản phẩm, tải ảnh lên Cloudinary, quản lý tồn kho, vị trí hiển thị, trạng thái hoạt động.
-   - Thùng rác sản phẩm: Khôi phục hoặc xóa vĩnh viễn.
-4. **Quản lý Đơn hàng & Vận chuyển:**
-   - Theo dõi trạng thái đơn hàng: Chờ duyệt, Đang giao, Đã giao, Đã hủy.
-   - Cập nhật trạng thái thanh toán và thông tin chuyển khoản ngân hàng.
-5. **Mã giảm giá (Vouchers):**
-   - Thiết lập mã theo %, giảm tiền trực tiếp, số lượng giới hạn, ngày hết hạn.
-6. **Phân quyền & Tài khoản (Roles & Permissions):**
-   - Phân chia vai trò (Quản trị viên tối cao, Nhân viên bán hàng, Biên tập viên).
-   - Bảng ma trận phân quyền chi tiết cho từng chức năng.
-7. **Nội dung & Cài đặt:**
-   - Quản lý đánh giá khách hàng (Duyệt/Ẩn đánh giá nổi bật).
-   - Quản lý bài viết tin tức thể thao, danh mục bài viết.
-   - Quản lý thông tin liên hệ gửi từ khách hàng.
-   - Cài đặt chung website (Logo, Tên shop, Hotline, Email, Địa chỉ, Bản quyền).
+## 🌟 ĐIỂM NHẤN TRẢI NGHIỆM & THIẾT KẾ ĐỘT PHÁ (KEY HIGHLIGHTS)
 
----
-
-## 📁 CẤU TRÚC THƯ MỤC DỰ ÁN
-
-```bash
-project_sport/
-├── config/                  # Cấu hình Database, biến hệ thống, Cloudinary
-├── controllers/             # Bộ điều khiển Controller
-│   ├── admin/               # Logic nghiệp vụ Admin
-│   └── client/              # Logic nghiệp vụ Khách hàng
-├── helpers/                 # Hàm tiện ích (Gửi mail, Upload Cloudinary, Phân trang, Mã hóa)
-├── middlewares/             # Middleware (Xác thực Auth, Alert, Upload)
-├── models/                  # Định nghĩa Schema cơ sở dữ liệu MongoDB
-├── public/                  # Tài nguyên tĩnh công khai
-│   ├── admin/assets/        # CSS, JS, Images của trang Quản trị
-│   │   ├── css/style.css    # Master Admin Stylesheet (Cấu trúc 19 phân khu chuẩn)
-│   │   └── js/script.js     # Admin interactivity & Socket.IO
-│   └── client/assets/       # CSS, JS, Images của trang Khách hàng
-│       ├── css/style.css    # Master Client Stylesheet (Cấu trúc 21 phân khu chuẩn)
-│       └── js/script.js     # Client interactivity & Dynamic UI
-├── routes/                  # Định tuyến ứng dụng
-│   ├── admin/               # URL Endpoints Admin
-│   └── client/              # URL Endpoints Khách hàng
-├── views/                   # Giao diện Pug Templates
-│   ├── admin/               # Template giao diện Admin
-│   └── client/              # Template giao diện Khách hàng
-├── .env.example             # Mẫu file biến môi trường
-├── index.js                 # Entry point khởi chạy ứng dụng
-├── package.json             # Danh sách dependencies & scripts
-└── README.md                # Tài liệu hướng dẫn dự án
+```
+       ┌─────────────────────────────────────────────────────────────┐
+       │                   TITISPORT PLATFORM                        │
+       ├──────────────────────────────┬──────────────────────────────┤
+       │     CLIENT STOREFRONT        │      ADMIN BACKOFFICE        │
+       │  • Floating Pill Header      │  • Biểu đồ doanh thu động    │
+       │  • Sport Passbook Voucher    │  • Chiến dịch Flash Sale     │
+       │  • Flash Sale giờ vàng       │  • Kho sản phẩm & Đơn hàng   │
+       │  • Realtime Order Stepper    │  • Ma trận phân quyền 3 tầng │
+       │  • Thanh toán VNPay/ZaloPay  │  • Quản lý đánh giá & bài viết│
+       └──────────────────────────────┴──────────────────────────────┘
 ```
 
+### 1. 🏝️ Đảo Nổi Treo Độc Bản (Floating Pill Island Header)
+- Thiết kế thanh điều hướng dạng viên nang bo tròn lơ lửng, tạo chiều sâu thị giác sang trọng.
+- Xử lý chuyển động **Zero-Jitter Sticky**: Cuộn trang êm ái, hoàn toàn không bị rung giật giao diện khi ghim cố định.
+- Tích hợp nhanh công cụ tìm kiếm, danh mục thả xuống mượt mà và huy hiệu giỏ hàng tự động cập nhật số lượng.
+
+### 2. 🎟️ Ví Ưu Đãi Sport Passbook (Voucher Vault)
+- Lấy cảm hứng từ vé thể thao xé cuống hiện đại, phân loại thẻ ưu đãi theo chủ đề màu sắc độc lập (`theme-red`, `theme-blue`, `theme-emerald`, `theme-purple`).
+- Tích hợp tính năng sao chép mã voucher chỉ với 1 click kèm phản hồi hoạt họa trực quan và thông báo Toast nổi góc.
+
+### 3. ⚡ Chiến Dịch Flash Deals Giờ Vàng
+- Bộ đếm ngược đếm từng giây kích thích mua sắm.
+- Cập nhật tỷ lệ mở bán, thanh tiến độ số lượng đã bán và trừ tồn kho tự động theo thời gian thực khi khách hoàn tất đơn hàng.
+
+### 4. 📦 Theo Dõi Tiến Trình Đơn Hàng Thời Gian Thực (Realtime Order Stepper)
+- Quy trình 5 bước trực quan: *Đặt hàng thành công ➔ Đã tiếp nhận & duyệt ➔ Đang đóng gói ➔ Đang giao hàng ➔ Hoàn tất*.
+- Đèn tín hiệu **Live Pulse Dot** nhấp nháy cập nhật trạng thái đơn hàng thời gian thực qua giao thức **Socket.IO**.
+
+### 5. 💳 Hệ Sinh Thái Thanh Toán Số Toàn Diện
+- **VNPay Sandbox:** Thanh toán quét mã QR & thẻ ngân hàng nội địa/quốc tế.
+- **ZaloPay Sandbox:** Thanh toán nhanh qua ví điện tử ZaloPay.
+- **Chuyển khoản VietQR:** Tự động tạo mã QR chính xác thông tin số tài khoản, số tiền và mã đơn hàng, hiển thị hướng dẫn sao chép thông tin chỉn chu.
+
+### 6. 🎨 Nhịp Điệu Thị Giác Xen Kẽ (Zebra Striping)
+- Các phân khu trên trang chủ tự động đan xen nền **Xám nhạt (#f8fafc) — Trắng (#ffffff)** khoa học, tạo cảm giác phân tách khối nội dung tự nhiên, tránh mỏi mắt cho người dùng.
+
 ---
 
-## ⚙️ HƯỚNG DẪN CÀI ĐẶT VÀ CHẠY DỰ ÁN LOCAL
+## 🎯 BẢN ĐỒ TÍNH NĂNG TOÀN DIỆN (SYSTEM FEATURE MATRIX)
 
-### 1. Yêu cầu môi trường
-- [Node.js](https://nodejs.org/) phiên bản `>= 18.x` hoặc mới hơn.
-- Trình quản lý gói `npm` (đi kèm Node.js).
-- Một tài khoản cơ sở dữ liệu [MongoDB Atlas](https://www.mongodb.com/atlas) (hoặc MongoDB cài cục bộ).
+| Phân hệ | Tính năng chính | Mô tả chi tiết trải nghiệm |
+| :--- | :--- | :--- |
+| **Khách hàng** | **Trang chủ & Khám phá** | Hero Banner động, Trust Features Bar cam kết dịch vụ, Khám phá bộ môn thể thao, Đối tác thương hiệu SVG tối giản |
+| **Khách hàng** | **Bộ sưu tập & Bộ lọc** | Xem theo danh mục thể thao, lọc giá, sắp xếp mới nhất / giá tăng - giảm, tìm kiếm từ khóa thông minh |
+| **Khách hàng** | **Chi tiết sản phẩm** | Thư viện Swiper Gallery trượt mượt mà, chọn biến thể kích cỡ / màu sắc, tình trạng tồn kho tức thì |
+| **Khách hàng** | **Đánh giá Verified Buyer** | Hệ thống nhận xét từ người mua thực tế, chấm điểm sao, phân tích phân bổ rating và bộ lọc review |
+| **Khách hàng** | **Giỏ hàng & Khuyến mãi** | Thanh tiến độ miễn phí vận chuyển (Freeship Goal), áp dụng mã giảm giá trực tiếp, tính tổng tiền tự động |
+| **Khách hàng** | **Tài khoản & Cá nhân** | Đăng ký, đăng nhập bảo mật JWT, lấy lại mật khẩu bằng mã OTP gửi về Email, lịch sử mua sắm và in hóa đơn |
+| **Quản trị** | **Dashboard Analytics** | Thống kê doanh thu theo kỳ, biểu đồ doanh thu so sánh trực quan, tổng đơn hàng, khách hàng mới |
+| **Quản trị** | **Quản lý Flash Sale** | Thiết lập chiến dịch giờ vàng, popup chọn nhanh sản phẩm từ kho, áp dụng hàng loạt % giảm giá và hạn mức bán |
+| **Quản trị** | **Quản lý Kho & Danh mục** | Cây danh mục đa cấp, CRUD sản phẩm, tải ảnh lên Cloudinary, trình soạn thảo TinyMCE, thùng rác khôi phục |
+| **Quản trị** | **Quản lý Đơn hàng** | Cập nhật tiến trình giao hàng, xác nhận chuyển khoản ngân hàng, xuất và in phiếu giao hàng chuẩn |
+| **Quản trị** | **Voucher & Mã giảm giá** | Tạo mã giảm giá theo số tiền cố định hoặc %, giới hạn lượt sử dụng và thời hạn hiệu lực |
+| **Quản trị** | **Phân quyền & Tài khoản** | Ma trận quyền hạn chi tiết (Quản trị viên, Nhân viên kinh doanh, Biên tập viên nội dung) |
 
-### 2. Tải mã nguồn về máy
+---
+
+## 🏗️ KIẾN TRÚC HỆ THỐNG & CÔNG NGHỆ (ARCHITECTURE & TECH STACK)
+
+```mermaid
+graph TD
+    Client[Khách hàng / Web Browser] -->|HTTP / WebSocket| App[Express.js Application Server]
+    Admin[Quản trị viên / Dashboard] -->|HTTP / WebSocket| App
+
+    subgraph "Core Business Services"
+        App --> Auth[Auth & Security: JWT, Bcrypt]
+        App --> OrderEngine[Order & Flash Sale Engine]
+        App --> SocketService[Socket.IO Realtime Hub]
+    end
+
+    subgraph "Data & Cloud Infrastructure"
+        App --> DB[(MongoDB Atlas Database)]
+        App --> Cloudinary[Cloudinary Media CDN]
+        App --> MailService[Nodemailer SMTP]
+    end
+
+    subgraph "Third-Party Payment Gateways"
+        OrderEngine --> VNPay[VNPay Sandbox]
+        OrderEngine --> ZaloPay[ZaloPay Sandbox]
+        OrderEngine --> VietQR[VietQR Dynamic Generator]
+    end
+```
+
+### Chi tiết Stack công nghệ:
+- **Backend:** Node.js v20+, Express.js v5, Mongoose v9, Socket.IO v4.
+- **Frontend Template:** Pug (Jade) SSR — tốc độ render nhanh, tối ưu SEO vượt trội.
+- **Frontend Styling:** Vanilla CSS với kiến trúc Design Tokens độc lập, 0% phụ thuộc Tailwind, responsive 5 breakpoint chuẩn mực.
+- **Bảo mật:** JSON Web Token (JWT), `bcryptjs` hashing, `express-rate-limit`, cookie an toàn `httpOnly`, bảo vệ route theo vai trò.
+- **Lưu trữ đám mây:** Cloudinary tích hợp Multer Storage.
+- **Hạ tầng Online:** Render.com Cloud Web Service + UptimeRobot giám sát 24/7.
+
+---
+
+## 🌐 TRẢI NGHIỆM TRỰC TUYẾN (LIVE DEMO & TEST ACCOUNTS)
+
+Hệ thống đã được đóng gói và triển khai hoạt động ổn định trên nền tảng đám mây:
+
+- 🚀 **Trang Cửa Hàng (Client):** **[https://titisport.onrender.com](https://titisport.onrender.com)**
+- 🛡️ **Trang Quản Trị (Admin):** **[https://titisport.onrender.com/admin](https://titisport.onrender.com/admin)**
+
+*(Bạn có thể tự do đăng ký tài khoản khách hàng để trải nghiệm mua sắm, nhận mã OTP qua email thật, hoặc đăng nhập bảng điều khiển Admin để khám phá hệ thống quản trị).*
+
+---
+
+## ⚡ BẮT ĐẦU NHANH CHO NHÀ PHÁT TRIỂN (QUICK START)
+
+Nếu bạn muốn chạy thử nghiệm dự án trên máy cá nhân:
+
 ```bash
+# 1. Tải mã nguồn về máy
 git clone https://github.com/PhanVuLinh/website_DoTheThao.git
 cd website_DoTheThao
-```
 
-### 3. Cài đặt các thư viện phụ thuộc
-*Lưu ý: Dự án sử dụng cờ `--legacy-peer-deps` để đảm bảo tương thích hoàn hảo giữa các phiên bản Cloudinary:*
-```bash
+# 2. Cài đặt thư viện phụ thuộc (sử dụng cờ --legacy-peer-deps)
 npm install --legacy-peer-deps
-```
 
-### 4. Cấu hình biến môi trường (`.env`)
-Tạo một file `.env` tại thư mục gốc của dự án với nội dung mẫu sau:
+# 3. Tạo file .env và cấu hình kết nối MongoDB, Cloudinary, Email
+# (Tham khảo mẫu trong tài liệu cấu hình hoặc dùng kết nối MongoDB Atlas của bạn)
 
-```env
-PORT=3000
-NODE_ENV=development
-
-# Database MongoDB Atlas
-DATABASE=mongodb+srv://<username>:<password>@cluster0.xxx.mongodb.net/sport_management?retryWrites=true&w=majority
-
-# Cloudinary Storage
-CLOUDINARY_NAME=your_cloud_name
-CLOUDINARY_API=your_api_key
-CLOUDINARY_SECRET=your_api_secret
-
-# Cấu hình gửi Mail (Gmail App Password)
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASSWORD=your_gmail_app_password
-
-# Cổng thanh toán ZaloPay Sandbox
-ZALOPAY_APPID=2553
-ZALOPAY_KEY1=your_zalopay_key1
-ZALOPAY_KEY2=your_zalopay_key2
-ZALOPAY_DOMAIN=https://sb-openapi.zalopay.vn
-
-# Cổng thanh toán VNPay Sandbox
-VNPAY_CODE=your_tmn_code
-VNPAY_SECRET=your_vnpay_hash_secret
-VNPAY_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-
-# Đường dẫn Website (cho webhook & callback thanh toán)
-DOMAIN_WEBSITE=http://localhost:3000
-
-# JSON Web Token & Session
-JWT_SECRET=your_super_secret_jwt_key
-JWT_EXPIRES_IN=7d
-SESSION_SECRET=PPCCLLAABB001
-```
-
-### 5. Khởi chạy ứng dụng
-- **Chế độ phát triển (Development):**
-```bash
+# 4. Khởi động máy chủ cục bộ
 npm start
+# ➔ Mở trình duyệt tại địa chỉ: http://localhost:3000
 ```
-- **Chế độ máy chủ chuẩn (Production):**
-```bash
-node index.js
-```
-
-### 6. Truy cập hệ thống
-- **Giao diện Khách hàng:** `http://localhost:3000`
-- **Giao diện Quản trị:** `http://localhost:3000/admin`
-- *(Tài khoản Admin mặc định có thể đăng ký trực tiếp hoặc kích hoạt trong bảng Quản trị viên)*.
 
 ---
 
-## 🌐 HƯỚNG DẪN TRIỂN KHAI ONLINE (DEPLOYMENT)
+## 👨‍🎓 THÔNG TIN ĐỒ ÁN & TÁC GIẢ (CREDITS)
 
-Hệ thống đã được thiết kế sẵn sàng cho việc triển khai trên các nền tảng đám mây hiện đại:
-
-1. **Nền tảng:** [Render.com](https://render.com) (Web Service Node.js).
-2. **Cấu hình Build & Start trên Render:**
-   - **Build Command:** `npm install --legacy-peer-deps`
-   - **Start Command:** `node index.js`
-3. **Mẹo chống ngủ đông 24/7:**
-   - Tạo monitor miễn phí trên [UptimeRobot](https://uptimerobot.com) với chu kỳ Ping `5 minutes` trỏ về link `https://titisport.onrender.com`.
-   - Giúp server Render luôn thức, phản hồi nhanh chóng mà không gặp độ trễ cold-start.
-
----
-
-## 👨‍💻 THÔNG TIN TÁC GIẢ & BẢN QUYỀN
-
-- **Họ và tên:** Phan Vũ Linh
+- **Đề tài:** Xây dựng website thương mại điện tử chuyên kinh doanh đồ thể thao cao cấp.
+- **Học phần:** Đồ án Thực tập tốt nghiệp.
+- **Giảng viên hướng dẫn:** Thầy Nghĩa.
+- **Sinh viên thực hiện:** **Phan Vũ Linh**
+- **Email liên hệ:** [linhphanzzz04@gmail.com](mailto:linhphanzzz04@gmail.com)
 - **GitHub:** [@PhanVuLinh](https://github.com/PhanVuLinh)
-- **Email:** [linhphanzzz04@gmail.com](mailto:linhphanzzz04@gmail.com)
-- **Đề tài:** Xây dựng website thương mại điện tử chuyên kinh doanh đồ thể thao (Thực tập tốt nghiệp).
 
-*Copyright © 2026 Phan Vũ Linh. All Rights Reserved.*
+---
+
+<div align="center">
+  <p><i>Được xây dựng với niềm đam mê công nghệ và tinh thần thể thao bứt phá mọi giới hạn.</i></p>
+  <p>© 2026 Phan Vũ Linh. All Rights Reserved.</p>
+</div>
