@@ -3,6 +3,7 @@ const orderController = require("../../controllers/admin/order.controller");
 const authMiddleware = require("../../middlewares/admin/auth.middleware");
 
 router.get("/list", authMiddleware.checkPermission("order_view"), orderController.list);
+router.get("/export", authMiddleware.checkPermission("order_view"), orderController.exportOrders);
 
 router.patch("/change-multi", authMiddleware.checkPermission("order_edit"), orderController.changeMulti);
 

@@ -25,6 +25,9 @@ const orderSchema = new mongoose.Schema(
     paymentMethod: String,
     paymentStatus: String,
     status: String,
+    cancelReason: String,
+    cancelledBy: String,
+    cancelledAt: Date,
     updatedBy: String,
     deleted: {
       type: Boolean,

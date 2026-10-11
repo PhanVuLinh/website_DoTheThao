@@ -20,13 +20,27 @@ block main
                 .order-date Ngày đặt: #{order.createdAtFormat}
             
               if order.status == "initial"
-                .order-status.status-pending Chờ xác nhận
+                .order-status-actions
+                  .order-status.status-pending Chờ xác nhận
+                  button.btn-cancel-order(
+                    type="button"
+                    data-id=order.id
+                    data-code=order.orderCode
+                    title="Hủy đơn hàng này"
+                  )
+                    i.fa-solid.fa-ban
+                    | Hủy đơn hàng
               else if order.status == "shipping"
                 .order-status.status-shipping Đang giao hàng
               else if order.status == "done"
                 .order-status.status-success Đã giao thành công
               else if order.status == "cancel"
-                .order-status.status-cancelled Đã hủy
+                .order-status-actions
+                  .order-status.status-cancelled Đã hủy
+                  if order.cancelReason
+                    .order-cancel-badge
+                      i.fa-solid.fa-circle-info
+                      span Lý do: #{order.cancelReason}
                 
 
           //- Thông tin nhận hàng

@@ -24,4 +24,7 @@ router.get("/payment-vnpay/:orderId", orderController.paymentVnpay);
 
 router.get("/payment-vnpay-result", orderController.paymentVnpayResult);
 
+router.patch("/cancel/:id", orderController.cancelPatch);
+router.post("/cancel/:id", orderController.cancelPatch);
+
 module.exports = router;

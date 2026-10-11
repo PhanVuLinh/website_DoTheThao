@@ -48,6 +48,9 @@ block main
           i.fa-solid.fa-magnifying-glass
           input(type="text" placeholder="Tìm kiếm theo Mã đơn, Tên khách hàng, SĐT..." search)
         .action-buttons-right
+          a(href=`/${pathAdmin}/order/export` class="btn-export-excel" title="Xuất danh sách đơn hàng ra file Excel/CSV")
+            i.fa-solid.fa-file-excel
+            | Xuất Excel
           if(role && role.permissions && role.permissions.includes("order_trash"))
             a(href=`/${pathAdmin}/order/trash`).btn-trash
               i.fa-regular.fa-trash-can

@@ -87,7 +87,34 @@
       orderBadge.style.display = "inline-flex";
     }
 
-    // Nếu đang ở trang danh sách đơn hàng, hiển thị thông báo yêu cầu tải lại hoặc tự động refresh
+    // Tăng badge trên chuông thông báo Header
+    const bellBadge = document.querySelector("#notificationBtn .badge");
+    if (bellBadge) {
+      let bCount = parseInt(bellBadge.textContent) || 0;
+      bellBadge.textContent = bCount + 1;
+      bellBadge.style.display = "flex";
+    }
+
+    // Thêm mục thông báo mới vào dropdown
+    const notifList = document.querySelector(".notification-list");
+    if (notifList) {
+      const li = document.createElement("li");
+      li.className = "notification-item unread";
+      li.style.cursor = "pointer";
+      li.onclick = () => window.location.href = `/admin/order/edit/${data.orderId}`;
+      li.innerHTML = `
+        <div class="notif-icon bg-emerald" style="background: #10b981; color: #fff;">
+          <i class="fa-solid fa-cart-shopping"></i>
+        </div>
+        <div class="notif-content">
+          <p class="notif-text"><strong>#${data.orderCode}</strong>: ${data.fullName || "Khách"} vừa đặt đơn hàng mới</p>
+          <span class="notif-time" style="color: #2563eb; font-weight: 600;">${formattedPrice} • Vừa xong</span>
+        </div>
+      `;
+      notifList.insertBefore(li, notifList.firstChild);
+    }
+
+    // Nếu đang ở trang danh sách đơn hàng, hiển thị banner cập nhật
     const orderTableBody = document.querySelector(".order-table-body");
     if (orderTableBody) {
       const banner = document.createElement("div");
@@ -96,15 +123,102 @@
         <div><i class="fa-solid fa-bell" style="color: #e11d48; margin-right: 8px;"></i> Vừa có đơn hàng mới <strong>#${data.orderCode}</strong>. Bấm để cập nhật danh sách!</div>
         <button onclick="window.location.reload()" style="background: #e11d48; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;">Cập nhật ngay</button>
       `;
-      const tableWrapper = document.querySelector(".order-table, .card, main");
+      const tableWrapper = document.querySelector(".table-section, .filter-action-card, main");
       if (tableWrapper) {
-        tableWrapper.insertBefore(banner, tableWrapper.firstChild);
+        tableWrapper.parentNode.insertBefore(banner, tableWrapper);
       }
     }
   });
 
-  // Lắng nghe cập nhật trạng thái đơn hàng
-  socket.on("SERVER_UPDATE_ORDER_STATUS", function (data) {
-    console.log("Cập nhật trạng thái đơn hàng:", data);
+  // Lắng nghe sự kiện Khách hàng hủy đơn hàng
+  socket.on("SERVER_RETURN_CANCEL_ORDER", function (data) {
+    console.log("⚠️ Khách hàng đã hủy đơn:", data);
+
+    playNewOrderSound();
+
+    if (typeof Swal !== "undefined") {
+      Swal.fire({
+        icon: "warning",
+        title: "⚠️ ĐƠN HÀNG VỪA BỊ HỦY!",
+        html: `
+          <div style="text-align: left; font-size: 13px; line-height: 1.6; margin-top: 6px;">
+            <div>Khách hàng: <strong>${data.fullName || "Khách hàng"}</strong></div>
+            <div>Mã đơn: <strong style="color: #dc2626; font-family: monospace;">#${data.orderCode}</strong></div>
+            <div>Lý do: <em>"${data.cancelReason || "Khách hàng đổi ý"}"</em></div>
+            <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Thời gian: ${data.createdAt}</div>
+          </div>
+        `,
+        toast: true,
+        position: "top-end",
+        showConfirmButton: true,
+        confirmButtonText: "Xem đơn hàng",
+        showCancelButton: true,
+        cancelButtonText: "Đóng",
+        confirmButtonColor: "#dc2626",
+        cancelButtonColor: "#64748b",
+        timer: 10000,
+        timerProgressBar: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = `/admin/order/edit/${data.orderId}`;
+        }
+      });
+    }
+
+    // Tăng badge trên chuông thông báo Header
+    const bellBadge = document.querySelector("#notificationBtn .badge");
+    if (bellBadge) {
+      let bCount = parseInt(bellBadge.textContent) || 0;
+      bellBadge.textContent = bCount + 1;
+      bellBadge.style.display = "flex";
+    }
+
+    // Thêm mục hủy vào dropdown
+    const notifList = document.querySelector(".notification-list");
+    if (notifList) {
+      const li = document.createElement("li");
+      li.className = "notification-item unread";
+      li.style.cursor = "pointer";
+      li.onclick = () => window.location.href = `/admin/order/edit/${data.orderId}`;
+      li.innerHTML = `
+        <div class="notif-icon bg-rose" style="background: #f43f5e; color: #fff;">
+          <i class="fa-solid fa-ban"></i>
+        </div>
+        <div class="notif-content">
+          <p class="notif-text"><strong>#${data.orderCode}</strong>: Khách đã hủy đơn (${data.cancelReason || "Đổi ý"})</p>
+          <span class="notif-time" style="color: #e11d48; font-weight: 600;">Vừa xong</span>
+        </div>
+      `;
+      notifList.insertBefore(li, notifList.firstChild);
+    }
+  });
+
+  // Tương tác Dropdown Chuông thông báo
+  document.addEventListener("DOMContentLoaded", function () {
+    const notifBtn = document.getElementById("notificationBtn");
+    const notifDropdown = document.getElementById("notificationDropdown");
+
+    if (notifBtn && notifDropdown) {
+      notifBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        const isShow = notifDropdown.classList.contains("show");
+        notifDropdown.classList.toggle("show");
+        notifBtn.setAttribute("aria-expanded", !isShow);
+
+        // Đặt badge về 0 khi đã mở xem
+        const bellBadge = notifBtn.querySelector(".badge");
+        if (bellBadge && !isShow) {
+          bellBadge.textContent = "0";
+          bellBadge.style.display = "none";
+        }
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!notifDropdown.contains(e.target) && e.target !== notifBtn) {
+          notifDropdown.classList.remove("show");
+          notifBtn.setAttribute("aria-expanded", "false");
+        }
+      });
+    }
   });
 })();

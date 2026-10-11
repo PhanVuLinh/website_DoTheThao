@@ -499,6 +499,18 @@ module.exports.paymentZalopayReturn = async (req, res) => {
             });
           }
 
+          // Bắn thông báo Realtime Socket.io cho Admin
+          if (global._io) {
+            global._io.emit("SERVER_RETURN_NEW_ORDER", {
+              orderId: orderDetail.id,
+              orderCode: orderDetail.orderCode,
+              fullName: orderDetail.fullName,
+              total: orderDetail.total,
+              createdAt: moment(orderDetail.createdAt).format("HH:mm - DD/MM/YYYY"),
+              paymentMethod: "zaloPay",
+            });
+          }
+
           // Gửi email hóa đơn
           orderMailHelper
             .sendOrderConfirmationEmail(orderDetail, orderDetail.products)
@@ -701,5 +713,112 @@ module.exports.paymentVnpayResult = async (req, res) => {
     console.error("VNPay Result Error:", error);
     req.flash("error", "Lỗi hệ thống khi kiểm tra kết quả thanh toán VNPay!");
     res.redirect("/cart");
+  }
+};
+
+// [PATCH] /order/cancel/:id - Khách hàng tự hủy đơn hàng khi chờ xác nhận
+module.exports.cancelPatch = async (req, res) => {
+  try {
+    const user = await getAuthUser(req);
+    if (!user) {
+      req.flash("error", "Vui lòng đăng nhập để thực hiện thao tác này!");
+      return res.redirect("/user/login");
+    }
+
+    const orderId = req.params.id;
+    const order = await Order.findOne({
+      _id: orderId,
+      user_id: user.id,
+      deleted: false,
+    });
+
+    if (!order) {
+      req.flash("error", "Đơn hàng không tồn tại hoặc bạn không có quyền thao tác!");
+      return res.redirect("/user/order-history");
+    }
+
+    // Chỉ cho phép hủy khi đơn ở trạng thái chờ xác nhận
+    if (order.status !== "initial") {
+      req.flash("error", "Đơn hàng đang được xử lý hoặc vận chuyển, không thể tự hủy! Vui lòng liên hệ hotline hỗ trợ.");
+      return res.redirect(`/user/order-history/detail/${orderId}`);
+    }
+
+    const cancelReason = typeof req.body.reason === "string" && req.body.reason.trim()
+      ? req.body.reason.trim()
+      : "Khách hàng đổi ý muốn hủy đơn";
+
+    // 1. Hoàn lại số lượng tồn kho theo từng size
+    if (Array.isArray(order.products)) {
+      for (const item of order.products) {
+        if (item.product_id && item.size && item.quantity) {
+          await Product.updateOne(
+            { _id: item.product_id, "sizes.size": item.size },
+            { $inc: { "sizes.$.stock": item.quantity } }
+          );
+        }
+      }
+    }
+
+    // 2. Hoàn lại mã giảm giá nếu có
+    if (order.couponCode) {
+      await Coupon.updateOne(
+        { code: order.couponCode },
+        {
+          $inc: { quantity: 1 },
+          $pull: { usedBy: user.id },
+        }
+      );
+    }
+
+    // 3. Hoàn lại số lượng đã bán (sold) trong Flash Sale nếu có
+    try {
+      const activeFlashSale = await FlashSale.findOne({
+        status: "active",
+        deleted: false,
+      });
+      if (activeFlashSale && Array.isArray(activeFlashSale.items)) {
+        let hasUpdated = false;
+        for (const p of order.products) {
+          const saleItem = activeFlashSale.items.find(
+            (item) => item.product_id.toString() === p.product_id.toString()
+          );
+          if (saleItem && saleItem.sold >= p.quantity) {
+            saleItem.sold -= p.quantity;
+            hasUpdated = true;
+          }
+        }
+        if (hasUpdated) {
+          await activeFlashSale.save();
+        }
+      }
+    } catch (fsErr) {
+      console.error("Lỗi hoàn Flash Sale khi khách hủy:", fsErr);
+    }
+
+    // 4. Cập nhật trạng thái đơn hàng
+    order.status = "cancel";
+    order.cancelReason = cancelReason;
+    order.cancelledBy = "client";
+    order.cancelledAt = new Date();
+    await order.save();
+
+    // 5. Bắn thông báo Realtime Socket.IO cho Admin
+    if (global._io) {
+      global._io.emit("SERVER_RETURN_CANCEL_ORDER", {
+        orderId: order.id,
+        orderCode: order.orderCode,
+        fullName: order.fullName,
+        cancelReason: cancelReason,
+        total: order.total,
+        createdAt: moment().format("HH:mm - DD/MM/YYYY"),
+      });
+    }
+
+    req.flash("success", "Hủy đơn hàng thành công! Số lượng sản phẩm và ưu đãi đã được hoàn lại.");
+    return res.redirect(`/user/order-history/detail/${orderId}`);
+  } catch (error) {
+    console.error("Lỗi hủy đơn hàng của khách:", error);
+    req.flash("error", "Đã có lỗi xảy ra khi hủy đơn hàng!");
+    res.redirect("/user/order-history");
   }
 };

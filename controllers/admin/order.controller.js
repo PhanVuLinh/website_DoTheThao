@@ -558,3 +558,98 @@ module.exports.changeMultiTrash = async (req, res) => {
     res.redirect(req.get("Referer") || `/${variableCongfig.pathAdmin}/order/trash`);
   }
 };
+
+// [GET] /admin/order/export
+module.exports.exportOrders = async (req, res) => {
+  try {
+    const find = { deleted: false };
+    if (req.query.status) find.status = req.query.status;
+    const dateFilter = {};
+    if (req.query.startDate) {
+      dateFilter.$gte = moment(req.query.startDate).startOf("date").toDate();
+    }
+    if (req.query.endDate) {
+      dateFilter.$lte = moment(req.query.endDate).endOf("date").toDate();
+    }
+    if (Object.keys(dateFilter).length > 0) find.createdAt = dateFilter;
+    if (req.query.payment_status) find.paymentStatus = req.query.payment_status;
+    if (req.query.payment_method) find.paymentMethod = req.query.payment_method;
+    if (req.query.keyword) {
+      const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
+      const regexKeyword = new RegExp(keyword, "i");
+      find.$or = [
+        { orderCode: regexKeyword },
+        { fullName: regexKeyword },
+        { phone: regexKeyword },
+      ];
+    }
+
+    const orders = await Order.find(find).sort({ createdAt: -1 });
+
+    const productIds = [];
+    orders.forEach((o) => {
+      if (Array.isArray(o.products)) {
+        o.products.forEach((p) => {
+          if (p.product_id) productIds.push(p.product_id);
+        });
+      }
+    });
+
+    const productsMap = {};
+    if (productIds.length > 0) {
+      const products = await Product.find({ _id: { $in: productIds } }).select("title");
+      products.forEach((p) => {
+        productsMap[p._id.toString()] = p.title;
+      });
+    }
+
+    // Xuất CSV UTF-8 BOM
+    let csv = "\uFEFF";
+    csv += "STT,Mã Đơn Hàng,Thời Gian Đặt,Họ Và Tên Khách Hàng,Số Điện Thoại,Địa Chỉ Giao Hàng,Chi Tiết Sản Phẩm & Size,Tạm Tính (VNĐ),Giảm Giá (VNĐ),Phí Ship (VNĐ),Tổng Tiền (VNĐ),Phương Thức Thanh Toán,Trạng Thái Thanh Toán,Trạng Thái Đơn Hàng,Lý Do Hủy (Nếu có)\n";
+
+    orders.forEach((order, index) => {
+      const timeStr = moment(order.createdAt).format("HH:mm DD/MM/YYYY");
+      const fullName = (order.fullName || "").replace(/"/g, '""');
+      const phone = order.phone || "";
+      const address = (order.address || "").replace(/"/g, '""');
+
+      let productDetails = [];
+      if (Array.isArray(order.products)) {
+        order.products.forEach((p) => {
+          const title = productsMap[p.product_id ? p.product_id.toString() : ""] || "Sản phẩm";
+          const sizeStr = p.size ? ` (Size: ${p.size})` : "";
+          const qty = p.quantity || 1;
+          productDetails.push(`${title}${sizeStr} x${qty}`);
+        });
+      }
+      const productsStr = productDetails.join(" ; ").replace(/"/g, '""');
+
+      let paymentMethodStr = "COD";
+      if (order.paymentMethod === "vnPay") paymentMethodStr = "VNPay";
+      else if (order.paymentMethod === "zaloPay") paymentMethodStr = "ZaloPay";
+      else if (order.paymentMethod === "bank") paymentMethodStr = "Chuyển khoản VietQR";
+
+      const paymentStatusStr = order.paymentStatus === "paid" ? "Đã thanh toán" : "Chưa thanh toán";
+
+      let statusStr = "Chờ xác nhận";
+      if (order.status === "shipping") statusStr = "Đang giao hàng";
+      else if (order.status === "done") statusStr = "Đã hoàn thành";
+      else if (order.status === "cancel") statusStr = "Đã hủy";
+
+      const cancelReasonStr = (order.cancelReason || "").replace(/"/g, '""');
+
+      csv += `"${index + 1}","${order.orderCode}","${timeStr}","${fullName}","${phone}","${address}","${productsStr}",${order.subtotal || 0},${order.discount || 0},${order.shippingFee || 0},${order.total || 0},"${paymentMethodStr}","${paymentStatusStr}","${statusStr}","${cancelReasonStr}"\n`;
+    });
+
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="Danh_sach_don_hang_TITISPORT_${moment().format("YYYYMMDD_HHmmss")}.csv"`
+    );
+    return res.send(csv);
+  } catch (error) {
+    console.error("Lỗi xuất file Excel đơn hàng:", error);
+    req.flash("error", "Lỗi khi xuất danh sách đơn hàng!");
+    res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
+  }
+};
