@@ -781,8 +781,19 @@ ul {
 
 /* Modal Backdrops & SweetAlert2 in Client: Nền chỉ tối, KHÔNG làm mờ */
 .modal-backdrop,
-.swal2-container.swal2-backdrop-show {
+body:not(.swal2-toast-shown) .swal2-container.swal2-backdrop-show:not(.swal2-top-end):not(.swal2-top-right):not(.swal2-bottom-end):not(.swal2-bottom-right) {
   background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.swal2-toast-shown .swal2-container,
+.swal2-container:has(.swal2-toast),
+.swal2-container.swal2-top-end,
+.swal2-container.swal2-top-right,
+.swal2-container.swal2-bottom-end,
+.swal2-container.swal2-bottom-right {
+  background: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
