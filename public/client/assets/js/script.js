@@ -33,6 +33,38 @@ if (header) {
 }
 // end active header menu
 
+// floating island header scroll handler (Kiểu 2 - Zero Jitter with rAF & Hysteresis)
+const siteNavbar = document.getElementById("siteNavbar") || document.querySelector(".navbar");
+if (siteNavbar) {
+  let isScrolled = false;
+  let ticking = false;
+
+  const updateHeaderScrollState = () => {
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+    if (!isScrolled && scrollY > 50) {
+      isScrolled = true;
+      siteNavbar.classList.add("is-scrolled");
+    } else if (isScrolled && scrollY < 20) {
+      isScrolled = false;
+      siteNavbar.classList.remove("is-scrolled");
+    }
+    ticking = false;
+  };
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateHeaderScrollState);
+        ticking = true;
+      }
+    },
+    { passive: true }
+  );
+  updateHeaderScrollState();
+}
+// end floating island header scroll handler
+
 // mobile menu
 const mobileToggleBtn = document.querySelector(".mobile-toggle-btn");
 const mobileCloseBtn = document.querySelector(".mobile-close-btn");
@@ -523,3 +555,28 @@ if (clientPaginationButtons.length > 0) {
     });
   });
 }
+
+/* =========================================
+   HOMEPAGE ALTERNATING SECTIONS (XÁM - TRẮNG)
+   ========================================= */
+function applyAlternatingSectionBgs() {
+  const sections = document.querySelectorAll(".home-section");
+  if (!sections || sections.length === 0) return;
+
+  let isGray = true; // Bắt đầu bằng Xám (Kho Voucher)
+  sections.forEach((sec) => {
+    const style = window.getComputedStyle(sec);
+    if (style.display !== "none" && !sec.hidden && !sec.classList.contains("d-none")) {
+      if (isGray) {
+        sec.classList.remove("section-bg-white");
+        sec.classList.add("section-bg-gray");
+      } else {
+        sec.classList.remove("section-bg-gray");
+        sec.classList.add("section-bg-white");
+      }
+      isGray = !isGray;
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", applyAlternatingSectionBgs);

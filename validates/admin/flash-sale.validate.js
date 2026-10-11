@@ -34,7 +34,14 @@ module.exports.createPost = (req, res, next) => {
   }
 
   // 4. Products check (at least 1 product selected)
-  if (!req.body.products || !Array.isArray(req.body.products) || req.body.products.length === 0) {
+  const hasProductIds =
+    (Array.isArray(req.body.product_id) && req.body.product_id.length > 0) ||
+    (typeof req.body.product_id === "string" && req.body.product_id.trim() !== "");
+
+  const hasProductsArray =
+    Array.isArray(req.body.products) && req.body.products.length > 0;
+
+  if (!hasProductIds && !hasProductsArray) {
     req.flash("error", "Vui lòng chọn ít nhất 1 sản phẩm tham gia chiến dịch Flash Sale!");
     return res.redirect(req.get("Referer"));
   }

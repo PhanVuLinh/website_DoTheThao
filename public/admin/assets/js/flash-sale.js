@@ -248,6 +248,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (modalSelectedCountEl) {
       modalSelectedCountEl.textContent = count;
     }
+    if (btnConfirmAdd) {
+      const spanEl = btnConfirmAdd.querySelector("span");
+      if (spanEl) {
+        spanEl.textContent = count > 0 ? `Thêm vào chiến dịch (${count})` : "Thêm vào chiến dịch";
+      }
+    }
   }
 
   // Chọn tất cả trong modal
@@ -416,6 +422,47 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     updateRowPrice(row);
   });
+
+  // Kiểm tra trước khi submit form Flash Sale
+  const flashSaleForm = document.querySelector("form[action*='/flash-sale/create'], form[action*='/flash-sale/edit']");
+  if (flashSaleForm) {
+    flashSaleForm.addEventListener("submit", function (e) {
+      let rows = tableBody ? tableBody.querySelectorAll("tr.flash-item-row") : [];
+
+      // Nếu trong bảng chưa có nhưng trong modal người dùng đã tick chọn sản phẩm:
+      if (rows.length === 0) {
+        modalRows.forEach((row) => {
+          const checkbox = row.querySelector(".modal-product-checkbox");
+          if (checkbox && checkbox.checked && !checkbox.disabled) {
+            const productData = {
+              id: row.getAttribute("data-id"),
+              title: row.getAttribute("data-title"),
+              price: row.getAttribute("data-price"),
+              thumbnail: row.getAttribute("data-thumb"),
+              brand: row.getAttribute("data-brand"),
+            };
+            addProductToTable(productData);
+          }
+        });
+        rows = tableBody ? tableBody.querySelectorAll("tr.flash-item-row") : [];
+      }
+
+      if (rows.length === 0) {
+        e.preventDefault();
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            icon: "warning",
+            title: "Chưa có sản phẩm",
+            text: "Vui lòng chọn ít nhất 1 sản phẩm tham gia chiến dịch Flash Sale trước khi lưu!",
+            confirmButtonColor: "#2563eb",
+          });
+        } else {
+          alert("Vui lòng chọn ít nhất 1 sản phẩm tham gia chiến dịch Flash Sale trước khi lưu!");
+        }
+        return false;
+      }
+    });
+  }
 
   updateCampaignStats();
 });
