@@ -466,29 +466,18 @@ block main
           h2.section-title Đối Tác Thể Thao Toàn Cầu
           p.section-subtitle #{settingWebsiteInfo.websiteName || 'TitiSport'} tự hào phân phối chính hãng các thương hiệu dụng cụ và trang phục thi đấu hàng đầu thế giới.
 
-        .brands-grid
-          each item in brandList
-            a.brand-card(href=(item.link || `/?keyword=${item.name}`))
-              .brand-card__logo-wrap
+        .brands-showcase-wrap
+          .brands-logos-list
+            each item in brandList
+              a.brand-logo-item(
+                href=(item.link || `/?keyword=${item.name}`)
+                title=`Thương hiệu ${item.name} - Phân phối chính hãng`
+              )
                 if item.logo
-                  img.brand-card__logo-img(src=item.logo alt=`${item.name} Logo` loading="lazy")
+                  img.brand-logo-img(src=item.logo alt=`${item.name} Logo` loading="lazy")
                 else
-                  i.fa-solid.fa-certificate.brand-card__fallback-icon
-              h4.brand-card__name= item.name
-              if item.tagline
-                span.brand-card__tagline= item.tagline
-              if item.specPill
-                span.brand-spec-pill
-                  i.fa-solid.fa-medal
-                  | #{item.specPill}
-              if item.description
-                p.brand-card__desc= item.description
-              .brand-card__footer
-                span.brand-card__badge
-                  i.fa-solid.fa-circle-check
-                  | Phân Phối Chính Hãng
-                span.brand-view-link
-                  | Xem Sản Phẩm
-                  i.fa-solid.fa-arrow-right
+                  span.brand-logo-fallback
+                    i.fa-solid.fa-certificate
+                    span= item.name
 
   script(src="/client/assets/js/flash-sale.js")
