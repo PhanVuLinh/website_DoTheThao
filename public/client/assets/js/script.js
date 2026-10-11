@@ -1137,9 +1137,466 @@ if (btnClearWishlist) {
   });
 }
 
-// Initial Wishlist Setup on DOM load
+// =========================================================
+// PRODUCT COMPARISON SYSTEM (HỆ THỐNG SO SÁNH SẢN PHẨM)
+// =========================================================
+const COMPARE_KEY = "titisport_compare";
+const MAX_COMPARE = 4;
+
+function getCompareList() {
+  try {
+    const raw = localStorage.getItem(COMPARE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.error("Lỗi đọc compare list:", e);
+    return [];
+  }
+}
+
+function saveCompareList(list) {
+  try {
+    localStorage.setItem(COMPARE_KEY, JSON.stringify(list));
+  } catch (e) {
+    console.error("Lỗi lưu compare list:", e);
+  }
+}
+
+function updateCompareCounter() {
+  const counterEl = document.getElementById("compare-counter");
+  const dockCounterEl = document.getElementById("compareDockCount");
+  const list = getCompareList();
+  const count = list.length;
+
+  if (counterEl) {
+    if (count > 0) {
+      counterEl.textContent = count;
+      counterEl.style.display = "flex";
+    } else {
+      counterEl.style.display = "none";
+    }
+  }
+
+  if (dockCounterEl) {
+    dockCounterEl.textContent = count;
+  }
+}
+
+function syncCompareButtonStates() {
+  const list = getCompareList();
+  const idSet = new Set(list.map((item) => String(item.id)));
+
+  // 1. Nút toggle trên các thẻ sản phẩm
+  const toggleBtns = document.querySelectorAll(".btn-compare-toggle");
+  toggleBtns.forEach((btn) => {
+    const id = btn.getAttribute("data-id");
+    if (id && idSet.has(String(id))) {
+      btn.classList.add("is-active");
+      btn.setAttribute("title", "Đã có trong danh sách so sánh");
+    } else {
+      btn.classList.remove("is-active");
+      btn.setAttribute("title", "So sánh sản phẩm");
+    }
+  });
+
+  // 2. Nút toggle trên trang chi tiết sản phẩm
+  const detailBtn = document.getElementById("btnCompareDetail");
+  if (detailBtn) {
+    const id = detailBtn.getAttribute("data-id");
+    if (id && idSet.has(String(id))) {
+      detailBtn.classList.add("is-active");
+      const span = detailBtn.querySelector("span");
+      if (span) span.textContent = "Đang so sánh";
+    } else {
+      detailBtn.classList.remove("is-active");
+      const span = detailBtn.querySelector("span");
+      if (span) span.textContent = "So sánh";
+    }
+  }
+}
+
+function renderCompareDock() {
+  const dockEl = document.getElementById("compareDock");
+  const itemsContainer = document.getElementById("compareDockItems");
+  const btnDockCompare = document.getElementById("btnDockCompare");
+  if (!dockEl || !itemsContainer) return;
+
+  const list = getCompareList();
+
+  if (list.length === 0) {
+    dockEl.style.display = "none";
+    return;
+  }
+
+  // Hiển thị thanh dock
+  dockEl.style.display = "block";
+
+  // Cập nhật link so sánh
+  if (btnDockCompare) {
+    const idsQuery = list.map((item) => item.id).join(",");
+    btnDockCompare.href = `/compare?ids=${idsQuery}`;
+  }
+
+  // Render 4 slots (các slot có sản phẩm và các slot trống)
+  let slotsHtml = "";
+  for (let i = 0; i < MAX_COMPARE; i++) {
+    if (i < list.length) {
+      const item = list[i];
+      const thumb = item.thumbnail || "https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT";
+      const formattedPrice = Number(item.price || 0).toLocaleString("vi-VN") + "đ";
+
+      slotsHtml += `
+        <div class="dock-slot dock-slot--filled" data-id="${item.id}">
+          <div class="dock-slot__thumb">
+            <img src="${thumb}" alt="${item.title}" onerror="this.src='https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT'" />
+          </div>
+          <div class="dock-slot__meta">
+            <div class="dock-slot__title" title="${item.title}">${item.title}</div>
+            <div class="dock-slot__price">${formattedPrice}</div>
+          </div>
+          <button type="button" class="btn-dock-slot-remove" data-id="${item.id}" title="Xóa khỏi so sánh" aria-label="Xóa">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      `;
+    } else {
+      slotsHtml += `
+        <div class="dock-slot dock-slot--empty">
+          <i class="fa-solid fa-plus"></i>
+          <span>Thêm sản phẩm</span>
+        </div>
+      `;
+    }
+  }
+
+  itemsContainer.innerHTML = slotsHtml;
+
+  // Gắn sự kiện xóa trên từng slot trong dock
+  const removeSlotBtns = itemsContainer.querySelectorAll(".btn-dock-slot-remove");
+  removeSlotBtns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-id");
+      if (id) {
+        removeCompareItem(id);
+      }
+    });
+  });
+}
+
+function removeCompareItem(id) {
+  let list = getCompareList();
+  list = list.filter((item) => String(item.id) !== String(id));
+  saveCompareList(list);
+  updateCompareCounter();
+  syncCompareButtonStates();
+  renderCompareDock();
+
+  // Nếu đang ở trang /compare, xóa cột tương ứng trên bảng
+  if (document.getElementById("compareTable")) {
+    handleRemoveColumnOnComparePage(id);
+  }
+}
+
+function handleRemoveColumnOnComparePage(id) {
+  const table = document.getElementById("compareTable");
+  if (!table) return;
+
+  const cols = table.querySelectorAll(`[data-id="${id}"]`);
+  cols.forEach((col) => {
+    col.style.transition = "opacity 0.25s, transform 0.25s";
+    col.style.opacity = "0";
+    col.style.transform = "scale(0.95)";
+    setTimeout(() => {
+      col.remove();
+      checkCompareTableColumns();
+    }, 250);
+  });
+}
+
+function checkCompareTableColumns() {
+  const table = document.getElementById("compareTable");
+  const emptyBox = document.getElementById("compareEmpty");
+  const wrapper = document.querySelector(".compare-table-wrapper");
+  const headerRight = document.querySelector(".compare-header-right");
+  if (!table) return;
+
+  const remainingCols = table.querySelectorAll("thead tr.compare-row--head th.compare-col--product");
+  const count = remainingCols.length;
+
+  const countSpan = document.querySelector(".col-label-inner .feature-count");
+  if (countSpan) {
+    countSpan.textContent = `${count} sản phẩm`;
+  }
+
+  if (count === 0) {
+    if (wrapper) wrapper.style.display = "none";
+    if (headerRight) headerRight.style.display = "none";
+    if (emptyBox) emptyBox.style.display = "flex";
+
+    // Cập nhật URL sạch không còn query ids
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState({}, document.title, "/compare");
+    }
+  } else {
+    // Cập nhật lại query param trên thanh URL
+    const list = getCompareList();
+    if (window.history && window.history.replaceState && list.length > 0) {
+      const newQuery = list.map((i) => i.id).join(",");
+      window.history.replaceState({}, document.title, `/compare?ids=${newQuery}`);
+    }
+    // Kiểm tra lại khác biệt sau khi gỡ cột
+    checkRowDifferences();
+  }
+}
+
+function checkRowDifferences() {
+  const toggleDiff = document.getElementById("toggleOnlyDiff");
+  const isDiffOnly = toggleDiff ? toggleDiff.checked : false;
+
+  const rows = document.querySelectorAll(".compare-table tbody tr.compare-row[data-row-name]");
+  rows.forEach((row) => {
+    const cells = row.querySelectorAll("td.compare-col--product");
+    if (cells.length <= 1) {
+      row.classList.remove("is-identical", "is-hidden-diff", "is-different-highlight");
+      return;
+    }
+
+    const firstVal = (cells[0].getAttribute("data-val") || "").trim().toLowerCase();
+    let isAllSame = true;
+
+    for (let i = 1; i < cells.length; i++) {
+      const val = (cells[i].getAttribute("data-val") || "").trim().toLowerCase();
+      if (val !== firstVal) {
+        isAllSame = false;
+        break;
+      }
+    }
+
+    if (isAllSame) {
+      row.classList.add("is-identical");
+      row.classList.remove("is-different-highlight");
+      if (isDiffOnly) {
+        row.classList.add("is-hidden-diff");
+      } else {
+        row.classList.remove("is-hidden-diff");
+      }
+    } else {
+      row.classList.remove("is-identical", "is-hidden-diff");
+      if (isDiffOnly) {
+        row.classList.add("is-different-highlight");
+      } else {
+        row.classList.remove("is-different-highlight");
+      }
+    }
+  });
+}
+
+// Global click event delegation cho các nút So Sánh
+document.addEventListener("click", (e) => {
+  const toggleBtn = e.target.closest(".btn-compare-toggle, #btnCompareDetail");
+  if (toggleBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const id = toggleBtn.getAttribute("data-id");
+    const title = toggleBtn.getAttribute("data-title") || "Sản phẩm";
+    const slug = toggleBtn.getAttribute("data-slug") || "";
+    const price = toggleBtn.getAttribute("data-price") || 0;
+    const priceOld = toggleBtn.getAttribute("data-price-old") || price;
+    const thumbnail = toggleBtn.getAttribute("data-thumbnail") || "";
+    const brand = toggleBtn.getAttribute("data-brand") || "CHÍNH HÃNG";
+
+    if (!id) return;
+
+    let list = getCompareList();
+    const existingIndex = list.findIndex((item) => String(item.id) === String(id));
+
+    if (existingIndex > -1) {
+      // Đã có -> Xóa khỏi danh sách so sánh
+      list.splice(existingIndex, 1);
+      saveCompareList(list);
+      updateCompareCounter();
+      syncCompareButtonStates();
+      renderCompareDock();
+
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "info",
+          title: "Đã xóa khỏi danh sách so sánh",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    } else {
+      // Chưa có -> Kiểm tra giới hạn tối đa 4 sản phẩm
+      if (list.length >= MAX_COMPARE) {
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            icon: "warning",
+            title: "Đã đạt giới hạn so sánh",
+            text: `Bạn chỉ có thể so sánh tối đa ${MAX_COMPARE} sản phẩm cùng lúc. Vui lòng bỏ bớt để thêm sản phẩm mới.`,
+            confirmButtonColor: "#2563eb",
+            confirmButtonText: "Đã hiểu",
+          });
+        } else {
+          alert(`Bạn chỉ có thể so sánh tối đa ${MAX_COMPARE} sản phẩm cùng lúc!`);
+        }
+        return;
+      }
+
+      list.push({
+        id: id,
+        title: title,
+        slug: slug,
+        price: price,
+        priceOld: priceOld,
+        thumbnail: thumbnail,
+        brand: brand,
+      });
+
+      saveCompareList(list);
+      updateCompareCounter();
+      syncCompareButtonStates();
+      renderCompareDock();
+
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: "Đã thêm vào danh sách so sánh!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    }
+  }
+});
+
+// Setup các điều khiển cho Floating Dock
+const btnToggleCompareDock = document.getElementById("btnToggleCompareDock");
+const btnCloseCompareDock = document.getElementById("btnCloseCompareDock");
+const btnDockClear = document.getElementById("btnDockClear");
+const compareDock = document.getElementById("compareDock");
+
+if (btnToggleCompareDock && compareDock) {
+  btnToggleCompareDock.addEventListener("click", () => {
+    compareDock.classList.toggle("is-collapsed");
+  });
+}
+
+if (btnCloseCompareDock && compareDock) {
+  btnCloseCompareDock.addEventListener("click", () => {
+    compareDock.style.display = "none";
+  });
+}
+
+if (btnDockClear) {
+  btnDockClear.addEventListener("click", () => {
+    clearAllCompare();
+  });
+}
+
+// Setup nút xóa trên trang /compare
+const btnClearComparePage = document.getElementById("btnClearComparePage");
+if (btnClearComparePage) {
+  btnClearComparePage.addEventListener("click", () => {
+    clearAllCompare();
+  });
+}
+
+function clearAllCompare() {
+  if (typeof Swal !== "undefined") {
+    Swal.fire({
+      title: "Xóa toàn bộ so sánh?",
+      text: "Bạn có chắc muốn làm trống danh sách so sánh sản phẩm?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#94a3b8",
+      confirmButtonText: "Xóa hết",
+      cancelButtonText: "Hủy",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        saveCompareList([]);
+        updateCompareCounter();
+        syncCompareButtonStates();
+        renderCompareDock();
+        if (document.getElementById("compareTable")) {
+          const wrapper = document.querySelector(".compare-table-wrapper");
+          const emptyBox = document.getElementById("compareEmpty");
+          const headerRight = document.querySelector(".compare-header-right");
+          if (wrapper) wrapper.style.display = "none";
+          if (headerRight) headerRight.style.display = "none";
+          if (emptyBox) emptyBox.style.display = "flex";
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState({}, document.title, "/compare");
+          }
+        }
+      }
+    });
+  } else {
+    if (confirm("Bạn có chắc muốn xóa tất cả sản phẩm đang so sánh?")) {
+      saveCompareList([]);
+      updateCompareCounter();
+      syncCompareButtonStates();
+      renderCompareDock();
+    }
+  }
+}
+
+// Xử lý trang /compare khi load
+function initComparePage() {
+  const compareTable = document.getElementById("compareTable");
+  const toggleOnlyDiff = document.getElementById("toggleOnlyDiff");
+
+  // Nếu đang ở trang /compare nhưng URL chưa có params `ids`, tự động đồng bộ từ localStorage
+  if (window.location.pathname === "/compare" && !window.location.search) {
+    const list = getCompareList();
+    if (list.length > 0) {
+      const ids = list.map((i) => i.id).join(",");
+      window.location.replace(`/compare?ids=${ids}`);
+      return;
+    }
+  }
+
+  // Gắn sự kiện cho các nút Xóa cột sản phẩm trên bảng
+  if (compareTable) {
+    const removeColBtns = compareTable.querySelectorAll(".btn-remove-from-compare");
+    removeColBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-id");
+        if (id) {
+          removeCompareItem(id);
+        }
+      });
+    });
+
+    // Check ban đầu về khác biệt
+    checkRowDifferences();
+  }
+
+  // Toggle chỉ xem điểm khác biệt
+  if (toggleOnlyDiff) {
+    toggleOnlyDiff.addEventListener("change", () => {
+      checkRowDifferences();
+    });
+  }
+}
+
+// Khởi tạo toàn bộ Wishlist & Compare khi DOM sẵn sàng
 document.addEventListener("DOMContentLoaded", () => {
+  // Wishlist
   updateWishlistCounter();
   syncWishlistHeartStates();
   renderWishlistPage();
+
+  // Compare
+  updateCompareCounter();
+  syncCompareButtonStates();
+  renderCompareDock();
+  initComparePage();
 });
+

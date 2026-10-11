@@ -9439,3 +9439,1053 @@ textarea.is-invalid {
   background: #e03613;
   transform: translateY(-2px);
 }
+
+/* =========================================================
+   PRODUCT COMPARISON SYSTEM (HỆ THỐNG SO SÁNH SẢN PHẨM)
+   ========================================================= */
+
+/* 1. Compare Toggle Buttons on Product Cards */
+.flash-product-card .btn-compare-toggle {
+  top: 66px;
+  right: 24px;
+}
+
+.flash-deal-card .btn-compare-toggle {
+  top: 64px;
+  right: 22px;
+}
+
+.btn-compare-toggle {
+  position: absolute;
+  top: 48px;
+  right: 8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 5;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.btn-compare-toggle:hover {
+  transform: scale(1.1);
+  background: #ffffff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.22);
+}
+
+.btn-compare-toggle.is-active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+.btn-compare-toggle.is-active i {
+  color: #ffffff;
+}
+
+/* 2. Detail Action Button */
+.btn-compare-detail {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 50px;
+  padding: 0 20px;
+  background: #ffffff;
+  color: #475569;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.btn-compare-detail:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.btn-compare-detail.is-active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.btn-compare-detail.is-active i {
+  color: #2563eb;
+}
+
+/* 3. Header Compare Action Badge */
+.compare-action-btn {
+  position: relative;
+}
+
+.badge-blue {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.compare-action-btn .action-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+}
+
+/* 4. Floating Compare Dock (Thanh Bar Nổi Đáy Màn Hình) */
+.compare-dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  pointer-events: none;
+  animation: slideUpDock 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpDock {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.compare-dock .container {
+  max-width: 1200px;
+}
+
+.compare-dock__box {
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #cbd5e1;
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -12px 35px rgba(15, 23, 42, 0.15);
+  padding: 14px 24px;
+  transition: all 0.3s ease;
+}
+
+.compare-dock.is-collapsed .compare-dock__body {
+  display: none !important;
+}
+
+.compare-dock.is-collapsed .compare-dock__box {
+  padding-bottom: 12px;
+}
+
+.compare-dock__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.compare-dock.is-collapsed .compare-dock__header {
+  margin-bottom: 0;
+}
+
+.compare-dock__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.compare-dock__title i {
+  color: #2563eb;
+  font-size: 16px;
+}
+
+.compare-dock__counter {
+  color: #2563eb;
+  font-weight: 800;
+}
+
+.compare-dock__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-dock-collapse,
+.btn-dock-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-dock-collapse:hover,
+.btn-dock-close:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.compare-dock.is-collapsed .btn-dock-collapse i {
+  transform: rotate(180deg);
+}
+
+.compare-dock__body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.compare-dock__list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  flex: 1;
+  min-width: 300px;
+}
+
+.dock-slot {
+  position: relative;
+  border-radius: 12px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+
+.dock-slot--filled {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  padding: 6px 10px;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.dock-slot--filled:hover {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+}
+
+.dock-slot__thumb {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.dock-slot__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 2px;
+}
+
+.dock-slot__meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dock-slot__title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 2px 0;
+}
+
+.dock-slot__price {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ef4444;
+}
+
+.btn-dock-slot-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ef4444;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+  z-index: 2;
+}
+
+.btn-dock-slot-remove:hover {
+  transform: scale(1.15);
+  background: #dc2626;
+}
+
+.dock-slot--empty {
+  border: 1.5px dashed #cbd5e1;
+  background: #fafafa;
+  justify-content: center;
+  gap: 6px;
+  color: #94a3b8;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.dock-slot--empty i {
+  font-size: 13px;
+}
+
+.compare-dock__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-dock-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  background: #2563eb;
+  color: #ffffff;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  white-space: nowrap;
+}
+
+.btn-dock-submit:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+}
+
+.btn-dock-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #ffffff;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-dock-clear:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  border-color: #fca5a5;
+}
+
+@media (max-width: 992px) {
+  .compare-dock__list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .compare-dock__list {
+    grid-template-columns: 1fr;
+  }
+  .compare-dock__actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+  .btn-dock-submit {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* =========================================================
+   5. DEDICATED COMPARE PAGE LAYOUT & MATRIX TABLE
+   ========================================================= */
+.compare-page {
+  padding: 40px 0 80px;
+  background: #f8fafc;
+  min-height: 80vh;
+}
+
+.compare-page__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.compare-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #eff6ff;
+  color: #2563eb;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.compare-main-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+}
+
+.compare-subtitle {
+  font-size: 14.5px;
+  color: #64748b;
+  margin: 0;
+  max-width: 680px;
+}
+
+.compare-header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* Toggle Difference Switch */
+.compare-diff-toggle-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-diff-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-diff-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-slider {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+  background-color: #cbd5e1;
+  border-radius: 24px;
+  transition: all 0.25s ease;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-diff-switch input:checked + .toggle-slider {
+  background-color: #2563eb;
+}
+
+.toggle-diff-switch input:checked + .toggle-slider:before {
+  transform: translateX(18px);
+}
+
+.toggle-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.btn-compare-add-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  background: #ffffff;
+  color: #2563eb;
+  border: 1.5px solid #bfdbfe;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-compare-add-more:hover {
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+
+.btn-compare-clear-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  background: #ffffff;
+  color: #ef4444;
+  border: 1.5px solid #fecaca;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-compare-clear-all:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+
+/* Compare Matrix Table */
+.compare-table-wrapper {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+}
+
+.compare-table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.compare-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+}
+
+.compare-row {
+  transition: background-color 0.2s;
+}
+
+.compare-row:hover td {
+  background-color: #fafafa;
+}
+
+.compare-row.is-identical.is-hidden-diff {
+  display: none !important;
+}
+
+.compare-row.is-different-highlight td.compare-col--label {
+  border-left: 4px solid #2563eb;
+  background-color: #eff6ff;
+}
+
+.compare-col--label {
+  width: 220px;
+  min-width: 200px;
+  background: #f8fafc;
+  color: #1e293b;
+  font-weight: 700;
+  padding: 16px 20px;
+  vertical-align: middle;
+  border-bottom: 1px solid #e2e8f0;
+  border-right: 2px solid #e2e8f0;
+  position: sticky;
+  left: 0;
+  z-index: 10;
+}
+
+.compare-col--label i {
+  margin-right: 8px;
+  color: #2563eb;
+  width: 18px;
+  text-align: center;
+}
+
+.col-label-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.col-label-inner .feature-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.col-label-inner .feature-count {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.compare-col--product {
+  min-width: 240px;
+  max-width: 300px;
+  padding: 16px 20px;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid #f1f5f9;
+  border-right: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+.compare-row--head th {
+  padding: 24px 20px;
+  background: #ffffff;
+  border-bottom: 2px solid #e2e8f0;
+  vertical-align: top;
+}
+
+.compare-card-head {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.btn-remove-from-compare {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 2;
+}
+
+.btn-remove-from-compare:hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+.compare-card-head__img-box {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  background: #f8fafc;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.compare-card-head__img-box:hover img {
+  transform: scale(1.06);
+}
+
+.compare-card-head__img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+  transition: transform 0.3s ease;
+}
+
+.compare-best-price-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #16a34a;
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3);
+  z-index: 2;
+}
+
+.compare-discount-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #e11d48;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 6px;
+  border-radius: 6px;
+  z-index: 2;
+}
+
+.compare-card-head__brand {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #2563eb;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.compare-card-head__title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0 0 10px 0;
+  height: 42px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.compare-card-head__title a {
+  color: #0f172a;
+  transition: color 0.2s;
+}
+
+.compare-card-head__title a:hover {
+  color: #2563eb;
+}
+
+.compare-card-head__price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.compare-card-head__price .current-price {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ef4444;
+}
+
+.compare-card-head__price .old-price {
+  font-size: 13px;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.compare-card-head__cta {
+  width: 100%;
+}
+
+.btn-compare-buy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 14px;
+  background: #0f172a;
+  color: #ffffff;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-compare-buy:hover {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Comparison Cells Content */
+.brand-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #f1f5f9;
+  color: #334155;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.category-tag {
+  color: #475569;
+  font-weight: 600;
+}
+
+.price-comparison-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.cell-main-price {
+  font-size: 16px;
+  font-weight: 800;
+  color: #ef4444;
+}
+
+.cell-save-text {
+  font-size: 12px;
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.sizes-comparison-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.size-pills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  max-width: 240px;
+}
+
+.size-pill {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.size-pill.is-instock {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.size-pill.is-oos {
+  background: #f1f5f9;
+  color: #94a3b8;
+  border: 1px dashed #cbd5e1;
+  text-decoration: line-through;
+}
+
+.size-pill .size-stock {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.total-stock-summary {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.rating-comparison-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.rating-comparison-cell .stars-group {
+  color: #f59e0b;
+  font-size: 13px;
+}
+
+.rating-comparison-cell .rating-number {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.rating-comparison-cell .review-count {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.pill-badge--hot {
+  background: #ffedd5;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+}
+
+.pill-badge--standard {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.cell-desc {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+  text-align: left;
+}
+
+.btn-compare-action-detail {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  background: #2563eb;
+  color: #ffffff;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.btn-compare-action-detail:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+/* Empty Compare State */
+.compare-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px dashed #cbd5e1;
+}
+
+.empty-compare-icon {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.compare-empty .empty-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.compare-empty .empty-desc {
+  font-size: 14.5px;
+  color: #64748b;
+  max-width: 520px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.btn-explore-compare {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: #2563eb;
+  color: #ffffff;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  transition: all 0.2s;
+}
+
+.btn-explore-compare:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+

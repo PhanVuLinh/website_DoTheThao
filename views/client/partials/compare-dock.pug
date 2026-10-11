@@ -1,0 +1,25 @@
+//- Floating Compare Sticky Bar / Dock
+.compare-dock#compareDock(style="display: none;")
+  .container
+    .compare-dock__box
+      .compare-dock__header
+        .compare-dock__title
+          i.fa-solid.fa-code-compare
+          span So Sánh Sản Phẩm
+          span.compare-dock__counter (<span id="compareDockCount">0</span>/4)
+        .compare-dock__controls
+          button.btn-dock-collapse#btnToggleCompareDock(type="button" title="Thu gọn / Mở rộng" aria-label="Thu gọn")
+            i.fa-solid.fa-chevron-down
+          button.btn-dock-close#btnCloseCompareDock(type="button" title="Đóng thanh so sánh" aria-label="Đóng")
+            i.fa-solid.fa-xmark
+
+      .compare-dock__body#compareDockBody
+        .compare-dock__list#compareDockItems
+          //- 4 slots render động bởi JavaScript
+        .compare-dock__actions
+          a.btn-dock-submit#btnDockCompare(href="/compare")
+            i.fa-solid.fa-scale-balanced
+            span So Sánh Ngay
+          button.btn-dock-clear#btnDockClear(type="button" title="Xóa tất cả sản phẩm so sánh")
+            i.fa-regular.fa-trash-can
+            span Xóa tất cả

@@ -222,6 +222,20 @@ block main
                   )
                     i.fa-regular.fa-heart
 
+                  button.btn-compare-toggle(
+                    type="button"
+                    data-id=(item.id || item._id)
+                    data-title=item.title
+                    data-slug=item.slug
+                    data-price=(item.priceNew || item.price)
+                    data-price-old=item.price
+                    data-thumbnail=(item.thumbnail || (item.images && item.images[0]) || "")
+                    data-brand=(item.brand || "CHÍNH HÃNG")
+                    title="So sánh sản phẩm"
+                    aria-label="So sánh"
+                  )
+                    i.fa-solid.fa-code-compare
+
                   a.flash-deal-card__link(href=`/product/detail/${item.slug}`)
                     .flash-deal-card__img-box
                       .card-badges-stack

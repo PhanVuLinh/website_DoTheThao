@@ -253,6 +253,20 @@ block main
                 )
                   i.fa-regular.fa-heart
                   span Yêu thích
+                button.btn-compare-detail(
+                  type="button"
+                  id="btnCompareDetail"
+                  data-id=(productDetail.id || productDetail._id)
+                  data-title=productDetail.title
+                  data-slug=productDetail.slug
+                  data-price=(productDetail.priceNew || productDetail.price)
+                  data-price-old=productDetail.price
+                  data-thumbnail=productDetail.thumbnail
+                  data-brand=(productDetail.brand || "CHÍNH HÃNG")
+                  title="Thêm vào danh sách so sánh"
+                )
+                  i.fa-solid.fa-code-compare
+                  span So sánh
 
               .trust-badges
                 .trust-item

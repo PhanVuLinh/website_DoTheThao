@@ -67,6 +67,10 @@
           i.fa-regular.fa-heart
           span.action-badge.badge-pink#wishlist-counter(style="display: none;") 0
 
+        a(href="/compare" title="So sánh sản phẩm").action-btn.compare-action-btn
+          i.fa-solid.fa-code-compare
+          span.action-badge.badge-blue#compare-counter(style="display: none;") 0
+
         a(href="/cart" title="Giỏ hàng").action-btn.cart-action-btn
           i.fa-solid.fa-cart-shopping
           if (miniCart > 0)

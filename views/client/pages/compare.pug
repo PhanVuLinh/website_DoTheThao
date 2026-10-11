@@ -1,0 +1,214 @@
+extends ../layouts/default.pug
+include ../mixins/box-breadcrumb.pug
+
+block main
+  +box-breadcrumb(breadcrumb)
+
+  section.compare-page
+    .container
+      .compare-page__header
+        .compare-header-left
+          .compare-badge-pill
+            i.fa-solid.fa-scale-balanced
+            span Đối chiếu đa chiều
+          h1.compare-main-title So Sánh Chi Tiết Sản Phẩm
+          p.compare-subtitle Đối chiếu trực quan thông số, kích cỡ còn hàng, giá bán và đánh giá giữa các sản phẩm để tìm ra lựa chọn hoàn hảo nhất cho bạn.
+        
+        if products && products.length > 0
+          .compare-header-right
+            .compare-diff-toggle-wrap
+              label.toggle-diff-switch(title="Chỉ hiển thị các tiêu chí có sự khác nhau giữa các sản phẩm")
+                input(type="checkbox" id="toggleOnlyDiff")
+                span.toggle-slider
+                span.toggle-label Chỉ xem điểm khác biệt
+            
+            a.btn-compare-add-more(href="/product" title="Chọn thêm sản phẩm khác")
+              i.fa-solid.fa-plus
+              span Thêm sản phẩm
+            
+            button.btn-compare-clear-all#btnClearComparePage(type="button" title="Xóa tất cả khỏi danh sách")
+              i.fa-regular.fa-trash-can
+              span Xóa tất cả
+
+      //- KHU VỰC BẢNG SO SÁNH CHÍNH
+      if products && products.length > 0
+        .compare-table-wrapper
+          .compare-table-responsive
+            table.compare-table#compareTable
+              thead
+                tr.compare-row.compare-row--head
+                  th.compare-col--label
+                    .col-label-inner
+                      span.feature-title Tiêu chí
+                      span.feature-count #{products.length} sản phẩm
+                  
+                  each prod, idx in products
+                    th.compare-col--product(data-id=prod._id.toString())
+                      .compare-card-head
+                        button.btn-remove-from-compare(
+                          type="button" 
+                          data-id=prod._id.toString() 
+                          title="Xóa khỏi so sánh" 
+                          aria-label="Xóa"
+                        )
+                          i.fa-solid.fa-xmark
+
+                        a.compare-card-head__img-box(href=`/product/detail/${prod.slug}`)
+                          if prod.isLowestPrice
+                            span.compare-best-price-badge
+                              i.fa-solid.fa-tag
+                              | Giá tốt nhất
+                          if prod.discountPercentage > 0
+                            span.compare-discount-badge -#{prod.discountPercentage}%
+                          
+                          img(
+                            src=(prod.thumbnail || "https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT") 
+                            alt=prod.title 
+                            loading="lazy"
+                            onerror="this.onerror=null; this.src='https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT'"
+                          )
+
+                        .compare-card-head__brand #{prod.brand || "CHÍNH HÃNG"}
+                        h3.compare-card-head__title
+                          a(href=`/product/detail/${prod.slug}` title=prod.title) #{prod.title}
+
+                        .compare-card-head__price
+                          if prod.priceNew && prod.priceNew < prod.price
+                            span.current-price #{prod.priceNew.toLocaleString('vi-VN')}đ
+                            span.old-price #{prod.price.toLocaleString('vi-VN')}đ
+                          else
+                            span.current-price #{(prod.price || 0).toLocaleString('vi-VN')}đ
+
+                        .compare-card-head__cta
+                          a.btn-compare-buy(href=`/product/detail/${prod.slug}`)
+                            i.fa-solid.fa-eye
+                            span Xem Chi Tiết
+
+              tbody
+                //- 1. THƯƠNG HIỆU
+                tr.compare-row(data-row-name="brand")
+                  td.compare-col--label
+                    i.fa-solid.fa-copyright
+                    span Thương hiệu
+                  each prod in products
+                    td.compare-col--product(data-id=prod._id.toString() data-val=(prod.brand || "Chính hãng"))
+                      span.brand-tag #{prod.brand || "Chính Hãng"}
+
+                //- 2. DANH MỤC
+                tr.compare-row(data-row-name="category")
+                  td.compare-col--label
+                    i.fa-solid.fa-shapes
+                    span Danh mục
+                  each prod in products
+                    td.compare-col--product(data-id=prod._id.toString() data-val=prod.categoryTitle)
+                      span.category-tag #{prod.categoryTitle}
+
+                //- 3. MỨC GIÁ & TIẾT KIỆM
+                tr.compare-row(data-row-name="price")
+                  td.compare-col--label
+                    i.fa-solid.fa-money-bill-wave
+                    span Mức giá & Tiết kiệm
+                  each prod in products
+                    td.compare-col--product(data-id=prod._id.toString() data-val=(prod.priceNew || prod.price))
+                      .price-comparison-cell
+                        strong.cell-main-price #{((prod.priceNew || prod.price) || 0).toLocaleString('vi-VN')}đ
+                        if prod.discountPercentage > 0
+                          span.cell-save-text (Tiết kiệm #{((prod.price - prod.priceNew) || 0).toLocaleString('vi-VN')}đ - giảm #{prod.discountPercentage}%)
+                        else
+                          span.cell-save-text (Giá niêm yết)
+
+                //- 4. KÍCH CỠ & TÌNH TRẠNG KHO
+                tr.compare-row(data-row-name="sizes")
+                  td.compare-col--label
+                    i.fa-solid.fa-ruler-combined
+                    span Kích cỡ & Tồn kho
+                  each prod in products
+                    td.compare-col--product(data-id=prod._id.toString() data-val=(prod.totalStock > 0 ? "in-stock" : "out-of-stock"))
+                      .sizes-comparison-cell
+                        if prod.formattedSizes && prod.formattedSizes.length > 0
+                          .size-pills-list
+                            each s in prod.formattedSizes
+                              span(
+                                class=`size-pill ${s.inStock ? 'is-instock' : 'is-oos'}` 
+                                title=(s.inStock ? `Size ${s.size} (Còn ${s.stock} sản phẩm)` : `Size ${s.size} (Hết hàng)`)
+                              )
+                                span.size-name #{s.size}
+                                if s.inStock
+                                  small.size-stock (#{s.stock})
+                                else
+                                  small.size-stock (Hết)
+                          .total-stock-summary
+                            if prod.totalStock > 0
+                              span.stock-status.text-success
+                                i.fa-solid.fa-circle-check
+                                | Còn tổng #{prod.totalStock} sản phẩm trong kho
+                            else
+                              span.stock-status.text-danger
+                                i.fa-solid.fa-circle-xmark
+                                | Tạm thời hết hàng
+                        else
+                          span.text-muted Kích cỡ tiêu chuẩn (Freesize)
+
+                //- 5. ĐÁNH GIÁ & KHÁCH HÀNG
+                tr.compare-row(data-row-name="rating")
+                  td.compare-col--label
+                    i.fa-solid.fa-star
+                    span Đánh giá khách hàng
+                  each prod in products
+                    td.compare-col--product(data-id=prod._id.toString() data-val=prod.avgRating)
+                      .rating-comparison-cell
+                        .stars-group
+                          - var ratingNum = parseFloat(prod.avgRating) || 5
+                          - var fullStars = Math.floor(ratingNum)
+                          - for (let i = 0; i < fullStars; i++)
+                            i.fa-solid.fa-star
+                          - for (let i = 0; i < (5 - fullStars); i++)
+                            i.fa-regular.fa-star
+                        span.rating-number #{prod.avgRating}/5.0
+                        span.review-count (#{prod.totalReviews} đánh giá)
+
+                //- 6. NỔI BẬT / PHÂN HẠNG
+                tr.compare-row(data-row-name="featured")
+                  td.compare-col--label
+                    i.fa-solid.fa-fire
+                    span Điểm nổi bật
+                  each prod in products
+                    td.compare-col--product(data-id=prod._id.toString() data-val=(prod.featured === '1' ? 'hot' : 'normal'))
+                      if prod.featured == "1"
+                        span.pill-badge.pill-badge--hot
+                          i.fa-solid.fa-fire-flame-curved
+                          | Sản phẩm Hot / Bán chạy
+                      else
+                        span.pill-badge.pill-badge--standard
+                          i.fa-solid.fa-shield-halved
+                          | Hàng chính hãng tiêu chuẩn
+
+                //- 7. MÔ TẢ TÓM TẮT
+                tr.compare-row(data-row-name="description")
+                  td.compare-col--label
+                    i.fa-solid.fa-circle-info
+                    span Đặc điểm & Mô tả
+                  each prod in products
+                    td.compare-col--product(data-id=prod._id.toString() data-val=prod.summaryDesc)
+                      p.cell-desc #{prod.summaryDesc}
+
+                //- 8. HÀNH ĐỘNG
+                tr.compare-row.compare-row--footer
+                  td.compare-col--label
+                    i.fa-solid.fa-cart-shopping
+                    span Hành động
+                  each prod in products
+                    td.compare-col--product(data-id=prod._id.toString())
+                      a.btn-compare-action-detail(href=`/product/detail/${prod.slug}`)
+                        i.fa-solid.fa-cart-plus
+                        span Đặt Mua Ngay
+
+      //- TRẠNG THÁI RỖNG
+      .compare-empty#compareEmpty(style=(products && products.length > 0 ? "display: none;" : "display: flex;"))
+        .empty-compare-icon
+          i.fa-solid.fa-scale-balanced
+        h2.empty-title Chưa có sản phẩm nào trong danh sách so sánh
+        p.empty-desc Bạn có thể chọn tối đa 4 sản phẩm cùng loại trên trang cửa hàng và nhấn vào nút <strong>"So sánh"</strong> để đối chiếu các thông số, giá bán và kích cỡ còn hàng.
+        a.btn-explore-compare(href="/product")
+          i.fa-solid.fa-cart-shopping
+          span Khám Phá Sản Phẩm Ngay
