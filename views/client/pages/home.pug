@@ -206,27 +206,99 @@ block main
                   span.copy-text Sao chép mã
 
   //- ==========================================
-  //- 4. KHÁM PHÁ DANH MỤC SẢN PHẨM
+  //- 4. KHÁM PHÁ BỘ MÔN THỂ THAO (SPORTS HUB)
   //- ==========================================
   if categoryChildren && categoryChildren.length > 0
-    section.categories.home-section
-      .categories__container
+    section.sports-hub.home-section#sportsHubSection
+      .container
         .section-header-center
           .section-tag
-            i.fa-solid.fa-layer-group
-            | BỘ SƯU TẬP
-          h2.categories__title Khám Phá Bộ Môn Thể Thao
+            i.fa-solid.fa-trophy
+            | BỘ SƯU TẬP THỂ THAO
+          h2.sports-hub__title Khám Phá Theo Từng Bộ Môn
           p.section-subtitle Đầy đủ trang thiết bị chuyên dụng phục vụ mọi cấp độ từ phong trào đến thi đấu chuyên nghiệp.
 
-        .categories__grid
-          each cat in categoryChildren
-            a.category-card(href=`/category/${cat.slug}`)
-              .category-card__img-wrap
-                img(src=cat.thumbnail, alt=cat.title loading="lazy")
-              h3.category-card__title= cat.title
-              span.category-card__action
-                | Khám phá
-                i.fa-solid.fa-chevron-right
+        //- 1. BỘ LỌC THỂ THAO DẠNG VIÊN THUỐC (SPORT PILL TABS)
+        .sports-nav-pills
+          button.sport-pill-btn.active(type="button" data-sport="all")
+            i.fa-solid.fa-fire-flame-curved
+            span Tất Cả Bộ Môn
+            span.pill-count #{storeStats && storeStats.totalProducts ? storeStats.totalProducts : categoryChildren.length}
+          if sportHubList && sportHubList.length > 0
+            each sport in sportHubList
+              button.sport-pill-btn(type="button" data-sport=sport.slug)
+                i(class=sport.icon)
+                span #{sport.title}
+                span.pill-count #{sport.totalProducts} sp
+
+        //- 2. 3 HERO SPORT SHOWCASE CARDS (BÓNG ĐÁ, BÓNG CHUYỀN, CẦU LÔNG)
+        if sportHubList && sportHubList.length > 0
+          .sport-hero-showcase#sportHeroShowcase
+            each sport in sportHubList
+              .sport-hero-card(class=sport.theme data-sport=sport.slug)
+                .sport-hero-bg
+                  img(
+                    src=sport.bannerImage 
+                    alt=sport.title 
+                    loading="lazy"
+                    onerror="this.src='https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=900&auto=format&fit=crop&q=80'"
+                  )
+                  .sport-hero-overlay
+                .sport-hero-content
+                  .sport-hero-top
+                    span.sport-hero-badge
+                      i(class=sport.icon)
+                      | #{sport.badge}
+                    span.sport-hero-count #{sport.totalProducts}+ Sản phẩm
+                  h3.sport-hero-heading #{sport.title}
+                  p.sport-hero-tagline #{sport.tagline}
+                  p.sport-hero-desc #{sport.description}
+
+                  //- Quick subcategory chips
+                  if sport.subcategories && sport.subcategories.length > 0
+                    .sport-quick-chips
+                      each sub in sport.subcategories
+                        a.quick-chip(href=`/category/${sub.slug}`)
+                          span #{sub.title}
+                          i.fa-solid.fa-angle-right
+
+                  .sport-hero-footer
+                    a.btn-sport-explore(href=`/category/${sport.slug}`)
+                      span Đến Cửa Hàng #{sport.title}
+                      i.fa-solid.fa-arrow-right
+
+        //- 3. LƯỚI DANH MỤC THIẾT BỊ CHI TIẾT
+        .sports-categories-wrap
+          .subcats-header-bar
+            .subcats-header-left
+              i.fa-solid.fa-cubes-stacked
+              span.subcats-header-title Danh Mục Thiết Bị Chuyên Dụng
+            span.subcats-count-badge#subcatsCountDisplay #{categoryChildren.length} danh mục
+
+          .sports-categories-grid#sportsCategoriesGrid
+            each cat in categoryChildren
+              a.sport-category-card(
+                href=`/category/${cat.slug}`
+                data-sport=(cat.parentSlug || 'other')
+              )
+                .sport-cat-header
+                  span.sport-parent-tag
+                    i(class=(cat.parentIcon || 'fa-solid fa-trophy'))
+                    | #{cat.parentTitle || 'Thể thao'}
+                  if cat.productCount > 0
+                    span.sport-stock-badge #{cat.productCount} sp
+                .sport-cat-thumb
+                  img(
+                    src=cat.thumbnail
+                    alt=cat.title
+                    loading="lazy"
+                    onerror="this.src='https://placehold.co/240x240/f1f5f9/94a3b8?text=' + encodeURIComponent(this.alt || 'Sport')"
+                  )
+                .sport-cat-info
+                  h4.sport-cat-title(title=cat.title)= cat.title
+                  .sport-cat-action
+                    span Khám phá ngay
+                    i.fa-solid.fa-arrow-right
 
   //- ==========================================
   //- 5. GIỜ VÀNG GIÁ SỐC (FLASH SALE)

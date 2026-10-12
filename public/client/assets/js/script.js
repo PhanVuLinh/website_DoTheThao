@@ -2072,3 +2072,56 @@ function initReviewInteractive() {
   }
 }
 
+/* ==========================================================================
+   SPORTS HUB PILL TABS INTERACTION & CATEGORY FILTERING
+   ========================================================================== */
+function initSportsHubTabs() {
+  const hubSection = document.getElementById("sportsHubSection");
+  if (!hubSection) return;
+
+  const pillButtons = hubSection.querySelectorAll(".sport-pill-btn");
+  const heroCards = hubSection.querySelectorAll(".sport-hero-card");
+  const categoryCards = hubSection.querySelectorAll(".sport-category-card");
+  const countDisplay = document.getElementById("subcatsCountDisplay");
+
+  pillButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const selectedSport = btn.getAttribute("data-sport") || "all";
+
+      // Toggle active state on buttons
+      pillButtons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      // Filter Hero Cards
+      heroCards.forEach((card) => {
+        const cardSport = card.getAttribute("data-sport");
+        if (selectedSport === "all" || cardSport === selectedSport) {
+          card.classList.remove("is-hidden");
+        } else {
+          card.classList.add("is-hidden");
+        }
+      });
+
+      // Filter Subcategory Cards
+      let visibleCount = 0;
+      categoryCards.forEach((cat) => {
+        const catSport = cat.getAttribute("data-sport");
+        if (selectedSport === "all" || catSport === selectedSport) {
+          cat.classList.remove("is-hidden");
+          visibleCount++;
+        } else {
+          cat.classList.add("is-hidden");
+        }
+      });
+
+      // Update count badge
+      if (countDisplay) {
+        countDisplay.textContent = `${visibleCount} danh mục`;
+      }
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initSportsHubTabs();
+});

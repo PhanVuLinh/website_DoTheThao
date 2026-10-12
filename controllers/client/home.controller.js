@@ -14,11 +14,105 @@ module.exports.index = async (req, res) => {
   try {
     const settingWebsiteInfo = res.locals.settingWebsiteInfo || {};
 
-    // 1. Danh mục sản phẩm con (Sub-categories for visual exploration)
-    const categoryChildren = await Category.find({
+    // 1. Khám phá các bộ môn thể thao chính & Danh mục con (Sport Hub & Sub-categories)
+    const rawParents = await Category.find({
       deleted: false,
+      status: "active",
+      $or: [{ parent_id: "" }, { parent_id: null }, { parent_id: { $exists: false } }],
+    }).sort({ position: "desc" }).lean();
+
+    const rawChildren = await Category.find({
+      deleted: false,
+      status: "active",
       parent_id: { $ne: "" },
-    }).sort({ position: "desc" });
+    }).sort({ position: "desc" }).lean();
+
+    const sportMetadata = {
+      "bong-da": {
+        icon: "fa-regular fa-futbol",
+        badge: "BÓNG ĐÁ CHUYÊN NGHIỆP",
+        tagline: "Làm Chủ Sân Cỏ • Bứt Tốc Mọi Trận Đấu",
+        description: "Giày đinh FG/TF cao cấp, bóng thi đấu FIFA Quality, đồng phục CLB và phụ kiện bảo vệ.",
+        bannerImage: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=900&auto=format&fit=crop&q=80",
+        theme: "theme-football",
+      },
+      "bong-chuyen": {
+        icon: "fa-solid fa-volleyball",
+        badge: "BÓNG CHUYỀN ĐỈNH CAO",
+        tagline: "Bật Nhảy Tối Đa • Kiểm Soát Lưới Đấu",
+        description: "Giày đệm bật Asics/Mizuno, banh da Gerustar/Mikasa thi đấu và băng bảo vệ khớp gối chuyên dụng.",
+        bannerImage: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=900&auto=format&fit=crop&q=80",
+        theme: "theme-volleyball",
+      },
+      "cau-long": {
+        icon: "fa-solid fa-feather-pointed",
+        badge: "CẦU LÔNG TỐC ĐỘ",
+        tagline: "Linh Hoạt Chuẩn Xác • Smash Uy Lực",
+        description: "Vợt carbon Yonex/Lining đỉnh cao, quả cầu thi đấu độ bền cao, giày bám thảm và balo chuyên dụng.",
+        bannerImage: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=900&auto=format&fit=crop&q=80",
+        theme: "theme-badminton",
+      },
+    };
+
+    // Đếm số sản phẩm thực tế cho từng danh mục con
+    const categoryChildren = [];
+    for (const c of rawChildren) {
+      const pCount = await Product.countDocuments({
+        deleted: false,
+        status: "active",
+        category_id: c._id.toString(),
+      });
+      const parent = rawParents.find((p) => p._id.toString() === c.parent_id);
+      categoryChildren.push({
+        ...c,
+        productCount: pCount,
+        parentTitle: parent ? parent.title : "Thể thao",
+        parentSlug: parent ? parent.slug : "the-thao",
+        parentIcon: parent && sportMetadata[parent.slug] ? sportMetadata[parent.slug].icon : "fa-solid fa-trophy",
+      });
+    }
+
+    // Danh sách 3 Hero Sport Cards cho 3 môn thể thao trụ cột
+    const sportHubList = [];
+    for (const p of rawParents) {
+      const meta = sportMetadata[p.slug] || {
+        icon: "fa-solid fa-trophy",
+        badge: p.title.toUpperCase(),
+        tagline: "Trang bị thể thao chính hãng",
+        description: "Đầy đủ dụng cụ phục vụ luyện tập và thi đấu.",
+        bannerImage: p.thumbnail || "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=900&auto=format&fit=crop&q=80",
+        theme: "theme-general",
+      };
+
+      const children = categoryChildren.filter((c) => c.parent_id === p._id.toString());
+      const childIds = children.map((c) => c._id.toString());
+      childIds.push(p._id.toString());
+
+      const totalSportProducts = await Product.countDocuments({
+        deleted: false,
+        status: "active",
+        category_id: { $in: childIds },
+      });
+
+      // Bỏ qua các danh mục nháp/demo không có danh mục con và không có sản phẩm
+      if (children.length === 0 && totalSportProducts === 0) {
+        continue;
+      }
+
+      sportHubList.push({
+        _id: p._id,
+        title: p.title,
+        slug: p.slug,
+        icon: meta.icon,
+        badge: meta.badge,
+        tagline: meta.tagline,
+        description: meta.description,
+        bannerImage: meta.bannerImage,
+        theme: meta.theme,
+        totalProducts: totalSportProducts,
+        subcategories: children,
+      });
+    }
 
     // 2. Mã giảm giá độc quyền đang hoạt động (Exclusive Coupons from DB)
     const couponList = await Coupon.find({
@@ -203,6 +297,7 @@ module.exports.index = async (req, res) => {
 
     res.render("client/pages/home.pug", {
       title: "Trang chủ",
+      sportHubList: sportHubList,
       categoryChildren: categoryChildren,
       couponList: couponList,
       activeFlashSale: activeFlashSale,
