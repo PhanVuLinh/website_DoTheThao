@@ -169,51 +169,189 @@ handleQtyChange();
 // 4. ÁP DỤNG VÀ HỦY MÃ GIẢM GIÁ
 // ==========================================
 
-// Áp dụng mã
-const btnApplyCoupon = document.querySelector("#btn-apply-coupon");
-if (btnApplyCoupon) {
-  btnApplyCoupon.addEventListener("click", async () => {
-    const codeInput = document.querySelector("#coupon-input");
-    const code = codeInput.value.trim();
+// Helper hiển thị thông báo
+function notifyVoucher(msg, icon = "info") {
+  if (typeof Swal !== "undefined") {
+    Swal.fire({
+      icon: icon,
+      title: msg,
+      timer: 2500,
+      showConfirmButton: false,
+      toast: true,
+      position: "top-end",
+    });
+  } else {
+    alert(msg);
+  }
+}
 
-    if (!code) {
-      alert("Vui lòng nhập mã giảm giá!");
-      return;
-    }
+// Hàm gửi request áp dụng mã
+async function submitApplyCoupon(code) {
+  if (!code) {
+    notifyVoucher("Vui lòng nhập hoặc chọn mã giảm giá!", "warning");
+    return;
+  }
 
-    try {
-      const response = await fetch("/cart/apply-coupon", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: code }),
-      });
+  try {
+    const response = await fetch("/cart/apply-coupon", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: code }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (data.code === 200) {
-        window.location.reload(); // Ép load lại trang để nhận dữ liệu từ Database
+    if (data.code === 200) {
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          icon: "success",
+          title: `Đã áp dụng mã "${code}" thành công!`,
+          timer: 1500,
+          showConfirmButton: false,
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+        window.location.reload();
+      }
+    } else {
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          icon: "error",
+          title: "Không thể áp dụng mã",
+          text: data.message || "Mã không hợp lệ hoặc bạn chưa đăng nhập!",
+          confirmButtonText: "Đã hiểu",
+          confirmButtonColor: "#0f172a",
+        });
       } else {
         alert(data.message);
       }
-    } catch (error) {
-      console.error("Lỗi áp dụng mã:", error);
+    }
+  } catch (error) {
+    console.error("Lỗi áp dụng mã:", error);
+    notifyVoucher("Lỗi kết nối máy chủ!", "error");
+  }
+}
+
+// Hàm gửi request gỡ mã
+async function submitRemoveCoupon() {
+  try {
+    const response = await fetch("/cart/remove-coupon", { method: "POST" });
+    const data = await response.json();
+
+    if (data.code === 200) {
+      window.location.reload();
+    } else {
+      notifyVoucher(data.message || "Lỗi gỡ mã!", "error");
+    }
+  } catch (error) {
+    console.error("Lỗi gỡ mã:", error);
+  }
+}
+
+// 1. Áp dụng mã từ ô nhập ngoài sidebar
+const btnApplyCoupon = document.querySelector("#btn-apply-coupon");
+if (btnApplyCoupon) {
+  btnApplyCoupon.addEventListener("click", () => {
+    const codeInput = document.querySelector("#coupon-input");
+    const code = codeInput ? codeInput.value.trim() : "";
+    submitApplyCoupon(code);
+  });
+}
+
+const inputCoupon = document.querySelector("#coupon-input");
+if (inputCoupon) {
+  inputCoupon.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      submitApplyCoupon(inputCoupon.value.trim());
     }
   });
 }
 
-// Hủy mã
+// 2. Hủy mã ngoài sidebar
 const btnCancelCoupon = document.querySelector("#btn-cancel-coupon");
 if (btnCancelCoupon) {
-  btnCancelCoupon.addEventListener("click", async () => {
-    try {
-      const response = await fetch("/cart/remove-coupon", { method: "POST" });
-      const data = await response.json();
+  btnCancelCoupon.addEventListener("click", () => {
+    submitRemoveCoupon();
+  });
+}
 
-      if (data.code === 200) {
-        window.location.reload(); // Load lại trang để reset Giao diện về giá gốc
-      }
-    } catch (error) {
-      console.error("Lỗi gỡ mã:", error);
+// 3. Quản lý Modal Ví Voucher
+const btnOpenVoucherModal = document.querySelector("#btnOpenVoucherModal");
+const voucherModal = document.querySelector("#voucherModal");
+const voucherModalBackdrop = document.querySelector("#voucherModalBackdrop");
+const btnCloseVoucherModal = document.querySelector("#btnCloseVoucherModal");
+const btnCloseVoucherModalFooter = document.querySelector("#btnCloseVoucherModalFooter");
+
+function openVoucherModal() {
+  if (voucherModal && voucherModalBackdrop) {
+    voucherModal.classList.add("is-active");
+    voucherModalBackdrop.classList.add("is-active");
+    document.body.style.overflow = "hidden";
+  }
+}
+
+function closeVoucherModal() {
+  if (voucherModal && voucherModalBackdrop) {
+    voucherModal.classList.remove("is-active");
+    voucherModalBackdrop.classList.remove("is-active");
+    document.body.style.overflow = "";
+  }
+}
+
+if (btnOpenVoucherModal) {
+  btnOpenVoucherModal.addEventListener("click", openVoucherModal);
+}
+
+if (btnCloseVoucherModal) {
+  btnCloseVoucherModal.addEventListener("click", closeVoucherModal);
+}
+
+if (btnCloseVoucherModalFooter) {
+  btnCloseVoucherModalFooter.addEventListener("click", closeVoucherModal);
+}
+
+if (voucherModalBackdrop) {
+  voucherModalBackdrop.addEventListener("click", closeVoucherModal);
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && voucherModal && voucherModal.classList.contains("is-active")) {
+    closeVoucherModal();
+  }
+});
+
+// 4. Áp dụng mã từ trong Modal
+const btnModalApplyManual = document.querySelector("#btnModalApplyManual");
+const modalCouponInput = document.querySelector("#modalCouponInput");
+if (btnModalApplyManual && modalCouponInput) {
+  btnModalApplyManual.addEventListener("click", () => {
+    const code = modalCouponInput.value.trim();
+    submitApplyCoupon(code);
+  });
+  modalCouponInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      submitApplyCoupon(modalCouponInput.value.trim());
     }
   });
 }
+
+// Click nút Áp dụng trên từng card trong modal
+document.querySelectorAll(".btn-modal-apply").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const code = btn.getAttribute("data-code");
+    submitApplyCoupon(code);
+  });
+});
+
+// Click nút Bỏ chọn trên card trong modal
+document.querySelectorAll(".btn-modal-remove").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    submitRemoveCoupon();
+  });
+});
+

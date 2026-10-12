@@ -68,16 +68,30 @@ block main
 
               // MÃ GIẢM GIÁ
               .cart-discount-section
-                label.section-mini-label(for="coupon-input") Mã ưu đãi / Voucher
-                .discount-input-wrap
-                  if cartDetail.coupon && cartDetail.coupon.code
-                    input#coupon-input.coupon-field(type="text" value=cartDetail.coupon.code readonly)
-                    button.btn-apply.d-none#btn-apply-coupon(type="button") Áp dụng
-                    button.btn-cancel-coupon.d-block#btn-cancel-coupon(type="button") Hủy mã
-                  else
-                    input#coupon-input.coupon-field(type="text" placeholder="Nhập mã giảm giá (VD: SALE10)")
-                    button.btn-apply.d-block#btn-apply-coupon(type="button") Áp dụng
-                    button.btn-cancel-coupon.d-none#btn-cancel-coupon(type="button") Hủy mã
+                .discount-header-row
+                  label.section-mini-label
+                    i.fa-solid.fa-ticket
+                    span Mã ưu đãi / Voucher
+                  button.btn-open-wallet-modal#btnOpenVoucherModal(type="button")
+                    i.fa-solid.fa-wallet
+                    span Chọn từ Ví (#{availableCoupons ? availableCoupons.length : 0})
+                    i.fa-solid.fa-angle-right
+
+                if cartDetail.coupon && cartDetail.coupon.code
+                  .applied-coupon-card
+                    .applied-coupon-left
+                      .applied-coupon-icon
+                        i.fa-solid.fa-circle-check
+                      .applied-coupon-details
+                        strong.applied-coupon-code= cartDetail.coupon.code
+                        span.applied-coupon-desc Đã giảm -#{cartDetail.discountAmount ? cartDetail.discountAmount.toLocaleString('vi-VN') : 0}₫
+                    button.btn-cancel-coupon#btn-cancel-coupon(type="button" title="Gỡ mã giảm giá này")
+                      i.fa-solid.fa-xmark
+                      span Gỡ
+                else
+                  .discount-input-wrap
+                    input#coupon-input.coupon-field(type="text" placeholder="Nhập mã ưu đãi (VD: FLASH25)")
+                    button.btn-apply#btn-apply-coupon(type="button") Áp dụng
 
               // TỔNG TIỀN CHI TIẾT
               .cart-summary 
@@ -208,4 +222,83 @@ block main
             a.btn-explore-now(href="/category/bong-da")
               i.fa-solid.fa-arrow-right
               | Khám Phá Sản Phẩm Ngay
-  script(src="/client/assets/js/cart.js")
+
+    //- ==========================================
+    //- MODAL VÍ VOUCHER (VOUCHER WALLET POPUP)
+    //- ==========================================
+    .voucher-modal-backdrop#voucherModalBackdrop
+    .voucher-modal#voucherModal(role="dialog" aria-modal="true" aria-labelledby="voucherModalTitle")
+      .voucher-modal__header
+        .voucher-modal__header-left
+          .modal-header-icon
+            i.fa-solid.fa-wallet
+          .modal-header-text
+            h3.voucher-modal__title#voucherModalTitle Kho Voucher Của Bạn
+            p.voucher-modal__subtitle Chọn mã ưu đãi để tự động tính giảm giá cho đơn hàng
+        button.voucher-modal__close#btnCloseVoucherModal(type="button" aria-label="Đóng")
+          i.fa-solid.fa-xmark
+
+      .voucher-modal__body
+        //- Ô nhập mã thủ công trong modal
+        .modal-coupon-input-box
+          i.fa-solid.fa-magnifying-glass
+          input#modalCouponInput(type="text" placeholder="Nhập mã ưu đãi khác..." value=(cartDetail.coupon ? cartDetail.coupon.code : ''))
+          button.btn-modal-apply-input#btnModalApplyManual(type="button") Áp Dụng
+
+        //- Danh sách mã voucher
+        .modal-section-title
+          i.fa-solid.fa-tags
+          span Mã Giảm Giá Đang Khả Dụng (#{availableCoupons ? availableCoupons.length : 0})
+
+        if availableCoupons && availableCoupons.length > 0
+          .modal-vouchers-list
+            each c, idx in availableCoupons
+              - var isCurrent = cartDetail.coupon && cartDetail.coupon.code === c.code
+              .modal-voucher-item(
+                class=(isCurrent ? 'is-selected' : (c.isUsed ? 'is-disabled' : ''))
+                data-code=c.code
+              )
+                //- Cuống vé trái
+                .modal-stub(class=`modal-stub--theme-${idx % 4}`)
+                  .modal-stub__pct -#{c.discountPercentage}%
+                  .modal-stub__label GIẢM
+                  .modal-stub__notch.notch-top
+                  .modal-stub__notch.notch-bottom
+                
+                //- Thân vé
+                .modal-content
+                  .modal-content__top
+                    span.modal-code-tag= c.code
+                    if isCurrent
+                      span.badge-status-applied
+                        i.fa-solid.fa-check
+                        | Đang áp dụng
+                    else if c.isUsed
+                      span.badge-status-used Đã dùng
+                    else
+                      span.badge-savings-preview Tiết kiệm #{c.calculatedDiscount ? c.calculatedDiscount.toLocaleString('vi-VN') : 0}₫
+
+                  h4.modal-voucher-name= c.title
+                  p.modal-voucher-condition Giảm tối đa #{c.maxDiscountFormatted}₫ cho đơn hàng
+                  
+                  .modal-voucher-footer
+                    span.modal-voucher-exp
+                      i.fa-regular.fa-clock
+                      | HSD: #{c.expirationDateFormatted}
+                    
+                    if isCurrent
+                      button.btn-modal-action.btn-modal-remove(type="button" data-code=c.code) Bỏ chọn
+                    else if c.isUsed
+                      button.btn-modal-action.disabled(type="button" disabled) Đã dùng
+                    else
+                      button.btn-modal-action.btn-modal-apply(type="button" data-code=c.code) Áp dụng
+        else
+          .modal-empty-vouchers
+            i.fa-solid.fa-ticket-simple
+            p Hiện không có mã voucher nào khả dụng cho đơn hàng này.
+
+      .voucher-modal__footer
+        span.modal-footer-note * Mỗi đơn hàng áp dụng tối đa 1 mã ưu đãi tốt nhất.
+        button.btn-close-modal-bottom#btnCloseVoucherModalFooter(type="button") Đóng
+
+  script(src="/client/assets/js/cart.js?v=1.4.3")

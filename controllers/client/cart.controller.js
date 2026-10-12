@@ -4,6 +4,7 @@ const Coupon = require("../../models/coupon.model");
 const User = require("../../models/user.model");
 const jwtHelper = require("../../helpers/jwt.helper");
 const productsHelper = require("../../helpers/getPriceNew.helper");
+const moment = require("moment");
 
 module.exports.cart = async (req, res) => {
   try {
@@ -88,6 +89,47 @@ module.exports.cart = async (req, res) => {
     cart.freeShippingThreshold = freeThreshold;
     cart.totalPayment = subtotalAfterDiscount + shippingFee;
 
+    // Lấy danh sách Voucher đang hoạt động để hiển thị trong Modal Ví Voucher
+    const rawCoupons = await Coupon.find({
+      deleted: false,
+      status: "active",
+      quantity: { $gt: 0 },
+      expirationDate: { $gte: new Date() },
+    }).sort({ discountPercentage: -1 });
+
+    const token = req.cookies.tokenUser || req.cookies.token;
+    let currentUserId = null;
+    if (token) {
+      const decoded = jwtHelper.verifyToken(token);
+      if (decoded && decoded.id) currentUserId = decoded.id;
+      else {
+        const u = await User.findOne({ token: token, deleted: false }).select("_id");
+        if (u) currentUserId = u._id.toString();
+      }
+    }
+
+    const availableCoupons = [];
+    for (const c of rawCoupons) {
+      const couponObj = c.toObject();
+      couponObj.expirationDateFormatted = moment(c.expirationDate).format("DD/MM/YYYY");
+      couponObj.isUsed = Boolean(
+        currentUserId &&
+          Array.isArray(c.usedBy) &&
+          c.usedBy.map(String).includes(String(currentUserId)),
+      );
+
+      let calcDiscount = Math.round((cart.totalPrice * c.discountPercentage) / 100);
+      if (c.maxDiscountAmount && calcDiscount > c.maxDiscountAmount) {
+        calcDiscount = c.maxDiscountAmount;
+      }
+      couponObj.calculatedDiscount = calcDiscount;
+      couponObj.isApplied = Boolean(cart.coupon && cart.coupon.code === c.code);
+      couponObj.maxDiscountFormatted = c.maxDiscountAmount
+        ? c.maxDiscountAmount.toLocaleString("vi-VN")
+        : "0";
+      availableCoupons.push(couponObj);
+    }
+
     const oldData = req.flash("oldData")[0] || {};
     if (res.locals.user) {
       if (!oldData.fullName && res.locals.user.fullName) oldData.fullName = res.locals.user.fullName;
@@ -98,6 +140,7 @@ module.exports.cart = async (req, res) => {
     res.render("client/pages/cart.pug", {
       title: "Giỏ hàng",
       cartDetail: cart,
+      availableCoupons: availableCoupons,
       oldData: oldData,
     });
   } catch (error) {
