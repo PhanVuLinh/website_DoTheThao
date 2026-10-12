@@ -979,6 +979,17 @@ if (copyVoucherBtns.length > 0) {
       }
     });
   }
+
+  const voucherCodeChips = document.querySelectorAll(".voucher-card__code-chip");
+  voucherCodeChips.forEach((chip) => {
+    chip.addEventListener("click", function () {
+      const card = this.closest(".voucher-card");
+      if (card) {
+        const copyBtn = card.querySelector(".btn-copy-voucher");
+        if (copyBtn) copyBtn.click();
+      }
+    });
+  });
 }
 
 /* =========================================

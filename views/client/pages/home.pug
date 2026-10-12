@@ -145,7 +145,7 @@ block main
             p.trust-desc #{settingWebsiteInfo && settingWebsiteInfo.trustBadge4_desc ? settingWebsiteInfo.trustBadge4_desc : "Đội ngũ am hiểu sâu về dụng cụ và giày thể thao chuyên dụng."}
 
   //- ==========================================
-  //- 3. KHO VOUCHER KHUYẾN MÃI
+  //- 3. KHO VOUCHER KHUYẾN MÃI (LUXURY SPORT PASSES)
   //- ==========================================
   if couponList && couponList.length > 0
     section.voucher-vault.home-section#voucher-vault
@@ -153,55 +153,70 @@ block main
         .section-header-wrap
           .section-header-left
             .section-tag
-              i.fa-solid.fa-wallet
-              | ƯU ĐÃI DÀNH CHO BẠN
-            h2.section-title Kho Voucher Giảm Giá
-            p.section-subtitle Thu thập mã ưu đãi để nhận giảm giá trực tiếp khi thanh toán đơn hàng.
+              i.fa-solid.fa-ticket
+              | ĐẶC QUYỀN HỘI VIÊN
+            h2.section-title Kho Voucher &amp; Đặc Quyền Giảm Giá
+            p.section-subtitle Thu thập ngay mã ưu đãi để nhận chiết khấu trực tiếp khi thanh toán đơn hàng hôm nay.
           
           .section-header-right
             .voucher-vault__summary-pill
-              i.fa-solid.fa-ticket
+              i.fa-solid.fa-tags
               span #{couponList.length} Mã khả dụng
             button.btn-vault-hot-copy(type="button" data-code=couponList[0].code title="Sao chép ngay mã giảm giá cao nhất")
               i.fa-solid.fa-bolt
-              span Sao chép mã HOT nhất
+              span Sao chép mã HOT (-#{couponList[0].discountPercentage}%)
 
         .voucher-grid
           each coupon, index in couponList
-            .voucher-ticket(class=`voucher-ticket--theme-${index % 4}`)
-              .voucher-ticket__top
-                .voucher-ticket__badge-row
-                  span.voucher-ticket__brand
-                    i.fa-solid.fa-medal
-                    | VOUCHER ƯU ĐÃI
-                  span.voucher-ticket__pct -#{coupon.discountPercentage}%
+            .voucher-card(class=`voucher-card--theme-${index % 4}`)
+              //- PHẦN CUỐNG VÉ (TICKET STUB)
+              .voucher-card__stub
+                .voucher-card__watermark
+                  i.fa-solid.fa-bolt
+                .voucher-card__stub-top
+                  span.voucher-card__badge
+                    if coupon.themeBadge
+                      i(class=coupon.themeBadge.icon)
+                      | #{coupon.themeBadge.tag}
+                    else
+                      i.fa-solid.fa-fire
+                      | VOUCHER
+                  span.voucher-card__pct -#{coupon.discountPercentage}%
                 
-                .voucher-ticket__hero
-                  .voucher-ticket__amount
-                    span.amount-num #{coupon.discountPercentage}
-                    span.amount-unit %
-                    span.amount-label GIẢM
-                  .voucher-ticket__code-box
-                    span.code-label MÃ VOUCHER
-                    span.code-text= coupon.code
+                .voucher-card__amount
+                  span.amount-num #{coupon.discountPercentage}
+                  span.amount-unit %
+                  span.amount-label GIẢM
 
-                .voucher-ticket__notch.voucher-ticket__notch--left
-                .voucher-ticket__dashed-divider
-                .voucher-ticket__notch.voucher-ticket__notch--right
+                .voucher-card__code-chip
+                  span.chip-label MÃ VOUCHER
+                  span.chip-code= coupon.code
 
-              .voucher-ticket__bottom
-                h4.voucher-ticket__title= coupon.title
-                p.voucher-ticket__limit Giảm tối đa #{coupon.maxDiscountAmount ? coupon.maxDiscountAmount.toLocaleString('vi-VN') : '0'} đ cho đơn hàng
-                
-                .voucher-ticket__footer
-                  span.voucher-ticket__exp(title=`Hạn sử dụng: ${coupon.expirationDateFormatted}`)
-                    i.fa-regular.fa-clock
-                    | HSD: #{coupon.expirationDateFormatted}
-                  span.voucher-ticket__state
-                    i.fa-solid.fa-circle-check
-                    | Khả dụng
+                //- VẾT CẮT CUỐNG VÉ CHUYÊN NGHIỆP
+                .voucher-card__notch.voucher-card__notch--left
+                .voucher-card__perforation
+                .voucher-card__notch.voucher-card__notch--right
 
-                button.btn-ticket-copy.btn-copy-voucher(type="button" data-code=coupon.code title="Bấm để sao chép mã")
+              //- PHẦN THÂN VÉ (TICKET BODY)
+              .voucher-card__body
+                .voucher-card__main-info
+                  h4.voucher-card__title(title=coupon.title)= coupon.title
+                  p.voucher-card__condition
+                    i.fa-solid.fa-circle-info
+                    | Giảm tối đa #{coupon.maxDiscountAmount ? coupon.maxDiscountAmount.toLocaleString('vi-VN') : '0'}₫ cho đơn hàng
+
+                //- Thanh tiến độ sử dụng / Số lượng
+                .voucher-card__progress-wrap
+                  .voucher-card__progress-bar
+                    .progress-fill(style=`width: ${coupon.percentUsed || 65}%`)
+                  .voucher-card__progress-info
+                    span.progress-text Đã dùng #{coupon.percentUsed || 65}%
+                    span.progress-exp(title=`Hạn sử dụng: ${coupon.expirationDateFormatted}`)
+                      i.fa-regular.fa-clock
+                      | HSD: #{coupon.expirationDateFormatted}
+
+                //- Nút hành động Lưu/Sao chép mã
+                button.btn-voucher-action.btn-copy-voucher(type="button" data-code=coupon.code title="Nhấp để sao chép mã ưu đãi")
                   i.fa-regular.fa-copy
                   span.copy-text Sao chép mã
 

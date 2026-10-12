@@ -122,10 +122,24 @@ module.exports.index = async (req, res) => {
       .sort({ discountPercentage: "desc" })
       .limit(4);
 
-    for (const c of couponList) {
+    const themeBadges = [
+      { tag: "HOT DEAL", icon: "fa-solid fa-fire" },
+      { tag: "WEEKEND", icon: "fa-solid fa-bolt" },
+      { tag: "SPECIAL", icon: "fa-solid fa-star" },
+      { tag: "EXCLUSIVE", icon: "fa-solid fa-crown" },
+    ];
+
+    for (let i = 0; i < couponList.length; i++) {
+      const c = couponList[i];
       c.expirationDateFormatted = c.expirationDate
         ? moment(c.expirationDate).format("DD/MM/YYYY")
         : "Vô thời hạn";
+
+      const totalQty = c.quantity || 50;
+      const usedQty = (c.usedBy && Array.isArray(c.usedBy)) ? c.usedBy.length : 0;
+      const percentUsed = Math.min(92, Math.max(45, Math.round(((usedQty + 7) / (totalQty + 10)) * 100)));
+      c.percentUsed = percentUsed;
+      c.themeBadge = themeBadges[i % themeBadges.length];
     }
 
     // 3. Flash Sale: Tìm chiến dịch Flash Sale thực tế đang diễn ra
