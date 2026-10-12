@@ -557,13 +557,16 @@ if (flashList && flashPrevBtn && flashNextBtn) {
 }
 
 /* =========================================
-   SEARCH DRAWER TOGGLE (RESPONSIVE SEARCH)
+   SEARCH DRAWER TOGGLE & LIVE SEARCH AUTOCOMPLETE
    ========================================= */
 const searchToggleBtn = document.querySelector(".search-toggle-btn");
 const searchDrawer = document.getElementById("headerSearchDrawer");
 const searchBackdrop = document.getElementById("headerSearchBackdrop");
 const searchCloseBtn = document.getElementById("headerSearchClose");
 const searchInput = document.getElementById("headerSearchInput");
+const searchClearBtn = document.getElementById("headerSearchClear");
+const defaultSuggestions = document.getElementById("defaultSuggestions");
+const searchLiveDropdown = document.getElementById("searchLiveDropdown");
 
 if (searchToggleBtn && searchDrawer) {
   const openSearch = () => {
@@ -571,7 +574,12 @@ if (searchToggleBtn && searchDrawer) {
     if (searchBackdrop) searchBackdrop.classList.add("is-open");
     searchToggleBtn.classList.add("is-active");
     if (searchInput) {
-      setTimeout(() => searchInput.focus(), 150);
+      setTimeout(() => {
+        searchInput.focus();
+        if (searchInput.value.trim().length >= 2) {
+          searchInput.dispatchEvent(new Event("input"));
+        }
+      }, 150);
     }
   };
 
@@ -598,6 +606,269 @@ if (searchToggleBtn && searchDrawer) {
       closeSearch();
     }
   });
+}
+
+// Live Search Autocomplete Logic
+if (searchInput && searchLiveDropdown) {
+  let searchDebounceTimer = null;
+  let activeAbortController = null;
+  let selectedIndex = -1;
+
+  const escapeHtml = (str) => {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  };
+
+  const escapeRegex = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  };
+
+  const highlightMatch = (text, query) => {
+    if (!text || !query) return escapeHtml(text);
+    const escapedQuery = escapeRegex(query.trim());
+    try {
+      const regex = new RegExp(`(${escapedQuery})`, "gi");
+      const parts = text.split(regex);
+      return parts
+        .map((part) =>
+          regex.test(part)
+            ? `<mark class="search-highlight">${escapeHtml(part)}</mark>`
+            : escapeHtml(part)
+        )
+        .join("");
+    } catch (e) {
+      return escapeHtml(text);
+    }
+  };
+
+  const formatPrice = (price) => {
+    return (price || 0).toLocaleString("vi-VN") + " đ";
+  };
+
+  const resetDropdown = () => {
+    searchLiveDropdown.style.display = "none";
+    searchLiveDropdown.innerHTML = "";
+    if (defaultSuggestions) defaultSuggestions.style.display = "flex";
+    selectedIndex = -1;
+  };
+
+  const updateClearButton = () => {
+    if (searchClearBtn) {
+      searchClearBtn.style.display = searchInput.value.trim() ? "inline-flex" : "none";
+    }
+  };
+
+  if (searchClearBtn) {
+    searchClearBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      updateClearButton();
+      resetDropdown();
+      searchInput.focus();
+    });
+  }
+
+  const renderLoading = () => {
+    if (defaultSuggestions) defaultSuggestions.style.display = "none";
+    searchLiveDropdown.style.display = "flex";
+    searchLiveDropdown.innerHTML = `
+      <div class="search-live-loading">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span>Đang tìm kiếm gợi ý...</span>
+      </div>
+    `;
+  };
+
+  const renderResults = (data, query) => {
+    const products = data.products || [];
+    const categories = data.categories || [];
+    const brands = data.brands || [];
+    const totalMatches = data.totalMatches || 0;
+
+    if (defaultSuggestions) defaultSuggestions.style.display = "none";
+    searchLiveDropdown.style.display = "flex";
+
+    if (products.length === 0 && categories.length === 0 && brands.length === 0) {
+      searchLiveDropdown.innerHTML = `
+        <div class="search-live-empty">
+          <div class="empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+          <div class="empty-title">Không tìm thấy sản phẩm phù hợp</div>
+          <div class="empty-desc">Không có kết quả nào cho từ khóa "<strong>${escapeHtml(query)}</strong>". Hãy thử tìm theo tên thương hiệu như Nike, Mizuno, Puma hoặc danh mục thể thao.</div>
+        </div>
+      `;
+      return;
+    }
+
+    let html = "";
+
+    // Gợi ý Danh mục & Thương hiệu liên quan
+    if (categories.length > 0 || brands.length > 0) {
+      html += `
+        <div class="search-live-meta">
+          <span class="meta-label">Gợi ý liên quan:</span>
+          <div class="meta-tags">
+      `;
+      categories.forEach((cat) => {
+        html += `
+          <a href="/category/${escapeHtml(cat.slug)}" class="meta-tag">
+            <i class="fa-regular fa-folder-open"></i>
+            <span>${escapeHtml(cat.title)}</span>
+          </a>
+        `;
+      });
+      brands.forEach((brand) => {
+        html += `
+          <a href="/search?keyword=${encodeURIComponent(brand)}" class="meta-tag">
+            <i class="fa-solid fa-tag"></i>
+            <span>${escapeHtml(brand)}</span>
+          </a>
+        `;
+      });
+      html += `
+          </div>
+        </div>
+      `;
+    }
+
+    // Danh sách 5 sản phẩm khớp nhất
+    if (products.length > 0) {
+      html += `
+        <div class="search-live-products">
+          <div class="live-products-heading">
+            <span>Sản phẩm gợi ý</span>
+            <span class="count-badge">${products.length} / ${totalMatches}</span>
+          </div>
+          <div class="live-products-list">
+      `;
+
+      products.forEach((p, index) => {
+        const thumbUrl = p.thumbnail || "https://placehold.co/100x100/f1f5f9/94a3b8?text=SP";
+        html += `
+          <a href="/product/detail/${escapeHtml(p.slug)}" class="live-product-item" data-index="${index}">
+            <div class="item-thumb">
+              <img src="${escapeHtml(thumbUrl)}" alt="${escapeHtml(p.title)}" onerror="this.src='https://placehold.co/100x100/f1f5f9/94a3b8?text=SP'" />
+              ${p.discountPercentage > 0 ? `<span class="item-badge-sale">-${p.discountPercentage}%</span>` : ""}
+            </div>
+            <div class="item-body">
+              <div class="item-title">${highlightMatch(p.title, query)}</div>
+              <div class="item-meta">
+                ${p.brand ? `<span class="item-brand"><i class="fa-solid fa-certificate"></i> ${escapeHtml(p.brand)}</span>` : ""}
+              </div>
+              <div class="item-pricing">
+                <span class="item-price-new">${formatPrice(p.priceNew)}</span>
+                ${p.discountPercentage > 0 ? `<span class="item-price-old">${formatPrice(p.price)}</span>` : ""}
+              </div>
+            </div>
+            <div class="item-arrow">
+              <i class="fa-solid fa-chevron-right"></i>
+            </div>
+          </a>
+        `;
+      });
+
+      html += `
+          </div>
+        </div>
+      `;
+    }
+
+    // Nút xem tất cả kết quả
+    html += `
+      <a href="/search?keyword=${encodeURIComponent(query)}" class="search-live-view-all">
+        <span>Xem tất cả <strong>${totalMatches}</strong> kết quả cho "<strong>${escapeHtml(query)}</strong>"</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    `;
+
+    searchLiveDropdown.innerHTML = html;
+    selectedIndex = -1;
+  };
+
+  const fetchSuggestions = async (query) => {
+    if (activeAbortController) {
+      activeAbortController.abort();
+    }
+    activeAbortController = new AbortController();
+
+    renderLoading();
+
+    try {
+      const response = await fetch(`/search/suggest?keyword=${encodeURIComponent(query)}`, {
+        signal: activeAbortController.signal,
+      });
+      if (!response.ok) throw new Error("Fetch failed");
+      const data = await response.json();
+
+      if (searchInput.value.trim().toLowerCase() === query.toLowerCase()) {
+        renderResults(data, query);
+      }
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        console.error("Live search fetch error:", err);
+        searchLiveDropdown.innerHTML = `
+          <div class="search-live-empty">
+            <div class="empty-title">Không thể tải gợi ý</div>
+            <div class="empty-desc">Vui lòng thử lại hoặc nhấn Enter để tìm kiếm đầy đủ.</div>
+          </div>
+        `;
+      }
+    }
+  };
+
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.trim();
+    updateClearButton();
+
+    if (searchDebounceTimer) {
+      clearTimeout(searchDebounceTimer);
+    }
+
+    if (query.length < 2) {
+      if (activeAbortController) activeAbortController.abort();
+      resetDropdown();
+      return;
+    }
+
+    searchDebounceTimer = setTimeout(() => {
+      fetchSuggestions(query);
+    }, 220);
+  });
+
+  const updateActiveItem = (items) => {
+    items.forEach((item, idx) => {
+      if (idx === selectedIndex) {
+        item.classList.add("is-selected");
+        item.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      } else {
+        item.classList.remove("is-selected");
+      }
+    });
+  };
+
+  searchInput.addEventListener("keydown", (e) => {
+    const items = searchLiveDropdown.querySelectorAll(".live-product-item");
+    if (!items.length || searchLiveDropdown.style.display === "none") return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      selectedIndex = (selectedIndex + 1) % items.length;
+      updateActiveItem(items);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+      updateActiveItem(items);
+    } else if (e.key === "Enter" && selectedIndex >= 0 && items[selectedIndex]) {
+      e.preventDefault();
+      items[selectedIndex].click();
+    }
+  });
+
+  // Initial check on load
+  updateClearButton();
 }
 
 /* =========================================

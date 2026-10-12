@@ -107,17 +107,22 @@
         form.search-drawer__form(action="/search" method="GET")
           i.fa-solid.fa-magnifying-glass.drawer-search-icon
           input.drawer-search-input#headerSearchInput(type="text" name="keyword" placeholder="Tìm kiếm giày đá bóng, áo đấu, phụ kiện..." value=(keyword || "") autocomplete="off")
+          button.drawer-search-clear#headerSearchClear(type="button" aria-label="Xóa từ khóa" style="display: none;")
+            i.fa-solid.fa-circle-xmark
           button.drawer-search-submit(type="submit")
             i.fa-solid.fa-magnifying-glass
             span Tìm kiếm
           button.drawer-search-close#headerSearchClose(type="button" aria-label="Đóng tìm kiếm")
             i.fa-solid.fa-xmark
-        .search-drawer__suggestions
+        .search-drawer__suggestions#defaultSuggestions
           span.sugg-label Gợi ý:
           a.sugg-tag(href="/search?keyword=Puma") Puma King
           a.sugg-tag(href="/search?keyword=Nike") Nike Phantom
           a.sugg-tag(href="/search?keyword=Giày") Giày đá bóng
           a.sugg-tag(href="/search?keyword=Áo") Áo thi đấu
           a.sugg-tag(href="/search?keyword=Bóng") Quả bóng đá
+
+        //- Dropdown gợi ý sản phẩm trực tiếp (Live Search Dropdown)
+        .search-live-dropdown#searchLiveDropdown(style="display: none;")
 
 .header-search-backdrop#headerSearchBackdrop
