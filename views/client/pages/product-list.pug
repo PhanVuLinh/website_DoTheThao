@@ -7,13 +7,114 @@ block main
   +box-breadcrumb(breadcrumb)
   section.product-list-page
     .container
+      //- NÚT MỞ BỘ LỌC TRÊN MOBILE
+      .mobile-filter-trigger-bar
+        button.btn-open-filter-mobile#btnOpenFilterMobile(type="button")
+          i.fa-solid.fa-sliders
+          span Bộ Lọc Sản Phẩm
+          if activeFilters && activeFilters.length > 0
+            span.filter-count-badge #{activeFilters.length}
+
+      //- OVERLAY BACKDROP CHO MOBILE DRAWER
+      .filter-drawer-backdrop#filterDrawerBackdrop
+
       .product-list-page__inner
-        aside.product-filter
+        //- --- 1. KHU VỰC BỘ LỌC (SIDEBAR / DRAWER) ---
+        aside.product-filter#productFilterSidebar
           form(action=(category ? `/category/${category.slug}` : "/product") method="GET" id="form-filter")
             .product-filter__header
-              i.fa-solid.fa-filter
-              h3.filter-title Bộ Lọc Sản Phẩm
-              
+              .filter-header-title
+                i.fa-solid.fa-filter
+                h3.filter-title Bộ Lọc Sản Phẩm
+              button.btn-close-filter-mobile#btnCloseFilterMobile(type="button" title="Đóng bộ lọc" aria-label="Đóng")
+                i.fa-solid.fa-xmark
+
+            //- TÌNH TRẠNG KHO HÀNG (IN-STOCK TOGGLE)
+            .filter-group.filter-group--stock
+              .stock-toggle-box
+                label.stock-toggle-label
+                  input(type="checkbox" name="inStock" value="1" checked=(queryInStock === "1" || queryInStock === "true") id="input-in-stock")
+                  span.stock-switch
+                  span.stock-text Chỉ hiện sản phẩm còn hàng
+
+            //- LỌC KÍCH CỠ CÒN HÀNG (SIZE FILTER)
+            .filter-group
+              .filter-group-header
+                h4.filter-group-title Kích Cỡ Còn Hàng
+                span.filter-group-hint (Chọn để lọc size sẵn có)
+
+              //- Kích Cỡ Giày
+              .size-filter-category
+                span.size-cat-title Giày Thể Thao
+                .size-pills-grid
+                  - var shoeSizes = (canonicalSizes && canonicalSizes.shoes) ? canonicalSizes.shoes : ["38", "39", "40", "41", "42", "43", "44"]
+                  each s in shoeSizes
+                    - var isChecked = querySize && (Array.isArray(querySize) ? querySize.includes(s) : querySize === s)
+                    label.size-checkbox-pill(class=(isChecked ? "active" : ""))
+                      input(type="checkbox" name="size" value=s checked=isChecked)
+                      span.pill-name #{s}
+
+              //- Kích Cỡ Quần Áo
+              .size-filter-category
+                span.size-cat-title Quần Áo Thể Thao
+                .size-pills-grid
+                  - var apparelSizes = (canonicalSizes && canonicalSizes.apparel) ? canonicalSizes.apparel : ["S", "M", "L", "XL", "XXL"]
+                  each s in apparelSizes
+                    - var isChecked = querySize && (Array.isArray(querySize) ? querySize.includes(s) : querySize === s)
+                    label.size-checkbox-pill(class=(isChecked ? "active" : ""))
+                      input(type="checkbox" name="size" value=s checked=isChecked)
+                      span.pill-name #{s}
+
+            //- LỌC KHOẢNG GIÁ
+            .filter-group
+              h4.filter-group-title Khoảng Giá
+              ul.filter-list
+                li
+                  label
+                    input(type="radio" name="price" value="" checked=(!queryPrice && !queryPriceMin && !queryPriceMax))
+                    span Tất cả mức giá
+                li
+                  label
+                    input(type="radio" name="price" value="under-500k" checked=(queryPrice === "under-500k"))
+                    span Dưới 500.000đ
+                li
+                  label
+                    input(type="radio" name="price" value="500k-to-1m" checked=(queryPrice === "500k-to-1m"))
+                    span 500.000đ - 1.000.000đ
+                li
+                  label
+                    input(type="radio" name="price" value="1m-to-2m" checked=(queryPrice === "1m-to-2m"))
+                    span 1.000.000đ - 2.000.000đ
+                li
+                  label
+                    input(type="radio" name="price" value="2m-to-3m" checked=(queryPrice === "2m-to-3m"))
+                    span 2.000.000đ - 3.000.000đ
+                li
+                  label
+                    input(type="radio" name="price" value="over-3m" checked=(queryPrice === "over-3m"))
+                    span Trên 3.000.000đ
+
+              //- Tự nhập khoảng giá
+              .custom-price-wrapper
+                span.custom-price-title Hoặc nhập khoảng giá:
+                .custom-price-inputs
+                  input(type="number" name="priceMin" placeholder="Từ đ" value=queryPriceMin min="0" step="50000" class="input-price-custom")
+                  span.separator -
+                  input(type="number" name="priceMax" placeholder="Đến đ" value=queryPriceMax min="0" step="50000" class="input-price-custom")
+
+            //- LỌC THƯƠNG HIỆU
+            if availableBrands && availableBrands.length > 0
+              .filter-group
+                h4.filter-group-title Thương Hiệu
+                ul.filter-list.brand-filter-list
+                  each b in availableBrands
+                    - var isBrandChecked = queryBrand && (Array.isArray(queryBrand) ? queryBrand.includes(b) : queryBrand === b)
+                    li
+                      label
+                        input(type="checkbox" name="brand" value=b checked=isBrandChecked)
+                        span #{b}
+
+            //- DANH MỤC
             .filter-group
               h4.filter-group-title Danh Mục
               ul.filter-list
@@ -24,45 +125,19 @@ block main
                         i.fa-solid.fa-chevron-right
                         span #{item.title}
 
-            .filter-group
-              h4.filter-group-title Khoảng Giá
-              ul.filter-list
-                li
-                  label
-                    input(type="radio" name="price" value="under-1m" checked=(queryPrice === "under-1m"))
-                    span Dưới 1 Triệu
-                li
-                  label
-                    input(type="radio" name="price" value="1m-to-3m" checked=(queryPrice === "1m-to-3m"))
-                    span 1 Triệu - 3 Triệu
-                li
-                  label
-                    input(type="radio" name="price" value="over-3m" checked=(queryPrice === "over-3m"))
-                    span Trên 3 Triệu
-
-            if availableBrands && availableBrands.length > 0
-              .filter-group
-                h4.filter-group-title Thương Hiệu
-                ul.filter-list
-                  each b in availableBrands
-                    li
-                      label
-                        input(type="checkbox" name="brand" value=b checked=(queryBrand && (Array.isArray(queryBrand) ? queryBrand.includes(b) : queryBrand === b)))
-                        span #{b}
-
             if querySort
-              input(type="hidden" name="sort" value=querySort)
+              input(type="hidden" name="sort" value=querySort id="hidden-sort-input")
 
             .filter-actions
               button.btn-apply-filter(type="submit") 
                 i.fa-solid.fa-filter
-                | Áp Dụng
+                | Áp Dụng Lọc
               
               a.btn-clear-filter(href=(category ? `/category/${category.slug}` : "/product")) 
                 i.fa-solid.fa-rotate-right
-                | Xóa Lọc
+                | Xóa Tất Cả
 
-        // --- 2. KHU VỰC SẢN PHẨM (BÊN PHẢI) ---
+        //- --- 2. KHU VỰC SẢN PHẨM (BÊN PHẢI) ---
         main.product-content
           .product-content__header
             .header-info
@@ -75,6 +150,22 @@ block main
                 option(value="newest" selected=(querySort === "newest" || !querySort)) Mới Nhất
                 option(value="price-asc" selected=(querySort === "price-asc")) Giá tăng dần
                 option(value="price-desc" selected=(querySort === "price-desc")) Giá giảm dần
+
+          //- THANH TAG BỘ LỌC ĐANG CHỌN (ACTIVE FILTER PILLS)
+          if activeFilters && activeFilters.length > 0
+            .active-filters-bar
+              .active-filters-title
+                i.fa-solid.fa-tags
+                span Đang lọc theo:
+              .active-filters-list
+                each pill in activeFilters
+                  span.filter-pill(data-key=pill.key data-val=pill.value)
+                    span.pill-label #{pill.label}
+                    button.btn-remove-pill(type="button" data-key=pill.key data-val=pill.value title="Xóa điều kiện này" aria-label="Xóa")
+                      i.fa-solid.fa-xmark
+                a.btn-clear-all-pills(href=(category ? `/category/${category.slug}` : "/product") title="Xóa toàn bộ bộ lọc")
+                  i.fa-solid.fa-trash-can
+                  span Xóa tất cả lọc
           
           if productCategory && productCategory.length > 0
             .product-content__grid
@@ -88,7 +179,7 @@ block main
               .empty-icon
                 i.fa-solid.fa-box-open
               h3 Không tìm thấy sản phẩm nào!
-              p Vui lòng thử chọn khoảng giá hoặc thương hiệu khác để xem sản phẩm phù hợp.
+              p Không có sản phẩm nào thỏa mãn các điều kiện lọc (kích cỡ, mức giá hoặc thương hiệu) đã chọn.
               a.btn-clear-filter-action(href=(category ? `/category/${category.slug}` : "/product"))
                 i.fa-solid.fa-rotate-right
                 | #{category ? "Xem tất cả sản phẩm danh mục này" : "Xem tất cả sản phẩm"}

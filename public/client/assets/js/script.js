@@ -1586,7 +1586,98 @@ function initComparePage() {
   }
 }
 
-// Khởi tạo toàn bộ Wishlist & Compare khi DOM sẵn sàng
+// =========================================================
+// PRODUCT MULTI-CRITERIA FILTER & MOBILE DRAWER SYSTEM
+// =========================================================
+function initProductFilterSystem() {
+  // 1. Sắp xếp sản phẩm tự động khi chọn dropdown (Sort Select)
+  const sortSelect = document.getElementById("sort-select");
+  if (sortSelect) {
+    sortSelect.addEventListener("change", function () {
+      const url = new URL(window.location.href);
+      if (this.value) {
+        url.searchParams.set("sort", this.value);
+      } else {
+        url.searchParams.delete("sort");
+      }
+      url.searchParams.set("page", "1");
+      window.location.href = url.href;
+    });
+  }
+
+  // 2. Gỡ từng tag bộ lọc đang chọn (Active Filter Pills Dismiss)
+  const removePillBtns = document.querySelectorAll(".active-filters-bar .btn-remove-pill");
+  removePillBtns.forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      const key = this.getAttribute("data-key");
+      const val = this.getAttribute("data-val");
+      const url = new URL(window.location.href);
+
+      if (key === "brand" || key === "size") {
+        const allVals = url.searchParams.getAll(key);
+        const filtered = allVals.filter((v) => String(v).trim() !== String(val).trim());
+        url.searchParams.delete(key);
+        filtered.forEach((v) => url.searchParams.append(key, v));
+      } else if (key === "price") {
+        url.searchParams.delete("price");
+      } else if (key === "priceCustom") {
+        url.searchParams.delete("priceMin");
+        url.searchParams.delete("priceMax");
+      } else if (key === "inStock") {
+        url.searchParams.delete("inStock");
+      }
+
+      url.searchParams.set("page", "1");
+      window.location.href = url.href;
+    });
+  });
+
+  // 3. Mobile Filter Drawer Open / Close
+  const btnOpenFilterMobile = document.getElementById("btnOpenFilterMobile");
+  const btnCloseFilterMobile = document.getElementById("btnCloseFilterMobile");
+  const filterDrawerBackdrop = document.getElementById("filterDrawerBackdrop");
+  const filterSidebar = document.getElementById("productFilterSidebar");
+
+  const openDrawer = () => {
+    if (filterSidebar) filterSidebar.classList.add("is-open");
+    if (filterDrawerBackdrop) filterDrawerBackdrop.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeDrawer = () => {
+    if (filterSidebar) filterSidebar.classList.remove("is-open");
+    if (filterDrawerBackdrop) filterDrawerBackdrop.classList.remove("is-open");
+    document.body.style.overflow = "auto";
+  };
+
+  if (btnOpenFilterMobile) {
+    btnOpenFilterMobile.addEventListener("click", openDrawer);
+  }
+  if (btnCloseFilterMobile) {
+    btnCloseFilterMobile.addEventListener("click", closeDrawer);
+  }
+  if (filterDrawerBackdrop) {
+    filterDrawerBackdrop.addEventListener("click", closeDrawer);
+  }
+
+  // 4. Toggle active highlight trên các checkbox size pill
+  const sizePills = document.querySelectorAll(".size-checkbox-pill");
+  sizePills.forEach((label) => {
+    const input = label.querySelector("input[type='checkbox']");
+    if (input) {
+      input.addEventListener("change", () => {
+        if (input.checked) {
+          label.classList.add("active");
+        } else {
+          label.classList.remove("active");
+        }
+      });
+    }
+  });
+}
+
+// Khởi tạo toàn bộ Wishlist, Compare & Filter khi DOM sẵn sàng
 document.addEventListener("DOMContentLoaded", () => {
   // Wishlist
   updateWishlistCounter();
@@ -1598,5 +1689,8 @@ document.addEventListener("DOMContentLoaded", () => {
   syncCompareButtonStates();
   renderCompareDock();
   initComparePage();
+
+  // Multi-Criteria Filter
+  initProductFilterSystem();
 });
 
