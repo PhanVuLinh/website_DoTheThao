@@ -1679,6 +1679,9 @@ function initProductFilterSystem() {
 
 // Khởi tạo toàn bộ Wishlist, Compare & Filter khi DOM sẵn sàng
 document.addEventListener("DOMContentLoaded", () => {
+  // Hero Carousel
+  initHeroCarousel();
+
   // Wishlist
   updateWishlistCounter();
   syncWishlistHeartStates();
@@ -1692,5 +1695,104 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Multi-Criteria Filter
   initProductFilterSystem();
+
+  // Review System Interactive
+  initReviewInteractive();
 });
+
+/* =========================================
+   HERO CAROUSEL SLIDER (HOMEPAGE)
+   ========================================= */
+function initHeroCarousel() {
+  const heroSwiperEl = document.querySelector(".hero-swiper");
+  if (!heroSwiperEl || typeof Swiper === "undefined") return;
+
+  new Swiper(".hero-swiper", {
+    loop: true,
+    speed: 900,
+    autoplay: {
+      delay: 5500,
+      disableOnInteraction: false,
+      pauseOnMouseEnter: true,
+    },
+    effect: "fade",
+    fadeEffect: {
+      crossFade: true,
+    },
+    pagination: {
+      el: ".hero-swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+      nextEl: ".hero-nav-arrow--next",
+      prevEl: ".hero-nav-arrow--prev",
+    },
+  });
+}
+
+/* =========================================
+   PRODUCT REVIEW FORM INTERACTIVE HELPERS
+   ========================================= */
+function initReviewInteractive() {
+  // Star rating hint updates
+  const ratingInputs = document.querySelectorAll('input[name="rating"]');
+  const ratingHint = document.getElementById("ratingHint");
+  const ratingTexts = {
+    "5": "Tuyệt vời (5/5 sao)",
+    "4": "Rất tốt (4/5 sao)",
+    "3": "Bình thường (3/5 sao)",
+    "2": "Kém (2/5 sao)",
+    "1": "Rất tệ (1/5 sao)",
+  };
+
+  if (ratingInputs.length > 0 && ratingHint) {
+    ratingInputs.forEach((input) => {
+      input.addEventListener("change", () => {
+        if (input.checked && ratingTexts[input.value]) {
+          ratingHint.textContent = ratingTexts[input.value];
+        }
+      });
+    });
+  }
+
+  // File upload preview
+  const fileInput = document.getElementById("reviewImages");
+  const previewContainer = document.getElementById("reviewImagesPreview");
+  const dropzoneText = document.getElementById("dropzoneText");
+
+  if (fileInput && previewContainer) {
+    fileInput.addEventListener("change", function () {
+      previewContainer.innerHTML = "";
+      const files = Array.from(this.files || []);
+
+      if (files.length > 3) {
+        alert("Bạn chỉ có thể tải lên tối đa 3 ảnh thực tế!");
+        this.value = "";
+        if (dropzoneText) dropzoneText.textContent = "Nhấn để chọn ảnh từ thiết bị";
+        return;
+      }
+
+      if (files.length === 0) {
+        if (dropzoneText) dropzoneText.textContent = "Nhấn để chọn ảnh từ thiết bị";
+        return;
+      }
+
+      if (dropzoneText) {
+        dropzoneText.textContent = `Đã chọn ${files.length} ảnh thực tế`;
+      }
+
+      files.forEach((file) => {
+        if (!file.type.startsWith("image/")) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const item = document.createElement("div");
+          item.className = "preview-img-item";
+          item.innerHTML = `<img src="${e.target.result}" alt="Preview" />`;
+          previewContainer.appendChild(item);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+  }
+}
 

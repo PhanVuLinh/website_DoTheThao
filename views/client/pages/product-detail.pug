@@ -41,11 +41,11 @@ block main
             .reviews-header
               h3.card-title
                 i.fa-solid.fa-star-half-stroke
-                | Đánh Giá Từ Khách Hàng (#{totalReviews})
+                span Đánh Giá Từ Khách Hàng (#{totalReviews})
               if isVerifiedBuyer
                 span.verified-badge-top
                   i.fa-solid.fa-shield-heart
-                  | Đã mua sản phẩm này
+                  span Đã mua sản phẩm này
 
             .reviews-summary-grid
               .summary-score-box
@@ -68,40 +68,60 @@ block main
             //- Form viết đánh giá
             if isUserLoggedIn
               .write-review-box
-                h4.write-title
-                  i.fa-solid.fa-pen-to-square
-                  | Gửi đánh giá của bạn
+                .write-header
+                  h4.write-title
+                    i.fa-solid.fa-pen-to-square
+                    span Gửi đánh giá của bạn
+                  span.write-subtitle Chia sẻ cảm nhận thực tế để giúp cộng đồng mua sắm tự tin hơn
                 if isVerifiedBuyer
                   p.verified-hint
                     i.fa-solid.fa-circle-check
-                    | Bạn đã mua sản phẩm này. Đánh giá của bạn sẽ được gắn huy hiệu <strong>Người mua xác thực</strong>!
+                    span Bạn đã mua sản phẩm này. Đánh giá của bạn sẽ được gắn huy hiệu <strong>Người mua xác thực</strong>!
                 form.review-form(action="/review/create" method="POST" enctype="multipart/form-data")
                   input(type="hidden" name="productId" value=productDetail._id)
+                  
                   .form-group-rating
-                    label Chọn số sao đánh giá:
-                    .star-rating-select
-                      input#star5(type="radio" name="rating" value="5" checked)
-                      label(for="star5" title="5 sao - Tuyệt vời") ★
-                      input#star4(type="radio" name="rating" value="4")
-                      label(for="star4" title="4 sao - Rất tốt") ★
-                      input#star3(type="radio" name="rating" value="3")
-                      label(for="star3" title="3 sao - Bình thường") ★
-                      input#star2(type="radio" name="rating" value="2")
-                      label(for="star2" title="2 sao - Kém") ★
-                      input#star1(type="radio" name="rating" value="1")
-                      label(for="star1" title="1 sao - Rất tệ") ★
+                    label.review-label
+                      i.fa-solid.fa-star
+                      span Chọn số sao đánh giá:
+                    .rating-interactive-wrap
+                      .star-rating-select
+                        input#star5(type="radio" name="rating" value="5" checked)
+                        label(for="star5" title="5 sao - Tuyệt vời") ★
+                        input#star4(type="radio" name="rating" value="4")
+                        label(for="star4" title="4 sao - Rất tốt") ★
+                        input#star3(type="radio" name="rating" value="3")
+                        label(for="star3" title="3 sao - Bình thường") ★
+                        input#star2(type="radio" name="rating" value="2")
+                        label(for="star2" title="2 sao - Kém") ★
+                        input#star1(type="radio" name="rating" value="1")
+                        label(for="star1" title="1 sao - Rất tệ") ★
+                      span.rating-hint#ratingHint Tuyệt vời (5/5 sao)
 
-                  .form-group
-                    label(for="reviewComment") Nhận xét chi tiết:
-                    textarea#reviewComment.form-control(name="comment" rows="3" placeholder="Chia sẻ cảm nhận về chất liệu, độ vừa vặn, độ bền của sản phẩm..." required)
+                  .form-group.review-comment-group
+                    label.review-label(for="reviewComment")
+                      i.fa-solid.fa-comment-dots
+                      span Nhận xét (Không bắt buộc):
+                    textarea#reviewComment.review-textarea(name="comment", rows="3", placeholder="Chia sẻ cảm nhận về chất liệu, độ vừa vặn, độ bền và trải nghiệm thi đấu (không bắt buộc)...")
 
-                  .form-group
-                    label Tải ảnh thực tế (Tối đa 3 ảnh):
-                    input#reviewImages(type="file" name="images" multiple accept="image/*" class="form-control-file")
+                  .form-group.review-upload-group
+                    label.review-label
+                      i.fa-solid.fa-camera
+                      span Tải ảnh thực tế (Tối đa 3 ảnh):
+                    .custom-file-upload
+                      input#reviewImages(type="file" name="images" multiple accept="image/*" class="review-file-input")
+                      label.file-upload-dropzone(for="reviewImages")
+                        .dropzone-icon
+                          i.fa-solid.fa-cloud-arrow-up
+                        .dropzone-text
+                          span.dropzone-primary#dropzoneText Nhấn để chọn ảnh từ thiết bị
+                          span.dropzone-sub Định dạng JPG, PNG, WEBP (Tối đa 3 ảnh)
+                      .preview-images-grid#reviewImagesPreview
 
-                  button.btn-submit-review(type="submit")
-                    i.fa-solid.fa-paper-plane
-                    | GỬI ĐÁNH GIÁ NGAY
+                  .form-actions-review
+                    button.btn-submit-review(type="submit")
+                      i.fa-solid.fa-paper-plane
+                      span GỬI ĐÁNH GIÁ NGAY
             else
               .login-to-review-alert
                 i.fa-solid.fa-lock
@@ -127,8 +147,9 @@ block main
                       - for (var i = 1; i <= 5; i++)
                         i.fa-solid.fa-star(class=(i <= item.rating ? 'filled' : 'empty'))
 
-                    .review-item__content
-                      p #{item.comment}
+                    if item.comment && item.comment.trim()
+                      .review-item__content
+                        p #{item.comment}
 
                     if item.images && item.images.length > 0
                       .review-item__gallery
@@ -137,8 +158,10 @@ block main
                             img(src=rImg alt="Ảnh đánh giá")
               else
                 .no-reviews-box
-                  i.fa-regular.fa-comment-dots
-                  p Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên trải nghiệm và để lại nhận xét!
+                  .empty-icon-wrap
+                    i.fa-regular.fa-comments
+                  h5 Chưa có đánh giá nào cho sản phẩm này
+                  p Hãy là người đầu tiên trải nghiệm và chia sẻ cảm nhận thực tế để nhận thêm ưu đãi từ TitiSport!
 
         // --- CỘT PHẢI: FORM ĐẶT HÀNG ---
         .detail-right
@@ -153,18 +176,21 @@ block main
                 
                 .product-meta-top
                   .stars
-                    - for (var i = 1; i <= 5; i++)
-                      i.fa-solid.fa-star(class=(i <= Math.round(parseFloat(avgRating)) ? 'filled' : 'empty'))
-                    span.rating-score-text #{avgRating} (#{totalReviews} đánh giá)
+                    .star-icons
+                      - for (var i = 1; i <= 5; i++)
+                        i.fa-solid.fa-star(class=(i <= Math.round(parseFloat(avgRating)) ? 'filled' : 'empty'))
+                    span.rating-score-text
+                      strong.score-num #{avgRating}
+                      span.reviews-count (#{totalReviews} đánh giá)
                   if productDetail.brand
-                    span.divider |
+                    span.meta-divider •
                     .brand-info
-                      span Thương hiệu: 
-                      strong #{productDetail.brand}
-                  span.divider |
-                  .status
-                    i.fa-solid.fa-check-circle
-                    | Còn hàng
+                      span.brand-label Thương hiệu: 
+                      strong.brand-name #{productDetail.brand}
+                  span.meta-divider •
+                  .stock-status-pill
+                    i.fa-solid.fa-circle-check
+                    span Còn hàng
 
               .price-wrap(data-base-price=productDetail.price data-base-price-new=(productDetail.priceNew || productDetail.price))
                 if productDetail.discountPercentage > 0
@@ -209,18 +235,21 @@ block main
                     p.text-danger Sản phẩm tạm hết hàng.
 
               .form-group.qty-selection
-                label Số lượng
+                label.qty-label Số lượng
                 
                 - var initialStock = productDetail.sizes && productDetail.sizes.length > 0 ? productDetail.sizes[firstAvailableIndex].stock : 0;
                 
                 .qty-control-wrapper
                   .qty-custom
-                    button.btn-qty-custom.minus(type="button") -
-                    input#quantity(type="text",name="quantity", value="1", readonly)
-                    button.btn-qty-custom.plus(type="button") +
+                    button.btn-qty-custom.minus(type="button", aria-label="Giảm số lượng")
+                      i.fa-solid.fa-minus
+                    input#quantity(type="text", name="quantity", value="1", readonly)
+                    button.btn-qty-custom.plus(type="button", aria-label="Tăng số lượng")
+                      i.fa-solid.fa-plus
                   
                   .stock-status-container
                     span.stock-info#stock-info-wrap(style=(initialStock <= 3 ? "display: none;" : "display: inline-flex;"))
+                      i.fa-solid.fa-circle-check
                       span.stock-text Còn
                       strong#current-stock #{initialStock}
                       span.stock-unit sản phẩm
@@ -237,36 +266,39 @@ block main
                         span.pill-text Chỉ còn #{initialStock} sản phẩm!
 
               .detail-action-buttons
-                button.btn-submit-cart(type="submit" id="btnAddToCart")
-                  i.fa-solid.fa-cart-plus
+                button.btn-submit-cart(type="submit", id="btnAddToCart")
+                  i.fa-solid.fa-cart-shopping
                   span Thêm Vào Giỏ Hàng
-                button.btn-wishlist-detail(
-                  type="button"
-                  id="btnWishlistDetail"
-                  data-id=(productDetail.id || productDetail._id)
-                  data-title=productDetail.title
-                  data-slug=productDetail.slug
-                  data-price=(productDetail.priceNew || productDetail.price)
-                  data-price-old=productDetail.price
-                  data-thumbnail=productDetail.thumbnail
-                  title="Thêm vào danh sách yêu thích"
-                )
-                  i.fa-regular.fa-heart
-                  span Yêu thích
-                button.btn-compare-detail(
-                  type="button"
-                  id="btnCompareDetail"
-                  data-id=(productDetail.id || productDetail._id)
-                  data-title=productDetail.title
-                  data-slug=productDetail.slug
-                  data-price=(productDetail.priceNew || productDetail.price)
-                  data-price-old=productDetail.price
-                  data-thumbnail=productDetail.thumbnail
-                  data-brand=(productDetail.brand || "CHÍNH HÃNG")
-                  title="Thêm vào danh sách so sánh"
-                )
-                  i.fa-solid.fa-code-compare
-                  span So sánh
+                
+                .detail-secondary-actions
+                  button.btn-wishlist-detail(
+                    type="button"
+                    id="btnWishlistDetail"
+                    data-id=(productDetail.id || productDetail._id)
+                    data-title=productDetail.title
+                    data-slug=productDetail.slug
+                    data-price=(productDetail.priceNew || productDetail.price)
+                    data-price-old=productDetail.price
+                    data-thumbnail=productDetail.thumbnail
+                    title="Thêm vào danh sách yêu thích"
+                  )
+                    i.fa-regular.fa-heart
+                    span Yêu thích
+                  
+                  button.btn-compare-detail(
+                    type="button"
+                    id="btnCompareDetail"
+                    data-id=(productDetail.id || productDetail._id)
+                    data-title=productDetail.title
+                    data-slug=productDetail.slug
+                    data-price=(productDetail.priceNew || productDetail.price)
+                    data-price-old=productDetail.price
+                    data-thumbnail=productDetail.thumbnail
+                    data-brand=(productDetail.brand || "CHÍNH HÃNG")
+                    title="Thêm vào danh sách so sánh"
+                  )
+                    i.fa-solid.fa-code-compare
+                    span So sánh
 
               .trust-badges
                 .trust-item

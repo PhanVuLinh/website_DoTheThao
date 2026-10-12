@@ -3,48 +3,112 @@ include ../mixins/product-item.pug
 
 block main
   //- ==========================================
-  //- 1. BANNER CHÍNH ĐẦU TRANG
+  //- 1. BANNER CHÍNH & HERO CAROUSEL TRANG CHỦ
   //- ==========================================
-  section.hero
-    img.hero__img(src=(settingWebsiteInfo.heroImage ? settingWebsiteInfo.heroImage : "") alt=settingWebsiteInfo.websiteName)
-    .hero__overlay
-    .hero__container 
-      .hero__content
-        if settingWebsiteInfo.heroBadge
-          .hero__badge 
-            i.fa-solid.fa-trophy
-            | #{settingWebsiteInfo.heroBadge}
-            
-        h1.hero__title !{settingWebsiteInfo.heroTitle || "BỨT PHÁ<br>MỌI GIỚI HẠN"}
-        p.hero__description #{settingWebsiteInfo.heroDescription || "Trải nghiệm đẳng cấp với bộ sưu tập thể thao chính hãng mới nhất. Chất lượng vượt trội, thiết kế tối ưu cho mọi chuyển động."}
-        
-        .hero__cta-group
-          a.btn-hero-primary(href=(settingWebsiteInfo && settingWebsiteInfo.heroBtnLink ? settingWebsiteInfo.heroBtnLink : "/product"))
-            | #{settingWebsiteInfo && settingWebsiteInfo.heroBtnText ? settingWebsiteInfo.heroBtnText : "Khám Phá Ngay"}
-            i.fa-solid.fa-arrow-right
-          if couponList && couponList.length > 0
-            a.btn-hero-secondary(href="#voucher-vault")
-              i.fa-solid.fa-ticket
-              | Săn Voucher Hot
+  - var activeHeroSlides = (settingWebsiteInfo && settingWebsiteInfo.heroSlides && settingWebsiteInfo.heroSlides.length > 0) ? settingWebsiteInfo.heroSlides : [{ badge: (settingWebsiteInfo && settingWebsiteInfo.heroBadge ? settingWebsiteInfo.heroBadge : "🏆 THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG"), title: (settingWebsiteInfo && settingWebsiteInfo.heroTitle ? settingWebsiteInfo.heroTitle : "BỨT PHÁ<br>MỌI GIỚI HẠN"), description: (settingWebsiteInfo && settingWebsiteInfo.heroDescription ? settingWebsiteInfo.heroDescription : "Trải nghiệm đẳng cấp với bộ sưu tập thể thao chính hãng mới nhất. Chất lượng vượt trội, thiết kế tối ưu cho mọi chuyển động."), btnText: (settingWebsiteInfo && settingWebsiteInfo.heroBtnText ? settingWebsiteInfo.heroBtnText : "Khám Phá Ngay"), btnLink: (settingWebsiteInfo && settingWebsiteInfo.heroBtnLink ? settingWebsiteInfo.heroBtnLink : "/product"), secondaryBtnText: "Săn Voucher Hot", secondaryBtnLink: "#voucher-vault", image: (settingWebsiteInfo ? settingWebsiteInfo.heroImage : ""), showcaseTag: "🔥 BEST SELLER MÙA GIẢI", showcaseTitle: "Nike Mercurial Superfly 9 Elite FG", showcasePrice: "2.450.000đ", showcaseOldPrice: "3.200.000đ", showcaseImage: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80", showcaseLink: "/product" }, { badge: "⚡ BẢO VỆ & BẬT NHẢY ĐỈNH CAO", title: "BẬT CAO<br>CHINH PHỤC ĐỈNH", description: "Dụng cụ và giày bóng chuyền chuyên nghiệp chuẩn thi đấu quốc tế. Êm ái, đàn hồi và bảo vệ khớp cổ chân tối đa.", btnText: "Xem Đồ Bóng Chuyền", btnLink: "/category/bong-chuyen", secondaryBtnText: "Ưu Đãi Hôm Nay", secondaryBtnLink: "#voucher-vault", image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&auto=format&fit=crop&q=80", showcaseTag: "⚡ GIỜ VÀNG GIÁ SỐC", showcaseTitle: "Mizuno Wave Momentum 3 Pro", showcasePrice: "2.450.000đ", showcaseOldPrice: "2.850.000đ", showcaseImage: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=600&auto=format&fit=crop&q=80", showcaseLink: "/product" }]
 
-        .hero__search-box
-          form.hero-search-form(form-search)
-            i.fa-solid.fa-magnifying-glass.icon-search
-            input(placeholder="Tìm kiếm giày bóng đá, bóng chuyền, áo đấu..." type="text" name="keyword" keyword)
-            button(type="submit") Tìm Kiếm
+  section.hero.hero-carousel-section
+    .swiper.hero-swiper
+      .swiper-wrapper
+        each slide, idx in activeHeroSlides
+          .swiper-slide.hero-slide
+            if slide.image
+              img.hero__img(src=slide.image alt=(slide.title ? slide.title.replace(/<[^>]*>/g, '') : "Banner TitiSport"))
+            else if settingWebsiteInfo && settingWebsiteInfo.heroImage
+              img.hero__img(src=settingWebsiteInfo.heroImage alt="Banner TitiSport")
+            else
+              .hero__placeholder-bg
+            .hero__overlay
+            .hero__container.container
+              .hero__grid-layout
+                //- CỘT 1: NỘI DUNG VÀ TƯƠNG TÁC
+                .hero__content
+                  if slide.badge
+                    .hero__badge 
+                      i.fa-solid.fa-trophy
+                      span !{slide.badge}
+                      
+                  h1.hero__title !{slide.title || "BỨT PHÁ<br>MỌI GIỚI HẠN"}
+                  p.hero__description #{slide.description || "Trải nghiệm đẳng cấp với bộ sưu tập thể thao chính hãng mới nhất. Chất lượng vượt trội, thiết kế tối ưu cho mọi chuyển động."}
+                  
+                  .hero__cta-group
+                    a.btn-hero-primary(href=(slide.btnLink || "/product"))
+                      span #{slide.btnText || "Khám Phá Ngay"}
+                      i.fa-solid.fa-arrow-right
+                    if slide.secondaryBtnText
+                      a.btn-hero-secondary(href=(slide.secondaryBtnLink || "#voucher-vault"))
+                        i.fa-solid.fa-ticket
+                        span #{slide.secondaryBtnText}
 
-        .hero__stats-pill
-          .stat-item
-            i.fa-solid.fa-certificate
-            span 100% Chính Hãng
-          .stat-divider
-          .stat-item
-            i.fa-solid.fa-truck-bolt
-            span Giao Nhanh 2H
-          .stat-divider
-          .stat-item
-            i.fa-solid.fa-arrow-rotate-left
-            span Đổi Trả 30 Ngày
+                  .hero__search-box
+                    form.hero-search-form(action="/search" method="GET" form-search)
+                      i.fa-solid.fa-magnifying-glass.icon-search
+                      input(placeholder="Tìm kiếm giày bóng đá, bóng chuyền, áo đấu..." type="text" name="keyword" keyword)
+                      button(type="submit") Tìm Kiếm
+
+                  .hero__stats-pill
+                    .stat-item
+                      i.fa-solid.fa-certificate
+                      span 100% Chính Hãng
+                    .stat-divider
+                    .stat-item
+                      i.fa-solid.fa-truck-bolt
+                      span Giao Nhanh 2H
+                    .stat-divider
+                    .stat-item
+                      i.fa-solid.fa-arrow-rotate-left
+                      span Đổi Trả 30 Ngày
+
+                //- CỘT 2: THẺ SPOTLIGHT 3D GLASSMORPHISM PHÁT SÁNG LƠ LỬNG
+                .hero__visual-column
+                  .hero-spotlight-card
+                    .spotlight-glow-layer
+                    .spotlight-card-header
+                      if slide.showcaseTag
+                        .spotlight-tag-badge
+                          i.fa-solid.fa-bolt
+                          span #{slide.showcaseTag}
+                    if slide.showcaseImage
+                      .spotlight-image-holder
+                        img(src=slide.showcaseImage alt=(slide.showcaseTitle || "Sản phẩm nổi bật") loading="lazy")
+                    .spotlight-info-box
+                      h3.spotlight-item-name #{slide.showcaseTitle || "Sản Phẩm Thể Thao Mới Nhất"}
+                      .spotlight-price-row
+                        if slide.showcasePrice
+                          span.current-price #{slide.showcasePrice}
+                        if slide.showcaseOldPrice
+                          span.original-price #{slide.showcaseOldPrice}
+                        .spotlight-stars
+                          i.fa-solid.fa-star
+                          i.fa-solid.fa-star
+                          i.fa-solid.fa-star
+                          i.fa-solid.fa-star
+                          i.fa-solid.fa-star
+                      a.btn-spotlight-view(href=(slide.showcaseLink || "/product"))
+                        span Khám Phá Ngay
+                        i.fa-solid.fa-arrow-right-long
+
+                  //- Floating Mini Badges
+                  .floating-feature-badge.floating-feature-badge--top
+                    .badge-icon-circle
+                      i.fa-solid.fa-fire
+                    .badge-text-wrap
+                      strong Ưu Đãi Hấp Dẫn
+                      span Giảm đến 50% hôm nay
+                  
+                  .floating-feature-badge.floating-feature-badge--bottom
+                    .badge-icon-circle
+                      i.fa-solid.fa-shield-halved
+                    .badge-text-wrap
+                      strong Bảo Hành Chính Hãng
+                      span Đổi mới trong 30 ngày
+
+      //- Swiper Điều Hướng
+      .hero-swiper-pagination
+      .hero-nav-arrow.hero-nav-arrow--prev(aria-label="Slide trước")
+        i.fa-solid.fa-chevron-left
+      .hero-nav-arrow.hero-nav-arrow--next(aria-label="Slide tiếp theo")
+        i.fa-solid.fa-chevron-right
 
   //- ==========================================
   //- 2. CHÍNH SÁCH & CAM KẾT VỚI KHÁCH HÀNG

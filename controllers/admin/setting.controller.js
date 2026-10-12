@@ -30,30 +30,129 @@ module.exports.websiteInfo = async (req, res) => {
 };
 
 module.exports.websiteInfoPatch = async (req, res) => {
-  if (req.files && req.files.logo) {
-    req.body.logo = req.files.logo[0].path;
+  const fileMap = {};
+  if (Array.isArray(req.files)) {
+    req.files.forEach((file) => {
+      fileMap[file.fieldname] = file.path;
+    });
+  } else if (req.files) {
+    Object.keys(req.files).forEach((key) => {
+      if (req.files[key] && req.files[key][0]) {
+        fileMap[key] = req.files[key][0].path;
+      }
+    });
+  }
+
+  if (fileMap.logo) {
+    req.body.logo = fileMap.logo;
   } else {
     delete req.body.logo;
   }
-  if (req.files && req.files.favicon) {
-    req.body.favicon = req.files.favicon[0].path;
+  if (fileMap.favicon) {
+    req.body.favicon = fileMap.favicon;
   } else {
     delete req.body.favicon;
   }
-  if (req.files && req.files.heroImage) {
-    req.body.heroImage = req.files.heroImage[0].path;
+  if (fileMap.heroImage) {
+    req.body.heroImage = fileMap.heroImage;
   } else {
     delete req.body.heroImage;
   }
-  if (req.files && req.files.promoBannerImage) {
-    req.body.promoBannerImage = req.files.promoBannerImage[0].path;
+  if (fileMap.promoBannerImage) {
+    req.body.promoBannerImage = fileMap.promoBannerImage;
   } else {
     delete req.body.promoBannerImage;
   }
-  if (req.files && req.files.bankQrCode) {
-    req.body.bankQrCode = req.files.bankQrCode[0].path;
+  if (fileMap.bankQrCode) {
+    req.body.bankQrCode = fileMap.bankQrCode;
   } else {
     delete req.body.bankQrCode;
+  }
+
+  // Xử lý danh sách Hero Carousel Slides (Nhiều Banner Trang Chủ)
+  if (req.body.heroSlide_title !== undefined) {
+    const titles = Array.isArray(req.body.heroSlide_title)
+      ? req.body.heroSlide_title
+      : [req.body.heroSlide_title];
+    const badges = Array.isArray(req.body.heroSlide_badge)
+      ? req.body.heroSlide_badge
+      : [req.body.heroSlide_badge];
+    const descs = Array.isArray(req.body.heroSlide_desc)
+      ? req.body.heroSlide_desc
+      : [req.body.heroSlide_desc];
+    const btnTexts = Array.isArray(req.body.heroSlide_btnText)
+      ? req.body.heroSlide_btnText
+      : [req.body.heroSlide_btnText];
+    const btnLinks = Array.isArray(req.body.heroSlide_btnLink)
+      ? req.body.heroSlide_btnLink
+      : [req.body.heroSlide_btnLink];
+    const secBtnTexts = Array.isArray(req.body.heroSlide_secBtnText)
+      ? req.body.heroSlide_secBtnText
+      : [req.body.heroSlide_secBtnText];
+    const secBtnLinks = Array.isArray(req.body.heroSlide_secBtnLink)
+      ? req.body.heroSlide_secBtnLink
+      : [req.body.heroSlide_secBtnLink];
+    const currentImages = Array.isArray(req.body.heroSlide_currentImage)
+      ? req.body.heroSlide_currentImage
+      : [req.body.heroSlide_currentImage];
+    const showcaseTags = Array.isArray(req.body.heroSlide_showcaseTag)
+      ? req.body.heroSlide_showcaseTag
+      : [req.body.heroSlide_showcaseTag];
+    const showcaseTitles = Array.isArray(req.body.heroSlide_showcaseTitle)
+      ? req.body.heroSlide_showcaseTitle
+      : [req.body.heroSlide_showcaseTitle];
+    const showcasePrices = Array.isArray(req.body.heroSlide_showcasePrice)
+      ? req.body.heroSlide_showcasePrice
+      : [req.body.heroSlide_showcasePrice];
+    const showcaseOldPrices = Array.isArray(req.body.heroSlide_showcaseOldPrice)
+      ? req.body.heroSlide_showcaseOldPrice
+      : [req.body.heroSlide_showcaseOldPrice];
+    const showcaseLinks = Array.isArray(req.body.heroSlide_showcaseLink)
+      ? req.body.heroSlide_showcaseLink
+      : [req.body.heroSlide_showcaseLink];
+    const currentShowcaseImages = Array.isArray(req.body.heroSlide_currentShowcaseImage)
+      ? req.body.heroSlide_currentShowcaseImage
+      : [req.body.heroSlide_currentShowcaseImage];
+
+    const parsedSlides = [];
+    for (let i = 0; i < titles.length; i++) {
+      if (!titles[i] && !currentImages[i] && !fileMap[`heroSlide_image_${i}`]) {
+        continue;
+      }
+      const slideImg = fileMap[`heroSlide_image_${i}`] || currentImages[i] || "";
+      const scImg = fileMap[`heroSlide_showcaseImage_${i}`] || currentShowcaseImages[i] || "";
+
+      parsedSlides.push({
+        badge: badges[i] || "",
+        title: titles[i] || "",
+        description: descs[i] || "",
+        btnText: btnTexts[i] || "Khám Phá Ngay",
+        btnLink: btnLinks[i] || "/product",
+        secondaryBtnText: secBtnTexts[i] || "",
+        secondaryBtnLink: secBtnLinks[i] || "",
+        image: slideImg,
+        showcaseTag: showcaseTags[i] || "",
+        showcaseTitle: showcaseTitles[i] || "",
+        showcasePrice: showcasePrices[i] || "",
+        showcaseOldPrice: showcaseOldPrices[i] || "",
+        showcaseImage: scImg,
+        showcaseLink: showcaseLinks[i] || "/product",
+      });
+    }
+
+    req.body.heroSlides = parsedSlides;
+
+    // Đồng bộ ngược sang các trường hero* gốc để tương thích
+    if (parsedSlides.length > 0) {
+      req.body.heroBadge = parsedSlides[0].badge;
+      req.body.heroTitle = parsedSlides[0].title;
+      req.body.heroDescription = parsedSlides[0].description;
+      req.body.heroBtnText = parsedSlides[0].btnText;
+      req.body.heroBtnLink = parsedSlides[0].btnLink;
+      if (parsedSlides[0].image) {
+        req.body.heroImage = parsedSlides[0].image;
+      }
+    }
   }
 
   // Xử lý các trường boolean checkbox

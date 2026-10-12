@@ -18,13 +18,7 @@ router.get("/website-info", authMiddleware.checkPermission("setting_view"), sett
 router.patch(
   "/website-info",
   authMiddleware.checkPermission("setting_edit"),
-  upload.fields([
-    { name: "logo", maxCount: 1 },
-    { name: "favicon", maxCount: 1 },
-    { name: "heroImage", maxCount: 1 },
-    { name: "promoBannerImage", maxCount: 1 },
-    { name: "bankQrCode", maxCount: 1 },
-  ]),
+  upload.any(),
   settingController.websiteInfoPatch,
 );
 

@@ -32,6 +32,26 @@ const settingwebsiteInfoSchema = new mongoose.Schema(
     heroBtnText: String,
     heroBtnLink: String,
 
+    // Danh sách các Slide Banner Hero (Carousel nhiều ảnh & thẻ nổi bật)
+    heroSlides: [
+      {
+        badge: String,
+        title: String,
+        description: String,
+        btnText: String,
+        btnLink: String,
+        secondaryBtnText: String,
+        secondaryBtnLink: String,
+        image: String,
+        showcaseTag: String,
+        showcaseTitle: String,
+        showcasePrice: String,
+        showcaseOldPrice: String,
+        showcaseImage: String,
+        showcaseLink: String,
+      },
+    ],
+
     // Banner Quảng Cáo Khuyến Mãi (Giữa trang)
     promoBannerImage: String,
     promoBannerTitle: String,

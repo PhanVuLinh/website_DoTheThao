@@ -43,7 +43,7 @@ block main
                 h4 Email hỗ trợ
                 p
                   if settingWebsiteInfo && settingWebsiteInfo.email
-                    a.link-email(href=`mailto:${settingWebsiteInfo.email}`) #{settingWebsiteInfo.email}
+                    a.link-email(href=`mailto:${settingWebsiteInfo.email}` title=settingWebsiteInfo.email) #{settingWebsiteInfo.email}
                   else
                     span hotro@sportstore.vn
 
@@ -52,14 +52,23 @@ block main
                 i.fa-solid.fa-clock
               .contact-card__body
                 h4 Giờ mở cửa
-                p #{settingWebsiteInfo && settingWebsiteInfo.workingHours ? settingWebsiteInfo.workingHours : "08:00 - 22:00 (Tất cả các ngày)"}
+                p.contact-hours-text
+                  if settingWebsiteInfo && settingWebsiteInfo.workingHours
+                    - var hoursParts = settingWebsiteInfo.workingHours.split('(');
+                    span.main-hours #{hoursParts[0].trim()}
+                    if hoursParts.length > 1
+                      span.sub-hours (#{hoursParts[1]}
+                  else
+                    span.main-hours 08:00 - 22:00
+                    span.sub-hours (Tất cả các ngày)
 
             .contact-card
               .contact-card__icon.address
                 i.fa-solid.fa-location-dot
               .contact-card__body
                 h4 Địa chỉ
-                p #{settingWebsiteInfo && settingWebsiteInfo.address ? settingWebsiteInfo.address : "Hệ thống cửa hàng thể thao trên toàn quốc"}
+                p.contact-address-text(title=(settingWebsiteInfo && settingWebsiteInfo.address ? settingWebsiteInfo.address : "Hệ thống cửa hàng thể thao trên toàn quốc"))
+                  | #{settingWebsiteInfo && settingWebsiteInfo.address ? settingWebsiteInfo.address : "Hệ thống cửa hàng thể thao trên toàn quốc"}
 
           //- Kênh mạng xã hội
           if settingWebsiteInfo && (settingWebsiteInfo.facebook || settingWebsiteInfo.instagram || settingWebsiteInfo.tiktok || settingWebsiteInfo.youtube || settingWebsiteInfo.zalo)

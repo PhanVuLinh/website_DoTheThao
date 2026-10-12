@@ -26,8 +26,8 @@ module.exports.createPost = async (req, res) => {
 
     const { productId, rating, comment } = req.body;
 
-    if (!productId || !comment) {
-      req.flash("error", "Vui lòng nhập đầy đủ nội dung đánh giá!");
+    if (!productId) {
+      req.flash("error", "Sản phẩm không hợp lệ!");
       return res.redirect(req.get("Referer") || "/");
     }
 
@@ -61,7 +61,7 @@ module.exports.createPost = async (req, res) => {
       fullName: user.fullName || "Khách hàng SportStore",
       avatar: user.avatar || "/client/assets/images/default-avatar.png",
       rating: Math.min(5, Math.max(1, parseInt(rating) || 5)),
-      comment: comment.trim(),
+      comment: (comment && typeof comment === "string") ? comment.trim() : "",
       images: images,
       isVerifiedBuyer: isVerifiedBuyer,
       status: "active",

@@ -27,8 +27,8 @@ block main
         i.fa-solid.fa-store
         span 1. Thông Tin Cửa Hàng
       button.tab-nav-btn(type="button" data-tab="tab-hero")
-        i.fa-solid.fa-image
-        span 2. Banner Trang Chủ
+        i.fa-solid.fa-images
+        span 2. Slider Banner Trang Chủ
       button.tab-nav-btn(type="button" data-tab="tab-trust")
         i.fa-solid.fa-shield-halved
         span 3. Chính Sách & Cam Kết
@@ -132,52 +132,126 @@ block main
                 i.fa-solid.fa-arrow-right
 
         //- ========================================================
-        //- PHẦN 2: BANNER CHÍNH TRANG CHỦ
+        //- PHẦN 2: BANNER CHÍNH & SLIDER HERO TRANG CHỦ
         //- ========================================================
         .settings-tab-pane#tab-hero
           .pane-header
             .pane-header-icon.hero
-              i.fa-solid.fa-image
+              i.fa-solid.fa-images
             .pane-header-info
-              h3 2. Banner Chính Trang Chủ
-              p Tùy chỉnh thông điệp và hình ảnh nổi bật nhất khi khách hàng vừa vào website.
+              h3 2. Hệ Thống Slider Banner & Hero Carousel Trang Chủ
+              p Quản lý các slide banner xoay vòng trên trang chủ. Mỗi slide bao gồm thông điệp và Thẻ Sản Phẩm/Hot Deal 3D Glassmorphism bên phải.
 
-          .form-row-2
-            .form-group
-              label Dòng chữ nổi bật trên banner
-              input.form-control(type="text" name="heroBadge" value=(settingWebsiteInfo ? settingWebsiteInfo.heroBadge : "") placeholder="Ví dụ: THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG")
-            
-            .form-group
-              label Tiêu đề chính của banner
-              input.form-control(type="text" name="heroTitle" value=(settingWebsiteInfo ? settingWebsiteInfo.heroTitle : "") placeholder="Ví dụ: BỨT PHÁ MỌI GIỚI HẠN")
+          - var initialSlides = (settingWebsiteInfo && settingWebsiteInfo.heroSlides && settingWebsiteInfo.heroSlides.length > 0) ? settingWebsiteInfo.heroSlides : [{ badge: (settingWebsiteInfo && settingWebsiteInfo.heroBadge ? settingWebsiteInfo.heroBadge : "🏆 THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG"), title: (settingWebsiteInfo && settingWebsiteInfo.heroTitle ? settingWebsiteInfo.heroTitle : "BỨT PHÁ<br>MỌI GIỚI HẠN"), description: (settingWebsiteInfo && settingWebsiteInfo.heroDescription ? settingWebsiteInfo.heroDescription : "Trải nghiệm đẳng cấp với bộ sưu tập thể thao chính hãng mới nhất. Chất lượng vượt trội, thiết kế tối ưu cho mọi chuyển động."), btnText: (settingWebsiteInfo && settingWebsiteInfo.heroBtnText ? settingWebsiteInfo.heroBtnText : "Khám Phá Ngay"), btnLink: (settingWebsiteInfo && settingWebsiteInfo.heroBtnLink ? settingWebsiteInfo.heroBtnLink : "/product"), secondaryBtnText: "Săn Voucher Hot", secondaryBtnLink: "#voucher-vault", image: (settingWebsiteInfo ? settingWebsiteInfo.heroImage : ""), showcaseTag: "🔥 BEST SELLER MÙA GIẢI", showcaseTitle: "Nike Mercurial Superfly 9 Elite FG", showcasePrice: "2.450.000đ", showcaseOldPrice: "3.200.000đ", showcaseLink: "/product", showcaseImage: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80" }]
 
-          .form-group
-            label Đoạn giới thiệu ngắn
-            textarea.form-control(name="heroDescription" rows="2" placeholder="Ví dụ: Trải nghiệm đẳng cấp với bộ sưu tập thể thao chính hãng mới nhất...") #{settingWebsiteInfo ? settingWebsiteInfo.heroDescription : ""}
+          .hero-slides-wrapper#hero-slides-container
+            each s, idx in initialSlides
+              .hero-slide-config-card(data-slide-index=idx)
+                .slide-card-header
+                  .slide-card-title
+                    span.slide-number-badge Slide ##{idx + 1}
+                    strong.slide-title-preview #{s.title ? s.title.replace(/<[^>]*>/g, ' ') : 'Banner Slide'}
+                  if idx > 0
+                    button.btn-delete-slide(type="button" title="Xóa slide này")
+                      i.fa-solid.fa-trash-can
+                      | Xóa slide
 
-          .form-row-2
-            .form-group
-              label Tên nút bấm xem hàng
-              input.form-control(type="text" name="heroBtnText" value=(settingWebsiteInfo ? settingWebsiteInfo.heroBtnText : "") placeholder="Ví dụ: Khám Phá Ngay, Mua Ngay")
-            
-            .form-group
-              label Đường dẫn khi khách bấm nút (Link URL)
-              input.form-control(type="text" name="heroBtnLink" value=(settingWebsiteInfo ? settingWebsiteInfo.heroBtnLink : "") placeholder="Ví dụ: /product (Trang sản phẩm)")
+                .slide-card-body
+                  .slide-section-label
+                    i.fa-solid.fa-align-left
+                    span 1. Nội dung thông điệp thể thao (Bên trái)
+                  
+                  .form-row-2
+                    .form-group
+                      label Dòng chữ nổi bật (Badge)
+                      input.form-control(type="text" name="heroSlide_badge" value=s.badge placeholder="Ví dụ: 🏆 THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG")
+                    
+                    .form-group
+                      label Tiêu đề chính (Title)
+                      input.form-control(type="text" name="heroSlide_title" value=s.title placeholder="Ví dụ: BỨT PHÁ<br>MỌI GIỚI HẠN")
 
-          .form-group.upload-row
-            label Hình ảnh banner chính (Khuyên dùng ảnh khổ ngang 1920x700px rõ nét)
-            .upload-image-wrapper(upload-image-wrapper)
-              input#hero-upload.hidden-input(upload-image-input type="file" name="heroImage" accept="image/*")
-              label.upload-box(for="hero-upload" upload-image-label class=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? "hidden" : ""))
-                i.fa-solid.fa-plus
-              .image-preview-container(upload-image-preview-container class=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? "" : "hidden"))
-                img(upload-image-preview src=(settingWebsiteInfo && settingWebsiteInfo.heroImage ? settingWebsiteInfo.heroImage : "") alt="Xem trước banner chính")
-                button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
-                  i.fa-solid.fa-xmark
+                  .form-group
+                    label Đoạn giới thiệu ngắn (Description)
+                    textarea.form-control(name="heroSlide_desc" rows="2" placeholder="Ví dụ: Trải nghiệm đẳng cấp với bộ sưu tập thể thao chính hãng mới nhất...") #{s.description}
+
+                  .form-row-2
+                    .form-group
+                      label Nút chính (Button 1)
+                      input.form-control(type="text" name="heroSlide_btnText" value=(s.btnText || "Khám Phá Ngay") placeholder="Ví dụ: Khám Phá Ngay")
+                    
+                    .form-group
+                      label Link nút chính (URL 1)
+                      input.form-control(type="text" name="heroSlide_btnLink" value=(s.btnLink || "/product") placeholder="Ví dụ: /product")
+
+                  .form-row-2
+                    .form-group
+                      label Nút phụ (Button 2 - Tùy chọn)
+                      input.form-control(type="text" name="heroSlide_secBtnText" value=s.secondaryBtnText placeholder="Ví dụ: Săn Voucher Hot")
+                    
+                    .form-group
+                      label Link nút phụ (URL 2)
+                      input.form-control(type="text" name="heroSlide_secBtnLink" value=s.secondaryBtnLink placeholder="Ví dụ: #voucher-vault")
+
+                  .form-group.upload-row
+                    label Hình ảnh nền banner slide (Khuyên dùng ảnh khổ ngang 1920x800px)
+                    input(type="hidden" name="heroSlide_currentImage" value=(s.image || ""))
+                    .upload-image-wrapper(upload-image-wrapper)
+                      input.hidden-input(id=`slide-bg-${idx}` upload-image-input type="file" name=`heroSlide_image_${idx}` accept="image/*")
+                      label.upload-box(for=`slide-bg-${idx}` upload-image-label class=(s.image ? "hidden" : ""))
+                        i.fa-solid.fa-plus
+                      .image-preview-container(upload-image-preview-container class=(s.image ? "" : "hidden"))
+                        img(upload-image-preview src=s.image alt=`Xem trước slide ${idx + 1}`)
+                        button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                          i.fa-solid.fa-xmark
+
+                  hr.slide-inner-divider
+
+                  .slide-section-label
+                    i.fa-solid.fa-wand-magic-sparkles
+                    span 2. Thẻ Sản Phẩm / Hot Deal 3D Glassmorphism (Bên phải)
+
+                  .form-row-2
+                    .form-group
+                      label Huy hiệu thẻ (Tag)
+                      input.form-control(type="text" name="heroSlide_showcaseTag" value=(s.showcaseTag || "🔥 BEST SELLER MÙA GIẢI") placeholder="Ví dụ: 🔥 BEST SELLER, GIỜ VÀNG GIÁ SỐC")
+                    
+                    .form-group
+                      label Tên sản phẩm / Tiêu đề thẻ
+                      input.form-control(type="text" name="heroSlide_showcaseTitle" value=s.showcaseTitle placeholder="Ví dụ: Giày Bóng Đá Nike Mercurial Superfly 9")
+
+                  .form-row-2
+                    .form-group
+                      label Giá bán hiển thị
+                      input.form-control(type="text" name="heroSlide_showcasePrice" value=s.showcasePrice placeholder="Ví dụ: 2.450.000đ")
+                    
+                    .form-group
+                      label Giá cũ (Gạch ngang)
+                      input.form-control(type="text" name="heroSlide_showcaseOldPrice" value=s.showcaseOldPrice placeholder="Ví dụ: 3.200.000đ")
+
+                  .form-group
+                    label Link xem chi tiết sản phẩm
+                    input.form-control(type="text" name="heroSlide_showcaseLink" value=(s.showcaseLink || "/product") placeholder="Ví dụ: /product/giay-da-bong-nike-mercurial")
+
+                  .form-group.upload-row
+                    label Ảnh sản phẩm nổi bật trên thẻ (Ảnh giày, bóng, áo...)
+                    input(type="hidden" name="heroSlide_currentShowcaseImage" value=(s.showcaseImage || ""))
+                    .upload-image-wrapper(upload-image-wrapper)
+                      input.hidden-input(id=`slide-showcase-${idx}` upload-image-input type="file" name=`heroSlide_showcaseImage_${idx}` accept="image/*")
+                      label.upload-box(for=`slide-showcase-${idx}` upload-image-label class=(s.showcaseImage ? "hidden" : ""))
+                        i.fa-solid.fa-plus
+                      .image-preview-container(upload-image-preview-container class=(s.showcaseImage ? "" : "hidden"))
+                        img(upload-image-preview src=s.showcaseImage alt="Xem trước ảnh thẻ nổi bật")
+                        button.btn-remove-image(type="button" button-remove-image title="Xóa ảnh")
+                          i.fa-solid.fa-xmark
+
+          .add-slide-action-box
+            button.btn-add-slide#btnAddHeroSlide(type="button")
+              i.fa-solid.fa-plus-circle
+              | Thêm Slide Banner Mới
 
           .sports-hub-config-box
             h4
-              i.fa-solid.fa-table-cells-large
+              i.fa-solid.fa-layer-group
               | Cấu Hình 2 Danh Mục Thể Thao Nổi Bật Trang Chủ (Sports Hub)
             p Chọn 2 danh mục thể thao cấp cha để hiển thị tab lọc sản phẩm nhanh giữa trang chủ.
             .form-row-2
