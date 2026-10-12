@@ -630,9 +630,14 @@ if (searchInput && searchLiveDropdown) {
 
   const highlightMatch = (text, query) => {
     if (!text || !query) return escapeHtml(text);
-    const escapedQuery = escapeRegex(query.trim());
+    const tokens = query
+      .trim()
+      .split(/\s+/)
+      .filter((w) => w.length > 0)
+      .map(escapeRegex);
+    if (!tokens.length) return escapeHtml(text);
     try {
-      const regex = new RegExp(`(${escapedQuery})`, "gi");
+      const regex = new RegExp(`(${tokens.join("|")})`, "gi");
       const parts = text.split(regex);
       return parts
         .map((part) =>
