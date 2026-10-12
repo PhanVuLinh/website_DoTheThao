@@ -25,6 +25,17 @@ const orderSchema = new mongoose.Schema(
     paymentMethod: String,
     paymentStatus: String,
     status: String,
+    trackingCode: String,
+    shippingCarrier: {
+      type: String,
+      default: "Giao Hàng Nhanh (GHN)",
+    },
+    autoApproved: {
+      type: Boolean,
+      default: false,
+    },
+    approvedBy: String,
+    approvedAt: Date,
     cancelReason: String,
     cancelledBy: String,
     cancelledAt: Date,

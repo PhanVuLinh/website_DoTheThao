@@ -355,3 +355,24 @@ document.querySelectorAll(".btn-modal-remove").forEach((btn) => {
   });
 });
 
+// Xử lý tự động cuộn và làm nổi bật form thanh toán khi bấm "Mua Ngay"
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.location.hash === "#checkout-form") {
+    const checkoutCard = document.getElementById("checkout-form");
+    if (checkoutCard) {
+      setTimeout(() => {
+        checkoutCard.scrollIntoView({ behavior: "smooth", block: "start" });
+        checkoutCard.classList.add("checkout-card-highlight");
+        setTimeout(() => {
+          checkoutCard.classList.remove("checkout-card-highlight");
+        }, 3000);
+
+        const fullNameInput = document.getElementById("fullName");
+        if (fullNameInput && !fullNameInput.value) {
+          fullNameInput.focus();
+        }
+      }, 350);
+    }
+  }
+});
+

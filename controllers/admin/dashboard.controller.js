@@ -163,12 +163,116 @@ module.exports.dashboard = async (req, res) => {
   lowStockProducts.sort((a, b) => a.totalStock - b.totalStock);
   const lowStockDisplay = lowStockProducts.slice(0, 8);
 
+  // Section 5 - Top Sản Phẩm Bán Chạy Nhất & Phân tích chuyên sâu
+  const validOrders = await Order.find({
+    deleted: false,
+    status: { $ne: "cancel" },
+  }).lean();
+
+  const productSalesMap = {};
+  let totalValidRevenue = 0;
+  let totalItemsSold = 0;
+
+  for (const ord of validOrders) {
+    const ordTotal = ord.total || 0;
+    totalValidRevenue += ordTotal;
+
+    if (Array.isArray(ord.products)) {
+      for (const p of ord.products) {
+        if (!p.product_id) continue;
+        const pId = p.product_id.toString();
+        const qty = parseInt(p.quantity, 10) || 1;
+        const price = p.priceNew || p.price || 0;
+        const revenue = price * qty;
+
+        totalItemsSold += qty;
+
+        if (!productSalesMap[pId]) {
+          productSalesMap[pId] = {
+            productId: pId,
+            soldQuantity: 0,
+            totalRevenue: 0,
+          };
+        }
+        productSalesMap[pId].soldQuantity += qty;
+        productSalesMap[pId].totalRevenue += revenue;
+      }
+    }
+  }
+
+  const salesArray = Object.values(productSalesMap);
+  salesArray.sort((a, b) => b.soldQuantity - a.soldQuantity);
+
+  const topSellingProducts = [];
+  const topSlice = salesArray.slice(0, 5);
+
+  for (let i = 0; i < topSlice.length; i++) {
+    const item = topSlice[i];
+    const prodInfo = await Product.findOne({
+      _id: item.productId,
+      deleted: false,
+    })
+      .select("title slug thumbnail brand price priceNew")
+      .lean();
+
+    if (prodInfo) {
+      const percentage =
+        totalItemsSold > 0
+          ? Math.round((item.soldQuantity / totalItemsSold) * 100)
+          : 0;
+      topSellingProducts.push({
+        rank: i + 1,
+        title: prodInfo.title,
+        slug: prodInfo.slug,
+        thumbnail: prodInfo.thumbnail,
+        brand: prodInfo.brand || "TitiSport",
+        price: prodInfo.priceNew || prodInfo.price,
+        soldQuantity: item.soldQuantity,
+        totalRevenue: item.totalRevenue,
+        percentage: percentage,
+      });
+    }
+  }
+
+  // Thống kê phân bổ đơn hàng theo trạng thái & Chỉ số vận hành
+  const allOrders = await Order.find({ deleted: false }).lean();
+  const orderStatusCounts = {
+    initial: 0,
+    shipping: 0,
+    done: 0,
+    cancel: 0,
+  };
+
+  allOrders.forEach((o) => {
+    if (orderStatusCounts[o.status] !== undefined) {
+      orderStatusCounts[o.status]++;
+    }
+  });
+
+  const totalAllOrders = allOrders.length;
+  const successRate =
+    totalAllOrders > 0
+      ? Math.round((orderStatusCounts.done / totalAllOrders) * 100)
+      : 100;
+
+  const averageOrderValue =
+    validOrders.length > 0
+      ? Math.round(totalValidRevenue / validOrders.length)
+      : 0;
+
   res.render("admin/pages/dashboard.pug", {
     title: "Tổng quan",
     section1: section1,
     orderList: orderList,
     lowStockList: lowStockDisplay,
     lowStockCount: lowStockProducts.length,
+    topSellingProducts: topSellingProducts,
+    orderStatusCounts: orderStatusCounts,
+    totalAllOrders: totalAllOrders,
+    successRate: successRate,
+    averageOrderValue: averageOrderValue,
+    totalItemsSold: totalItemsSold,
+    totalValidRevenue: totalValidRevenue,
     chart: {
       currentMonth: chartMonth,
       currentYear: chartYear,
@@ -179,4 +283,106 @@ module.exports.dashboard = async (req, res) => {
     },
     monthOptions,
   });
+};
+
+// [GET] /admin/dashboard/export-revenue
+module.exports.exportRevenue = async (req, res) => {
+  try {
+    const chartMonth = parseInt(req.query.chartMonth, 10);
+    const chartYear =
+      parseInt(req.query.chartYear, 10) || new Date().getFullYear();
+
+    const find = {
+      deleted: false,
+    };
+
+    let timeTitle = "Toàn bộ thời gian";
+    if (chartMonth && !isNaN(chartMonth)) {
+      const startDate = new Date(chartYear, chartMonth - 1, 1);
+      const endDate = new Date(chartYear, chartMonth, 0, 23, 59, 59, 999);
+      find.createdAt = { $gte: startDate, $lte: endDate };
+      timeTitle = `Tháng ${chartMonth}/${chartYear}`;
+    }
+
+    const orders = await Order.find(find).sort({ createdAt: -1 }).lean();
+
+    // Chuẩn bị CSV với UTF-8 BOM (\uFEFF) mở trên Excel tiếng Việt không lỗi font
+    let csv = "\uFEFF";
+    csv += `BÁO CÁO DOANH THU BÁN HÀNG TITISPORT STORE - ${timeTitle.toUpperCase()}\n`;
+    csv += `Thời gian xuất báo cáo: ${moment().format("HH:mm - DD/MM/YYYY")}\n`;
+    csv += `Tổng số lượng đơn: ${orders.length} đơn\n\n`;
+
+    csv +=
+      "STT,Mã Đơn Hàng,Họ Tên Khách Hàng,Số Điện Thoại,Địa Chỉ Nhận Hàng,Thời Gian Đặt,Phương Thức Thanh Toán,Trạng Thái Đơn,Tạm Tính (VNĐ),Giảm Giá (VNĐ),Mã Ưu Đãi,Tổng Thanh Toán (VNĐ)\n";
+
+    let totalSubtotal = 0;
+    let totalDiscount = 0;
+    let grandTotal = 0;
+
+    orders.forEach((ord, index) => {
+      const subtotal = ord.subtotal || ord.total || 0;
+      const discount = ord.discount || 0;
+      const total = ord.total || 0;
+
+      if (ord.status !== "cancel") {
+        totalSubtotal += subtotal;
+        totalDiscount += discount;
+        grandTotal += total;
+      }
+
+      const pMethod = variableConfig.paymentMethod.find(
+        (m) => m.value === ord.paymentMethod,
+      );
+      const pMethodName = pMethod
+        ? pMethod.label
+        : ord.paymentMethod || "Tiền mặt (COD)";
+
+      const oStatus = variableConfig.orderStatus.find(
+        (s) => s.value === ord.status,
+      );
+      const oStatusName = oStatus ? oStatus.label : ord.status || "Chờ xử lý";
+
+      const escapeCsv = (str) => {
+        if (!str) return '""';
+        return `"${String(str).replace(/"/g, '""').replace(/\n/g, " ")}"`;
+      };
+
+      const dateStr = moment(ord.createdAt).format("DD/MM/YYYY HH:mm");
+
+      csv +=
+        [
+          index + 1,
+          escapeCsv(ord.orderCode || ord._id),
+          escapeCsv(ord.fullName),
+          escapeCsv(ord.phone),
+          escapeCsv(ord.address),
+          escapeCsv(dateStr),
+          escapeCsv(pMethodName),
+          escapeCsv(oStatusName),
+          subtotal,
+          discount,
+          escapeCsv(ord.couponCode || "Không"),
+          total,
+        ].join(",") + "\n";
+    });
+
+    csv += "\n";
+    csv += `,,,,,,,"TỔNG DOANH THU THỰC NHẬN:",${totalSubtotal},${totalDiscount},,${grandTotal}\n`;
+    csv += `,,,,,,,"(Chỉ tính các đơn hợp lệ - không bao gồm đơn hủy)",,,,\n`;
+
+    const fileName = `Bao-cao-doanh-thu-TitiSport-${
+      chartMonth ? `T${chartMonth}-${chartYear}` : "Tat-ca"
+    }.csv`;
+
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${fileName}"`,
+    );
+    res.status(200).send(csv);
+  } catch (error) {
+    console.error("Export revenue error:", error);
+    req.flash("error", "Lỗi xuất báo cáo doanh thu!");
+    res.redirect(`/${res.locals.pathAdmin}/dashboard`);
+  }
 };

@@ -220,6 +220,16 @@ module.exports.addToCart = async (req, res) => {
       await Cart.updateOne({ _id: cartId }, { $push: { products: objectCart } });
     }
 
+    const isBuyNow =
+      req.body.buyNow === "true" ||
+      req.body.buyNow === true ||
+      req.query.buyNow === "1";
+
+    if (isBuyNow) {
+      req.flash("success", "Đã thêm vào giỏ! Vui lòng hoàn tất thông tin nhận hàng.");
+      return res.redirect("/cart#checkout-form");
+    }
+
     req.flash("success", "Thêm vào giỏ hàng thành công");
     res.redirect(req.get("Referer") || "/cart");
   } catch (error) {

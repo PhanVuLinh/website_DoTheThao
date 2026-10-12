@@ -478,9 +478,18 @@ module.exports.paymentZalopayReturn = async (req, res) => {
 
         // Chỉ khi ZaloPay server chính thức xác nhận thành công (return_code = 1)
         if (checkStatus.data && checkStatus.data.return_code === 1) {
+          const autoTrackingCode = `GHN${moment().format("YYMMDD")}${Math.floor(1000 + Math.random() * 9000)}`;
           await Order.updateOne(
             { _id: orderId, paymentStatus: "unpaid" },
-            { paymentStatus: "paid", status: "initial" },
+            {
+              paymentStatus: "paid",
+              status: "shipping",
+              autoApproved: true,
+              trackingCode: autoTrackingCode,
+              shippingCarrier: "Giao Hàng Nhanh (GHN)",
+              approvedBy: "Cổng thanh toán ZaloPay (Tự động duyệt)",
+              approvedAt: new Date(),
+            },
           );
           await Cart.updateOne(
             { _id: orderDetail.cartId },
@@ -549,9 +558,18 @@ module.exports.paymentZalopayCallback = async (req, res) => {
       const orderCode = dataJson["description"]?.split("#")[1];
 
       if (orderCode) {
+        const autoTrackingCode = `GHN${moment().format("YYMMDD")}${Math.floor(1000 + Math.random() * 9000)}`;
         const orderUpdate = await Order.findOneAndUpdate(
           { orderCode: orderCode, paymentStatus: "unpaid" },
-          { paymentStatus: "paid", status: "initial" },
+          {
+            paymentStatus: "paid",
+            status: "shipping",
+            autoApproved: true,
+            trackingCode: autoTrackingCode,
+            shippingCarrier: "Giao Hàng Nhanh (GHN)",
+            approvedBy: "Cổng thanh toán ZaloPay (Tự động duyệt)",
+            approvedAt: new Date(),
+          },
         );
 
         if (orderUpdate) {
@@ -671,9 +689,18 @@ module.exports.paymentVnpayResult = async (req, res) => {
         vnp_Params["vnp_ResponseCode"] === "00" &&
         vnp_Params["vnp_TransactionStatus"] === "00"
       ) {
+        const autoTrackingCode = `GHN${moment().format("YYMMDD")}${Math.floor(1000 + Math.random() * 9000)}`;
         await Order.updateOne(
           { _id: orderId, deleted: false },
-          { paymentStatus: "paid", status: "initial" },
+          {
+            paymentStatus: "paid",
+            status: "shipping",
+            autoApproved: true,
+            trackingCode: autoTrackingCode,
+            shippingCarrier: "Giao Hàng Nhanh (GHN)",
+            approvedBy: "Cổng thanh toán VNPay (Tự động duyệt)",
+            approvedAt: new Date(),
+          },
         );
         await Cart.updateOne(
           { _id: orderDetail.cartId },

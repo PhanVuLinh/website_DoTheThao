@@ -209,6 +209,7 @@ if (qtyInput && btnPlus && btnMinus) {
 
   const lowStockAlert = document.getElementById("low-stock-alert");
   const btnAddToCart = document.getElementById("btnAddToCart") || document.querySelector(".btn-submit-cart");
+  const btnBuyNow = document.getElementById("btnBuyNow") || document.querySelector(".btn-buy-now");
 
   function getCurrentStock() {
     const checkedSize = document.querySelector('input[name="size"]:checked');
@@ -232,7 +233,11 @@ if (qtyInput && btnPlus && btnMinus) {
         btnAddToCart.disabled = true;
         btnAddToCart.classList.add("disabled");
         const spanText = btnAddToCart.querySelector("span");
-        if (spanText) spanText.textContent = "Tạm Hết Hàng";
+        if (spanText) spanText.textContent = "Hết Hàng";
+      }
+      if (btnBuyNow) {
+        btnBuyNow.disabled = true;
+        btnBuyNow.classList.add("disabled");
       }
     } else if (stock <= 3) {
       if (stockInfoWrap) stockInfoWrap.style.display = "none";
@@ -245,7 +250,11 @@ if (qtyInput && btnPlus && btnMinus) {
         btnAddToCart.disabled = false;
         btnAddToCart.classList.remove("disabled");
         const spanText = btnAddToCart.querySelector("span");
-        if (spanText) spanText.textContent = "Thêm Vào Giỏ Hàng";
+        if (spanText) spanText.textContent = "Thêm Vào Giỏ";
+      }
+      if (btnBuyNow) {
+        btnBuyNow.disabled = false;
+        btnBuyNow.classList.remove("disabled");
       }
     } else {
       if (stockInfoWrap) stockInfoWrap.style.display = "inline-flex";
@@ -254,7 +263,11 @@ if (qtyInput && btnPlus && btnMinus) {
         btnAddToCart.disabled = false;
         btnAddToCart.classList.remove("disabled");
         const spanText = btnAddToCart.querySelector("span");
-        if (spanText) spanText.textContent = "Thêm Vào Giỏ Hàng";
+        if (spanText) spanText.textContent = "Thêm Vào Giỏ";
+      }
+      if (btnBuyNow) {
+        btnBuyNow.disabled = false;
+        btnBuyNow.classList.remove("disabled");
       }
     }
   }
@@ -291,7 +304,16 @@ if (qtyInput && btnPlus && btnMinus) {
       qtyInput.value = current + 1;
       updateTotalPrice();
     } else {
-      alert(`Rất tiếc, size này chỉ còn tối đa ${max} sản phẩm!`);
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          icon: "info",
+          title: "Đã đạt giới hạn",
+          text: `Rất tiếc, size này chỉ còn tối đa ${max} sản phẩm trong kho!`,
+          confirmButtonColor: "#ff4722",
+        });
+      } else {
+        alert(`Rất tiếc, size này chỉ còn tối đa ${max} sản phẩm!`);
+      }
     }
   });
 
@@ -302,6 +324,60 @@ if (qtyInput && btnPlus && btnMinus) {
       updateTotalPrice();
     }
   });
+
+  // Xử lý nút Mua Ngay (Fast Checkout)
+  if (btnBuyNow) {
+    btnBuyNow.addEventListener("click", function (e) {
+      e.preventDefault();
+      const form = btnBuyNow.closest("form");
+      if (!form) return;
+
+      const checkedSize = form.querySelector('input[name="size"]:checked');
+      if (!checkedSize) {
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            icon: "warning",
+            title: "Chưa chọn kích cỡ",
+            text: "Vui lòng chọn kích cỡ (Size) phù hợp trước khi Mua Ngay!",
+            confirmButtonColor: "#ff4722",
+          });
+        } else {
+          alert("Vui lòng chọn kích cỡ (Size) trước khi Mua Ngay!");
+        }
+        return;
+      }
+
+      if (parseInt(checkedSize.dataset.stock || 0) <= 0) {
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            icon: "error",
+            title: "Tạm hết hàng",
+            text: "Kích cỡ bạn chọn hiện đang tạm hết hàng!",
+            confirmButtonColor: "#ff4722",
+          });
+        } else {
+          alert("Kích cỡ bạn chọn hiện đang tạm hết hàng!");
+        }
+        return;
+      }
+
+      const buyNowInput = document.getElementById("buyNowInput");
+      if (buyNowInput) {
+        buyNowInput.value = "true";
+      }
+
+      form.submit();
+    });
+  }
+
+  if (btnAddToCart) {
+    btnAddToCart.addEventListener("click", function () {
+      const buyNowInput = document.getElementById("buyNowInput");
+      if (buyNowInput) {
+        buyNowInput.value = "false";
+      }
+    });
+  }
 }
 // end product quantity and size
 

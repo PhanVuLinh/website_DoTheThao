@@ -63,6 +63,29 @@ block main
                   option(value=item.value selected=(item.value === orderDetail.paymentStatus ? true : false)) #{item.label}            
               button.btn-apply.w-auto(type="submit") Áp dụng
           .order-section-box.mb-4
+            label Vận chuyển & Giao hàng (3PL Logistics)
+            .shipping-info-card
+              .shipping-field-row
+                span.field-title Đơn vị vận chuyển:
+                span.field-val.badge-carrier
+                  i.fa-solid.fa-truck-fast
+                  | #{orderDetail.shippingCarrier || 'Giao Hàng Nhanh (GHN)'}
+              if orderDetail.trackingCode
+                .shipping-field-row
+                  span.field-title Mã vận đơn:
+                  span.field-val.font-monospace
+                    strong #{orderDetail.trackingCode}
+              if orderDetail.autoApproved
+                .shipping-field-row
+                  span.field-title Cơ chế duyệt:
+                  span.field-val.text-auto-bot
+                    i.fa-solid.fa-robot
+                    | #{orderDetail.approvedBy || 'Tự động duyệt bởi Auto-Bot'}
+              .mt-2
+                a.btn-print-slip-link(href=`/${pathAdmin}/order/print-label/${orderDetail._id || orderDetail.id}` target="_blank")
+                  i.fa-solid.fa-print
+                  span In Phiếu Vận Đơn & Đóng Hàng
+          .order-section-box.mb-4
             label Trạng thái đơn
             .status-update-row
               select.form-select.w-auto(name="status")

@@ -265,10 +265,15 @@ block main
                         i.fa-solid.fa-fire-flame-curved
                         span.pill-text Chỉ còn #{initialStock} sản phẩm!
 
+              input#buyNowInput(type="hidden" name="buyNow" value="false")
               .detail-action-buttons
-                button.btn-submit-cart(type="submit", id="btnAddToCart")
-                  i.fa-solid.fa-cart-shopping
-                  span Thêm Vào Giỏ Hàng
+                .detail-cta-row
+                  button.btn-submit-cart(type="submit", id="btnAddToCart")
+                    i.fa-solid.fa-cart-shopping
+                    span Thêm Vào Giỏ
+                  button.btn-buy-now(type="button", id="btnBuyNow")
+                    i.fa-solid.fa-bolt-lightning
+                    span Mua Ngay
                 
                 .detail-secondary-actions
                   button.btn-wishlist-detail(

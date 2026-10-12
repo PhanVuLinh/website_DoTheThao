@@ -4,6 +4,10 @@ const authMiddleware = require("../../middlewares/admin/auth.middleware");
 
 router.get("/list", authMiddleware.checkPermission("order_view"), orderController.list);
 router.get("/export", authMiddleware.checkPermission("order_view"), orderController.exportOrders);
+router.post("/auto-approve", authMiddleware.checkPermission("order_edit"), orderController.autoApprove);
+router.get("/print-label/:id", authMiddleware.checkPermission("order_view"), orderController.printLabel);
+router.get("/print-labels", authMiddleware.checkPermission("order_view"), orderController.printLabels);
+router.post("/print-labels", authMiddleware.checkPermission("order_view"), orderController.printLabels);
 
 router.patch("/change-multi", authMiddleware.checkPermission("order_edit"), orderController.changeMulti);
 

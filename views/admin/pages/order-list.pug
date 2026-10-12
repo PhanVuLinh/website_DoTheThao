@@ -48,6 +48,13 @@ block main
           i.fa-solid.fa-magnifying-glass
           input(type="text" placeholder="Tìm kiếm theo Mã đơn, Tên khách hàng, SĐT..." search)
         .action-buttons-right
+          if(role && role.permissions && role.permissions.includes("order_edit"))
+            button.btn-auto-approve#btnAutoApprove(type="button" data-path=`/${pathAdmin}/order/auto-approve` title="Tự động phân tích và duyệt toàn bộ đơn hàng hợp lệ theo chuẩn rủi ro")
+              i.fa-solid.fa-bolt-lightning
+              span Duyệt Tự Động
+          button.btn-print-bulk#btnPrintBulk(type="button" data-path=`/${pathAdmin}/order/print-labels` title="In phiếu đóng hàng / tem vận đơn GHN cho các đơn được chọn")
+            i.fa-solid.fa-print
+            span In Vận Đơn
           a(href=`/${pathAdmin}/order/export` class="btn-export-excel" title="Xuất danh sách đơn hàng ra file Excel/CSV")
             i.fa-solid.fa-file-excel
             | Xuất Excel
@@ -62,7 +69,7 @@ block main
             tr
               th.text-center(width="50px")
                 input(type="checkbox" check-all)
-              th Mã ĐH
+              th Mã ĐH & Vận Đơn
               th Thông tin khách
               th(width="300px") Danh sách sản phẩm
               th Thanh toán
@@ -78,7 +85,16 @@ block main
                   td.text-center
                     input(type="checkbox" value=orderDetail._id || orderDetail.id name="id" check-item)
                   td
-                    a.order-code(href=`/${pathAdmin}/order/edit/${orderDetail._id || orderDetail.id}`) #{orderDetail.orderCode}
+                    .order-code-wrapper
+                      a.order-code(href=`/${pathAdmin}/order/edit/${orderDetail._id || orderDetail.id}`) #{orderDetail.orderCode}
+                      if orderDetail.trackingCode
+                        .tracking-code-pill(title=`Mã vận đơn: ${orderDetail.trackingCode} (${orderDetail.shippingCarrier || 'GHN Express'})`)
+                          i.fa-solid.fa-truck-fast
+                          span #{orderDetail.trackingCode}
+                      if orderDetail.autoApproved
+                        span.badge-auto-bot(title=orderDetail.approvedBy || "Đơn hàng được duyệt tự động bởi Auto-Bot")
+                          i.fa-solid.fa-robot
+                          | Auto-Bot
                   td
                     .customer-info
                       span.font-weight-600 #{orderDetail.fullName}
@@ -98,7 +114,7 @@ block main
                         .product-mini-item
                           img(
                             src=item.thumbnail 
-                            alt=item.title
+                            alt=item.title 
                             onerror="this.src='https://placehold.co/80x80/e2e8f0/64748b?text=SP'"
                           )
                           .prod-info
@@ -125,6 +141,8 @@ block main
                   if(role && role.permissions && (role.permissions.includes("order_edit") || role.permissions.includes("order_delete")))
                     td
                       .action-btns
+                        a.btn-action.btn-print-single(href=`/${pathAdmin}/order/print-label/${orderDetail._id || orderDetail.id}` target="_blank" title="In phiếu đóng hàng / vận đơn (GHN Express)")
+                          i.fa-solid.fa-print
                         if(role && role.permissions && (role.permissions.includes("order_edit") || role.permissions.includes("order_view")))
                           a.btn-action.btn-edit(href=`/${pathAdmin}/order/edit/${orderDetail._id || orderDetail.id}` title="Chi tiết / Cập nhật")
                             i.fa-regular.fa-pen-to-square

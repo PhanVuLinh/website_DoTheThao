@@ -903,4 +903,146 @@ document.addEventListener("DOMContentLoaded", function () {
       "Cảnh báo: Không tìm thấy thư viện SweetAlert2, thông báo không thể hiển thị.",
     );
   }
+
+  // --- D. AUTO-APPROVE ORDERS & BULK PRINT LABELS ---
+  const btnAutoApprove = document.querySelector("#btnAutoApprove");
+  if (btnAutoApprove) {
+    btnAutoApprove.addEventListener("click", async () => {
+      const autoApprovePath = btnAutoApprove.getAttribute("data-path") || "/admin/order/auto-approve";
+
+      const confirmResult = await Swal.fire({
+        title: "⚡ Kích hoạt Bot Duyệt Tự Động?",
+        html: `
+          <div style="text-align: left; font-size: 13.5px; line-height: 1.6; color: #334155;">
+            <p style="margin-bottom: 10px;">Hệ thống sẽ tự động quét và phân tích rủi ro toàn bộ các đơn hàng đang chờ duyệt:</p>
+            <div style="background: #f8fafc; border-left: 4px solid #10b981; padding: 8px 12px; margin-bottom: 8px; border-radius: 4px;">
+              <strong>🟢 Đơn Online (VNPAY / ZaloPay / Bank):</strong><br>
+              Tự động duyệt 100% và cấp mã vận đơn GHN Express ngay lập tức.
+            </div>
+            <div style="background: #f8fafc; border-left: 4px solid #3b82f6; padding: 8px 12px; margin-bottom: 8px; border-radius: 4px;">
+              <strong>🔵 Đơn COD Hợp Lệ (Giá trị &le; 3.000.000đ):</strong><br>
+              SĐT và địa chỉ chuẩn xác sẽ được tự động chuyển sang Đang giao hàng.
+            </div>
+            <div style="background: #f8fafc; border-left: 4px solid #f59e0b; padding: 8px 12px; border-radius: 4px;">
+              <strong>⚠️ Đơn Ngoại Lệ (COD &gt; 3 triệu hoặc SĐT sai):</strong><br>
+              Giữ lại để nhân viên CSKH liên hệ xác minh thủ công.
+            </div>
+          </div>
+        `,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: '<i class="fa-solid fa-bolt me-1"></i> Bắt đầu duyệt tự động',
+        cancelButtonText: "Hủy bỏ",
+        confirmButtonColor: "#2563eb",
+        cancelButtonColor: "#64748b",
+        reverseButtons: true,
+      });
+
+      if (!confirmResult.isConfirmed) return;
+
+      Swal.fire({
+        title: "Đang phân tích & duyệt tự động...",
+        html: "Hệ thống đang kiểm tra rủi ro và kết nối cấp mã vận đơn GHN...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      try {
+        const response = await fetch(autoApprovePath, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+        });
+
+        const data = await response.json();
+
+        if (data.code === 200) {
+          let detailHtml = `
+            <div style="text-align: left; font-size: 13px; line-height: 1.5; color: #1e293b;">
+              <div style="display: flex; gap: 12px; margin-bottom: 14px;">
+                <div style="flex: 1; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 6px; padding: 10px; text-align: center;">
+                  <span style="font-size: 20px; font-weight: 800; color: #059669; display: block;">${data.approvedCount}</span>
+                  <span style="font-size: 11.5px; color: #047857; font-weight: 600;">Đã duyệt thành công</span>
+                </div>
+                <div style="flex: 1; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 10px; text-align: center;">
+                  <span style="font-size: 20px; font-weight: 800; color: #d97706; display: block;">${data.skippedCount}</span>
+                  <span style="font-size: 11.5px; color: #b45309; font-weight: 600;">Giữ lại kiểm tra</span>
+                </div>
+              </div>
+          `;
+
+          if (data.skippedOrders && data.skippedOrders.length > 0) {
+            detailHtml += `
+              <div style="margin-top: 10px;">
+                <strong style="color: #b45309; font-size: 12.5px;">Danh sách đơn cần gọi điện xác nhận:</strong>
+                <ul style="margin: 6px 0 0 16px; padding: 0; max-height: 140px; overflow-y: auto;">
+            `;
+            data.skippedOrders.forEach((item) => {
+              detailHtml += `
+                <li style="margin-bottom: 4px; font-size: 12px;">
+                  <strong>#${item.orderCode}</strong> (${item.fullName || "Khách"} - ${Number(item.total || 0).toLocaleString("vi-VN")} đ): 
+                  <span style="color: #dc2626;">${item.reason}</span>
+                </li>
+              `;
+            });
+            detailHtml += `</ul></div>`;
+          }
+
+          detailHtml += `</div>`;
+
+          await Swal.fire({
+            title: "Kết quả duyệt đơn tự động",
+            html: detailHtml,
+            icon: data.approvedCount > 0 ? "success" : "info",
+            confirmButtonText: "Tải lại danh sách",
+            confirmButtonColor: "#2563eb",
+          });
+
+          window.location.reload();
+        } else {
+          Swal.fire({
+            title: "Thất bại",
+            text: data.message || "Không thể thực hiện duyệt tự động!",
+            icon: "error",
+            confirmButtonColor: "#2563eb",
+          });
+        }
+      } catch (err) {
+        console.error("Auto approve error:", err);
+        Swal.fire({
+          title: "Lỗi kết nối",
+          text: "Có lỗi xảy ra khi kết nối máy chủ!",
+          icon: "error",
+          confirmButtonColor: "#2563eb",
+        });
+      }
+    });
+  }
+
+  // Nút In Vận Đơn Hàng Loạt
+  const btnPrintBulk = document.querySelector("#btnPrintBulk");
+  if (btnPrintBulk) {
+    btnPrintBulk.addEventListener("click", () => {
+      const printPath = btnPrintBulk.getAttribute("data-path") || "/admin/order/print-labels";
+      const checkedInputs = document.querySelectorAll("input[check-item]:checked");
+
+      if (checkedInputs.length === 0) {
+        Swal.fire({
+          icon: "warning",
+          title: "Chưa chọn đơn hàng",
+          text: "Vui lòng tích chọn ít nhất 1 đơn hàng để in phiếu vận đơn & đóng hàng!",
+          confirmButtonColor: "#2563eb",
+        });
+        return;
+      }
+
+      const ids = Array.from(checkedInputs).map((input) => input.value).filter(Boolean);
+      const url = `${printPath}?ids=${encodeURIComponent(ids.join(","))}`;
+      window.open(url, "_blank");
+    });
+  }
 });

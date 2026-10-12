@@ -10,9 +10,17 @@ block main
       .hero-text
         h1.page-title Tổng quan hệ thống
         p.page-subtitle Theo dõi các chỉ số kinh doanh và hoạt động quản trị trong thời gian thực.
-      .hero-date
-        i.fa-regular.fa-calendar
-        span Hôm nay, #{new Date().toLocaleDateString('vi-VN')}
+      .hero-actions
+        .hero-date
+          i.fa-regular.fa-calendar
+          span Hôm nay, #{new Date().toLocaleDateString('vi-VN')}
+        a.btn-export-revenue(
+          href=`/${pathAdmin}/dashboard/export-revenue?chartMonth=${chart.currentMonth}&chartYear=${chart.currentYear}`
+          id="btnExportRevenue"
+          title="Tải file Excel (CSV) báo cáo doanh thu"
+        )
+          i.fa-solid.fa-file-excel
+          span Xuất Báo Cáo Excel
 
     .stat-widgets
       .widget-card.widget-admin
@@ -72,6 +80,130 @@ block main
         data-prev-revenue=chart.prevMonthRevenue
       )
         canvas#revenueChart
+
+    //- SECTION: HIỆU SUẤT VẬN HÀNH (4 WIDGET CARDS)
+    .performance-hero-row
+      .section-header
+        .section-header-left
+          .d-flex.align-items-center.gap-2
+            .badge-icon-growth
+              i.fa-solid.fa-chart-line
+            h2.section-title Hiệu Suất Vận Hành
+          p.section-desc Đánh giá tỷ lệ hoàn tất đơn hàng và giá trị giỏ hàng trung bình
+
+    .stat-widgets.performance-widgets
+      .widget-card.widget-kpi
+        .widget-icon.bg-indigo-light
+          i.fa-solid.fa-receipt
+        .widget-info
+          span.label Giá trị trung bình/đơn (AOV)
+          h3.value #{averageOrderValue.toLocaleString('vi-VN')} đ
+          span.widget-subtext Doanh thu trung bình mỗi đơn
+
+      .widget-card.widget-kpi
+        .widget-icon.bg-emerald-light
+          i.fa-solid.fa-circle-check
+        .widget-info
+          span.label Tỷ lệ hoàn thành đơn
+          h3.value.text-success #{successRate}%
+          span.widget-subtext #{orderStatusCounts.done}/#{totalAllOrders} đơn thành công
+
+      .widget-card.widget-kpi
+        .widget-icon.bg-amber-light
+          i.fa-solid.fa-boxes-packing
+        .widget-info
+          span.label Tổng sản phẩm đã bán
+          h3.value #{totalItemsSold} sp
+          span.widget-subtext Khách hàng đã đặt mua
+
+      .widget-card.widget-kpi.widget-status-summary
+        .widget-info
+          span.label Phân bổ trạng thái đơn
+          .mini-status-bars
+            .status-bar-pill.pill-done
+              span.dot
+              span.txt Hoàn tất: <strong>#{orderStatusCounts.done}</strong>
+            .status-bar-pill.pill-shipping
+              span.dot
+              span.txt Đang giao: <strong>#{orderStatusCounts.shipping}</strong>
+            .status-bar-pill.pill-initial
+              span.dot
+              span.txt Chờ duyệt: <strong>#{orderStatusCounts.initial}</strong>
+            .status-bar-pill.pill-cancel
+              span.dot
+              span.txt Đã hủy: <strong>#{orderStatusCounts.cancel}</strong>
+
+    //- SECTION: TOP 5 SẢN PHẨM BÁN CHẠY NHẤT (FULL-WIDTH TABLE)
+    .table-section.top-selling-section
+      .section-header
+        .section-header-left
+          .d-flex.align-items-center.gap-2
+            .badge-icon-trophy
+              i.fa-solid.fa-trophy
+            h2.section-title Top 5 Sản Phẩm Bán Chạy Nhất
+            span.badge-count-success Dẫn đầu doanh số
+          p.section-desc Xếp hạng mặt hàng có số lượng bán và doanh thu cao nhất trên toàn hệ thống
+        if(role && role.permissions && role.permissions.includes("product_view"))
+          .section-header-right
+            a.btn-link-action(href=`/${pathAdmin}/product/list`)
+              span Quản lý kho hàng
+              i.fa-solid.fa-arrow-right
+
+      if topSellingProducts && topSellingProducts.length
+        .table-responsive
+          table.admin-table.table-hover
+            thead
+              tr
+                th(style="width: 75px; text-align: center;") Hạng
+                th Sản phẩm
+                th Thương hiệu
+                th Đơn giá
+                th(style="text-align: center;") Đã bán
+                th Tổng doanh thu
+                th(style="width: 180px;") Tỷ trọng bán
+                th(style="text-align: center;") Xem
+            tbody
+              each item in topSellingProducts
+                tr
+                  td(style="text-align: center;")
+                    span.rank-pill(class=`rank-${item.rank}`)
+                      if item.rank === 1
+                        i.fa-solid.fa-crown
+                        |  #1
+                      else
+                        | ##{item.rank}
+                  td
+                    .product-mini-item
+                      img(
+                        src=item.thumbnail 
+                        alt=item.title 
+                        onerror="this.src='https://placehold.co/80x80/e2e8f0/64748b?text=SP'"
+                      )
+                      .prod-info
+                        a.prod-name(href=`/product/detail/${item.slug}` target="_blank" title=item.title) #{item.title}
+                  td
+                    span.badge-brand #{item.brand}
+                  td
+                    span.font-weight-600 #{item.price.toLocaleString('vi-VN')} đ
+                  td(style="text-align: center;")
+                    span.badge-sold-pill #{item.soldQuantity} sp
+                  td
+                    span.text-price #{(item.totalRevenue || 0).toLocaleString('vi-VN')} đ
+                  td
+                    .sales-progress-box(title=`Chiếm ${item.percentage}% tổng lượng bán`)
+                      .progress-track
+                        .progress-bar-fill(style=`width: ${item.percentage}%`)
+                      span.progress-text #{item.percentage}%
+                  td(style="text-align: center;")
+                    .action-btns.justify-content-center
+                      a.btn-action.btn-view(href=`/product/detail/${item.slug}` target="_blank" title="Xem sản phẩm ngoài website")
+                        i.fa-regular.fa-eye
+      else
+        .admin-empty-state
+          .empty-icon
+            i.fa-solid.fa-chart-pie
+          h4.empty-title Chưa có dữ liệu bán chạy
+          p.empty-desc Bảng xếp hạng sẽ tự động cập nhật khi có đơn hàng được thanh toán.
 
     .table-section
       .section-header

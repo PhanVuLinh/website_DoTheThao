@@ -653,3 +653,234 @@ module.exports.exportOrders = async (req, res) => {
     res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
   }
 };
+
+/**
+ * ⚡ DUYỆT TỰ ĐỘNG HÀNG LOẠT (SMART AUTO-APPROVAL ENGINE)
+ * Phân tích rủi ro đơn hàng, tự động cấp mã vận đơn GHN và chuyển trạng thái shipping
+ */
+module.exports.autoApprove = async (req, res) => {
+  try {
+    const adminAccount = req.account;
+    const adminName = adminAccount ? adminAccount.fullName : "Quản trị viên";
+
+    // Tìm tất cả các đơn hàng đang ở trạng thái 'initial' (Chờ duyệt)
+    const pendingOrders = await Order.find({
+      status: "initial",
+      deleted: false,
+    }).sort({ createdAt: 1 });
+
+    if (!pendingOrders.length) {
+      if (req.xhr || req.headers.accept?.includes("json")) {
+        return res.json({
+          code: 200,
+          success: true,
+          approvedCount: 0,
+          skippedCount: 0,
+          message: "Hiện không có đơn hàng nào đang chờ duyệt!",
+        });
+      }
+      req.flash("info", "Hiện không có đơn hàng nào đang chờ duyệt!");
+      return res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
+    }
+
+    const approvedOrders = [];
+    const skippedOrders = [];
+
+    // Regex kiểm tra số điện thoại Việt Nam hợp lệ (10 số: 03x, 05x, 07x, 08x, 09x)
+    const vnPhoneRegex = /^(03|05|07|08|09)\d{8}$/;
+
+    for (const order of pendingOrders) {
+      const isOnlinePaid = order.paymentStatus === "paid";
+      const cleanPhone = (order.phone || "").replace(/[\s.-]/g, "");
+      const hasValidPhone = vnPhoneRegex.test(cleanPhone);
+      const hasValidAddress = order.address && order.address.trim().length >= 8;
+      const isHighValue = (order.total || 0) > 3000000; // Ngưỡng an toàn COD: <= 3 triệu
+
+      let shouldApprove = false;
+      let skipReason = "";
+
+      if (isOnlinePaid) {
+        // Rule 1: Đã thanh toán online -> Tự động duyệt 100%
+        shouldApprove = true;
+      } else {
+        // Rule 2: Đơn COD -> Phân tích rủi ro gian lận / đơn ảo
+        if (!hasValidPhone) {
+          skipReason = "SĐT không hợp lệ hoặc thiếu số (Yêu cầu 10 số di động VN)";
+        } else if (!hasValidAddress) {
+          skipReason = "Địa chỉ giao hàng quá ngắn, thiếu chi tiết";
+        } else if (isHighValue) {
+          skipReason = `Đơn COD giá trị cao (${(order.total || 0).toLocaleString("vi-VN")} đ > 3tr) - Cần gọi điện xác nhận`;
+        } else {
+          // COD hợp lệ, địa chỉ rõ ràng, giá trị an toàn
+          shouldApprove = true;
+        }
+      }
+
+      if (shouldApprove) {
+        const trackingCode = order.trackingCode || `GHN${moment().format("YYMMDD")}${Math.floor(1000 + Math.random() * 9000)}`;
+        order.status = "shipping";
+        order.trackingCode = trackingCode;
+        order.shippingCarrier = order.shippingCarrier || "Giao Hàng Nhanh (GHN)";
+        order.autoApproved = true;
+        order.approvedBy = `Hệ thống Tự Động (Auto-Bot - Kích hoạt bởi ${adminName})`;
+        order.approvedAt = new Date();
+        order.updatedBy = adminAccount ? adminAccount.id : undefined;
+
+        await order.save();
+        approvedOrders.push({
+          orderCode: order.orderCode,
+          trackingCode: trackingCode,
+          fullName: order.fullName,
+          total: order.total,
+        });
+      } else {
+        skippedOrders.push({
+          orderCode: order.orderCode,
+          fullName: order.fullName,
+          phone: order.phone,
+          total: order.total,
+          reason: skipReason,
+        });
+      }
+    }
+
+    const message = `⚡ Đã duyệt tự động ${approvedOrders.length}/${pendingOrders.length} đơn hàng! ${
+      skippedOrders.length > 0 ? `(Giữ lại ${skippedOrders.length} đơn rủi ro cao để nhân viên gọi điện xác nhận)` : ""
+    }`;
+
+    if (req.xhr || req.headers.accept?.includes("json")) {
+      return res.json({
+        code: 200,
+        success: true,
+        approvedCount: approvedOrders.length,
+        skippedCount: skippedOrders.length,
+        approvedOrders,
+        skippedOrders,
+        message,
+      });
+    }
+
+    req.flash(approvedOrders.length > 0 ? "success" : "info", message);
+    return res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
+  } catch (error) {
+    console.error("Auto approve error:", error);
+    if (req.xhr || req.headers.accept?.includes("json")) {
+      return res.status(500).json({ code: 500, success: false, message: "Lỗi hệ thống khi duyệt tự động!" });
+    }
+    req.flash("error", "Lỗi trong quá trình duyệt tự động đơn hàng!");
+    res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
+  }
+};
+
+/**
+ * 🖨️ IN 1 PHIẾU VẬN ĐƠN (PACKING SLIP & SHIPPING LABEL)
+ */
+module.exports.printLabel = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const order = await Order.findOne({ _id: orderId, deleted: false }).lean();
+    if (!order) {
+      req.flash("error", "Không tìm thấy đơn hàng để in phiếu!");
+      return res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
+    }
+
+    // Populate sản phẩm
+    const productIds = (order.products || []).map((p) => p.product_id).filter(Boolean);
+    const products = await Product.find({ _id: { $in: productIds } }).select("title thumbnail").lean();
+    const productMap = {};
+    products.forEach((p) => {
+      productMap[p._id.toString()] = p;
+    });
+
+    order.products.forEach((item) => {
+      const p = productMap[item.product_id?.toString()];
+      if (p) {
+        item.title = p.title;
+        item.thumbnail = p.thumbnail;
+      }
+    });
+
+    if (!order.trackingCode) {
+      order.trackingCode = `GHN${moment().format("YYMMDD")}${Math.floor(1000 + Math.random() * 9000)}`;
+      await Order.updateOne({ _id: order._id }, { trackingCode: order.trackingCode });
+    }
+
+    const SettingWebsiteInfo = require("../../models/setting-website-info.model");
+    const websiteInfo = await SettingWebsiteInfo.findOne({}).lean();
+
+    res.render("admin/pages/order-print-labels.pug", {
+      title: `In Phiếu Vận Đơn #${order.orderCode}`,
+      orders: [order],
+      websiteInfo: websiteInfo || {},
+      moment: moment,
+    });
+  } catch (error) {
+    console.error("Print label error:", error);
+    req.flash("error", "Lỗi khi tạo phiếu vận đơn!");
+    res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
+  }
+};
+
+/**
+ * 🖨️ IN HÀNG LOẠT PHIẾU VẬN ĐƠN (BULK PRINT LABELS)
+ */
+module.exports.printLabels = async (req, res) => {
+  try {
+    let ids = req.query.ids || req.body.ids;
+    if (typeof ids === "string") {
+      ids = ids.split(",").map((id) => id.trim()).filter(Boolean);
+    }
+    if (!Array.isArray(ids) || !ids.length) {
+      req.flash("error", "Vui lòng chọn ít nhất một đơn hàng để in phiếu vận đơn!");
+      return res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
+    }
+
+    const orders = await Order.find({ _id: { $in: ids }, deleted: false }).lean();
+    if (!orders.length) {
+      req.flash("error", "Không tìm thấy đơn hàng nào để in!");
+      return res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
+    }
+
+    const allProductIds = [];
+    orders.forEach((o) => {
+      (o.products || []).forEach((p) => {
+        if (p.product_id) allProductIds.push(p.product_id);
+      });
+    });
+
+    const products = await Product.find({ _id: { $in: allProductIds } }).select("title thumbnail").lean();
+    const productMap = {};
+    products.forEach((p) => {
+      productMap[p._id.toString()] = p;
+    });
+
+    for (const order of orders) {
+      if (!order.trackingCode) {
+        order.trackingCode = `GHN${moment().format("YYMMDD")}${Math.floor(1000 + Math.random() * 9000)}`;
+        await Order.updateOne({ _id: order._id }, { trackingCode: order.trackingCode });
+      }
+      (order.products || []).forEach((item) => {
+        const p = productMap[item.product_id?.toString()];
+        if (p) {
+          item.title = p.title;
+          item.thumbnail = p.thumbnail;
+        }
+      });
+    }
+
+    const SettingWebsiteInfo = require("../../models/setting-website-info.model");
+    const websiteInfo = await SettingWebsiteInfo.findOne({}).lean();
+
+    res.render("admin/pages/order-print-labels.pug", {
+      title: `In ${orders.length} Phiếu Vận Đơn`,
+      orders: orders,
+      websiteInfo: websiteInfo || {},
+      moment: moment,
+    });
+  } catch (error) {
+    console.error("Print labels error:", error);
+    req.flash("error", "Lỗi tạo phiếu vận đơn hàng loạt!");
+    res.redirect(`/${variableCongfig.pathAdmin}/order/list`);
+  }
+};
+

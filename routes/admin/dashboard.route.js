@@ -8,4 +8,10 @@ router.get(
   dashboardController.dashboard,
 );
 
+router.get(
+  "/export-revenue",
+  authMiddleware.checkPermission("dashboard_view"),
+  dashboardController.exportRevenue,
+);
+
 module.exports = router;

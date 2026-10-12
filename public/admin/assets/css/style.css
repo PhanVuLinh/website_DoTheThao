@@ -4895,3 +4895,473 @@ body.swal2-toast-shown .swal2-container,
   object-fit: cover;
   border: 1px solid #e2e8f0;
 }
+
+/* ==========================================================================
+   DASHBOARD HERO ACTIONS & EXPORT REVENUE BUTTON
+   ========================================================================== */
+.dashboard-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.dashboard-hero .hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-export-revenue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+  transition: all 0.25s ease;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-export-revenue:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+  color: #ffffff !important;
+}
+
+.btn-export-revenue i {
+  font-size: 15px;
+}
+
+/* ==========================================================================
+   DASHBOARD PERFORMANCE WIDGETS & TOP SELLING TABLE
+   ========================================================================== */
+.performance-hero-row {
+  margin-top: 24px;
+}
+
+.performance-hero-row .section-header {
+  margin-bottom: 16px;
+}
+
+.performance-widgets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.widget-kpi {
+  background: var(--admin-surface);
+  border-radius: var(--admin-radius-lg);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--admin-shadow-xs);
+  border: 1px solid var(--admin-border);
+  transition: var(--admin-transition);
+}
+
+.widget-kpi:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--admin-shadow-md);
+  border-color: #cbd5e1;
+}
+
+.badge-icon-growth {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #ede9fe;
+  color: #7c3aed;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.badge-icon-trophy {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #fef3c7;
+  color: #d97706;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.bg-indigo-light {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.bg-emerald-light {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.bg-amber-light {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+/* Status summary widget inside KPI row */
+.widget-status-summary .widget-info {
+  width: 100%;
+}
+
+.mini-status-bars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.status-bar-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #475569;
+  background: #f8fafc;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #edf2f7;
+}
+
+.status-bar-pill .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-bar-pill.pill-done .dot { background: #10b981; }
+.status-bar-pill.pill-shipping .dot { background: #3b82f6; }
+.status-bar-pill.pill-initial .dot { background: #f59e0b; }
+.status-bar-pill.pill-cancel .dot { background: #ef4444; }
+
+.status-bar-pill strong {
+  color: #0f172a;
+}
+
+/* Top 5 Bán Chạy Section */
+.top-selling-section {
+  background: var(--admin-surface);
+  border-radius: var(--admin-radius-lg);
+  padding: 22px;
+  box-shadow: var(--admin-shadow-xs);
+  margin-bottom: 24px;
+  border: 1px solid var(--admin-border);
+}
+
+.badge-count-success {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Rank Pills in Table */
+.rank-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 800;
+  min-width: 44px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.rank-pill.rank-1 {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 3px 8px rgba(245, 158, 11, 0.35);
+}
+
+.rank-pill.rank-2 {
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+  color: #ffffff;
+  border: none;
+}
+
+.rank-pill.rank-3 {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  color: #ffffff;
+  border: none;
+}
+
+/* Brand badge in Table */
+.badge-brand {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Sold badge */
+.badge-sold-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+/* Progress bar inside Table */
+.sales-progress-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.sales-progress-box .progress-track {
+  flex: 1;
+  height: 7px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.sales-progress-box .progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 9999px;
+  transition: width 0.4s ease;
+}
+
+.sales-progress-box .progress-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  min-width: 32px;
+  text-align: right;
+}
+
+@media (max-width: 1200px) {
+  .performance-widgets {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .performance-widgets {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   ORDER AUTOMATION & 3PL SHIPPING LOGISTICS
+   ========================================================================== */
+.btn-auto-approve {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--admin-radius-sm, 8px);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-auto-approve:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+  background: linear-gradient(135deg, #6d28d9 0%, #4338ca 100%);
+  color: #ffffff;
+}
+
+.btn-auto-approve i {
+  color: #fde047;
+  font-size: 14px;
+}
+
+.btn-print-bulk {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--admin-radius-sm, 8px);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-print-bulk:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.btn-print-bulk i {
+  color: #2563eb;
+}
+
+/* Order Code Wrapper in List */
+.order-code-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tracking-code-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: monospace;
+  width: fit-content;
+}
+
+.tracking-code-pill i {
+  color: #16a34a;
+  font-size: 10px;
+}
+
+.badge-auto-bot {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f5f3ff;
+  color: #6d28d9;
+  border: 1px solid #ddd6fe;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.badge-auto-bot i {
+  color: #7c3aed;
+  font-size: 10px;
+}
+
+.btn-action.btn-print-single {
+  color: #0284c7;
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+.btn-action.btn-print-single:hover {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+/* Shipping Info Card in Order Details */
+.shipping-info-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shipping-field-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+}
+
+.shipping-field-row .field-title {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.shipping-field-row .badge-carrier {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+  color: #c2410c;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11.5px;
+}
+
+.shipping-field-row .text-auto-bot {
+  color: #6d28d9;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+}
+
+.btn-print-slip-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #2563eb;
+  color: #ffffff !important;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.btn-print-slip-link:hover {
+  background: #1d4ed8;
+}
+
