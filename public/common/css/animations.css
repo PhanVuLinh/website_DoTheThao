@@ -1,16 +1,22 @@
 /**
  * ====================================================================
- * TITISPORT ANIMATION & MICRO-INTERACTION ENGINE (PREMIUM SUITE)
+ * TITISPORT ANIMATION & MICRO-INTERACTION ENGINE (PREMIUM SUITE V2)
  * ====================================================================
- * Cung cấp hệ thống hiệu ứng mượt mà (60-120fps), tăng tính thẩm mỹ,
- * mang lại trải nghiệm sống động chuẩn E-commerce hiện đại.
+ * Hệ thống hiệu ứng nâng cao:
+ * - Punchy Elastic Scroll Reveal (60-120fps)
+ * - 3D Magnetic Tilt & Radial Cursor Spotlight trên Thẻ sản phẩm
+ * - Add-To-Cart Flying Ghost Thumbnail Parabolic Arc
+ * - Scroll-Driven Circular Progress Back-to-Top Button
+ * - Dynamic Gradient Heading Shimmer
+ * - Energetic CTA Breathing Aura & Lightning Jolts
+ * - Confetti Celebration Particle Burst
  */
 
 :root {
   --anim-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --anim-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --anim-ease-punchy: cubic-bezier(0.2, 0.9, 0.2, 1);
   --anim-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-  --anim-duration-base: 0.3s;
 }
 
 /* ====================================================================
@@ -26,77 +32,47 @@ html {
   top: 0;
   left: 0;
   width: 0%;
-  height: 3px;
-  background: linear-gradient(90deg, #2563eb, #38bdf8, #06b6d4, #10b981);
-  z-index: 99999;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+  height: 3.5px;
+  background: linear-gradient(90deg, #2563eb 0%, #38bdf8 30%, #ef4444 70%, #10b981 100%);
+  background-size: 200% auto;
+  z-index: 999999;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.8), 0 0 6px rgba(37, 99, 235, 0.5);
   transition: width 0.3s ease-out, opacity 0.4s ease-out;
   pointer-events: none;
+  animation: progressGleam 2s linear infinite;
+}
+
+@keyframes progressGleam {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
 }
 
 /* ====================================================================
    2. KEYFRAME DEFINITIONS
    ==================================================================== */
 
-/* Reveal animations */
+/* Punchy Reveal */
 @keyframes animFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes animFadeInUp {
+@keyframes animFadeInUpPunchy {
   from {
     opacity: 0;
-    transform: translate3d(0, 26px, 0);
+    transform: translate3d(0, 36px, 0) scale3d(0.95, 0.95, 1);
   }
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
   }
 }
 
-@keyframes animFadeInDown {
-  from {
-    opacity: 0;
-    transform: translate3d(0, -22px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes animFadeInLeft {
-  from {
-    opacity: 0;
-    transform: translate3d(-30px, 0, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes animFadeInRight {
-  from {
-    opacity: 0;
-    transform: translate3d(30px, 0, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes animZoomInSoft {
-  from {
-    opacity: 0;
-    transform: scale3d(0.94, 0.94, 1);
-  }
-  to {
-    opacity: 1;
-    transform: scale3d(1, 1, 1);
-  }
+/* Dynamic Gradient Flow for Headings */
+@keyframes textGradientShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* Levitation & Float */
@@ -105,7 +81,7 @@ html {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-7px);
+    transform: translateY(-8px);
   }
 }
 
@@ -114,36 +90,44 @@ html {
     transform: translateY(0) rotate(0deg);
   }
   50% {
-    transform: translateY(-5px) rotate(1.2deg);
+    transform: translateY(-5px) rotate(1.5deg);
   }
 }
 
 /* Pulsing aura & glows */
 @keyframes pulseGlowRed {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.55);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
   }
 }
 
 @keyframes pulseGlowBlue {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.55);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(37, 99, 235, 0);
+    box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
   }
 }
 
-@keyframes pulseGlowEmerald {
+/* Energetic Breathing for CTA Buttons */
+@keyframes ctaEnergyPulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55);
+    box-shadow: 0 4px 14px rgba(255, 71, 34, 0.4), 0 0 0 0 rgba(255, 71, 34, 0.5);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+    box-shadow: 0 8px 24px rgba(255, 71, 34, 0.65), 0 0 0 9px rgba(255, 71, 34, 0);
   }
+}
+
+@keyframes lightningJolt {
+  0%, 100% { transform: scale(1) rotate(0); }
+  25% { transform: scale(1.3) rotate(-14deg); }
+  50% { transform: scale(1.15) rotate(10deg); }
+  75% { transform: scale(1.25) rotate(-6deg); }
 }
 
 @keyframes pingCircle {
@@ -152,7 +136,7 @@ html {
     opacity: 0.9;
   }
   80%, 100% {
-    transform: scale(2.2);
+    transform: scale(2.4);
     opacity: 0;
   }
 }
@@ -160,14 +144,14 @@ html {
 /* Diagonal Shine Sweep Effect on Hover */
 @keyframes shineSweep {
   0% {
-    left: -120%;
+    left: -130%;
     opacity: 0;
   }
   20% {
-    opacity: 0.65;
+    opacity: 0.75;
   }
   100% {
-    left: 220%;
+    left: 230%;
     opacity: 0;
   }
 }
@@ -176,10 +160,10 @@ html {
 @keyframes buttonRipple {
   0% {
     transform: scale(0);
-    opacity: 0.5;
+    opacity: 0.55;
   }
   100% {
-    transform: scale(3.5);
+    transform: scale(3.8);
     opacity: 0;
   }
 }
@@ -187,23 +171,16 @@ html {
 /* Badge Wiggle on Cart / Wishlist update */
 @keyframes cartWiggle {
   0%, 100% { transform: rotate(0) scale(1); }
-  20% { transform: rotate(-15deg) scale(1.15); }
-  40% { transform: rotate(12deg) scale(1.15); }
-  60% { transform: rotate(-8deg) scale(1.05); }
-  80% { transform: rotate(4deg) scale(1.02); }
+  20% { transform: rotate(-18deg) scale(1.25); }
+  40% { transform: rotate(15deg) scale(1.2); }
+  60% { transform: rotate(-10deg) scale(1.1); }
+  80% { transform: rotate(5deg) scale(1.05); }
 }
 
-@keyframes badgeBounce {
-  0%, 100% { transform: scale(1); }
-  40% { transform: scale(1.35); }
-  70% { transform: scale(0.92); }
-}
-
-/* Heart pop animation */
 @keyframes heartPop {
   0% { transform: scale(1); }
-  35% { transform: scale(1.4) rotate(-12deg); }
-  70% { transform: scale(0.9) rotate(6deg); }
+  35% { transform: scale(1.5) rotate(-14deg); }
+  70% { transform: scale(0.9) rotate(8deg); }
   100% { transform: scale(1) rotate(0); }
 }
 
@@ -211,7 +188,7 @@ html {
 @keyframes dropdownUnfold {
   0% {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+    transform: translateY(14px) scale(0.97);
   }
   100% {
     opacity: 1;
@@ -219,26 +196,20 @@ html {
   }
 }
 
-/* Shimmer Loading Skeleton */
-@keyframes shimmerSkeleton {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
 /* ====================================================================
-   3. SCROLL REVEAL UTILITIES (Tích hợp cùng IntersectionObserver)
+   3. PUNCHY SCROLL REVEAL (TÍCH HỢP INTERSECTION OBSERVER)
    ==================================================================== */
 .reveal-init {
   opacity: 0;
-  transform: translate3d(0, 26px, 0);
-  transition: opacity 0.65s var(--anim-ease-spring),
-              transform 0.65s var(--anim-ease-spring);
+  transform: translate3d(0, 32px, 0) scale3d(0.96, 0.96, 1);
+  transition: opacity 0.55s var(--anim-ease-punchy),
+              transform 0.55s var(--anim-ease-punchy);
   will-change: opacity, transform;
 }
 
 .reveal-init.revealed {
   opacity: 1 !important;
-  transform: translate3d(0, 0, 0) !important;
+  transform: translate3d(0, 0, 0) scale3d(1, 1, 1) !important;
 }
 
 .reveal-fade {
@@ -246,53 +217,78 @@ html {
 }
 
 .reveal-left {
-  transform: translate3d(-30px, 0, 0) !important;
+  transform: translate3d(-35px, 0, 0) scale3d(0.96, 0.96, 1) !important;
 }
 .reveal-left.revealed {
-  transform: translate3d(0, 0, 0) !important;
+  transform: translate3d(0, 0, 0) scale3d(1, 1, 1) !important;
 }
 
 .reveal-right {
-  transform: translate3d(30px, 0, 0) !important;
+  transform: translate3d(35px, 0, 0) scale3d(0.96, 0.96, 1) !important;
 }
 .reveal-right.revealed {
-  transform: translate3d(0, 0, 0) !important;
-}
-
-.reveal-zoom {
-  transform: scale3d(0.93, 0.93, 1) !important;
-}
-.reveal-zoom.revealed {
-  transform: scale3d(1, 1, 1) !important;
+  transform: translate3d(0, 0, 0) scale3d(1, 1, 1) !important;
 }
 
 /* Stagger delay helpers */
-.anim-delay-1 { transition-delay: 0.08s !important; }
-.anim-delay-2 { transition-delay: 0.16s !important; }
-.anim-delay-3 { transition-delay: 0.24s !important; }
-.anim-delay-4 { transition-delay: 0.32s !important; }
-.anim-delay-5 { transition-delay: 0.40s !important; }
-.anim-delay-6 { transition-delay: 0.48s !important; }
+.anim-delay-1 { transition-delay: 0.06s !important; }
+.anim-delay-2 { transition-delay: 0.12s !important; }
+.anim-delay-3 { transition-delay: 0.18s !important; }
+.anim-delay-4 { transition-delay: 0.24s !important; }
+.anim-delay-5 { transition-delay: 0.30s !important; }
+.anim-delay-6 { transition-delay: 0.36s !important; }
 
 /* ====================================================================
-   4. MICRO-INTERACTIONS: CARD SHINE, HOVER PHYSICS & ZOOM
+   4. DYNAMIC ANIMATED GRADIENT HEADINGS
    ==================================================================== */
+.text-gradient-shimmer,
+.hero__title {
+  background: linear-gradient(135deg, #0f172a 0%, #2563eb 40%, #ff4722 75%, #0f172a 100%) !important;
+  background-size: 300% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  animation: textGradientShimmer 9s ease infinite !important;
+}
 
-/* Hiệu ứng tia sáng lướt qua thẻ (Shine Beam) khi rê chuột */
-.flash-product-card,
-.voucher-card,
-.trust-card,
-.sports-showcase-card,
-.widget-card,
-.article-card,
-.hero-spotlight-card {
+/* ====================================================================
+   5. 3D MAGNETIC TILT & RADIAL SPOTLIGHT TRÊN THẺ SẢN PHẨM
+   ==================================================================== */
+.flash-product-card {
+  --spotlight-x: 50%;
+  --spotlight-y: 50%;
+  --spotlight-opacity: 0;
   position: relative;
   overflow: hidden;
   transition: transform 0.4s var(--anim-ease-spring),
               box-shadow 0.4s var(--anim-ease-spring),
               border-color 0.3s ease;
+  will-change: transform;
 }
 
+/* Radial Cursor Spotlight lướt theo chuột */
+.flash-product-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    450px circle at var(--spotlight-x) var(--spotlight-y),
+    rgba(37, 99, 235, 0.1),
+    transparent 75%
+  );
+  pointer-events: none;
+  opacity: var(--spotlight-opacity);
+  transition: opacity 0.25s ease;
+  z-index: 3;
+}
+
+.flash-product-card:hover {
+  border-color: #93c5fd !important;
+  box-shadow: 0 20px 40px -6px rgba(15, 23, 42, 0.12),
+              0 8px 16px -4px rgba(37, 99, 235, 0.1) !important;
+}
+
+/* Shine beam sweep */
 .flash-product-card::before,
 .trust-card::before,
 .article-card::before,
@@ -300,18 +296,18 @@ html {
   content: "";
   position: absolute;
   top: 0;
-  left: -120%;
-  width: 60%;
+  left: -130%;
+  width: 65%;
   height: 100%;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.5) 50%,
     transparent 100%
   );
   transform: skewX(-25deg);
   pointer-events: none;
-  z-index: 4;
+  z-index: 5;
 }
 
 .flash-product-card:hover::before,
@@ -325,20 +321,128 @@ html {
 .flash-product-card__img-wrap img,
 .article-card__thumb img,
 .spotlight-image-holder img {
-  transition: transform 0.6s var(--anim-ease-spring) !important;
+  transition: transform 0.65s var(--anim-ease-spring) !important;
   will-change: transform;
 }
 
 .flash-product-card:hover .flash-product-card__img-wrap img,
 .article-card:hover .article-card__thumb img {
-  transform: scale(1.08);
+  transform: scale(1.09) !important;
 }
 
 /* ====================================================================
-   5. BUTTON INTERACTIONS & RIPPLE EFFECT
+   6. ENERGETIC BUY NOW & PRIMARY CTA PULSES
    ==================================================================== */
+.btn-buy-now,
+#btnBuyNow {
+  animation: ctaEnergyPulse 2.6s infinite !important;
+}
 
-/* Hiệu ứng nhún nảy đàn hồi khi click button */
+.btn-buy-now i,
+#btnBuyNow i {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.btn-buy-now:hover i,
+#btnBuyNow:hover i {
+  animation: lightningJolt 0.5s infinite !important;
+}
+
+/* Nút so sánh nổi đáy có hào quang gradient */
+.btn-dock-submit:not(.is-disabled) {
+  animation: pulseGlowBlue 2.6s infinite;
+}
+
+/* ====================================================================
+   7. FLYING GHOST ITEM KHI THÊM GIỎ HÀNG / YÊU THÍCH
+   ==================================================================== */
+.flying-ghost-item {
+  position: fixed;
+  z-index: 9999999;
+  pointer-events: none;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.5), 0 0 18px rgba(255, 71, 34, 0.4);
+  transition: all 0.75s cubic-bezier(0.2, 0.9, 0.3, 1);
+  object-fit: cover;
+}
+
+/* ====================================================================
+   8. SCROLL-DRIVEN CIRCULAR PROGRESS "BACK TO TOP" BUTTON
+   ==================================================================== */
+.scroll-progress-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: none;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.16), 0 2px 8px rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.65) translateY(24px);
+  transition: all 0.35s var(--anim-ease-spring);
+  outline: none;
+}
+
+.scroll-progress-btn.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1) translateY(0);
+}
+
+.scroll-progress-btn:hover {
+  transform: scale(1.14) translateY(-4px) !important;
+  box-shadow: 0 16px 36px rgba(37, 99, 235, 0.35), 0 4px 12px rgba(15, 23, 42, 0.1);
+}
+
+.scroll-progress-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.scroll-progress-circle-bg {
+  fill: none;
+  stroke: #f1f5f9;
+  stroke-width: 4;
+}
+
+.scroll-progress-circle-bar {
+  fill: none;
+  stroke: url(#scrollProgressGrad);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 138.2; /* 2 * PI * 22 */
+  stroke-dashoffset: 138.2;
+  transition: stroke-dashoffset 0.15s ease-out;
+}
+
+.scroll-progress-icon {
+  font-size: 16px;
+  color: #2563eb;
+  transition: transform 0.3s var(--anim-ease-bounce);
+}
+
+.scroll-progress-btn:hover .scroll-progress-icon {
+  transform: translateY(-4px) scale(1.1);
+  color: #1d4ed8;
+}
+
+/* ====================================================================
+   9. BUTTON INTERACTIONS & RIPPLE EFFECT
+   ==================================================================== */
 button,
 .btn,
 .btn-primary,
@@ -365,26 +469,26 @@ button:active,
 .btn-buy-now:active,
 .btn-cart:active,
 .btn-dock-submit:active {
-  transform: translateY(1px) scale(0.97) !important;
+  transform: translateY(1.5px) scale(0.96) !important;
 }
 
 /* Sóng lan tỏa Ripple khi click */
 .ripple-wave {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.45);
   pointer-events: none;
   transform: scale(0);
-  animation: buttonRipple 0.6s cubic-bezier(0.2, 0.8, 0.4, 1);
+  animation: buttonRipple 0.65s cubic-bezier(0.2, 0.8, 0.4, 1);
   z-index: 10;
 }
 
 .ripple-wave--dark {
-  background: rgba(15, 23, 42, 0.15);
+  background: rgba(15, 23, 42, 0.16);
 }
 
 /* ====================================================================
-   6. FLOATING BADGES & STATUS GLOWS
+   10. FLOATING BADGES & STATUS GLOWS
    ==================================================================== */
 .floating-feature-badge--top {
   animation: floatLevitate 4.5s ease-in-out infinite;
@@ -394,19 +498,17 @@ button:active,
   animation: floatLevitate 5s ease-in-out 1s infinite;
 }
 
-/* Badge HOT / SALE nhấp nháy phát sáng nhẹ */
 .badge-orange,
 .sidebar-badge-hot,
 .badge-pink {
   animation: pulseGlowRed 2.8s infinite;
 }
 
-/* Chấm Online / Hoạt động trong Admin */
 .status-dot-active {
   position: relative;
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   background: #10b981;
   border-radius: 50%;
 }
@@ -423,9 +525,8 @@ button:active,
   animation: pingCircle 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-/* Badge cart / wishlist khi có cập nhật */
 .action-badge.wiggle-active {
-  animation: cartWiggle 0.65s ease-in-out;
+  animation: cartWiggle 0.65s ease-in-out !important;
 }
 
 .btn-wishlist-toggle.is-active i {
@@ -433,52 +534,35 @@ button:active,
   color: #ef4444 !important;
 }
 
-/* Icon compare quay nhẹ khi hover */
 .btn-compare-toggle:hover i {
   transform: rotate(180deg);
   transition: transform 0.4s var(--anim-ease-spring);
 }
 
 /* ====================================================================
-   7. DROPDOWN & MODAL SMOOTH ENTRANCES
+   11. CONFETTI CELEBRATION BURST PARTICLES
    ==================================================================== */
-.dropdown,
-.user-dropdown {
-  animation: dropdownUnfold 0.28s var(--anim-ease-spring);
+.confetti-particle {
+  position: fixed;
+  z-index: 999999;
+  pointer-events: none;
+  border-radius: 2px;
+  animation: confettiFall 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-/* Modal / SweetAlert2 bounce in siêu mượt */
-.swal2-popup {
-  animation: animZoomInSoft 0.35s var(--anim-ease-bounce) !important;
-  border-radius: 20px !important;
+@keyframes confettiFall {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--tx, 50px), var(--ty, 120px), 0) rotate(var(--rot, 360deg)) scale(0.3);
+  }
 }
 
 /* ====================================================================
-   8. ADMIN DASHBOARD STATS WIDGET HOVER LIFT
-   ==================================================================== */
-.widget-card {
-  transition: transform 0.3s var(--anim-ease-spring),
-              box-shadow 0.3s var(--anim-ease-spring);
-}
-
-.widget-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 14px 28px -4px rgba(15, 23, 42, 0.08), 0 6px 12px -2px rgba(15, 23, 42, 0.04);
-}
-
-.widget-card:hover .widget-icon {
-  transform: scale(1.1) rotate(4deg);
-  transition: transform 0.35s var(--anim-ease-spring);
-}
-
-/* Counter số nhảy mượt mà */
-.counter-animate {
-  display: inline-block;
-  will-change: transform;
-}
-
-/* ====================================================================
-   9. ACCESSIBILITY: PREFERS-REDUCED-MOTION
+   12. ACCESSIBILITY: PREFERS-REDUCED-MOTION
    ==================================================================== */
 @media (prefers-reduced-motion: reduce) {
   html {
