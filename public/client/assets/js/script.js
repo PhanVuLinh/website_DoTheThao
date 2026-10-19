@@ -1592,43 +1592,55 @@ function renderCompareDock() {
 
   // Hiển thị thanh dock
   dockEl.style.display = "block";
+  updateCompareCounter();
 
-  // Cập nhật link so sánh
+  // Cập nhật trạng thái và link so sánh
   if (btnDockCompare) {
-    const idsQuery = list.map((item) => item.id).join(",");
-    btnDockCompare.href = `/compare?ids=${idsQuery}`;
+    if (list.length >= 2) {
+      const idsQuery = list.map((item) => item.id).join(",");
+      btnDockCompare.href = `/compare?ids=${idsQuery}`;
+      btnDockCompare.classList.remove("is-disabled");
+      btnDockCompare.title = `So sánh chi tiết ${list.length} sản phẩm đã chọn`;
+      btnDockCompare.innerHTML = `<i class="fa-solid fa-scale-balanced"></i><span>So Sánh Ngay (${list.length})</span>`;
+    } else {
+      btnDockCompare.href = "javascript:void(0);";
+      btnDockCompare.classList.add("is-disabled");
+      btnDockCompare.title = "Vui lòng chọn thêm ít nhất 1 sản phẩm để bắt đầu so sánh";
+      btnDockCompare.innerHTML = `<i class="fa-solid fa-scale-balanced"></i><span>Chọn thêm 1 SP</span>`;
+    }
   }
 
-  // Render 4 slots (các slot có sản phẩm và các slot trống)
+  // Render các slot sản phẩm đã chọn
   let slotsHtml = "";
-  for (let i = 0; i < MAX_COMPARE; i++) {
-    if (i < list.length) {
-      const item = list[i];
-      const thumb = item.thumbnail || "https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT";
-      const formattedPrice = Number(item.price || 0).toLocaleString("vi-VN") + "đ";
+  list.forEach((item) => {
+    const thumb = item.thumbnail || "https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT";
+    const formattedPrice = Number(item.price || 0).toLocaleString("vi-VN") + "đ";
 
-      slotsHtml += `
-        <div class="dock-slot dock-slot--filled" data-id="${item.id}">
-          <div class="dock-slot__thumb">
-            <img src="${thumb}" alt="${item.title}" onerror="this.src='https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT'" />
-          </div>
-          <div class="dock-slot__meta">
-            <div class="dock-slot__title" title="${item.title}">${item.title}</div>
-            <div class="dock-slot__price">${formattedPrice}</div>
-          </div>
-          <button type="button" class="btn-dock-slot-remove" data-id="${item.id}" title="Xóa khỏi so sánh" aria-label="Xóa">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
+    slotsHtml += `
+      <div class="dock-slot dock-slot--filled" data-id="${item.id}">
+        <div class="dock-slot__thumb">
+          <img src="${thumb}" alt="${item.title}" onerror="this.src='https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT'" />
         </div>
-      `;
-    } else {
-      slotsHtml += `
-        <div class="dock-slot dock-slot--empty">
-          <i class="fa-solid fa-plus"></i>
-          <span>Thêm sản phẩm</span>
+        <div class="dock-slot__meta">
+          <div class="dock-slot__title" title="${item.title}">${item.title}</div>
+          <div class="dock-slot__price">${formattedPrice}</div>
         </div>
-      `;
-    }
+        <button type="button" class="btn-dock-slot-remove" data-id="${item.id}" title="Xóa khỏi so sánh" aria-label="Xóa">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    `;
+  });
+
+  // Nếu còn chỗ trống (< MAX_COMPARE), hiển thị 1 slot compact mời chọn thêm
+  if (list.length < MAX_COMPARE) {
+    const remaining = MAX_COMPARE - list.length;
+    slotsHtml += `
+      <div class="dock-slot dock-slot--empty" title="Bạn có thể thêm tối đa ${remaining} sản phẩm nữa vào danh sách so sánh">
+        <i class="fa-solid fa-plus"></i>
+        <span>Thêm SP (${remaining})</span>
+      </div>
+    `;
   }
 
   itemsContainer.innerHTML = slotsHtml;
