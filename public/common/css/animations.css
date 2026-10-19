@@ -1,0 +1,501 @@
+/**
+ * ====================================================================
+ * TITISPORT ANIMATION & MICRO-INTERACTION ENGINE (PREMIUM SUITE)
+ * ====================================================================
+ * Cung cấp hệ thống hiệu ứng mượt mà (60-120fps), tăng tính thẩm mỹ,
+ * mang lại trải nghiệm sống động chuẩn E-commerce hiện đại.
+ */
+
+:root {
+  --anim-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --anim-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --anim-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --anim-duration-base: 0.3s;
+}
+
+/* ====================================================================
+   1. GLOBAL SMOOTH SCROLL & PAGE PROGRESS BAR
+   ==================================================================== */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Thanh tiến trình tải trang mảnh 3px đỉnh trình duyệt */
+#pageTopProgressBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb, #38bdf8, #06b6d4, #10b981);
+  z-index: 99999;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+  transition: width 0.3s ease-out, opacity 0.4s ease-out;
+  pointer-events: none;
+}
+
+/* ====================================================================
+   2. KEYFRAME DEFINITIONS
+   ==================================================================== */
+
+/* Reveal animations */
+@keyframes animFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes animFadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes animFadeInDown {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -22px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes animFadeInLeft {
+  from {
+    opacity: 0;
+    transform: translate3d(-30px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes animFadeInRight {
+  from {
+    opacity: 0;
+    transform: translate3d(30px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes animZoomInSoft {
+  from {
+    opacity: 0;
+    transform: scale3d(0.94, 0.94, 1);
+  }
+  to {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+/* Levitation & Float */
+@keyframes floatLevitate {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(1.2deg);
+  }
+}
+
+/* Pulsing aura & glows */
+@keyframes pulseGlowRed {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+  }
+}
+
+@keyframes pulseGlowBlue {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(37, 99, 235, 0);
+  }
+}
+
+@keyframes pulseGlowEmerald {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes pingCircle {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
+  80%, 100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* Diagonal Shine Sweep Effect on Hover */
+@keyframes shineSweep {
+  0% {
+    left: -120%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.65;
+  }
+  100% {
+    left: 220%;
+    opacity: 0;
+  }
+}
+
+/* Ripple click effect */
+@keyframes buttonRipple {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(3.5);
+    opacity: 0;
+  }
+}
+
+/* Badge Wiggle on Cart / Wishlist update */
+@keyframes cartWiggle {
+  0%, 100% { transform: rotate(0) scale(1); }
+  20% { transform: rotate(-15deg) scale(1.15); }
+  40% { transform: rotate(12deg) scale(1.15); }
+  60% { transform: rotate(-8deg) scale(1.05); }
+  80% { transform: rotate(4deg) scale(1.02); }
+}
+
+@keyframes badgeBounce {
+  0%, 100% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  70% { transform: scale(0.92); }
+}
+
+/* Heart pop animation */
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.4) rotate(-12deg); }
+  70% { transform: scale(0.9) rotate(6deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+/* Dropdown Unfold */
+@keyframes dropdownUnfold {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Shimmer Loading Skeleton */
+@keyframes shimmerSkeleton {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ====================================================================
+   3. SCROLL REVEAL UTILITIES (Tích hợp cùng IntersectionObserver)
+   ==================================================================== */
+.reveal-init {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+  transition: opacity 0.65s var(--anim-ease-spring),
+              transform 0.65s var(--anim-ease-spring);
+  will-change: opacity, transform;
+}
+
+.reveal-init.revealed {
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) !important;
+}
+
+.reveal-fade {
+  transform: none !important;
+}
+
+.reveal-left {
+  transform: translate3d(-30px, 0, 0) !important;
+}
+.reveal-left.revealed {
+  transform: translate3d(0, 0, 0) !important;
+}
+
+.reveal-right {
+  transform: translate3d(30px, 0, 0) !important;
+}
+.reveal-right.revealed {
+  transform: translate3d(0, 0, 0) !important;
+}
+
+.reveal-zoom {
+  transform: scale3d(0.93, 0.93, 1) !important;
+}
+.reveal-zoom.revealed {
+  transform: scale3d(1, 1, 1) !important;
+}
+
+/* Stagger delay helpers */
+.anim-delay-1 { transition-delay: 0.08s !important; }
+.anim-delay-2 { transition-delay: 0.16s !important; }
+.anim-delay-3 { transition-delay: 0.24s !important; }
+.anim-delay-4 { transition-delay: 0.32s !important; }
+.anim-delay-5 { transition-delay: 0.40s !important; }
+.anim-delay-6 { transition-delay: 0.48s !important; }
+
+/* ====================================================================
+   4. MICRO-INTERACTIONS: CARD SHINE, HOVER PHYSICS & ZOOM
+   ==================================================================== */
+
+/* Hiệu ứng tia sáng lướt qua thẻ (Shine Beam) khi rê chuột */
+.flash-product-card,
+.voucher-card,
+.trust-card,
+.sports-showcase-card,
+.widget-card,
+.article-card,
+.hero-spotlight-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s var(--anim-ease-spring),
+              box-shadow 0.4s var(--anim-ease-spring),
+              border-color 0.3s ease;
+}
+
+.flash-product-card::before,
+.trust-card::before,
+.article-card::before,
+.widget-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.flash-product-card:hover::before,
+.trust-card:hover::before,
+.article-card:hover::before,
+.widget-card:hover::before {
+  animation: shineSweep 0.85s ease-in-out;
+}
+
+/* Zoom ảnh mượt mà trong thẻ sản phẩm */
+.flash-product-card__img-wrap img,
+.article-card__thumb img,
+.spotlight-image-holder img {
+  transition: transform 0.6s var(--anim-ease-spring) !important;
+  will-change: transform;
+}
+
+.flash-product-card:hover .flash-product-card__img-wrap img,
+.article-card:hover .article-card__thumb img {
+  transform: scale(1.08);
+}
+
+/* ====================================================================
+   5. BUTTON INTERACTIONS & RIPPLE EFFECT
+   ==================================================================== */
+
+/* Hiệu ứng nhún nảy đàn hồi khi click button */
+button,
+.btn,
+.btn-primary,
+.btn-hero-primary,
+.btn-hero-secondary,
+.btn-buy-now,
+.btn-cart,
+.btn-spotlight-view,
+.btn-dock-submit,
+.btn-voucher-action,
+.btn-export-revenue,
+.action-btn {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s var(--anim-ease-spring),
+              box-shadow 0.25s var(--anim-ease-spring),
+              background 0.25s ease,
+              color 0.25s ease;
+}
+
+button:active,
+.btn:active,
+.btn-hero-primary:active,
+.btn-buy-now:active,
+.btn-cart:active,
+.btn-dock-submit:active {
+  transform: translateY(1px) scale(0.97) !important;
+}
+
+/* Sóng lan tỏa Ripple khi click */
+.ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  transform: scale(0);
+  animation: buttonRipple 0.6s cubic-bezier(0.2, 0.8, 0.4, 1);
+  z-index: 10;
+}
+
+.ripple-wave--dark {
+  background: rgba(15, 23, 42, 0.15);
+}
+
+/* ====================================================================
+   6. FLOATING BADGES & STATUS GLOWS
+   ==================================================================== */
+.floating-feature-badge--top {
+  animation: floatLevitate 4.5s ease-in-out infinite;
+}
+
+.floating-feature-badge--bottom {
+  animation: floatLevitate 5s ease-in-out 1s infinite;
+}
+
+/* Badge HOT / SALE nhấp nháy phát sáng nhẹ */
+.badge-orange,
+.sidebar-badge-hot,
+.badge-pink {
+  animation: pulseGlowRed 2.8s infinite;
+}
+
+/* Chấm Online / Hoạt động trong Admin */
+.status-dot-active {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+}
+
+.status-dot-active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pingCircle 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Badge cart / wishlist khi có cập nhật */
+.action-badge.wiggle-active {
+  animation: cartWiggle 0.65s ease-in-out;
+}
+
+.btn-wishlist-toggle.is-active i {
+  animation: heartPop 0.45s var(--anim-ease-bounce);
+  color: #ef4444 !important;
+}
+
+/* Icon compare quay nhẹ khi hover */
+.btn-compare-toggle:hover i {
+  transform: rotate(180deg);
+  transition: transform 0.4s var(--anim-ease-spring);
+}
+
+/* ====================================================================
+   7. DROPDOWN & MODAL SMOOTH ENTRANCES
+   ==================================================================== */
+.dropdown,
+.user-dropdown {
+  animation: dropdownUnfold 0.28s var(--anim-ease-spring);
+}
+
+/* Modal / SweetAlert2 bounce in siêu mượt */
+.swal2-popup {
+  animation: animZoomInSoft 0.35s var(--anim-ease-bounce) !important;
+  border-radius: 20px !important;
+}
+
+/* ====================================================================
+   8. ADMIN DASHBOARD STATS WIDGET HOVER LIFT
+   ==================================================================== */
+.widget-card {
+  transition: transform 0.3s var(--anim-ease-spring),
+              box-shadow 0.3s var(--anim-ease-spring);
+}
+
+.widget-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 28px -4px rgba(15, 23, 42, 0.08), 0 6px 12px -2px rgba(15, 23, 42, 0.04);
+}
+
+.widget-card:hover .widget-icon {
+  transform: scale(1.1) rotate(4deg);
+  transition: transform 0.35s var(--anim-ease-spring);
+}
+
+/* Counter số nhảy mượt mà */
+.counter-animate {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* ====================================================================
+   9. ACCESSIBILITY: PREFERS-REDUCED-MOTION
+   ==================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal-init {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
