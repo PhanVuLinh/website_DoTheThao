@@ -12037,19 +12037,26 @@ textarea.is-invalid {
 }
 
 .flash-product-card .btn-wishlist-toggle {
-  top: 24px;
-  right: 24px;
+  position: absolute !important;
+  top: 24px !important;
+  right: 24px !important;
+  left: auto !important;
+  z-index: 6 !important;
 }
 
 .flash-deal-card .btn-wishlist-toggle {
-  top: 22px;
-  right: 22px;
+  position: absolute !important;
+  top: 22px !important;
+  right: 22px !important;
+  left: auto !important;
+  z-index: 6 !important;
 }
 
 .btn-wishlist-toggle {
-  position: absolute;
+  position: absolute !important;
   top: 8px;
   right: 8px;
+  left: auto !important;
   width: 34px;
   height: 34px;
   border-radius: 50%;
@@ -13026,19 +13033,26 @@ textarea.is-invalid {
 
 /* 1. Compare Toggle Buttons on Product Cards */
 .flash-product-card .btn-compare-toggle {
-  top: 66px;
-  right: 24px;
+  position: absolute !important;
+  top: 66px !important;
+  right: 24px !important;
+  left: auto !important;
+  z-index: 6 !important;
 }
 
 .flash-deal-card .btn-compare-toggle {
-  top: 64px;
-  right: 22px;
+  position: absolute !important;
+  top: 64px !important;
+  right: 22px !important;
+  left: auto !important;
+  z-index: 6 !important;
 }
 
 .btn-compare-toggle {
-  position: absolute;
+  position: absolute !important;
   top: 48px;
   right: 8px;
+  left: auto !important;
   width: 34px;
   height: 34px;
   border-radius: 50%;

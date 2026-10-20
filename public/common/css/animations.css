@@ -443,7 +443,7 @@ html {
 /* ====================================================================
    9. BUTTON INTERACTIONS & RIPPLE EFFECT
    ==================================================================== */
-button:not(.action-btn),
+button:not(.action-btn):not(.btn-wishlist-toggle):not(.btn-compare-toggle):not(.btn-wishlist-detail):not(.btn-compare-detail):not(.slider-btn):not(.flash-nav-btn):not(.mobile-close-btn):not(.mobile-toggle-btn),
 .btn,
 .btn-primary,
 .btn-hero-primary,
@@ -477,6 +477,33 @@ button:not(.action-btn),
 .action-btn .action-badge {
   z-index: 25 !important;
   pointer-events: none;
+}
+
+/* Đảm bảo các nút Toggle Yêu thích và So sánh trên Card luôn định vị tuyệt đối chuẩn xác ở góc trên bên phải */
+.btn-wishlist-toggle,
+.btn-compare-toggle {
+  position: absolute !important;
+  left: auto !important;
+  z-index: 6 !important;
+  overflow: visible !important;
+}
+
+.flash-product-card .btn-wishlist-toggle,
+.flash-deal-card .btn-wishlist-toggle {
+  position: absolute !important;
+  top: 24px !important;
+  right: 24px !important;
+  left: auto !important;
+  z-index: 6 !important;
+}
+
+.flash-product-card .btn-compare-toggle,
+.flash-deal-card .btn-compare-toggle {
+  position: absolute !important;
+  top: 66px !important;
+  right: 24px !important;
+  left: auto !important;
+  z-index: 6 !important;
 }
 
 button:active,
