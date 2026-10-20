@@ -443,7 +443,7 @@ html {
 /* ====================================================================
    9. BUTTON INTERACTIONS & RIPPLE EFFECT
    ==================================================================== */
-button,
+button:not(.action-btn),
 .btn,
 .btn-primary,
 .btn-hero-primary,
@@ -453,14 +453,30 @@ button,
 .btn-spotlight-view,
 .btn-dock-submit,
 .btn-voucher-action,
-.btn-export-revenue,
-.action-btn {
+.btn-export-revenue {
   position: relative;
   overflow: hidden;
   transition: transform 0.2s var(--anim-ease-spring),
               box-shadow 0.25s var(--anim-ease-spring),
               background 0.25s ease,
               color 0.25s ease;
+}
+
+/* Đảm bảo Action Buttons trên Header và Badge KHÔNG bao giờ bị cắt/lấp góc */
+.action-btn,
+.cart-action-btn,
+.wishlist-action-btn,
+.compare-action-btn,
+.search-toggle-btn,
+.user-action-btn,
+.user-logged-btn {
+  position: relative;
+  overflow: visible !important;
+}
+
+.action-btn .action-badge {
+  z-index: 25 !important;
+  pointer-events: none;
 }
 
 button:active,
@@ -471,6 +487,7 @@ button:active,
 .btn-dock-submit:active {
   transform: translateY(1.5px) scale(0.96) !important;
 }
+
 
 /* Sóng lan tỏa Ripple khi click */
 .ripple-wave {

@@ -35,29 +35,80 @@
       .mobile-overlay
 
       .nav-menu-wrapper
-        button.mobile-close-btn
-          i.fa-solid.fa-xmark
-          
-        ul.nav-links
-          li
-            a(href="/") Trang Chủ
-            
-          each item in categoryList
+        .mobile-drawer-header
+          if (user)
+            .mobile-user-card
+              .mobile-user-avatar
+                i.fa-solid.fa-circle-user
+              .mobile-user-info
+                span.mobile-user-greeting Xin chào,
+                strong.mobile-user-name #{user.fullName}
+          else
+            .mobile-user-guest
+              .mobile-guest-avatar
+                i.fa-regular.fa-user
+              .mobile-guest-info
+                strong Tài khoản
+                span Đăng nhập để nhận ưu đãi
+              a.btn-mobile-login(href="/auth/login") Đăng nhập
+
+          button.mobile-close-btn(type="button" aria-label="Đóng menu")
+            i.fa-solid.fa-xmark
+
+        .mobile-quick-bar
+          a.mobile-quick-btn(href="/wishlist" title="Yêu thích")
+            i.fa-regular.fa-heart
+            span Yêu thích
+            span.drawer-badge.badge-pink#wishlist-drawer-counter(style="display: none;") 0
+          a.mobile-quick-btn(href="/compare" title="So sánh")
+            i.fa-solid.fa-code-compare
+            span So sánh
+            span.drawer-badge.badge-blue#compare-drawer-counter(style="display: none;") 0
+          a.mobile-quick-btn(href="/cart" title="Giỏ hàng")
+            i.fa-solid.fa-cart-shopping
+            span Giỏ hàng
+            if (miniCart > 0)
+              span.drawer-badge.badge-red #{miniCart}
+
+        .mobile-drawer-body
+          .mobile-menu-section-title DANH MỤC SẢN PHẨM
+          ul.nav-links
             li
-              a(href=`/category/${item.slug}`) #{item.title}
+              a(href="/") Trang Chủ
+              
+            each item in categoryList
+              li
+                a(href=`/category/${item.slug}`) #{item.title}
+                  if(item.children && item.children.length > 0)
+                    i.fa-solid.fa-chevron-down.arrow
+                    
                 if(item.children && item.children.length > 0)
-                  i.fa-solid.fa-chevron-down.arrow
+                  .dropdown
+                    each itemChild in item.children 
+                      a(href=`/category/${itemChild.slug}`) #{itemChild.title}
                   
-              if(item.children && item.children.length > 0)
-                .dropdown
-                  each itemChild in item.children 
-                    a(href=`/category/${itemChild.slug}`) #{itemChild.title}
-                
-          li
-            a(href="/article") Tin Tức
-            
-          li
-            a(href="/contact") Liên Hệ
+            li
+              a(href="/article") Tin Tức
+              
+            li
+              a(href="/contact") Liên Hệ
+
+          if (user)
+            .mobile-menu-section-title TÀI KHOẢN CỦA BẠN
+            ul.mobile-user-nav-list
+              li
+                a(href="/user/profile")
+                  i.fa-regular.fa-id-card
+                  span Thông tin tài khoản
+              li
+                a(href="/user/order-history")
+                  i.fa-solid.fa-box-open
+                  span Đơn hàng của tôi
+              li
+                a.text-danger(href="/auth/logout")
+                  i.fa-solid.fa-arrow-right-from-bracket
+                  span Đăng xuất
+
 
       .nav-actions
         button.action-btn.search-toggle-btn(type="button" title="Tìm kiếm sản phẩm" aria-label="Mở tìm kiếm")

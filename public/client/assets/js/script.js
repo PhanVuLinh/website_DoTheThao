@@ -1270,15 +1270,29 @@ function saveWishlist(list) {
 
 function updateWishlistCounter() {
   const counterEl = document.getElementById("wishlist-counter");
-  if (!counterEl) return;
+  const drawerCounterEl = document.getElementById("wishlist-drawer-counter");
   const list = getWishlist();
-  if (list.length > 0) {
-    counterEl.textContent = list.length;
-    counterEl.style.display = "inline-flex";
-  } else {
-    counterEl.style.display = "none";
+  const count = list.length;
+
+  if (counterEl) {
+    if (count > 0) {
+      counterEl.textContent = count;
+      counterEl.style.display = "inline-flex";
+    } else {
+      counterEl.style.display = "none";
+    }
+  }
+
+  if (drawerCounterEl) {
+    if (count > 0) {
+      drawerCounterEl.textContent = count;
+      drawerCounterEl.style.display = "inline-flex";
+    } else {
+      drawerCounterEl.style.display = "none";
+    }
   }
 }
+
 
 function syncWishlistHeartStates() {
   const list = getWishlist();
@@ -1526,6 +1540,7 @@ function saveCompareList(list) {
 
 function updateCompareCounter() {
   const counterEl = document.getElementById("compare-counter");
+  const drawerCounterEl = document.getElementById("compare-drawer-counter");
   const dockCounterEl = document.getElementById("compareDockCount");
   const list = getCompareList();
   const count = list.length;
@@ -1539,10 +1554,20 @@ function updateCompareCounter() {
     }
   }
 
+  if (drawerCounterEl) {
+    if (count > 0) {
+      drawerCounterEl.textContent = count;
+      drawerCounterEl.style.display = "inline-flex";
+    } else {
+      drawerCounterEl.style.display = "none";
+    }
+  }
+
   if (dockCounterEl) {
     dockCounterEl.textContent = count;
   }
 }
+
 
 function syncCompareButtonStates() {
   const list = getCompareList();
