@@ -172,15 +172,29 @@ module.exports.addToCart = async (req, res) => {
       return res.redirect(req.get("Referer") || "/");
     }
 
-    const sizeItem = (productInfo.sizes || []).find((item) => item.size === size);
+    const hasSizes = Array.isArray(productInfo.sizes) && productInfo.sizes.length > 0;
+    let targetStock = 999;
+    let finalSize = size;
 
-    if (!sizeItem) {
-      req.flash("error", "Size không tồn tại!");
-      return res.redirect(req.get("Referer") || "/");
-    }
-    if (sizeItem.stock <= 0) {
-      req.flash("error", "Sản phẩm kích thước này đã hết hàng!");
-      return res.redirect(req.get("Referer") || "/");
+    if (hasSizes) {
+      const sizeItem = productInfo.sizes.find((item) => item.size === size);
+
+      if (!sizeItem) {
+        req.flash("error", "Vui lòng chọn kích cỡ (size) hợp lệ cho sản phẩm!");
+        return res.redirect(req.get("Referer") || "/");
+      }
+      if (sizeItem.stock <= 0) {
+        req.flash("error", "Sản phẩm kích thước này tạm thời hết hàng!");
+        return res.redirect(req.get("Referer") || "/");
+      }
+      targetStock = sizeItem.stock;
+    } else {
+      finalSize = "Tiêu chuẩn";
+      targetStock = productInfo.stock !== undefined ? productInfo.stock : 999;
+      if (targetStock <= 0) {
+        req.flash("error", "Sản phẩm tạm thời hết hàng!");
+        return res.redirect(req.get("Referer") || "/");
+      }
     }
 
     const cart = await Cart.findOne({ _id: cartId });
@@ -190,7 +204,7 @@ module.exports.addToCart = async (req, res) => {
     }
 
     const existProductInCart = cart.products.find(
-      (item) => item.product_id === productId && item.size === size,
+      (item) => item.product_id === productId && (!hasSizes || item.size === finalSize),
     );
 
     let newQuantity = quantity;
@@ -198,8 +212,8 @@ module.exports.addToCart = async (req, res) => {
     if (existProductInCart) {
       newQuantity += existProductInCart.quantity;
     }
-    if (newQuantity > sizeItem.stock) {
-      req.flash("error", `Chỉ còn ${sizeItem.stock} sản phẩm trong kho!`);
+    if (newQuantity > targetStock) {
+      req.flash("error", `Chỉ còn ${targetStock} sản phẩm trong kho!`);
       return res.redirect(req.get("Referer") || "/");
     }
     if (existProductInCart) {
@@ -207,7 +221,7 @@ module.exports.addToCart = async (req, res) => {
         {
           _id: cartId,
           "products.product_id": productId,
-          "products.size": size,
+          "products.size": existProductInCart.size,
         },
         { $set: { "products.$.quantity": newQuantity } },
       );
@@ -215,7 +229,7 @@ module.exports.addToCart = async (req, res) => {
       const objectCart = {
         product_id: productId,
         quantity: quantity,
-        size: size,
+        size: finalSize,
       };
       await Cart.updateOne({ _id: cartId }, { $push: { products: objectCart } });
     }
@@ -301,15 +315,23 @@ module.exports.updateQuantity = async (req, res) => {
       return res.status(404).json({ success: false, message: "Sản phẩm không tồn tại hoặc đã bị xóa!" });
     }
 
-    const sizeItem = (productInfo.sizes || []).find((s) => s.size === item.size);
-    if (!sizeItem) {
-      return res.status(400).json({ success: false, message: "Size sản phẩm không tồn tại!" });
+    const hasSizes = Array.isArray(productInfo.sizes) && productInfo.sizes.length > 0;
+    let targetStock = 999;
+
+    if (hasSizes) {
+      const sizeItem = productInfo.sizes.find((s) => s.size === item.size);
+      if (!sizeItem) {
+        return res.status(400).json({ success: false, message: "Kích thước không hợp lệ!" });
+      }
+      targetStock = sizeItem.stock;
+    } else {
+      targetStock = productInfo.stock !== undefined ? productInfo.stock : 999;
     }
 
-    if (quantity > sizeItem.stock) {
+    if (quantity > targetStock) {
       return res.json({
         success: false,
-        message: `Chỉ còn ${sizeItem.stock} sản phẩm trong kho!`,
+        message: `Chỉ còn ${targetStock} sản phẩm trong kho!`,
       });
     }
 
@@ -334,6 +356,10 @@ module.exports.updateQuantity = async (req, res) => {
 module.exports.applyCoupon = async (req, res) => {
   try {
     const code = (req.body.code || "").trim();
+    if (!code) {
+      return res.status(400).json({ code: 400, message: "Vui lòng nhập mã giảm giá!" });
+    }
+
     const cartId = req.cookies.cartId;
     const token = req.cookies.tokenUser || req.cookies.token;
 
@@ -353,17 +379,18 @@ module.exports.applyCoupon = async (req, res) => {
       return res.status(401).json({ code: 400, message: "Vui lòng đăng nhập để dùng mã!" });
     }
 
+    // Tra cứu mã không phân biệt hoa thường
     const coupon = await Coupon.findOne({
-      code: code,
+      code: new RegExp(`^${code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i"),
       deleted: false,
       status: "active",
     });
 
-    if (!coupon) return res.status(400).json({ code: 400, message: "Mã không hợp lệ!" });
+    if (!coupon) return res.status(400).json({ code: 400, message: "Mã giảm giá không tồn tại!" });
     if (coupon.quantity <= 0)
       return res.status(400).json({ code: 400, message: "Mã đã hết lượt dùng!" });
     if (new Date() > new Date(coupon.expirationDate))
-      return res.status(400).json({ code: 400, message: "Mã đã hết hạn!" });
+      return res.status(400).json({ code: 400, message: "Mã đã hết hạn sử dụng!" });
 
     // Kiểm tra usedBy an toàn (tránh lỗi includes trên undefined)
     if (coupon.usedBy && coupon.usedBy.includes(user.id)) {
@@ -374,7 +401,7 @@ module.exports.applyCoupon = async (req, res) => {
       { _id: cartId },
       {
         $set: {
-          "coupon.code": code,
+          "coupon.code": coupon.code,
           "coupon.discount": coupon.discountPercentage,
         },
       },

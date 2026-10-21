@@ -43,6 +43,16 @@ mixin productItem(item)
           loading="lazy"
           onerror="this.onerror=null; this.src='https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT'"
         )
+
+        .flash-product-card__quick-overlay
+          button.quick-view-btn(
+            type="button"
+            data-slug=item.slug
+            data-title=item.title
+            title="Xem nhanh sản phẩm"
+          )
+            i.fa-solid.fa-eye
+            | Xem nhanh
         
       span.flash-product-card__brand #{item.brand || 'CHÍNH HÃNG'}
       h3.flash-product-card__title(title=item.title) #{item.title}

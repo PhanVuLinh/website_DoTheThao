@@ -1,31 +1,28 @@
 module.exports.createPost = (req, res, next) => {
+  const referer = req.get("Referer") || "/admin/article/list";
+
   if (!req.body.title || req.body.title.trim() === "") {
     req.flashFormError("title", "Vui lòng nhập tiêu đề bài viết!");
-    return res.redirect(req.get("Referer"));
+    return res.redirect(referer);
   }
 
-  if (req.body.title.trim().length < 5) {
-    req.flashFormError("title", "Tiêu đề phải ít nhất 5 ký tự!");
-    return res.redirect(req.get("Referer"));
+  if (req.body.title.trim().length < 3) {
+    req.flashFormError("title", "Tiêu đề bài viết phải có ít nhất 3 ký tự!");
+    return res.redirect(referer);
   }
 
   if (!req.body.content || req.body.content.trim() === "") {
     req.flashFormError("content", "Nội dung bài viết không được để trống!");
-    return res.redirect(req.get("Referer"));
+    return res.redirect(referer);
   }
 
   if (req.body.position) {
     const positionInt = parseInt(req.body.position, 10);
     if (isNaN(positionInt) || positionInt < 1) {
-      req.flashFormError("position", "Vị trí phải là số >= 1!");
-      return res.redirect(req.get("Referer"));
+      req.flashFormError("position", "Vị trí phải là số lớn hơn hoặc bằng 1!");
+      return res.redirect(referer);
     }
     req.body.position = positionInt;
-  }
-
-  if (!req.file) {
-    req.flashFormError("thumbnail", "Vui lòng chọn ảnh đại diện cho bài viết!");
-    return res.redirect(req.get("Referer"));
   }
 
   req.body.title = req.body.title.trim();
@@ -39,26 +36,28 @@ module.exports.createPost = (req, res, next) => {
 };
 
 module.exports.editPost = (req, res, next) => {
+  const referer = req.get("Referer") || "/admin/article/list";
+
   if (!req.body.title || req.body.title.trim() === "") {
     req.flashFormError("title", "Vui lòng nhập tiêu đề bài viết!");
-    return res.redirect(req.get("Referer"));
+    return res.redirect(referer);
   }
 
-  if (req.body.title.trim().length < 5) {
-    req.flashFormError("title", "Tiêu đề phải ít nhất 5 ký tự!");
-    return res.redirect(req.get("Referer"));
+  if (req.body.title.trim().length < 3) {
+    req.flashFormError("title", "Tiêu đề bài viết phải có ít nhất 3 ký tự!");
+    return res.redirect(referer);
   }
 
   if (!req.body.content || req.body.content.trim() === "") {
-    req.flashFormError("content", "Nội dung không được để trống!");
-    return res.redirect(req.get("Referer"));
+    req.flashFormError("content", "Nội dung bài viết không được để trống!");
+    return res.redirect(referer);
   }
 
   if (req.body.position) {
     const positionInt = parseInt(req.body.position, 10);
     if (isNaN(positionInt) || positionInt < 1) {
-      req.flashFormError("position", "Vị trí phải là số >= 1!");
-      return res.redirect(req.get("Referer"));
+      req.flashFormError("position", "Vị trí phải là số lớn hơn hoặc bằng 1!");
+      return res.redirect(referer);
     }
     req.body.position = positionInt;
   }

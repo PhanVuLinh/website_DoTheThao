@@ -93,6 +93,19 @@
             li
               a(href="/contact") Liên Hệ
 
+          .mobile-menu-section-title CÔNG NGHỆ & TƯ VẤN THỂ THAO
+          ul.mobile-user-nav-list
+            li
+              a.ai-mobile-menu-link#btnMobileOpenAiLab(href="#ai-sport-lab")
+                i.fa-solid.fa-wand-magic-sparkles
+                span AI Tư Vấn Vợt & Giày
+                span.ai-menu-badge AI PRO
+            li
+              a.theme-mobile-menu-link#btnMobileToggleTheme(href="#toggle-theme")
+                i.fa-solid.fa-circle-half-stroke
+                span Chế độ Sân Đấu Pro Arena
+                span.theme-status-text#mobileThemeStatus TẮT
+
           if (user)
             .mobile-menu-section-title TÀI KHOẢN CỦA BẠN
             ul.mobile-user-nav-list
@@ -111,6 +124,13 @@
 
 
       .nav-actions
+        button.action-btn.ai-lab-header-btn#btnHeaderOpenAiLab(type="button" title="AI Tư Vấn Vợt & Giày Thể Thao" aria-label="Mở AI Lab")
+          i.fa-solid.fa-wand-magic-sparkles
+          span.action-badge.badge-ai AI
+
+        button.action-btn.theme-toggle-btn#btnThemeToggle(type="button" title="Chế độ Sân Đấu Pro Arena / Sáng" aria-label="Đổi giao diện")
+          i.fa-solid.fa-moon
+
         button.action-btn.search-toggle-btn(type="button" title="Tìm kiếm sản phẩm" aria-label="Mở tìm kiếm")
           i.fa-solid.fa-magnifying-glass
 

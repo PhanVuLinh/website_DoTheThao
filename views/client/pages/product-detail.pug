@@ -232,12 +232,16 @@ block main
                           if isOutOfStock
                             span.size-sub-oos Hết
                   else 
-                    p.text-danger Sản phẩm tạm hết hàng.
+                    .default-size-tag
+                      input(type="hidden" name="size" value="Tiêu chuẩn")
+                      span.badge.badge-primary(style="padding: 6px 14px; font-size: 13px; font-weight: 600; border-radius: 8px; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; display: inline-flex; align-items: center; gap: 6px;")
+                        i.fa-solid.fa-check
+                        | Kích cỡ Tiêu chuẩn / Freesize
 
               .form-group.qty-selection
                 label.qty-label Số lượng
                 
-                - var initialStock = productDetail.sizes && productDetail.sizes.length > 0 ? productDetail.sizes[firstAvailableIndex].stock : 0;
+                - var initialStock = productDetail.sizes && productDetail.sizes.length > 0 ? (productDetail.sizes[firstAvailableIndex] ? productDetail.sizes[firstAvailableIndex].stock : 0) : (productDetail.stock !== undefined ? productDetail.stock : 99);
                 
                 .qty-control-wrapper
                   .qty-custom

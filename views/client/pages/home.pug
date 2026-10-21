@@ -407,7 +407,12 @@ block main
                       )
 
                       .flash-deal-card__quick-overlay
-                        span.quick-view-pill
+                        button.quick-view-pill(
+                          type="button"
+                          data-slug=item.slug
+                          data-title=item.title
+                          title="Xem nhanh"
+                        )
                           i.fa-solid.fa-eye
                           | Xem nhanh
                     

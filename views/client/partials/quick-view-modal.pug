@@ -1,0 +1,74 @@
+//- ====================================================================
+//- QUICK VIEW STUDIO MODAL (XEM NHANH SẢN PHẨM 1 CHẠM SIÊU TỐC)
+//- ====================================================================
+#quickViewModal.quick-view-modal(style="display: none;" aria-hidden="true")
+  .quick-view-backdrop#quickViewBackdrop
+
+  .quick-view-dialog
+    button.quick-view-close-btn#btnQuickViewClose(type="button" aria-label="Đóng")
+      i.fa-solid.fa-xmark
+
+    .quick-view-content#quickViewContent
+      //- 1. Cột trái: Gallery ảnh sản phẩm
+      .quick-view-gallery
+        .quick-view-main-image-wrap
+          img#quickViewMainImg(src="" alt="Sản phẩm")
+          .quick-view-badge-discount#quickViewDiscountBadge(style="display: none;") -0%
+        .quick-view-thumbs#quickViewThumbs
+          //- JS nạp các ảnh thumbnails
+
+      //- 2. Cột phải: Thông tin sản phẩm & Mua 1 chạm
+      .quick-view-info
+        .quick-view-brand#quickViewBrand CHÍNH HÃNG 100%
+        h2.quick-view-title#quickViewTitle Tên Sản Phẩm
+
+        .quick-view-rating
+          .stars-group
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+            i.fa-solid.fa-star
+          span.rating-score (5.0)
+          span.rating-stock-tag
+            i.fa-solid.fa-circle-check
+            | Còn hàng
+
+        .quick-view-price-box
+          span.quick-view-price-new#quickViewPriceNew 0đ
+          span.quick-view-price-old#quickViewPriceOld(style="display: none;") 0đ
+          span.quick-view-savings#quickViewSavings(style="display: none;") Tiết kiệm 0đ
+
+        .quick-view-divider
+
+        //- Tùy chọn size / phân loại nếu có
+        .quick-view-sizes-wrap#quickViewSizesWrap(style="display: none;")
+          .quick-view-size-header
+            span.label Chọn Kích Cỡ / Trọng Lượng:
+            span.selected-val#quickViewSelectedSizeVal Chưa chọn
+          .quick-view-sizes-list#quickViewSizesList
+            //- JS render các nút chọn size
+
+        //- Bộ chọn số lượng
+        .quick-view-qty-row
+          span.qty-label Số lượng:
+          .quick-view-qty-control
+            button.qty-btn#btnQuickQtyMinus(type="button" aria-label="Giảm")
+              i.fa-solid.fa-minus
+            input.qty-input#quickViewQtyInput(type="number" value="1" min="1" max="99" readonly)
+            button.qty-btn#btnQuickQtyPlus(type="button" aria-label="Tăng")
+              i.fa-solid.fa-plus
+
+        //- Nút bấm thêm giỏ & mua ngay
+        .quick-view-actions
+          button.btn-quick-add-cart#btnQuickAddToCart(type="button")
+            i.fa-solid.fa-cart-plus
+            span Thêm Vào Giỏ Hàng
+          button.btn-quick-buy-now#btnQuickBuyNow(type="button")
+            i.fa-solid.fa-bolt
+            span Mua Ngay
+
+        .quick-view-footer-links
+          a.quick-view-full-detail#quickViewFullDetailLink(href="#")
+            | Xem chi tiết đầy đủ sản phẩm
+            i.fa-solid.fa-arrow-right

@@ -28,12 +28,12 @@ html(lang="vi")
       
     link(
       rel="stylesheet"
-      href="/client/assets/css/style.css?v=1.4.8"
+      href="/client/assets/css/style.css?v=1.5.0"
     )
 
     link(
       rel="stylesheet"
-      href="/common/css/animations.css?v=2.0.2"
+      href="/common/css/animations.css?v=2.1.0"
     )
 
 
@@ -60,7 +60,10 @@ html(lang="vi")
     include ../partials/footer.pug    
 
     include ../partials/box-contact.pug   
+    include ../partials/floating-ai-lab.pug
     include ../partials/compare-dock.pug   
+    include ../partials/quick-view-modal.pug
+    include ../partials/ai-sport-lab.pug
 
     script(src="https://cdn.jsdelivr.net/npm/sweetalert2@11")
 
@@ -70,8 +73,8 @@ html(lang="vi")
       window.formErrors = !{JSON.stringify(formErrors || {})};
     script(src="/common/js/form-validator.js")
     script(src="/socket.io/socket.io.js")
-    script(src="/client/assets/js/script.js?v=1.4.6")
-    script(src="/common/js/animations.js?v=2.0.0")
+    script(src="/client/assets/js/script.js?v=1.5.0")
+    script(src="/common/js/animations.js?v=2.1.0")
 
 
 

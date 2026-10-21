@@ -176,7 +176,8 @@ textarea {
 body.admin-body {
   display: flex;
   height: 100vh;
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
   overflow: hidden;
   position: relative;
 }
@@ -1414,6 +1415,7 @@ select.filter-select {
 
 .admin-table {
   width: 100%;
+  min-width: 900px;
   border-collapse: collapse;
   text-align: left;
 }
@@ -1675,6 +1677,8 @@ select.filter-select {
   display: flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .btn-action,

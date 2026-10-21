@@ -366,3 +366,190 @@ module.exports.detail = async (req, res) => {
   }
 };
 
+// [GET] /product/api/quick-detail/:slug
+module.exports.quickDetail = async (req, res) => {
+  try {
+    const slug = req.params.slug;
+    let product = await Product.findOne({
+      slug: slug,
+      deleted: false,
+      status: "active",
+    }).lean();
+
+    if (!product && slug.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findOne({
+        _id: slug,
+        deleted: false,
+        status: "active",
+      }).lean();
+    }
+
+    if (!product) {
+      return res.status(404).json({ code: 404, message: "Không tìm thấy sản phẩm" });
+    }
+
+    product = productPriceHelper.priceNewOne(product);
+
+    let images = [];
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      images = product.images.filter((img) => img && typeof img === "string" && img.trim() !== "");
+    }
+    if (product.thumbnail && !images.includes(product.thumbnail)) {
+      images.unshift(product.thumbnail);
+    }
+    if (images.length === 0 && product.thumbnail) {
+      images.push(product.thumbnail);
+    }
+    product.images = images;
+
+    return res.json({
+      code: 200,
+      product: {
+        id: product._id,
+        title: product.title,
+        slug: product.slug,
+        brand: product.brand || "CHÍNH HÃNG",
+        price: product.price,
+        priceNew: product.priceNew,
+        discountPercentage: product.discountPercentage || 0,
+        thumbnail: product.thumbnail || images[0] || "",
+        images: images,
+        sizes: product.sizes || [],
+        description: product.description || "",
+      },
+    });
+  } catch (error) {
+    console.error("Quick detail API error:", error);
+    return res.status(500).json({ code: 500, message: "Lỗi máy chủ" });
+  }
+};
+
+// [GET] /product/api/ai-recommend
+module.exports.aiRecommend = async (req, res) => {
+  try {
+    const { sport, playstyle, wristStrength, budget } = req.query;
+
+    const find = {
+      deleted: false,
+      status: "active",
+    };
+
+    // 1. Phân loại theo Bộ môn
+    let keywords = [];
+    if (sport === "badminton") {
+      keywords = ["vợt", "cầu lông", "yonex", "lining", "victor", "nanoflare", "axforce", "astrox", "giày cầu lông"];
+    } else if (sport === "football") {
+      keywords = ["bóng đá", "giày đá bóng", "mizuno", "kamito", "nike", "quả bóng", "sân cỏ"];
+    } else if (sport === "volleyball") {
+      keywords = ["bóng chuyền", "asics", "mizuno", "băng gối", "quả bóng chuyền"];
+    } else if (sport === "running") {
+      keywords = ["chạy", "giày chạy", "băng cổ chân", "áo thi đấu", "quần"];
+    }
+
+    if (keywords.length > 0) {
+      find.$or = keywords.map((kw) => ({
+        title: { $regex: new RegExp(kw, "i") },
+      }));
+    }
+
+    // 2. Phân loại theo Ngân sách
+    if (budget === "under-1m") {
+      find.price = { $lt: 1000000 };
+    } else if (budget === "1m-to-2.5m") {
+      find.price = { $gte: 1000000, $lte: 2500000 };
+    } else if (budget === "over-2.5m") {
+      find.price = { $gt: 2500000 };
+    }
+
+    let products = await Product.find(find).limit(6).lean();
+
+    // Nếu bộ lọc quá chặt không có sản phẩm, nới lỏng để luôn có gợi ý chất lượng
+    if (products.length < 3) {
+      const fallbackFind = { deleted: false, status: "active" };
+      if (keywords.length > 0) {
+        fallbackFind.$or = keywords.slice(0, 3).map((kw) => ({
+          title: { $regex: new RegExp(kw, "i") },
+        }));
+      }
+      const moreProducts = await Product.find(fallbackFind).limit(6).lean();
+      const existingIds = new Set(products.map((p) => p._id.toString()));
+      for (const p of moreProducts) {
+        if (!existingIds.has(p._id.toString())) {
+          products.push(p);
+        }
+      }
+    }
+
+    products = productPriceHelper.priceNewProduct(products);
+
+    // Tính toán thông số kỹ thuật AI khuyến nghị (Physics & Sports Engineering Model)
+    let aiSpecs = {};
+    if (sport === "badminton" || !sport) {
+      if (playstyle === "attack") {
+        aiSpecs = {
+          balancePoint: "298 - 308 mm (Nặng đầu - Head Heavy)",
+          shaftFlex: wristStrength === "strong" ? "Cứng (Stiff) - Đập cắm & Uy lực" : "Trung bình (Medium) - Hỗ trợ lực",
+          weightRacket: wristStrength === "beginner" ? "4U (80-84g)" : "3U / 4U (83-88g)",
+          recommendedTension: wristStrength === "strong" ? "11.0 - 12.0 kg (24-26.5 lbs)" : "10.0 - 10.5 kg (22-23 lbs)",
+          playstyleDesc: "Thiết kế tối ưu cho đòn Smash cắm vạch cuối sân, quỹ đạo cầu gắt và áp đảo đối thủ hoàn toàn.",
+        };
+      } else if (playstyle === "speed") {
+        aiSpecs = {
+          balancePoint: "285 - 293 mm (Nhẹ đầu - Head Light)",
+          shaftFlex: "Cực dẻo & Đàn hồi cao (Aero Frame)",
+          weightRacket: "4U / 5U (75-84g) - Cực kỳ thanh thoát",
+          recommendedTension: "10.5 - 11.5 kg (23-25 lbs)",
+          playstyleDesc: "Chuyên biệt cho phản tạt chớp nhoáng, tì đè trên lưới và đổi hướng cầu tốc độ cao.",
+        };
+      } else {
+        aiSpecs = {
+          balancePoint: "290 - 296 mm (Cân bằng - Even Balance)",
+          shaftFlex: "Trung bình (Medium Flex)",
+          weightRacket: "4U (80-84g) - Toàn diện linh hoạt",
+          recommendedTension: "10.5 - 11.0 kg (23-24.5 lbs)",
+          playstyleDesc: "Công thủ toàn diện, điều cầu chính xác từng milimet và bền bỉ trong các pha đôi công kéo dài.",
+        };
+      }
+    } else if (sport === "football") {
+      aiSpecs = {
+        soleType: "Đinh TF cao su đúc đa hướng (Sân cỏ nhân tạo Việt Nam)",
+        upperMaterial: "Da nhân tạo Microfiber / Da tự nhiên siêu êm",
+        insoleTech: "Đệm EVA lót giảm chấn bảo vệ khớp gối & gót chân",
+        fitType: "Form chân chuẩn người Việt (Regular - Wide)",
+        playstyleDesc: "Bám sân chắc chắn ngay cả khi trời mưa ẩm, cảm giác chạm bóng thật chân và bứt tốc tức thì.",
+      };
+    } else {
+      aiSpecs = {
+        cushionTech: "Đệm khí Gel / Power Cushion đàn hồi hồi phục năng lượng",
+        supportSystem: "Bộ khung chống lật cổ chân TPU & đế cao su Non-Marking",
+        breathability: "Lưới dệt thoáng khí đa điểm AirMesh giảm nhiệt độ bàn chân",
+        fitType: "Form ôm chân linh hoạt, giảm chấn động khi tiếp đất",
+        playstyleDesc: "Bảo vệ tối đa hệ cơ xương khớp khi bật nhảy liên tục và di chuyển đổi hướng đột ngột.",
+      };
+    }
+
+    const matchScores = [99, 96, 94, 91, 88, 85];
+    const enrichedProducts = products.slice(0, 6).map((p, idx) => ({
+      id: p._id,
+      title: p.title,
+      slug: p.slug,
+      brand: p.brand || "CHÍNH HÃNG",
+      price: p.price,
+      priceNew: p.priceNew,
+      discountPercentage: p.discountPercentage || 0,
+      thumbnail: p.thumbnail || (p.images && p.images[0]) || "",
+      matchScore: matchScores[idx] || 85,
+      aiHighlight: idx === 0 ? "Khớp hoàn hảo nhất với thể lực và phong cách chơi của bạn" : "Lựa chọn xuất sắc trong phân khúc ngân sách đã chọn",
+    }));
+
+    return res.json({
+      code: 200,
+      specs: aiSpecs,
+      products: enrichedProducts,
+    });
+  } catch (error) {
+    console.error("AI recommend API error:", error);
+    return res.status(500).json({ code: 500, message: "Lỗi xử lý thuật toán AI" });
+  }
+};
+

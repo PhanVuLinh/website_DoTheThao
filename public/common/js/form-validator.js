@@ -18,10 +18,11 @@
    */
   function isCurrencyInput(input) {
     if (!input || input.tagName !== "INPUT") return false;
+    if (input.type === "hidden" || input.closest("form[form-filter]") || input.closest("form[form-search]")) return false;
     return (
       input.hasAttribute("input-currency") ||
       input.dataset.type === "currency" ||
-      input.name === "price" ||
+      (input.name === "price" && !input.value.includes("-")) ||
       input.name === "maxDiscountAmount"
     );
   }
@@ -267,9 +268,10 @@
       }
     }
 
-    // 3. Kiểm tra định dạng Số điện thoại
+    // 3. Kiểm tra định dạng Số điện thoại (chấp nhận cả dấu cách, gạch ngang)
     if (input.type === "tel" || input.name === "phone" || input.dataset.rule === "phone") {
-      if (!REGEX_PHONE.test(val)) {
+      const cleanPhone = val.replace(/[\s\-\.\(\)]/g, "");
+      if (!REGEX_PHONE.test(cleanPhone)) {
         showFieldError(input, "Số điện thoại không hợp lệ (cần 10 chữ số, bắt đầu bằng 0)!");
         return false;
       }
@@ -435,7 +437,9 @@
    */
   function init() {
     initCurrencyInputs();
-    const forms = document.querySelectorAll("form:not([no-validate])");
+    const forms = document.querySelectorAll(
+      "form:not([no-validate]):not([form-search]):not(.hero-search-form):not(.search-drawer__form)"
+    );
     forms.forEach(attachValidatorToForm);
     handleServerFormErrors();
   }

@@ -1612,11 +1612,18 @@ function renderCompareDock() {
 
   if (list.length === 0) {
     dockEl.style.display = "none";
+    document.body.classList.remove("has-compare-dock", "dock-collapsed");
     return;
   }
 
   // Hiển thị thanh dock
   dockEl.style.display = "block";
+  document.body.classList.add("has-compare-dock");
+  if (dockEl.classList.contains("is-collapsed")) {
+    document.body.classList.add("dock-collapsed");
+  } else {
+    document.body.classList.remove("dock-collapsed");
+  }
   updateCompareCounter();
 
   // Cập nhật trạng thái và link so sánh
@@ -1884,12 +1891,18 @@ const compareDock = document.getElementById("compareDock");
 if (btnToggleCompareDock && compareDock) {
   btnToggleCompareDock.addEventListener("click", () => {
     compareDock.classList.toggle("is-collapsed");
+    if (compareDock.classList.contains("is-collapsed")) {
+      document.body.classList.add("dock-collapsed");
+    } else {
+      document.body.classList.remove("dock-collapsed");
+    }
   });
 }
 
 if (btnCloseCompareDock && compareDock) {
   btnCloseCompareDock.addEventListener("click", () => {
     compareDock.style.display = "none";
+    document.body.classList.remove("has-compare-dock", "dock-collapsed");
   });
 }
 
@@ -2246,6 +2259,573 @@ function initSportsHubTabs() {
   });
 }
 
+// ====================================================================
+// 24. TITISPORT PRO ARENA THEME (CYBER SPORT DARK MODE)
+// ====================================================================
+function initProArenaTheme() {
+  const THEME_KEY = "titisport_pro_arena_theme";
+  const savedTheme = localStorage.getItem(THEME_KEY) || "light";
+
+  function applyTheme(theme) {
+    const isDark = theme === "dark";
+    if (isDark) {
+      document.body.classList.add("pro-arena-mode");
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.body.classList.remove("pro-arena-mode");
+      document.documentElement.removeAttribute("data-theme");
+    }
+
+    // Update icons
+    const themeBtns = document.querySelectorAll("#btnThemeToggle, .theme-toggle-btn");
+    themeBtns.forEach((btn) => {
+      const icon = btn.querySelector("i");
+      if (icon) {
+        icon.className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+      }
+    });
+
+    const mobileStatus = document.getElementById("mobileThemeStatus");
+    if (mobileStatus) {
+      mobileStatus.textContent = isDark ? "BẬT" : "TẮT";
+      mobileStatus.style.color = isDark ? "#38bdf8" : "#64748b";
+    }
+  }
+
+  // Apply immediately on initialization
+  applyTheme(savedTheme);
+
+  // Toggle handlers
+  document.addEventListener("click", (e) => {
+    const toggleBtn = e.target.closest("#btnThemeToggle, .theme-toggle-btn, #btnMobileToggleTheme");
+    if (toggleBtn) {
+      e.preventDefault();
+      const currentTheme = document.body.classList.contains("pro-arena-mode") ? "dark" : "light";
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
+      localStorage.setItem(THEME_KEY, newTheme);
+      applyTheme(newTheme);
+
+      // Flash feedback message
+      if (window.Swal) {
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "info",
+          title: newTheme === "dark" ? "Đã bật Chế độ Sân Đấu Pro Arena" : "Đã chuyển sang Chế độ Tiêu chuẩn",
+          showConfirmButton: false,
+          timer: 1800,
+          timerProgressBar: true,
+        });
+      }
+    }
+  });
+}
+
+// ====================================================================
+// 25. TITISPORT AI SPORT LAB (HỆ THỐNG TƯ VẤN THỂ THAO AI CHUYÊN NGHIỆP)
+// ====================================================================
+function initAiSportLab() {
+  const modal = document.getElementById("aiSportLabModal");
+  if (!modal) return;
+
+  const backdrop = document.getElementById("aiLabBackdrop");
+  const btnClose = document.getElementById("btnAiLabClose");
+  const btnCloseFinished = document.getElementById("btnAiCloseFinished");
+  const btnRestart = document.getElementById("btnAiRestart");
+
+  let currentStep = 1;
+  let selectedSport = "badminton";
+
+  function openLab() {
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    goToStep(1);
+  }
+
+  function closeLab() {
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  function updateStepsBar(step) {
+    const stepItems = modal.querySelectorAll(".ai-step-item");
+    stepItems.forEach((item) => {
+      const s = parseInt(item.getAttribute("data-step"));
+      item.classList.remove("is-active", "is-finished");
+      if (s === step) {
+        item.classList.add("is-active");
+      } else if (s < step) {
+        item.classList.add("is-finished");
+      }
+    });
+  }
+
+  function goToStep(step) {
+    currentStep = step;
+    const views = modal.querySelectorAll(".ai-view-step");
+    views.forEach((v) => v.classList.remove("is-active"));
+
+    if (step === 1) {
+      document.getElementById("aiStep1").classList.add("is-active");
+      updateStepsBar(1);
+    } else if (step === 2) {
+      document.getElementById("aiStep2").classList.add("is-active");
+      updateStepsBar(2);
+    } else if (step === "loading") {
+      document.getElementById("aiStepLoading").classList.add("is-active");
+      updateStepsBar(3);
+    } else if (step === 3) {
+      document.getElementById("aiStep3").classList.add("is-active");
+      updateStepsBar(3);
+    }
+  }
+
+  // Open triggers
+  document.addEventListener("click", (e) => {
+    const openBtn = e.target.closest("#btnHeaderOpenAiLab, #btnFloatingOpenAiLab, #btnMobileOpenAiLab, .btn-open-ai-lab");
+    if (openBtn) {
+      e.preventDefault();
+      openLab();
+    }
+  });
+
+  if (btnClose) btnClose.addEventListener("click", closeLab);
+  if (btnCloseFinished) btnCloseFinished.addEventListener("click", closeLab);
+  if (backdrop) backdrop.addEventListener("click", closeLab);
+
+  // Esc key close
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.style.display === "flex") {
+      closeLab();
+    }
+  });
+
+  // Step 1: Select Sport Card
+  const sportCards = modal.querySelectorAll(".ai-sport-card");
+  sportCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      sportCards.forEach((c) => c.classList.remove("is-selected"));
+      card.classList.add("is-selected");
+      selectedSport = card.getAttribute("data-sport") || "badminton";
+    });
+  });
+
+  // Next from Step 1 to Step 2
+  const btnNextTo2 = document.getElementById("btnAiNextTo2");
+  if (btnNextTo2) {
+    btnNextTo2.addEventListener("click", () => goToStep(2));
+  }
+
+  // Back from Step 2 to Step 1
+  const btnBackTo1 = document.getElementById("btnAiBackTo1");
+  if (btnBackTo1) {
+    btnBackTo1.addEventListener("click", () => goToStep(1));
+  }
+
+  // Restart from Step 3 to Step 1
+  if (btnRestart) {
+    btnRestart.addEventListener("click", () => goToStep(1));
+  }
+
+  // Start AI Analysis from Step 2
+  const btnStartAnalyze = document.getElementById("btnAiStartAnalyze");
+  if (btnStartAnalyze) {
+    btnStartAnalyze.addEventListener("click", async () => {
+      const playstyleEl = modal.querySelector('input[name="aiPlaystyle"]:checked');
+      const wristEl = modal.querySelector('input[name="aiWrist"]:checked');
+      const budgetEl = modal.querySelector('input[name="aiBudget"]:checked');
+
+      const playstyle = playstyleEl ? playstyleEl.value : "attack";
+      const wristStrength = wristEl ? wristEl.value : "beginner";
+      const budget = budgetEl ? budgetEl.value : "1m-to-2.5m";
+
+      goToStep("loading");
+
+      try {
+        const queryParams = new URLSearchParams({
+          sport: selectedSport,
+          playstyle: playstyle,
+          wristStrength: wristStrength,
+          budget: budget,
+        });
+
+        const res = await fetch(`/product/api/ai-recommend?${queryParams.toString()}`);
+        const data = await res.json();
+
+        // Giữ loading 1.2s để tạo hiệu ứng phân tích radar AI ấn tượng
+        setTimeout(() => {
+          if (data && data.code === 200) {
+            renderAiResults(data.specs, data.products);
+          } else {
+            renderAiFallbackResults(selectedSport, playstyle, wristStrength);
+          }
+          goToStep(3);
+        }, 1200);
+      } catch (err) {
+        console.error("AI Lab Fetch Error:", err);
+        setTimeout(() => {
+          renderAiFallbackResults(selectedSport, playstyle, wristStrength);
+          goToStep(3);
+        }, 1000);
+      }
+    });
+  }
+
+  function renderAiResults(specs, products) {
+    const board = document.getElementById("aiSpecRadarBoard");
+    if (board && specs) {
+      let specItemsHtml = "";
+      if (specs.balancePoint) {
+        specItemsHtml += `
+          <div class="ai-spec-item">
+            <span class="spec-label">Điểm Cân Bằng Lý Tưởng:</span>
+            <span class="spec-value">${specs.balancePoint}</span>
+          </div>`;
+      }
+      if (specs.shaftFlex) {
+        specItemsHtml += `
+          <div class="ai-spec-item">
+            <span class="spec-label">Độ Cứng Đũa Vợt Khuyên Dùng:</span>
+            <span class="spec-value">${specs.shaftFlex}</span>
+          </div>`;
+      }
+      if (specs.weightRacket) {
+        specItemsHtml += `
+          <div class="ai-spec-item">
+            <span class="spec-label">Trọng Lượng Tối Ưu Lực Tay:</span>
+            <span class="spec-value">${specs.weightRacket}</span>
+          </div>`;
+      }
+      if (specs.recommendedTension) {
+        specItemsHtml += `
+          <div class="ai-spec-item">
+            <span class="spec-label">Mức Căng Cước Đề Xuất:</span>
+            <span class="spec-value">${specs.recommendedTension}</span>
+          </div>`;
+      }
+      if (specs.soleType) {
+        specItemsHtml += `
+          <div class="ai-spec-item">
+            <span class="spec-label">Bộ Đế Giày Khuyên Dùng:</span>
+            <span class="spec-value">${specs.soleType}</span>
+          </div>`;
+      }
+      if (specs.cushionTech) {
+        specItemsHtml += `
+          <div class="ai-spec-item">
+            <span class="spec-label">Công Nghệ Giảm Chấn:</span>
+            <span class="spec-value">${specs.cushionTech}</span>
+          </div>`;
+      }
+
+      board.innerHTML = `
+        <div class="ai-specs-grid">${specItemsHtml}</div>
+        <div class="ai-spec-summary">
+          <i class="fa-solid fa-lightbulb" style="color: #f59e0b; margin-right: 6px;"></i>
+          <strong>Đánh giá của AI:</strong> ${specs.playstyleDesc || "Cấu hình được tối ưu hóa cho phong cách thi đấu và khả năng xoay xở của bạn."}
+        </div>
+      `;
+    }
+
+    const grid = document.getElementById("aiProductsResultGrid");
+    if (grid) {
+      if (!products || products.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 24px; color: #64748b;">
+            <i class="fa-solid fa-box-open" style="font-size: 32px; margin-bottom: 8px;"></i>
+            <p>Đang đối chiếu sản phẩm với kho hàng. Vui lòng thử lại với mức ngân sách khác.</p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = products.map((item) => `
+        <div class="ai-result-card">
+          <span class="ai-match-badge">${item.matchScore}% PHÙ HỢP</span>
+          <a class="ai-result-thumb" href="/product/detail/${item.slug}">
+            <img src="${item.thumbnail || 'https://placehold.co/300x300/f8fafc/94a3b8?text=TITISPORT'}" alt="${item.title}" loading="lazy" />
+          </a>
+          <span class="ai-result-brand">${item.brand || 'CHÍNH HÃNG'}</span>
+          <h5 class="ai-result-title" title="${item.title}">${item.title}</h5>
+          <div class="ai-result-price-row">
+            <span class="ai-result-price-new">${Number(item.priceNew || item.price).toLocaleString('vi-VN')}đ</span>
+            ${item.discountPercentage > 0 ? `<span class="ai-result-price-old">${Number(item.price).toLocaleString('vi-VN')}đ</span>` : ''}
+          </div>
+          <div class="ai-result-actions">
+            <button type="button" class="btn-ai-card-cart btn-cart" data-id="${item.id}" data-slug="${item.slug}">
+              <i class="fa-solid fa-cart-shopping"></i> Thêm giỏ
+            </button>
+            <button type="button" class="btn-ai-card-compare btn-compare-toggle" data-id="${item.id}" data-title="${item.title}" data-slug="${item.slug}" data-price="${item.priceNew || item.price}" data-thumbnail="${item.thumbnail || ''}" data-brand="${item.brand || 'CHÍNH HÃNG'}">
+              <i class="fa-solid fa-code-compare"></i> So sánh
+            </button>
+          </div>
+        </div>
+      `).join("");
+    }
+  }
+
+  function renderAiFallbackResults(sport, playstyle, wrist) {
+    const specs = {
+      balancePoint: "295 - 302 mm (Hơi nặng đầu / Tấn công linh hoạt)",
+      shaftFlex: "Trung bình (Medium Flex) - Trợ lực tốt",
+      weightRacket: "4U (83g) - Dễ làm quen & thuần thục",
+      recommendedTension: "10.5 - 11.0 kg (23-24 lbs)",
+      playstyleDesc: "Phù hợp với các pha đánh cầu nhanh, tạo góc smash gắt đồng thời vẫn giữ khả năng phòng thủ phản tạt chuẩn xác.",
+    };
+    renderAiResults(specs, []);
+  }
+}
+
+// ====================================================================
+// 26. QUICK VIEW STUDIO MODAL (XEM NHANH SẢN PHẨM 1 CHẠM SIÊU TỐC)
+// ====================================================================
+function initQuickViewStudio() {
+  const modal = document.getElementById("quickViewModal");
+  if (!modal) return;
+
+  const backdrop = document.getElementById("quickViewBackdrop");
+  const btnClose = document.getElementById("btnQuickViewClose");
+
+  const imgMain = document.getElementById("quickViewMainImg");
+  const thumbsWrap = document.getElementById("quickViewThumbs");
+  const badgeDiscount = document.getElementById("quickViewDiscountBadge");
+  const elBrand = document.getElementById("quickViewBrand");
+  const elTitle = document.getElementById("quickViewTitle");
+  const elPriceNew = document.getElementById("quickViewPriceNew");
+  const elPriceOld = document.getElementById("quickViewPriceOld");
+  const elSavings = document.getElementById("quickViewSavings");
+  const sizesWrap = document.getElementById("quickViewSizesWrap");
+  const sizesList = document.getElementById("quickViewSizesList");
+  const selectedSizeVal = document.getElementById("quickViewSelectedSizeVal");
+  const qtyInput = document.getElementById("quickViewQtyInput");
+  const btnQtyMinus = document.getElementById("btnQuickQtyMinus");
+  const btnQtyPlus = document.getElementById("btnQuickQtyPlus");
+  const btnAddCart = document.getElementById("btnQuickAddToCart");
+  const btnBuyNow = document.getElementById("btnQuickBuyNow");
+  const fullDetailLink = document.getElementById("quickViewFullDetailLink");
+
+  let currentProduct = null;
+  let selectedSize = null;
+
+  function openQuickView(slug) {
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    fetchQuickProduct(slug);
+  }
+
+  function closeQuickView() {
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    currentProduct = null;
+    selectedSize = null;
+  }
+
+  if (btnClose) btnClose.addEventListener("click", closeQuickView);
+  if (backdrop) backdrop.addEventListener("click", closeQuickView);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.style.display === "flex") {
+      closeQuickView();
+    }
+  });
+
+  // Quantity handlers
+  if (btnQtyMinus) {
+    btnQtyMinus.addEventListener("click", () => {
+      let v = parseInt(qtyInput.value) || 1;
+      if (v > 1) qtyInput.value = v - 1;
+    });
+  }
+
+  if (btnQtyPlus) {
+    btnQtyPlus.addEventListener("click", () => {
+      let v = parseInt(qtyInput.value) || 1;
+      if (v < 99) qtyInput.value = v + 1;
+    });
+  }
+
+  // Global listener for Quick View triggers on cards
+  document.addEventListener("click", (e) => {
+    const quickBtn = e.target.closest(".quick-view-btn, .quick-view-pill, .btn-quick-view");
+    if (quickBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const slug = quickBtn.getAttribute("data-slug");
+      if (slug) {
+        openQuickView(slug);
+      }
+    }
+  });
+
+  async function fetchQuickProduct(slug) {
+    // Show placeholder loading state
+    elTitle.textContent = "Đang tải dữ liệu sản phẩm...";
+    elBrand.textContent = "TITISPORT";
+    elPriceNew.textContent = "...";
+    imgMain.src = "https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT";
+    thumbsWrap.innerHTML = "";
+    sizesWrap.style.display = "none";
+    qtyInput.value = "1";
+
+    try {
+      const res = await fetch(`/product/api/quick-detail/${slug}`);
+      const data = await res.json();
+
+      if (data && data.code === 200 && data.product) {
+        currentProduct = data.product;
+        populateModal(currentProduct);
+      } else {
+        elTitle.textContent = "Không tìm thấy thông tin sản phẩm";
+      }
+    } catch (err) {
+      console.error("Error fetching quick detail:", err);
+      elTitle.textContent = "Lỗi khi tải thông tin sản phẩm";
+    }
+  }
+
+  function populateModal(prod) {
+    elBrand.textContent = prod.brand || "CHÍNH HÃNG 100%";
+    elTitle.textContent = prod.title;
+
+    // Price
+    const priceNewFormatted = Number(prod.priceNew || prod.price).toLocaleString("vi-VN") + "đ";
+    elPriceNew.textContent = priceNewFormatted;
+
+    if (prod.discountPercentage > 0) {
+      elPriceOld.style.display = "inline";
+      elPriceOld.textContent = Number(prod.price).toLocaleString("vi-VN") + "đ";
+
+      const diff = prod.price - (prod.priceNew || prod.price);
+      elSavings.style.display = "inline-flex";
+      elSavings.textContent = `Tiết kiệm ${Number(diff).toLocaleString("vi-VN")}đ`;
+
+      badgeDiscount.style.display = "block";
+      badgeDiscount.textContent = `-${prod.discountPercentage}%`;
+    } else {
+      elPriceOld.style.display = "none";
+      elSavings.style.display = "none";
+      badgeDiscount.style.display = "none";
+    }
+
+    // Images
+    const images = Array.isArray(prod.images) && prod.images.length > 0 ? prod.images : [prod.thumbnail];
+    imgMain.src = images[0] || "https://placehold.co/400x400/f8fafc/94a3b8?text=TITISPORT";
+
+    thumbsWrap.innerHTML = images.map((src, idx) => `
+      <div class="quick-thumb-item ${idx === 0 ? 'is-active' : ''}" data-src="${src}">
+        <img src="${src}" alt="Thumb ${idx + 1}" />
+      </div>
+    `).join("");
+
+    // Thumbnail switch listener
+    const thumbItems = thumbsWrap.querySelectorAll(".quick-thumb-item");
+    thumbItems.forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        thumbItems.forEach((t) => t.classList.remove("is-active"));
+        thumb.classList.add("is-active");
+        imgMain.src = thumb.getAttribute("data-src");
+      });
+    });
+
+    // Sizes
+    if (Array.isArray(prod.sizes) && prod.sizes.length > 0) {
+      sizesWrap.style.display = "block";
+      selectedSize = prod.sizes[0].name || prod.sizes[0].size || prod.sizes[0];
+      selectedSizeVal.textContent = selectedSize;
+
+      sizesList.innerHTML = prod.sizes.map((s, idx) => {
+        const val = typeof s === "object" ? (s.name || s.size) : s;
+        return `<button type="button" class="quick-size-btn ${idx === 0 ? 'is-active' : ''}" data-val="${val}">${val}</button>`;
+      }).join("");
+
+      const sizeBtns = sizesList.querySelectorAll(".quick-size-btn");
+      sizeBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          sizeBtns.forEach((b) => b.classList.remove("is-active"));
+          btn.classList.add("is-active");
+          selectedSize = btn.getAttribute("data-val");
+          selectedSizeVal.textContent = selectedSize;
+        });
+      });
+    } else {
+      sizesWrap.style.display = "none";
+      selectedSize = null;
+    }
+
+    // Full detail link
+    fullDetailLink.href = `/product/detail/${prod.slug}`;
+  }
+
+  // Quick Add To Cart
+  if (btnAddCart) {
+    btnAddCart.addEventListener("click", async () => {
+      if (!currentProduct) return;
+      const quantity = parseInt(qtyInput.value) || 1;
+
+      try {
+        const res = await fetch(`/cart/add/${currentProduct.id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            quantity: quantity,
+            size: selectedSize || "",
+          }),
+        });
+
+        if (window.Swal) {
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "success",
+            title: `Đã thêm ${quantity} x "${currentProduct.title}" vào giỏ!`,
+            showConfirmButton: false,
+            timer: 2000,
+          });
+        }
+
+        // Trigger Parabolic Flying Animation from modal image to cart
+        if (typeof triggerFlyingItem === "function" && imgMain) {
+          triggerFlyingItem(imgMain, ".cart-action-btn");
+        }
+
+        closeQuickView();
+      } catch (err) {
+        console.error("Quick Add Cart Error:", err);
+        window.location.href = `/product/detail/${currentProduct.slug}`;
+      }
+    });
+  }
+
+  // Quick Buy Now
+  if (btnBuyNow) {
+    btnBuyNow.addEventListener("click", async () => {
+      if (!currentProduct) return;
+      const quantity = parseInt(qtyInput.value) || 1;
+
+      try {
+        await fetch(`/cart/add/${currentProduct.id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            quantity: quantity,
+            size: selectedSize || "",
+          }),
+        });
+        window.location.href = "/cart";
+      } catch (err) {
+        window.location.href = `/product/detail/${currentProduct.slug}`;
+      }
+    });
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initSportsHubTabs();
+  initProArenaTheme();
+  initAiSportLab();
+  initQuickViewStudio();
 });
+

@@ -1,0 +1,217 @@
+//- ====================================================================
+//- TITISPORT AI SPORT LAB MODAL (HỆ THỐNG PHÂN TÍCH & TƯ VẤN THỂ THAO AI)
+//- ====================================================================
+#aiSportLabModal.ai-lab-modal(style="display: none;" aria-hidden="true")
+  .ai-lab-backdrop#aiLabBackdrop
+
+  .ai-lab-container
+    //- Header của Lab
+    .ai-lab-header
+      .ai-lab-brand
+        .ai-chip-icon
+          i.fa-solid.fa-brain
+          span.ai-pulse-ring
+        .ai-lab-titles
+          .ai-lab-tag
+            span.ai-tag-pill TITISPORT AI LAB™
+            span.ai-tag-version v3.5 SPORT PHYSICS
+          h2.ai-lab-title Trợ Lý AI Tư Vấn Vợt & Giày Thể Thao
+      button.ai-lab-close-btn#btnAiLabClose(type="button" aria-label="Đóng AI Lab")
+        i.fa-solid.fa-xmark
+
+    //- Thanh tiến trình 3 bước
+    .ai-steps-indicator
+      .ai-step-item.is-active(data-step="1")
+        .ai-step-circle 1
+        span.ai-step-label Chọn Bộ Môn
+      .ai-step-divider
+      .ai-step-item(data-step="2")
+        .ai-step-circle 2
+        span.ai-step-label Thể Trạng & Lối Chơi
+      .ai-step-divider
+      .ai-step-item(data-step="3")
+        .ai-step-circle 3
+        span.ai-step-label Khuyến Nghị AI
+
+    //- Thân Modal
+    .ai-lab-body
+      //- ==========================================
+      //- BƯỚC 1: CHỌN BỘ MÔN
+      //- ==========================================
+      .ai-view-step#aiStep1.is-active
+        .ai-step-heading
+          h3 Bạn đang tìm kiếm trang thiết bị cho môn thể thao nào?
+          p Chọn bộ môn bạn quan tâm để AI tải ma trận thông số kỹ thuật chuẩn quốc tế.
+
+        .ai-sport-grid
+          button.ai-sport-card.is-selected(type="button" data-sport="badminton")
+            .ai-sport-icon.icon-badminton
+              i.fa-solid.fa-feather-pointed
+            h4 Cầu Lông
+            p Vợt đập cầu, cước trợ lực, giày di chuyển linh hoạt
+            span.ai-card-check
+              i.fa-solid.fa-circle-check
+
+          button.ai-sport-card(type="button" data-sport="football")
+            .ai-sport-icon.icon-football
+              i.fa-solid.fa-futbol
+            h4 Bóng Đá
+            p Giày đinh TF sân cỏ nhân tạo, bóng thi đấu, phụ kiện
+            span.ai-card-check
+              i.fa-solid.fa-circle-check
+
+          button.ai-sport-card(type="button" data-sport="volleyball")
+            .ai-sport-icon.icon-volleyball
+              i.fa-solid.fa-volleyball
+            h4 Bóng Chuyền
+            p Giày bật nhảy giảm chấn, bảo hộ khớp gối thi đấu
+            span.ai-card-check
+              i.fa-solid.fa-circle-check
+
+          button.ai-sport-card(type="button" data-sport="running")
+            .ai-sport-icon.icon-running
+              i.fa-solid.fa-person-running
+            h4 Chạy Bộ & Gym
+            p Giày đệm êm hoàn trả năng lượng, trang phục nén cơ
+            span.ai-card-check
+              i.fa-solid.fa-circle-check
+
+        .ai-step-actions
+          button.ai-btn-next#btnAiNextTo2(type="button")
+            | Tiếp tục khảo sát thể trạng
+            i.fa-solid.fa-arrow-right
+
+      //- ==========================================
+      //- BƯỚC 2: KHẢO SÁT THỂ TRẠNG & PHONG CÁCH
+      //- ==========================================
+      .ai-view-step#aiStep2
+        .ai-step-heading
+          h3 Khảo sát phong cách chơi & lực cổ tay
+          p Dữ liệu này giúp thuật toán AI tính toán chính xác Điểm Cân Bằng (mm) và Độ Căng Cước (lbs).
+
+        .ai-options-section
+          h4.ai-section-label
+            i.fa-solid.fa-bolt
+            | 1. Phong cách thi đấu sở trường của bạn:
+          .ai-options-grid.grid-3
+            label.ai-option-pill
+              input(type="radio" name="aiPlaystyle" value="attack" checked)
+              .ai-pill-content
+                strong Tấn Công Uy Lực (Smash)
+                span Đập cầu cắm sân, dứt điểm bóng tốc độ cao
+
+            label.ai-option-pill
+              input(type="radio" name="aiPlaystyle" value="allround")
+              .ai-pill-content
+                strong Công Thủ Toàn Diện
+                span Linh hoạt, công thủ nhịp nhàng, kiểm soát trận đấu
+
+            label.ai-option-pill
+              input(type="radio" name="aiPlaystyle" value="speed")
+              .ai-pill-content
+                strong Phản Tạt & Tốc Độ
+                span Điều cầu lưới, thoát cầu nhanh, di chuyển thanh thoát
+
+        .ai-options-section
+          h4.ai-section-label
+            i.fa-solid.fa-hand-fist
+            | 2. Thể lực cổ tay & Cấp độ hiện tại:
+          .ai-options-grid.grid-3
+            label.ai-option-pill
+              input(type="radio" name="aiWrist" value="beginner" checked)
+              .ai-pill-content
+                strong Mới Chơi / Dưới 1 Năm
+                span Cổ tay chưa quen, cần trợ lực thân dẻo tối đa
+
+            label.ai-option-pill
+              input(type="radio" name="aiWrist" value="medium")
+              .ai-pill-content
+                strong Phong Trào (1 - 3 Năm)
+                span Lực tay ổn định, kiểm soát lực tốt, thích xoay xở
+
+            label.ai-option-pill
+              input(type="radio" name="aiWrist" value="strong")
+              .ai-pill-content
+                strong Khỏe / Chuyên Nghiệp
+                span Cổ tay rất khỏe, thích vợt đầm tay, cước căng cao
+
+        .ai-options-section
+          h4.ai-section-label
+            i.fa-solid.fa-wallet
+            | 3. Tầm ngân sách mong muốn:
+          .ai-options-grid.grid-3
+            label.ai-option-pill
+              input(type="radio" name="aiBudget" value="under-1m")
+              .ai-pill-content
+                strong Dưới 1.000.000đ
+                span Tiết kiệm, bền bỉ cho người mới
+
+            label.ai-option-pill
+              input(type="radio" name="aiBudget" value="1m-to-2.5m" checked)
+              .ai-pill-content
+                strong 1.000.000đ - 2.500.000đ
+                span Phân khúc phong trào cao cấp bán chạy nhất
+
+            label.ai-option-pill
+              input(type="radio" name="aiBudget" value="over-2.5m")
+              .ai-pill-content
+                strong Trên 2.500.000đ
+                span Dòng thi đấu Tour / Pro chuẩn các tuyển thủ
+
+        .ai-step-actions.space-between
+          button.ai-btn-prev#btnAiBackTo1(type="button")
+            i.fa-solid.fa-arrow-left
+            | Quay lại
+          button.ai-btn-next.btn-ai-analyze#btnAiStartAnalyze(type="button")
+            i.fa-solid.fa-microchip
+            | Phân Tích Thông Số & Gợi Ý Sản Phẩm
+
+      //- ==========================================
+      //- HIỆU ỨNG AI QUÉT & TÍNH TOÁN (SCANNER STATE)
+      //- ==========================================
+      .ai-view-step#aiStepLoading
+        .ai-loading-wrap
+          .ai-radar-visual
+            .ai-radar-circle.circle-1
+            .ai-radar-circle.circle-2
+            .ai-radar-circle.circle-3
+            .ai-radar-beam
+            .ai-radar-center
+              i.fa-solid.fa-bolt
+          h3.ai-loading-title Đang Phân Tích Dữ Liệu Chuyên Môn Thể Thao...
+          p.ai-loading-desc AI đang đối chiếu lối chơi của bạn với hơn 100+ thông số khí động học, điểm uốn thân vợt và công nghệ đệm giày.
+          .ai-loading-progress-bar
+            .ai-loading-fill
+
+      //- ==========================================
+      //- BƯỚC 3: KẾT QUẢ PHÂN TÍCH & SẢN PHẨM PHÙ HỢP
+      //- ==========================================
+      .ai-view-step#aiStep3
+        .ai-results-header
+          .ai-results-badge
+            i.fa-solid.fa-circle-check
+            | KẾT QUẢ PHÂN TÍCH HOÀN TẤT
+          h3 Hồ Sơ Kỹ Thuật Đề Xuất Dành Riêng Cho Bạn
+
+        //- Bảng thông số kỹ thuật tối ưu
+        .ai-spec-radar-board#aiSpecRadarBoard
+          //- JS sẽ nạp thông số động vào đây
+
+        //- Danh sách sản phẩm được AI tuyển chọn
+        .ai-products-section
+          .ai-products-heading
+            h4
+              i.fa-solid.fa-sparkles
+              | Top Sản Phẩm Khớp Chuẩn 100% Trong Kho TiTiSport:
+            span.ai-verified-tag Được thẩm định bởi TiTiSport Lab
+
+          .ai-products-grid#aiProductsResultGrid
+            //- JS render cards động vào đây
+
+        .ai-step-actions.center-aligned
+          button.ai-btn-secondary#btnAiRestart(type="button")
+            i.fa-solid.fa-arrow-rotate-left
+            | Khảo sát lại từ đầu
+          button.ai-btn-primary#btnAiCloseFinished(type="button")
+            i.fa-solid.fa-check
+            | Đã chọn được sản phẩm ưng ý
