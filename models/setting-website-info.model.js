@@ -148,6 +148,55 @@ const settingwebsiteInfoSchema = new mongoose.Schema(
       type: Number,
       default: 500000,
     },
+
+    // ==========================================
+    // CẤU HÌNH TRỢ LÝ AI TƯ VẤN THỂ THAO (AI SPORT LAB)
+    // ==========================================
+    aiLabActive: {
+      type: Boolean,
+      default: true,
+    },
+    aiLabTitle: {
+      type: String,
+      default: "Trợ Lý AI Tư Vấn Vợt & Giày Thể Thao",
+    },
+    aiLabTag: {
+      type: String,
+      default: "TITISPORT AI LAB™",
+    },
+    aiLabVersion: {
+      type: String,
+      default: "v3.5 SPORT PHYSICS",
+    },
+    aiLabDescription: {
+      type: String,
+      default: "Phân tích thể trạng, lực cổ tay và lối chơi để đề xuất trang bị thể thao tối ưu từ kho hàng.",
+    },
+    aiEngineMode: {
+      type: String,
+      default: "hybrid", // "rules" | "api" | "hybrid"
+    },
+    aiApiKey: {
+      type: String,
+      default: "",
+    },
+    aiSystemPrompt: {
+      type: String,
+      default: "Bạn là Chuyên gia Khoa học Thể thao hàng đầu tại TitiSport. Hãy đối chiếu lối chơi, lực cổ tay và ngân sách để đưa ra lời khuyên kỹ thuật chuyên sâu về điểm cân bằng (mm), độ dẻo đũa vợt, trọng lượng (U), độ căng cước (lbs) hoặc công nghệ đệm giày bảo vệ khớp tối ưu nhất.",
+    },
+    // Danh sách bộ môn thể thao được cấu hình động bởi Admin
+    aiSports: [
+      {
+        key: String,
+        title: String,
+        desc: String,
+        icon: String,
+        keywords: String,
+        attackSpecs: String,
+        speedSpecs: String,
+        allroundSpecs: String,
+      },
+    ],
   },
   {
     timestamps: true,

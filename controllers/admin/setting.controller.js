@@ -15,8 +15,74 @@ module.exports.list = (req, res) => {
   });
 };
 
+const defaultAiSports = [
+  {
+    key: "badminton",
+    title: "Cầu Lông",
+    desc: "Vợt đập cầu, cước trợ lực, giày di chuyển linh hoạt",
+    icon: "fa-solid fa-feather-pointed",
+    keywords: "vợt, cầu lông, yonex, lining, victor, nanoflare, axforce, astrox, giày cầu lông",
+    attackSpecs: "Vợt nặng đầu (300-308mm), thân cứng (Stiff), 3U/4U, cước 11-12kg (24-26.5 lbs)",
+    speedSpecs: "Vợt nhẹ đầu (285-293mm), thân dẻo thoát tay, 4U/5U, cước 10.5-11.5kg (23-25 lbs)",
+    allroundSpecs: "Vợt cân bằng (290-296mm), thân trung bình, 4U, cước 10.5-11.0kg (23-24.5 lbs)",
+  },
+  {
+    key: "football",
+    title: "Bóng Đá",
+    desc: "Giày đinh TF sân cỏ nhân tạo, bóng thi đấu, phụ kiện",
+    icon: "fa-solid fa-futbol",
+    keywords: "bóng đá, đá banh, giày đá bóng, tf, kamito, mizuno, wika, quả bóng, sân cỏ",
+    attackSpecs: "Form ôm mũi nhọn, đinh TF cao su đúc đa hướng bám sân, tăng lực sút mu & bứt tốc",
+    speedSpecs: "Trọng lượng siêu nhẹ (<200g), upper microfiber cảm giác bóng thật chân",
+    allroundSpecs: "Đệm EVA lót giảm chấn bảo vệ khớp gối & gót chân, upper êm ái kiểm soát bóng",
+  },
+  {
+    key: "volleyball",
+    title: "Bóng Chuyền",
+    desc: "Giày bật nhảy giảm chấn, bảo hộ khớp gối thi đấu",
+    icon: "fa-solid fa-volleyball",
+    keywords: "bóng chuyền, giày bóng chuyền, asics, mizuno, đệm bật, bóng thi đấu",
+    attackSpecs: "Đệm gót Power Cushion / Gel siêu êm trợ lực bật cao dứt điểm trên lưới",
+    speedSpecs: "Đế ma sát đa hướng, cổ thấp linh hoạt cứu bóng và di chuyển nhanh",
+    allroundSpecs: "Khung chống lật cổ chân TPU, bảo vệ an toàn khớp gối khi tiếp đất sàn cứng",
+  },
+  {
+    key: "running",
+    title: "Chạy Bộ & Gym",
+    desc: "Giày đệm êm hoàn trả năng lượng, trang phục nén cơ",
+    icon: "fa-solid fa-person-running",
+    keywords: "chạy, running, giày chạy, marathon, gym, thể thao, quần áo thể thao",
+    attackSpecs: "Đế carbon đàn hồi bứt phá tốc độ, hoàn trả lực tối đa cho pace cao",
+    speedSpecs: "Trọng lượng lông vũ, upper lưới thoáng khí giảm nhiệt độ bàn chân",
+    allroundSpecs: "Đệm bọt êm dày Max Cushion chống chấn thương khớp gối & gót chân cự ly dài",
+  },
+  {
+    key: "pickleball",
+    title: "Pickleball & Tennis",
+    desc: "Vợt pickleball & giày tennis bám sân",
+    icon: "fa-solid fa-table-tennis-paddle-ball",
+    keywords: "pickleball, tennis, vợt pickleball, giày tennis, joola, head",
+    attackSpecs: "Mặt Carbon T700 thô, lõi polymer 13-14mm smash uy lực & độ xoáy topspin cực cao",
+    speedSpecs: "Trọng lượng nhẹ 7.5-7.8 oz, vung vợt chớp nhoáng tại vùng kitchen",
+    allroundSpecs: "Lõi dày 16mm giảm chấn, sweet spot rộng kiểm soát dink êm ái toàn diện",
+  },
+];
+
 module.exports.websiteInfo = async (req, res) => {
-  const settingWebsiteInfo = await SettingWebsiteInfo.findOne({});
+  let settingWebsiteInfo = await SettingWebsiteInfo.findOne({});
+  if (!settingWebsiteInfo) {
+    settingWebsiteInfo = new SettingWebsiteInfo({
+      aiSports: defaultAiSports,
+    });
+    await settingWebsiteInfo.save();
+  } else if (!settingWebsiteInfo.aiSports || settingWebsiteInfo.aiSports.length === 0) {
+    settingWebsiteInfo.aiSports = defaultAiSports;
+    await SettingWebsiteInfo.updateOne(
+      { _id: settingWebsiteInfo._id },
+      { aiSports: defaultAiSports }
+    );
+  }
+
   const parentCategories = await Category.find({
     deleted: false,
     parent_id: "",
@@ -171,9 +237,34 @@ module.exports.websiteInfoPatch = async (req, res) => {
     req.body.freeShippingThreshold = parseInt(req.body.freeShippingThreshold, 10);
   }
 
-  // Xử lý ngày kết thúc Flash Sale
-  if (req.body.flashSaleEndTime) {
-    req.body.flashSaleEndTime = new Date(req.body.flashSaleEndTime);
+  // Xử lý Cấu Hình Trợ Lý AI Thể Thao (AI Sport Lab)
+  req.body.aiLabActive = req.body.aiLabActive === "on" || req.body.aiLabActive === "true" || req.body.aiLabActive === true;
+
+  if (req.body.aiSport_key !== undefined) {
+    const keys = Array.isArray(req.body.aiSport_key) ? req.body.aiSport_key : [req.body.aiSport_key];
+    const titles = Array.isArray(req.body.aiSport_title) ? req.body.aiSport_title : [req.body.aiSport_title];
+    const descs = Array.isArray(req.body.aiSport_desc) ? req.body.aiSport_desc : [req.body.aiSport_desc];
+    const icons = Array.isArray(req.body.aiSport_icon) ? req.body.aiSport_icon : [req.body.aiSport_icon];
+    const keywords = Array.isArray(req.body.aiSport_keywords) ? req.body.aiSport_keywords : [req.body.aiSport_keywords];
+    const attackSpecs = Array.isArray(req.body.aiSport_attackSpecs) ? req.body.aiSport_attackSpecs : [req.body.aiSport_attackSpecs];
+    const speedSpecs = Array.isArray(req.body.aiSport_speedSpecs) ? req.body.aiSport_speedSpecs : [req.body.aiSport_speedSpecs];
+    const allroundSpecs = Array.isArray(req.body.aiSport_allroundSpecs) ? req.body.aiSport_allroundSpecs : [req.body.aiSport_allroundSpecs];
+
+    const parsedSports = [];
+    for (let i = 0; i < keys.length; i++) {
+      if (!keys[i] && !titles[i]) continue;
+      parsedSports.push({
+        key: (keys[i] || "").trim().toLowerCase().replace(/\s+/g, "-"),
+        title: (titles[i] || "").trim(),
+        desc: (descs[i] || "").trim(),
+        icon: (icons[i] || "fa-solid fa-trophy").trim(),
+        keywords: (keywords[i] || "").trim(),
+        attackSpecs: (attackSpecs[i] || "").trim(),
+        speedSpecs: (speedSpecs[i] || "").trim(),
+        allroundSpecs: (allroundSpecs[i] || "").trim(),
+      });
+    }
+    req.body.aiSports = parsedSports;
   }
 
   const settingWebsiteInfo = await SettingWebsiteInfo.findOne({});

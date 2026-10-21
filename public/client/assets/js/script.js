@@ -2333,13 +2333,17 @@ function initAiSportLab() {
   const btnCloseFinished = document.getElementById("btnAiCloseFinished");
   const btnRestart = document.getElementById("btnAiRestart");
 
-  let currentStep = 1;
-  let selectedSport = "badminton";
+  const initialCard = modal.querySelector(".ai-sport-card.is-selected") || modal.querySelector(".ai-sport-card");
+  let selectedSport = initialCard ? (initialCard.getAttribute("data-sport") || "badminton") : "badminton";
 
   function openLab() {
     modal.style.display = "flex";
     modal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
+    const currentActiveCard = modal.querySelector(".ai-sport-card.is-selected") || modal.querySelector(".ai-sport-card");
+    if (currentActiveCard) {
+      selectedSport = currentActiveCard.getAttribute("data-sport") || "badminton";
+    }
     goToStep(1);
   }
 
@@ -2477,6 +2481,13 @@ function initAiSportLab() {
     const board = document.getElementById("aiSpecRadarBoard");
     if (board && specs) {
       let specItemsHtml = "";
+      if (specs.sportTitle) {
+        specItemsHtml += `
+          <div class="ai-spec-item" style="grid-column: 1 / -1; background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.2);">
+            <span class="spec-label"><i class="fa-solid fa-trophy" style="color: #6366f1; margin-right: 6px;"></i>Bộ Môn Đang Khảo Sát:</span>
+            <strong class="spec-value" style="color: #4f46e5; font-size: 15px;">${specs.sportTitle}</strong>
+          </div>`;
+      }
       if (specs.balancePoint) {
         specItemsHtml += `
           <div class="ai-spec-item">
@@ -2512,11 +2523,32 @@ function initAiSportLab() {
             <span class="spec-value">${specs.soleType}</span>
           </div>`;
       }
+      if (specs.upperMaterial) {
+        specItemsHtml += `
+          <div class="ai-spec-item">
+            <span class="spec-label">Chất Liệu Thân Giày:</span>
+            <span class="spec-value">${specs.upperMaterial}</span>
+          </div>`;
+      }
       if (specs.cushionTech) {
         specItemsHtml += `
           <div class="ai-spec-item">
             <span class="spec-label">Công Nghệ Giảm Chấn:</span>
             <span class="spec-value">${specs.cushionTech}</span>
+          </div>`;
+      }
+      if (specs.supportSystem) {
+        specItemsHtml += `
+          <div class="ai-spec-item">
+            <span class="spec-label">Hệ Thống Ổn Định Khớp:</span>
+            <span class="spec-value">${specs.supportSystem}</span>
+          </div>`;
+      }
+      if (specs.fitType) {
+        specItemsHtml += `
+          <div class="ai-spec-item">
+            <span class="spec-label">Form Dáng / Thiết Kế:</span>
+            <span class="spec-value">${specs.fitType}</span>
           </div>`;
       }
 

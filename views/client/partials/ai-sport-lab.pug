@@ -13,9 +13,9 @@
           span.ai-pulse-ring
         .ai-lab-titles
           .ai-lab-tag
-            span.ai-tag-pill TITISPORT AI LAB™
-            span.ai-tag-version v3.5 SPORT PHYSICS
-          h2.ai-lab-title Trợ Lý AI Tư Vấn Vợt & Giày Thể Thao
+            span.ai-tag-pill #{settingWebsiteInfo && settingWebsiteInfo.aiLabTag ? settingWebsiteInfo.aiLabTag : "TITISPORT AI LAB™"}
+            span.ai-tag-version #{settingWebsiteInfo && settingWebsiteInfo.aiLabVersion ? settingWebsiteInfo.aiLabVersion : "v3.5 SPORT PHYSICS"}
+          h2.ai-lab-title #{settingWebsiteInfo && settingWebsiteInfo.aiLabTitle ? settingWebsiteInfo.aiLabTitle : "Trợ Lý AI Tư Vấn Vợt & Giày Thể Thao"}
       button.ai-lab-close-btn#btnAiLabClose(type="button" aria-label="Đóng AI Lab")
         i.fa-solid.fa-xmark
 
@@ -44,37 +44,15 @@
           p Chọn bộ môn bạn quan tâm để AI tải ma trận thông số kỹ thuật chuẩn quốc tế.
 
         .ai-sport-grid
-          button.ai-sport-card.is-selected(type="button" data-sport="badminton")
-            .ai-sport-icon.icon-badminton
-              i.fa-solid.fa-feather-pointed
-            h4 Cầu Lông
-            p Vợt đập cầu, cước trợ lực, giày di chuyển linh hoạt
-            span.ai-card-check
-              i.fa-solid.fa-circle-check
-
-          button.ai-sport-card(type="button" data-sport="football")
-            .ai-sport-icon.icon-football
-              i.fa-solid.fa-futbol
-            h4 Bóng Đá
-            p Giày đinh TF sân cỏ nhân tạo, bóng thi đấu, phụ kiện
-            span.ai-card-check
-              i.fa-solid.fa-circle-check
-
-          button.ai-sport-card(type="button" data-sport="volleyball")
-            .ai-sport-icon.icon-volleyball
-              i.fa-solid.fa-volleyball
-            h4 Bóng Chuyền
-            p Giày bật nhảy giảm chấn, bảo hộ khớp gối thi đấu
-            span.ai-card-check
-              i.fa-solid.fa-circle-check
-
-          button.ai-sport-card(type="button" data-sport="running")
-            .ai-sport-icon.icon-running
-              i.fa-solid.fa-person-running
-            h4 Chạy Bộ & Gym
-            p Giày đệm êm hoàn trả năng lượng, trang phục nén cơ
-            span.ai-card-check
-              i.fa-solid.fa-circle-check
+          - const clientAiSports = (settingWebsiteInfo && settingWebsiteInfo.aiSports && settingWebsiteInfo.aiSports.length > 0) ? settingWebsiteInfo.aiSports : [{ key: "badminton", title: "Cầu Lông", desc: "Vợt đập cầu, cước trợ lực, giày di chuyển linh hoạt", icon: "fa-solid fa-feather-pointed" }, { key: "football", title: "Bóng Đá", desc: "Giày đinh TF sân cỏ nhân tạo, bóng thi đấu", icon: "fa-solid fa-futbol" }, { key: "volleyball", title: "Bóng Chuyền", desc: "Giày bật nhảy giảm chấn, bảo hộ khớp gối", icon: "fa-solid fa-volleyball" }, { key: "running", title: "Chạy Bộ & Gym", desc: "Giày đệm êm hoàn trả năng lượng", icon: "fa-solid fa-person-running" }]
+          each sportItem, sIdx in clientAiSports
+            button.ai-sport-card(type="button" data-sport=sportItem.key class=(sIdx === 0 ? "is-selected" : ""))
+              .ai-sport-icon(class=`icon-${sportItem.key}`)
+                i(class=sportItem.icon || "fa-solid fa-trophy")
+              h4 #{sportItem.title}
+              p #{sportItem.desc || "Trang thiết bị & phụ kiện thể thao chính hãng"}
+              span.ai-card-check
+                i.fa-solid.fa-circle-check
 
         .ai-step-actions
           button.ai-btn-next#btnAiNextTo2(type="button")

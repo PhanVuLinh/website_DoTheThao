@@ -5,6 +5,7 @@ const Brand = require("../../models/brand.model");
 const Review = require("../../models/review.model");
 const Order = require("../../models/order.model");
 const User = require("../../models/user.model");
+const SettingWebsiteInfo = require("../../models/setting-website-info.model");
 const jwtHelper = require("../../helpers/jwt.helper");
 const paginationHelper = require("../../helpers/pagination.helper");
 const regexHelper = require("../../helpers/regex.helper");
@@ -429,21 +430,80 @@ module.exports.aiRecommend = async (req, res) => {
   try {
     const { sport, playstyle, wristStrength, budget } = req.query;
 
+    // Lấy cấu hình website & trợ lý AI từ database
+    const settingWebsiteInfo = await SettingWebsiteInfo.findOne({});
+
+    // Kiểm tra trợ lý AI có đang hoạt động không
+    if (settingWebsiteInfo && settingWebsiteInfo.aiLabActive === false) {
+      return res.json({
+        code: 403,
+        message: "Tính năng Trợ lý AI hiện đang tạm bảo trì.",
+        specs: null,
+        products: [],
+      });
+    }
+
+    // Danh sách bộ môn thể thao từ cấu hình Admin (hoặc fallback nếu chưa cấu hình)
+    const sportsList = (settingWebsiteInfo && settingWebsiteInfo.aiSports && settingWebsiteInfo.aiSports.length > 0)
+      ? settingWebsiteInfo.aiSports
+      : [
+          {
+            key: "badminton",
+            title: "Cầu Lông",
+            keywords: "vợt, cầu lông, yonex, lining, victor, nanoflare, axforce, astrox, giày cầu lông",
+            attackSpecs: "Vợt nặng đầu (300-308mm), thân cứng (Stiff), 3U/4U, cước 11-12kg trợ lực smash",
+            speedSpecs: "Vợt nhẹ đầu (285-293mm), thân dẻo thoát tay, 4U/5U, cước 10.5-11.5kg phản tạt",
+            allroundSpecs: "Vợt cân bằng (290-296mm), thân trung bình, 4U, cước 10.5-11.0kg toàn diện",
+          },
+          {
+            key: "football",
+            title: "Bóng Đá",
+            keywords: "bóng đá, đá banh, giày đá bóng, tf, kamito, mizuno, wika, quả bóng, sân cỏ",
+            attackSpecs: "Form ôm mũi nhọn, đinh TF cao su đúc đa hướng bám sân, tăng lực sút mu & bứt tốc",
+            speedSpecs: "Trọng lượng siêu nhẹ (<200g), upper microfiber cảm giác bóng thật chân",
+            allroundSpecs: "Đệm EVA lót giảm chấn bảo vệ khớp gối & gót chân, upper êm ái kiểm soát bóng",
+          },
+          {
+            key: "volleyball",
+            title: "Bóng Chuyền",
+            keywords: "bóng chuyền, giày bóng chuyền, asics, mizuno, đệm bật, bóng thi đấu",
+            attackSpecs: "Đệm gót Power Cushion / Gel siêu êm trợ lực bật cao dứt điểm trên lưới",
+            speedSpecs: "Đế ma sát đa hướng, cổ thấp linh hoạt cứu bóng và di chuyển nhanh",
+            allroundSpecs: "Khung chống lật cổ chân TPU, bảo vệ an toàn khớp gối khi tiếp đất sàn cứng",
+          },
+          {
+            key: "running",
+            title: "Chạy Bộ & Gym",
+            keywords: "chạy, running, giày chạy, marathon, gym, thể thao, quần áo thể thao",
+            attackSpecs: "Đế carbon đàn hồi bứt phá tốc độ, hoàn trả lực tối đa cho pace cao",
+            speedSpecs: "Trọng lượng lông vũ, upper lưới thoáng khí giảm nhiệt độ bàn chân",
+            allroundSpecs: "Đệm bọt êm dày Max Cushion chống chấn thương khớp gối & gót chân cự ly dài",
+          },
+          {
+            key: "pickleball",
+            title: "Pickleball & Tennis",
+            keywords: "pickleball, tennis, vợt pickleball, giày tennis, joola, head",
+            attackSpecs: "Mặt Carbon T700 thô, lõi polymer 13-14mm smash uy lực & độ xoáy topspin cực cao",
+            speedSpecs: "Trọng lượng nhẹ 7.5-7.8 oz, vung vợt chớp nhoáng tại vùng kitchen",
+            allroundSpecs: "Lõi dày 16mm giảm chấn, sweet spot rộng kiểm soát dink êm ái toàn diện",
+          },
+        ];
+
+    // Tìm cấu hình môn thể thao khách hàng đã chọn
+    const currentSport = sportsList.find((s) => s.key === (sport || "").toLowerCase()) || sportsList[0];
+
     const find = {
       deleted: false,
       status: "active",
     };
 
-    // 1. Phân loại theo Bộ môn
+    // 1. Phân loại theo Bộ môn: tách các từ khóa do Admin thiết lập
     let keywords = [];
-    if (sport === "badminton") {
-      keywords = ["vợt", "cầu lông", "yonex", "lining", "victor", "nanoflare", "axforce", "astrox", "giày cầu lông"];
-    } else if (sport === "football") {
-      keywords = ["bóng đá", "giày đá bóng", "mizuno", "kamito", "nike", "quả bóng", "sân cỏ"];
-    } else if (sport === "volleyball") {
-      keywords = ["bóng chuyền", "asics", "mizuno", "băng gối", "quả bóng chuyền"];
-    } else if (sport === "running") {
-      keywords = ["chạy", "giày chạy", "băng cổ chân", "áo thi đấu", "quần"];
+    if (currentSport && currentSport.keywords) {
+      keywords = currentSport.keywords
+        .split(",")
+        .map((k) => k.trim())
+        .filter((k) => k.length > 0);
     }
 
     if (keywords.length > 0) {
@@ -463,7 +523,7 @@ module.exports.aiRecommend = async (req, res) => {
 
     let products = await Product.find(find).limit(6).lean();
 
-    // Nếu bộ lọc quá chặt không có sản phẩm, nới lỏng để luôn có gợi ý chất lượng
+    // Nếu bộ lọc ngân sách quá chặt không có sản phẩm, nới lỏng để luôn có gợi ý chất lượng trong kho
     if (products.length < 3) {
       const fallbackFind = { deleted: false, status: "active" };
       if (keywords.length > 0) {
@@ -480,52 +540,54 @@ module.exports.aiRecommend = async (req, res) => {
       }
     }
 
+    // Trường hợp kho hàng môn này chưa có sản phẩm đúng tên, lấy sản phẩm nổi bật
+    if (products.length === 0) {
+      products = await Product.find({ deleted: false, status: "active" }).limit(6).lean();
+    }
+
     products = productPriceHelper.priceNewProduct(products);
 
-    // Tính toán thông số kỹ thuật AI khuyến nghị (Physics & Sports Engineering Model)
-    let aiSpecs = {};
-    if (sport === "badminton" || !sport) {
+    // Xác định lời khuyên kỹ thuật theo lối chơi và cấu hình môn thể thao do Admin thiết lập
+    let playstyleAdvice = currentSport.allroundSpecs || "Công thủ toàn diện, linh hoạt & bền bỉ.";
+    if (playstyle === "attack" && currentSport.attackSpecs) {
+      playstyleAdvice = currentSport.attackSpecs;
+    } else if (playstyle === "speed" && currentSport.speedSpecs) {
+      playstyleAdvice = currentSport.speedSpecs;
+    }
+
+    // Tính toán thông số kỹ thuật AI khuyến nghị (Physics & Dynamic Sports Specs)
+    const aiSpecs = {
+      sportTitle: currentSport.title,
+      playstyleDesc: playstyleAdvice,
+    };
+
+    if (currentSport.key === "badminton" || !sport) {
       if (playstyle === "attack") {
-        aiSpecs = {
-          balancePoint: "298 - 308 mm (Nặng đầu - Head Heavy)",
-          shaftFlex: wristStrength === "strong" ? "Cứng (Stiff) - Đập cắm & Uy lực" : "Trung bình (Medium) - Hỗ trợ lực",
-          weightRacket: wristStrength === "beginner" ? "4U (80-84g)" : "3U / 4U (83-88g)",
-          recommendedTension: wristStrength === "strong" ? "11.0 - 12.0 kg (24-26.5 lbs)" : "10.0 - 10.5 kg (22-23 lbs)",
-          playstyleDesc: "Thiết kế tối ưu cho đòn Smash cắm vạch cuối sân, quỹ đạo cầu gắt và áp đảo đối thủ hoàn toàn.",
-        };
+        aiSpecs.balancePoint = "298 - 308 mm (Nặng đầu - Head Heavy)";
+        aiSpecs.shaftFlex = wristStrength === "strong" ? "Cứng (Stiff) - Đập cắm & Uy lực" : "Trung bình (Medium) - Hỗ trợ lực";
+        aiSpecs.weightRacket = wristStrength === "beginner" ? "4U (80-84g)" : "3U / 4U (83-88g)";
+        aiSpecs.recommendedTension = wristStrength === "strong" ? "11.0 - 12.0 kg (24-26.5 lbs)" : "10.0 - 10.5 kg (22-23 lbs)";
       } else if (playstyle === "speed") {
-        aiSpecs = {
-          balancePoint: "285 - 293 mm (Nhẹ đầu - Head Light)",
-          shaftFlex: "Cực dẻo & Đàn hồi cao (Aero Frame)",
-          weightRacket: "4U / 5U (75-84g) - Cực kỳ thanh thoát",
-          recommendedTension: "10.5 - 11.5 kg (23-25 lbs)",
-          playstyleDesc: "Chuyên biệt cho phản tạt chớp nhoáng, tì đè trên lưới và đổi hướng cầu tốc độ cao.",
-        };
+        aiSpecs.balancePoint = "285 - 293 mm (Nhẹ đầu - Head Light)";
+        aiSpecs.shaftFlex = "Cực dẻo & Đàn hồi cao (Aero Frame)";
+        aiSpecs.weightRacket = "4U / 5U (75-84g) - Cực kỳ thanh thoát";
+        aiSpecs.recommendedTension = "10.5 - 11.5 kg (23-25 lbs)";
       } else {
-        aiSpecs = {
-          balancePoint: "290 - 296 mm (Cân bằng - Even Balance)",
-          shaftFlex: "Trung bình (Medium Flex)",
-          weightRacket: "4U (80-84g) - Toàn diện linh hoạt",
-          recommendedTension: "10.5 - 11.0 kg (23-24.5 lbs)",
-          playstyleDesc: "Công thủ toàn diện, điều cầu chính xác từng milimet và bền bỉ trong các pha đôi công kéo dài.",
-        };
+        aiSpecs.balancePoint = "290 - 296 mm (Cân bằng - Even Balance)";
+        aiSpecs.shaftFlex = "Trung bình (Medium Flex)";
+        aiSpecs.weightRacket = "4U (80-84g) - Toàn diện linh hoạt";
+        aiSpecs.recommendedTension = "10.5 - 11.0 kg (23-24.5 lbs)";
       }
-    } else if (sport === "football") {
-      aiSpecs = {
-        soleType: "Đinh TF cao su đúc đa hướng (Sân cỏ nhân tạo Việt Nam)",
-        upperMaterial: "Da nhân tạo Microfiber / Da tự nhiên siêu êm",
-        insoleTech: "Đệm EVA lót giảm chấn bảo vệ khớp gối & gót chân",
-        fitType: "Form chân chuẩn người Việt (Regular - Wide)",
-        playstyleDesc: "Bám sân chắc chắn ngay cả khi trời mưa ẩm, cảm giác chạm bóng thật chân và bứt tốc tức thì.",
-      };
+    } else if (currentSport.key === "football") {
+      aiSpecs.soleType = "Đinh TF cao su đúc đa hướng (Sân cỏ nhân tạo Việt Nam)";
+      aiSpecs.upperMaterial = "Da nhân tạo Microfiber / Da tự nhiên siêu êm";
+      aiSpecs.insoleTech = "Đệm EVA lót giảm chấn bảo vệ khớp gối & gót chân";
+      aiSpecs.fitType = "Form chân chuẩn người Việt (Regular - Wide)";
     } else {
-      aiSpecs = {
-        cushionTech: "Đệm khí Gel / Power Cushion đàn hồi hồi phục năng lượng",
-        supportSystem: "Bộ khung chống lật cổ chân TPU & đế cao su Non-Marking",
-        breathability: "Lưới dệt thoáng khí đa điểm AirMesh giảm nhiệt độ bàn chân",
-        fitType: "Form ôm chân linh hoạt, giảm chấn động khi tiếp đất",
-        playstyleDesc: "Bảo vệ tối đa hệ cơ xương khớp khi bật nhảy liên tục và di chuyển đổi hướng đột ngột.",
-      };
+      aiSpecs.cushionTech = "Đệm đàn hồi cao cấp hoàn trả năng lượng tối đa";
+      aiSpecs.supportSystem = "Khung hỗ trợ chống lật cổ chân TPU & đế cao su chịu mài mòn";
+      aiSpecs.breathability = "Chất liệu thoáng khí cao cấp giảm nhiệt độ vận động";
+      aiSpecs.fitType = "Thiết kế ôm chân công thái học, bảo vệ hệ cơ xương khớp";
     }
 
     const matchScores = [99, 96, 94, 91, 88, 85];

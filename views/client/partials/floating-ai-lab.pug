@@ -1,11 +1,12 @@
 //- ====================================================================
 //- FLOATING AI SPORT LAB BUTTON (NÚT NỔI KÍCH HOẠT TRỢ LÝ AI)
 //- ====================================================================
-.floating-ai-widget#floatingAiWidget(title="Trợ Lý AI Tư Vấn Vợt & Giày Thể Thao")
-  button.floating-ai-btn#btnFloatingOpenAiLab(type="button" aria-label="Mở AI Sport Lab")
-    .floating-ai-icon-pulse
-      i.fa-solid.fa-wand-magic-sparkles
-    .floating-ai-text
-      span.ai-sub AI FITTING
-      strong AI Tư Vấn Vợt & Giày
-    span.floating-ai-badge PRO
+if (settingWebsiteInfo && settingWebsiteInfo.aiLabActive !== false)
+  .floating-ai-widget#floatingAiWidget(title=(settingWebsiteInfo && settingWebsiteInfo.aiLabTitle ? settingWebsiteInfo.aiLabTitle : "Trợ Lý AI Tư Vấn Vợt & Giày Thể Thao"))
+    button.floating-ai-btn#btnFloatingOpenAiLab(type="button" aria-label="Mở AI Sport Lab")
+      .floating-ai-icon-pulse
+        i.fa-solid.fa-wand-magic-sparkles
+      .floating-ai-text
+        span.ai-sub #{settingWebsiteInfo && settingWebsiteInfo.aiLabTag ? settingWebsiteInfo.aiLabTag : "AI FITTING"}
+        strong #{settingWebsiteInfo && settingWebsiteInfo.aiLabTitle ? settingWebsiteInfo.aiLabTitle : "AI Tư Vấn Vợt & Giày"}
+      span.floating-ai-badge PRO

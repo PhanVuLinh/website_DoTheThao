@@ -50,8 +50,11 @@ block main
       button.tab-nav-btn(type="button" data-tab="tab-payment")
         i.fa-solid.fa-credit-card
         span 9. Thanh Toán & Vận Chuyển
+      button.tab-nav-btn(type="button" data-tab="tab-ai")
+        i.fa-solid.fa-brain
+        span 10. Trợ Lý AI Tư Vấn
 
-    //- KHỐI FORM LƯU CHÍNH (Chứa toàn bộ 7 phân hệ)
+    //- KHỐI FORM LƯU CHÍNH (Chứa toàn bộ 10 phân hệ)
     .form-card
       form#formWebsiteInfo(action=`/${pathAdmin}/setting/website-info?_method=PATCH` method="POST" enctype="multipart/form-data")
         
@@ -687,6 +690,137 @@ block main
             button.btn-next-tab(type="button" data-next="tab-flash")
               i.fa-solid.fa-arrow-left
               | Quay lại: Flash Sale
+            .pane-actions-right
+              button.btn-next-tab(type="button" data-next="tab-ai")
+                | Tiếp tục: Trợ Lý AI
+                i.fa-solid.fa-arrow-right
+              if(role && role.permissions && role.permissions.includes("setting_edit"))
+                button.btn-save-pane.btn-save-pane-lg(type="submit")
+                  i.fa-solid.fa-floppy-disk
+                  | LƯU TOÀN BỘ CÀI ĐẶT
+
+        //- ========================================================
+        //- PHẦN 10: CẤU HÌNH TRỢ LÝ AI TƯ VẤN THỂ THAO (AI SPORT LAB)
+        //- ========================================================
+        .settings-tab-pane#tab-ai
+          .pane-header
+            .pane-header-icon.ai-icon-bg
+              i.fa-solid.fa-brain
+            .pane-header-info
+              h3 10. Cấu Hình Trợ Lý AI Tư Vấn Thể Thao (AI Sport Lab™)
+              p Quản lý công nghệ AI, bật/tắt toàn hệ thống, tinh chỉnh Prompt, API Key và cấu hình ma trận thông số từng môn thể thao.
+
+          h4.settings-section-subtitle
+            i.fa-solid.fa-sliders
+            | 1. Tổng quan & Trạng thái hoạt động
+          
+          .payment-methods-config-grid
+            label.payment-toggle-card
+              input(type="checkbox" name="aiLabActive" checked=(settingWebsiteInfo && settingWebsiteInfo.aiLabActive !== false))
+              .toggle-card-content
+                i.fa-solid.fa-brain.text-primary
+                div
+                  strong Bật Trợ Lý AI Trên Toàn Website
+                  span Hiển thị nút AI nổi (Floating Widget), nút AI trên thanh Header và Modal tư vấn tương tác
+
+          .form-row-2.mt-3
+            .form-group
+              label Tiêu đề trợ lý AI (Modal Title)
+              input.form-control(type="text" name="aiLabTitle" value=(settingWebsiteInfo && settingWebsiteInfo.aiLabTitle ? settingWebsiteInfo.aiLabTitle : "Trợ Lý AI Tư Vấn Vợt & Giày Thể Thao") placeholder="Ví dụ: Trợ Lý AI Tư Vấn Vợt & Giày Thể Thao")
+            
+            .form-group
+              label Nhãn bản quyền / Thương hiệu (Tag)
+              input.form-control(type="text" name="aiLabTag" value=(settingWebsiteInfo && settingWebsiteInfo.aiLabTag ? settingWebsiteInfo.aiLabTag : "TITISPORT AI LAB™") placeholder="Ví dụ: TITISPORT AI LAB™")
+
+          .form-row-2
+            .form-group
+              label Phiên bản động cơ AI (Version)
+              input.form-control(type="text" name="aiLabVersion" value=(settingWebsiteInfo && settingWebsiteInfo.aiLabVersion ? settingWebsiteInfo.aiLabVersion : "v3.5 SPORT PHYSICS") placeholder="Ví dụ: v3.5 SPORT PHYSICS")
+            
+            .form-group
+              label Chế độ vận hành (AI Engine Mode)
+              select.form-control(name="aiEngineMode")
+                option(value="hybrid" selected=(!settingWebsiteInfo || settingWebsiteInfo.aiEngineMode === "hybrid")) Hybrid - Kết Hợp Phân Tích Logic & Quét Kho Hàng (Khuyên dùng)
+                option(value="rules" selected=(settingWebsiteInfo && settingWebsiteInfo.aiEngineMode === "rules")) Dynamic Rules - Ma trận thông số thể thao động
+                option(value="api" selected=(settingWebsiteInfo && settingWebsiteInfo.aiEngineMode === "api")) LLM API - Kết nối Gemini / OpenAI API
+
+          .form-group
+            label Mô tả ngắn giới thiệu trợ lý AI
+            textarea.form-control(name="aiLabDescription" rows="2" placeholder="Ví dụ: Phân tích thể trạng, lực cổ tay và lối chơi để đề xuất trang bị thể thao tối ưu từ kho hàng.") #{settingWebsiteInfo ? settingWebsiteInfo.aiLabDescription : "Phân tích thể trạng, lực cổ tay và lối chơi để đề xuất trang bị thể thao tối ưu từ kho hàng."}
+
+          h4.settings-section-subtitle.mt-4
+            i.fa-solid.fa-wand-magic-sparkles
+            | 2. Chỉ dẫn hệ thống & Khóa API (System Prompt & API Key)
+
+          .form-row-2
+            .form-group
+              label API Key (Dành cho Gemini / OpenAI nếu dùng chế độ API)
+              input.form-control(type="password" name="aiApiKey" value=(settingWebsiteInfo ? settingWebsiteInfo.aiApiKey : "") placeholder="Nhập API Key nếu cần tích hợp LLM trực tiếp (tùy chọn)")
+              p.form-text.text-muted Để trống nếu bạn muốn AI hoạt động với tốc độ tức thì theo cơ chế Hybrid / Logic Kho Hàng đã cấu hình bên dưới.
+
+            .form-group
+              label Chỉ dẫn vai trò AI (System Instruction Prompt)
+              textarea.form-control(name="aiSystemPrompt" rows="3" placeholder="Nhập định hướng phong cách tư vấn...") #{settingWebsiteInfo ? settingWebsiteInfo.aiSystemPrompt : "Bạn là Chuyên gia Khoa học Thể thao hàng đầu tại TitiSport. Hãy đối chiếu lối chơi, lực cổ tay và ngân sách để đưa ra lời khuyên kỹ thuật chuyên sâu về điểm cân bằng (mm), độ dẻo đũa vợt, trọng lượng (U), độ căng cước (lbs) hoặc công nghệ đệm giày bảo vệ khớp tối ưu nhất."}
+
+          h4.settings-section-subtitle.mt-4
+            i.fa-solid.fa-layer-group
+            | 3. Danh sách Bộ Môn Thể Thao & Quy Tắc Gợi Ý Động (Sport Matrix)
+          p.form-text.text-muted Admin có toàn quyền Thêm / Sửa / Xóa các bộ môn thể thao. AI sẽ nạp từ khóa để tự động truy vấn sản phẩm trong kho hàng và đưa ra lời khuyên chuẩn xác theo từng lối chơi.
+
+          .ai-sports-manage-container#aiSportsContainer
+            if(settingWebsiteInfo && settingWebsiteInfo.aiSports && settingWebsiteInfo.aiSports.length > 0)
+              each sportItem, sportIdx in settingWebsiteInfo.aiSports
+                .ai-sport-admin-card(data-sport-index=sportIdx)
+                  .sport-card-header
+                    .sport-card-title-group
+                      i(class=sportItem.icon || "fa-solid fa-trophy")
+                      strong.sport-card-heading #{sportItem.title || `Bộ môn #${sportIdx + 1}`}
+                      span.badge.badge-secondary.ml-2 #{sportItem.key}
+                    button.btn-remove-sport(type="button" title="Xóa bộ môn này")
+                      i.fa-solid.fa-trash-can
+                      | Xóa môn này
+                  
+                  .sport-card-body
+                    .form-row-3
+                      .form-group
+                        label Mã định danh (Key không dấu, viết liền/dấu gạch) <span class="text-danger">*</span>
+                        input.form-control.sport-key-input(type="text" name="aiSport_key" value=sportItem.key placeholder="Ví dụ: badminton, football, tennis..." required)
+                      .form-group
+                        label Tên bộ môn hiển thị <span class="text-danger">*</span>
+                        input.form-control.sport-title-input(type="text" name="aiSport_title" value=sportItem.title placeholder="Ví dụ: Cầu Lông, Bóng Đá..." required)
+                      .form-group
+                        label Icon FontAwesome
+                        input.form-control.sport-icon-input(type="text" name="aiSport_icon" value=sportItem.icon placeholder="Ví dụ: fa-solid fa-feather-pointed")
+                    
+                    .form-group
+                      label Mô tả ngắn gọn (Hiển thị trên thẻ chọn của khách)
+                      input.form-control(type="text" name="aiSport_desc" value=sportItem.desc placeholder="Ví dụ: Vợt đập cầu, cước trợ lực, giày di chuyển linh hoạt")
+
+                    .form-group
+                      label Từ khóa tìm kiếm sản phẩm trong kho (Cách nhau bởi dấu phẩy) <span class="text-danger">*</span>
+                      input.form-control(type="text" name="aiSport_keywords" value=sportItem.keywords placeholder="Ví dụ: vợt, cầu lông, yonex, lining, victor, nanoflare, axforce")
+                      p.form-text.text-muted Khi khách chọn bộ môn này, AI sẽ quét kho hàng với các từ khóa trên để tìm và gợi ý sản phẩm phù hợp ngân sách.
+
+                    .form-row-3
+                      .form-group
+                        label Lời khuyên Kỹ thuật: Lối chơi TẤN CÔNG (Smash/Bứt tốc)
+                        textarea.form-control(name="aiSport_attackSpecs" rows="2" placeholder="Thông số vợt/giày phù hợp lối chơi tấn công...") #{sportItem.attackSpecs}
+                      .form-group
+                        label Lời khuyên Kỹ thuật: Lối chơi TỐC ĐỘ (Phản tạt/Linh hoạt)
+                        textarea.form-control(name="aiSport_speedSpecs" rows="2" placeholder="Thông số vợt/giày phù hợp lối chơi phản tạt...") #{sportItem.speedSpecs}
+                      .form-group
+                        label Lời khuyên Kỹ thuật: Lối chơi TOÀN DIỆN (Công thủ linh hoạt)
+                        textarea.form-control(name="aiSport_allroundSpecs" rows="2" placeholder="Thông số vợt/giày phù hợp lối chơi toàn diện...") #{sportItem.allroundSpecs}
+
+          .add-sport-action-wrap.mt-3
+            button.btn-add-sport#btnAddAiSport(type="button")
+              i.fa-solid.fa-plus
+              | Thêm Bộ Môn Thể Thao Mới Cho AI
+
+          .pane-footer-actions.mt-4
+            button.btn-next-tab(type="button" data-next="tab-payment")
+              i.fa-solid.fa-arrow-left
+              | Quay lại: Thanh Toán & Vận Chuyển
             .pane-actions-right
               if(role && role.permissions && role.permissions.includes("setting_edit"))
                 button.btn-save-pane.btn-save-pane-lg(type="submit")

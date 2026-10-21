@@ -5369,3 +5369,108 @@ body.swal2-toast-shown .swal2-container,
   background: #1d4ed8;
 }
 
+/* ==========================================
+   TAB 10: TRỢ LÝ AI TƯ VẤN THỂ THAO (ADMIN STYLES)
+   ========================================== */
+.pane-header-icon.ai-icon-bg {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35) !important;
+}
+
+.ai-sports-manage-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+.ai-sport-admin-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+  transition: all 0.25s ease;
+}
+
+.ai-sport-admin-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.sport-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1.5px solid #e2e8f0;
+}
+
+.sport-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14.5px;
+}
+
+.sport-card-title-group i {
+  color: #6366f1;
+  font-size: 17px;
+}
+
+.sport-card-heading {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.sport-card-body {
+  padding: 20px;
+}
+
+.btn-remove-sport {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-remove-sport:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+  box-shadow: 0 3px 8px rgba(220, 38, 38, 0.25);
+}
+
+.btn-add-sport {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.28);
+  transition: all 0.25s ease;
+}
+
+.btn-add-sport:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+}
+
+

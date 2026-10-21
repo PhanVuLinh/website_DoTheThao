@@ -341,4 +341,157 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
   }
+
+  // ------------------------------------------
+  // 3. QUẢN LÝ DYNAMIC AI SPORTS (MÔN THỂ THAO TRỢ LÝ AI)
+  // ------------------------------------------
+  const aiSportsContainer = document.getElementById("aiSportsContainer");
+  const btnAddAiSport = document.getElementById("btnAddAiSport");
+
+  if (aiSportsContainer) {
+    function bindSportCardEvents(card) {
+      if (!card) return;
+      const titleInput = card.querySelector(".sport-title-input");
+      const keyInput = card.querySelector(".sport-key-input");
+      const iconInput = card.querySelector(".sport-icon-input");
+      const heading = card.querySelector(".sport-card-heading");
+      const iconEl = card.querySelector(".sport-card-title-group i");
+
+      if (titleInput && heading) {
+        titleInput.addEventListener("input", function () {
+          heading.textContent = this.value.trim() || "Bộ môn thể thao mới";
+          if (keyInput && (!keyInput.value || keyInput.dataset.autoSlug !== "false")) {
+            // Tự động tạo slug không dấu từ tên môn nếu admin chưa chủ động gõ key riêng
+            const slug = this.value
+              .toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .replace(/đ/g, "d")
+              .replace(/[^a-z0-9\s-]/g, "")
+              .trim()
+              .replace(/\s+/g, "-");
+            keyInput.value = slug;
+          }
+        });
+      }
+
+      if (keyInput) {
+        keyInput.addEventListener("input", function () {
+          this.dataset.autoSlug = "false";
+        });
+      }
+
+      if (iconInput && iconEl) {
+        iconInput.addEventListener("input", function () {
+          iconEl.className = this.value.trim() || "fa-solid fa-trophy";
+        });
+      }
+    }
+
+    // Gắn sự kiện cho các thẻ đã có sẵn
+    aiSportsContainer.querySelectorAll(".ai-sport-admin-card").forEach((card) => {
+      bindSportCardEvents(card);
+    });
+
+    // Xóa thẻ môn thể thao (Event delegation)
+    aiSportsContainer.addEventListener("click", function (e) {
+      const btnRemove = e.target.closest(".btn-remove-sport");
+      if (btnRemove) {
+        const card = btnRemove.closest(".ai-sport-admin-card");
+        if (card) {
+          const allCards = aiSportsContainer.querySelectorAll(".ai-sport-admin-card");
+          if (allCards.length <= 1) {
+            if (typeof Swal !== "undefined") {
+              Swal.fire({
+                icon: "warning",
+                title: "Không thể xóa",
+                text: "Cần giữ lại ít nhất 1 bộ môn thể thao để Trợ lý AI có thể hoạt động.",
+              });
+            } else {
+              alert("Cần giữ lại ít nhất 1 bộ môn thể thao để Trợ lý AI có thể hoạt động.");
+            }
+            return;
+          }
+
+          if (confirm("Bạn có chắc chắn muốn xóa bộ môn thể thao này khỏi cấu hình AI không?")) {
+            card.style.opacity = "0";
+            card.style.transform = "scale(0.95)";
+            setTimeout(() => {
+              card.remove();
+            }, 250);
+          }
+        }
+      }
+    });
+
+    // Thêm thẻ môn thể thao mới
+    if (btnAddAiSport) {
+      btnAddAiSport.addEventListener("click", function () {
+        const currentCount = aiSportsContainer.querySelectorAll(".ai-sport-admin-card").length;
+        const newCard = document.createElement("div");
+        newCard.className = "ai-sport-admin-card";
+        newCard.setAttribute("data-sport-index", currentCount);
+
+        newCard.innerHTML = `
+          <div class="sport-card-header">
+            <div class="sport-card-title-group">
+              <i class="fa-solid fa-trophy"></i>
+              <strong class="sport-card-heading">Bộ môn thể thao mới #${currentCount + 1}</strong>
+              <span class="badge badge-secondary ml-2">Mới tạo</span>
+            </div>
+            <button class="btn-remove-sport" type="button" title="Xóa bộ môn này">
+              <i class="fa-solid fa-trash-can"></i>
+              Xóa môn này
+            </button>
+          </div>
+          <div class="sport-card-body">
+            <div class="form-row-3">
+              <div class="form-group">
+                <label>Mã định danh (Key không dấu, viết liền/dấu gạch) <span class="text-danger">*</span></label>
+                <input class="form-control sport-key-input" type="text" name="aiSport_key" value="" placeholder="Ví dụ: basketball, tennis, swimming..." required />
+              </div>
+              <div class="form-group">
+                <label>Tên bộ môn hiển thị <span class="text-danger">*</span></label>
+                <input class="form-control sport-title-input" type="text" name="aiSport_title" value="" placeholder="Ví dụ: Bóng Rổ, Tennis, Bơi Lội..." required />
+              </div>
+              <div class="form-group">
+                <label>Icon FontAwesome</label>
+                <input class="form-control sport-icon-input" type="text" name="aiSport_icon" value="fa-solid fa-trophy" placeholder="Ví dụ: fa-solid fa-basketball" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Mô tả ngắn gọn (Hiển thị trên thẻ chọn của khách)</label>
+              <input class="form-control" type="text" name="aiSport_desc" value="" placeholder="Ví dụ: Quả bóng, giày thi đấu, phụ kiện chuyên nghiệp" />
+            </div>
+            <div class="form-group">
+              <label>Từ khóa tìm kiếm sản phẩm trong kho (Cách nhau bởi dấu phẩy) <span class="text-danger">*</span></label>
+              <input class="form-control" type="text" name="aiSport_keywords" value="" placeholder="Ví dụ: bóng rổ, giày bóng rổ, spalding, molten" required />
+              <p class="form-text text-muted">Khi khách chọn bộ môn này, AI sẽ quét kho hàng với các từ khóa trên để tìm và gợi ý sản phẩm phù hợp ngân sách.</p>
+            </div>
+            <div class="form-row-3">
+              <div class="form-group">
+                <label>Lời khuyên Kỹ thuật: Lối chơi TẤN CÔNG (Smash/Bứt tốc)</label>
+                <textarea class="form-control" name="aiSport_attackSpecs" rows="2" placeholder="Thông số trang bị phù hợp lối chơi tấn công..."></textarea>
+              </div>
+              <div class="form-group">
+                <label>Lời khuyên Kỹ thuật: Lối chơi TỐC ĐỘ (Phản tạt/Linh hoạt)</label>
+                <textarea class="form-control" name="aiSport_speedSpecs" rows="2" placeholder="Thông số trang bị phù hợp lối chơi tốc độ..."></textarea>
+              </div>
+              <div class="form-group">
+                <label>Lời khuyên Kỹ thuật: Lối chơi TOÀN DIỆN (Công thủ linh hoạt)</label>
+                <textarea class="form-control" name="aiSport_allroundSpecs" rows="2" placeholder="Thông số trang bị phù hợp lối chơi toàn diện..."></textarea>
+              </div>
+            </div>
+          </div>
+        `;
+
+        aiSportsContainer.appendChild(newCard);
+        bindSportCardEvents(newCard);
+        newCard.scrollIntoView({ behavior: "smooth", block: "center" });
+
+        const firstInput = newCard.querySelector(".sport-title-input");
+        if (firstInput) firstInput.focus();
+      });
+    }
+  }
 });
