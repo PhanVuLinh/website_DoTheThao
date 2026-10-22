@@ -5,6 +5,7 @@ const User = require("../../models/user.model");
 
 const variableCongfig = require("../../config/variable");
 const paginationHelper = require("../../helpers/pagination.helper");
+const regexHelper = require("../../helpers/regex.helper");
 
 module.exports.list = async (req, res) => {
   const find = {
@@ -17,7 +18,7 @@ module.exports.list = async (req, res) => {
 
   //Tìm kiếm
   if (req.query.keyword) {
-    const keyword = req.query.keyword.trim();
+    const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
     const regexKeyword = new RegExp(keyword, "i");
     find.$or = [{ fullName: regexKeyword }, { email: regexKeyword }];
   }
@@ -203,7 +204,7 @@ module.exports.trash = async (req, res) => {
   };
   //Tìm kiếm
   if (req.query.keyword) {
-    const keyword = req.query.keyword.trim();
+    const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
     const regexKeyword = new RegExp(keyword, "i");
     find.$or = [{ fullName: regexKeyword }, { email: regexKeyword }];
   }

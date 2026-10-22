@@ -279,7 +279,11 @@ module.exports.resetPasswordPost = async (req, res) => {
     const hashedPassword = await passwordHelper.hashPassword(password);
 
     // Cấp lại JWT token mới để vô hiệu hóa token cũ nếu bị lộ
-    const newToken = jwtHelper.generateToken({ email: email });
+    const userUpdated = await User.findOne({ email: email, deleted: false });
+    const newToken = jwtHelper.generateToken({
+      userId: userUpdated ? userUpdated.id : undefined,
+      email: email,
+    });
 
     await User.updateOne(
       { email: email },

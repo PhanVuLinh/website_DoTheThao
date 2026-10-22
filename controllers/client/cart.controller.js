@@ -101,8 +101,10 @@ module.exports.cart = async (req, res) => {
     let currentUserId = null;
     if (token) {
       const decoded = jwtHelper.verifyToken(token);
-      if (decoded && decoded.id) currentUserId = decoded.id;
-      else {
+      const resolvedUserId = decoded ? (decoded.userId || decoded.id) : null;
+      if (resolvedUserId) {
+        currentUserId = resolvedUserId;
+      } else {
         const u = await User.findOne({ token: token, deleted: false }).select("_id");
         if (u) currentUserId = u._id.toString();
       }
@@ -369,8 +371,9 @@ module.exports.applyCoupon = async (req, res) => {
 
     let user = null;
     const decoded = jwtHelper.verifyToken(token);
-    if (decoded && decoded.id) {
-      user = await User.findOne({ _id: decoded.id, deleted: false });
+    const resolvedUserId = decoded ? (decoded.userId || decoded.id) : null;
+    if (resolvedUserId) {
+      user = await User.findOne({ _id: resolvedUserId, deleted: false });
     } else {
       user = await User.findOne({ token: token, deleted: false });
     }

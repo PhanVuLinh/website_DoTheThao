@@ -8,6 +8,7 @@ const permissonConfig = require("../../config/permission");
 const passwordHelper = require("../../helpers/password.helper");
 
 const paginationHelper = require("../../helpers/pagination.helper");
+const regexHelper = require("../../helpers/regex.helper");
 
 module.exports.list = (req, res) => {
   res.render("admin/pages/setting-list.pug", {
@@ -298,7 +299,7 @@ module.exports.accountAdminList = async (req, res) => {
 
   //Tìm kiếm
   if (req.query.keyword) {
-    const keyword = req.query.keyword.trim();
+    const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
     const regexKeyword = new RegExp(keyword, "i");
     find.$or = [
       { fullName: regexKeyword },
@@ -497,7 +498,7 @@ module.exports.accountAdminTrash = async (req, res) => {
   };
   //Tìm kiếm
   if (req.query.keyword) {
-    const keyword = req.query.keyword.trim();
+    const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
     const regexKeyword = new RegExp(keyword, "i");
     find.$or = [
       { fullName: regexKeyword },
@@ -607,7 +608,7 @@ module.exports.roleList = async (req, res) => {
   };
   //Tìm kiếm
   if (req.query.keyword) {
-    const keyword = req.query.keyword.trim();
+    const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
     const regexKeyword = new RegExp(keyword, "i");
     find.$or = [{ name: regexKeyword }];
   }
@@ -769,7 +770,7 @@ module.exports.roleTrash = async (req, res) => {
   };
   //Tìm kiếm
   if (req.query.keyword) {
-    const keyword = req.query.keyword.trim();
+    const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
     const regexKeyword = new RegExp(keyword, "i");
     find.$or = [{ name: regexKeyword }];
   }

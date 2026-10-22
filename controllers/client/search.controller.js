@@ -47,7 +47,8 @@ module.exports.searchList = async (req, res) => {
     };
   }
 
-  const rawProducts = await Product.find(find).lean();
+  // Giới hạn an toàn tối đa 200 sản phẩm ứng viên để chấm điểm độ liên quan, chống cạn kiệt RAM
+  const rawProducts = await Product.find(find).limit(200).lean();
   let productList = productPriceHelper.priceNewProduct(rawProducts);
 
   // Sắp xếp theo yêu cầu hoặc sắp xếp theo mức độ liên quan (Relevance Scoring)

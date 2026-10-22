@@ -84,22 +84,8 @@ module.exports.index = async (req, res) => {
       }
     }
 
-    const rawProducts = await Product.find(find).lean();
-    let productList = productPriceHelper.priceNewProduct(rawProducts);
-
-    if (req.query.sort) {
-      if (req.query.sort === "price-asc") {
-        productList.sort((a, b) => a.priceNew - b.priceNew);
-      } else if (req.query.sort === "price-desc") {
-        productList.sort((a, b) => b.priceNew - a.priceNew);
-      } else if (req.query.sort === "newest") {
-        productList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      }
-    } else {
-      productList.sort((a, b) => (b.position || 0) - (a.position || 0));
-    }
-
-    const countProduct = productList.length;
+    // Đếm tổng số sản phẩm thỏa mãn điều kiện lọc
+    const countProduct = await Product.countDocuments(find);
     const objectPagination = paginationHelper(
       {
         currentPage: 1,
@@ -109,10 +95,43 @@ module.exports.index = async (req, res) => {
       countProduct,
     );
 
-    const paginatedProducts = productList.slice(
-      objectPagination.skip,
-      objectPagination.skip + objectPagination.limitItems,
-    );
+    let paginatedProducts = [];
+    if (req.query.sort === "price-asc" || req.query.sort === "price-desc") {
+      const sortDirection = req.query.sort === "price-asc" ? 1 : -1;
+      paginatedProducts = await Product.aggregate([
+        { $match: find },
+        {
+          $addFields: {
+            calculatedPriceNew: {
+              $multiply: [
+                "$price",
+                {
+                  $subtract: [
+                    1,
+                    { $divide: [{ $ifNull: ["$discountPercentage", 0] }, 100] },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+        { $sort: { calculatedPriceNew: sortDirection, _id: -1 } },
+        { $skip: objectPagination.skip },
+        { $limit: objectPagination.limitItems },
+      ]);
+    } else {
+      let sortMongo = { position: -1, createdAt: -1 };
+      if (req.query.sort === "newest") {
+        sortMongo = { createdAt: -1 };
+      }
+      paginatedProducts = await Product.find(find)
+        .sort(sortMongo)
+        .skip(objectPagination.skip)
+        .limit(objectPagination.limitItems)
+        .lean();
+    }
+
+    const productList = productPriceHelper.priceNewProduct(paginatedProducts);
 
     const allChildCategories = await Category.find({
       deleted: false,
@@ -508,7 +527,7 @@ module.exports.aiRecommend = async (req, res) => {
 
     if (keywords.length > 0) {
       find.$or = keywords.map((kw) => ({
-        title: { $regex: new RegExp(kw, "i") },
+        title: { $regex: new RegExp(regexHelper.escapeRegex(kw), "i") },
       }));
     }
 
@@ -528,7 +547,7 @@ module.exports.aiRecommend = async (req, res) => {
       const fallbackFind = { deleted: false, status: "active" };
       if (keywords.length > 0) {
         fallbackFind.$or = keywords.slice(0, 3).map((kw) => ({
-          title: { $regex: new RegExp(kw, "i") },
+          title: { $regex: new RegExp(regexHelper.escapeRegex(kw), "i") },
         }));
       }
       const moreProducts = await Product.find(fallbackFind).limit(6).lean();

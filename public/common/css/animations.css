@@ -371,7 +371,7 @@ html {
    8. SCROLL-DRIVEN CIRCULAR PROGRESS "BACK TO TOP" BUTTON
    ==================================================================== */
 .scroll-progress-btn {
-  position: fixed;
+  position: fixed !important;
   bottom: 30px;
   right: 30px;
   width: 50px;
@@ -443,7 +443,7 @@ html {
 /* ====================================================================
    9. BUTTON INTERACTIONS & RIPPLE EFFECT
    ==================================================================== */
-button:not(.action-btn):not(.btn-wishlist-toggle):not(.btn-compare-toggle):not(.btn-wishlist-detail):not(.btn-compare-detail):not(.slider-btn):not(.flash-nav-btn):not(.mobile-close-btn):not(.mobile-toggle-btn):not(.floating-ai-btn):not(.ai-lab-close-btn):not(.quick-view-close-btn):not(.quick-size-btn):not(.qty-btn),
+button:not(.action-btn):not(.btn-wishlist-toggle):not(.btn-compare-toggle):not(.btn-wishlist-detail):not(.btn-compare-detail):not(.slider-btn):not(.flash-nav-btn):not(.mobile-close-btn):not(.mobile-toggle-btn):not(.floating-ai-btn):not(.ai-lab-close-btn):not(.quick-view-close-btn):not(.quick-size-btn):not(.qty-btn):not(.scroll-progress-btn),
 .btn,
 .btn-primary,
 .btn-hero-primary,

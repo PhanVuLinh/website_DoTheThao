@@ -227,28 +227,8 @@ module.exports.list = async (req, res) => {
       });
     }
 
-    // Danh sách sản phẩm
-    const productCategory = await Product.find(find).lean();
-    const newProductCategory =
-      productPriceHelper.priceNewProduct(productCategory);
-
-    // Xử lý Sắp xếp (Sort)
-    if (req.query.sort) {
-      if (req.query.sort === "price-asc") {
-        newProductCategory.sort((a, b) => a.priceNew - b.priceNew);
-      } else if (req.query.sort === "price-desc") {
-        newProductCategory.sort((a, b) => b.priceNew - a.priceNew);
-      } else if (req.query.sort === "newest") {
-        newProductCategory.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
-        );
-      }
-    } else {
-      newProductCategory.sort((a, b) => (b.position || 0) - (a.position || 0));
-    }
-
-    // Phân trang
-    const countProduct = newProductCategory.length;
+    // Phân trang & Đếm trực tiếp trong Database
+    const countProduct = await Product.countDocuments(find);
     let objectPagination = paginationHelper(
       {
         currentPage: 1,
@@ -258,10 +238,44 @@ module.exports.list = async (req, res) => {
       countProduct,
     );
 
-    const paginatedProducts = newProductCategory.slice(
-      objectPagination.skip,
-      objectPagination.skip + objectPagination.limitItems,
-    );
+    let paginatedRawProducts = [];
+    if (req.query.sort === "price-asc" || req.query.sort === "price-desc") {
+      const sortDirection = req.query.sort === "price-asc" ? 1 : -1;
+      paginatedRawProducts = await Product.aggregate([
+        { $match: find },
+        {
+          $addFields: {
+            calculatedPriceNew: {
+              $multiply: [
+                "$price",
+                {
+                  $subtract: [
+                    1,
+                    { $divide: [{ $ifNull: ["$discountPercentage", 0] }, 100] },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+        { $sort: { calculatedPriceNew: sortDirection, _id: -1 } },
+        { $skip: objectPagination.skip },
+        { $limit: objectPagination.limitItems },
+      ]);
+    } else {
+      let sortMongo = { position: -1, createdAt: -1 };
+      if (req.query.sort === "newest") {
+        sortMongo = { createdAt: -1 };
+      }
+      paginatedRawProducts = await Product.find(find)
+        .sort(sortMongo)
+        .skip(objectPagination.skip)
+        .limit(objectPagination.limitItems)
+        .lean();
+    }
+
+    const paginatedProducts =
+      productPriceHelper.priceNewProduct(paginatedRawProducts);
 
     res.render("client/pages/product-list.pug", {
       title: category.title || "Danh sách sản phẩm",

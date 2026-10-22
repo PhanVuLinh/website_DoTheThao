@@ -309,6 +309,13 @@
   // 5. NÚT CUỘN ĐẦU TRANG VỚI VÒNG TRÒN SVG TIẾN ĐỘ CUỘN
   // ==================================================================
   function initScrollProgressBtn() {
+    // Không chạy nút cuộn Back to top trên trang quản trị Admin (trang admin cuộn trong .admin-content và dùng layout flex)
+    if (document.body.classList.contains("admin-body") || window.location.pathname.startsWith("/admin")) {
+      const existing = document.getElementById("scrollProgressBtn");
+      if (existing) existing.remove();
+      return;
+    }
+
     let btn = document.getElementById("scrollProgressBtn");
     if (!btn) {
       btn = document.createElement("button");

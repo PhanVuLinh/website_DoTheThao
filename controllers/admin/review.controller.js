@@ -3,6 +3,7 @@ const Product = require("../../models/product.model");
 const moment = require("moment");
 const variableCongfig = require("../../config/variable");
 const paginationHelper = require("../../helpers/pagination.helper");
+const regexHelper = require("../../helpers/regex.helper");
 
 // [GET] /admin/review/list
 module.exports.list = async (req, res) => {
@@ -20,10 +21,11 @@ module.exports.list = async (req, res) => {
     }
 
     if (req.query.keyword) {
-      const keyword = req.query.keyword.trim();
+      const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
+      const regexKeyword = new RegExp(keyword, "i");
       find.$or = [
-        { fullName: new RegExp(keyword, "i") },
-        { comment: new RegExp(keyword, "i") },
+        { fullName: regexKeyword },
+        { comment: regexKeyword },
       ];
     }
 

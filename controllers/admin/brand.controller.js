@@ -2,6 +2,7 @@ const moment = require("moment");
 const Brand = require("../../models/brand.model");
 const variableConfig = require("../../config/variable");
 const paginationHelper = require("../../helpers/pagination.helper");
+const regexHelper = require("../../helpers/regex.helper");
 
 // [GET] /admin/brand/list
 module.exports.list = async (req, res) => {
@@ -15,7 +16,7 @@ module.exports.list = async (req, res) => {
     }
 
     if (req.query.keyword) {
-      const keyword = req.query.keyword.trim();
+      const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
       find.name = new RegExp(keyword, "i");
     }
 

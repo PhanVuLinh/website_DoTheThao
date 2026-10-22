@@ -115,7 +115,7 @@ module.exports.trash = async (req, res) => {
 
   //Tìm kiếm
   if (req.query.keyword) {
-    const keyword = req.query.keyword.trim();
+    const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
     const regexKeyword = new RegExp(keyword, "i");
     find.$or = [{ email: regexKeyword }];
   }

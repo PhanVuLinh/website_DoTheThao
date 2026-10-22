@@ -342,7 +342,7 @@ module.exports.editPatch = async (req, res) => {
     // Bắn thông báo Realtime Socket.io cho khách hàng và Admin
     if (global._io) {
       const statusObj = variableCongfig.orderStatus.find((item) => item.value === status);
-      global._io.emit("SERVER_UPDATE_ORDER_STATUS", {
+      global._io.to("admin_room").to(`order_${id}`).emit("SERVER_UPDATE_ORDER_STATUS", {
         orderId: id,
         orderCode: order.orderCode,
         status: status,

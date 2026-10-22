@@ -1,0 +1,28 @@
+extends ../layouts/default.pug
+
+block main
+  .container.my-5
+    .row.justify-content-center
+      .col-12.col-md-8.col-lg-6.text-center.py-5
+        .error-page-wrapper(style="background: #ffffff; border-radius: 20px; padding: 48px 32px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06); border: 1px solid #f1f5f9;")
+          .error-badge(style="display: inline-flex; align-items: center; gap: 8px; background: #fee2e2; color: #dc2626; padding: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 700; margin-bottom: 24px;")
+            i.fa-solid.fa-triangle-exclamation
+            | #{errorMessage ? "HỆ THỐNG GIÁN ĐOẠN" : "LỖI ĐIỀU HƯỚNG"}
+
+          h1.error-code(style="font-size: 88px; font-weight: 900; line-height: 1; letter-spacing: -2px; margin-bottom: 12px; background: linear-gradient(135deg, #ef4444, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent;")
+            | #{errorMessage ? "500" : "404"}
+
+          h2.error-title(style="font-size: 22px; font-weight: 700; color: #1e293b; margin-bottom: 14px;")
+            | #{errorMessage ? "Rất tiếc! Đã xảy ra lỗi hệ thống" : "Không tìm thấy trang yêu cầu"}
+
+          p.error-desc(style="font-size: 15px; color: #64748b; line-height: 1.6; margin-bottom: 32px; max-width: 440px; margin-left: auto; margin-right: auto;")
+            | #{errorMessage || "Đường dẫn bạn truy cập có thể đã bị thay đổi, bị xóa hoặc không còn tồn tại trên hệ thống TiTiSport."}
+
+          .error-actions(style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;")
+            a.btn-home(href="/" style="display: inline-flex; align-items: center; gap: 8px; background: #e11d48; color: #ffffff; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 4px 14px rgba(225, 29, 72, 0.3); transition: all 0.2s ease;")
+              i.fa-solid.fa-house
+              | Về Trang Chủ
+
+            a.btn-shop(href="/product" style="display: inline-flex; align-items: center; gap: 8px; background: #f8fafc; color: #334155; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease;")
+              i.fa-solid.fa-cart-shopping
+              | Xem Sản Phẩm

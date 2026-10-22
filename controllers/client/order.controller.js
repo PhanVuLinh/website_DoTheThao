@@ -246,7 +246,7 @@ module.exports.createPost = async (req, res) => {
 
         // Bắn thông báo Realtime Socket.io cho Admin
         if (global._io) {
-          global._io.emit("SERVER_RETURN_NEW_ORDER", {
+          global._io.to("admin_room").emit("SERVER_RETURN_NEW_ORDER", {
             orderId: newOrder.id,
             orderCode: newOrder.orderCode,
             fullName: newOrder.fullName,
@@ -496,21 +496,9 @@ module.exports.paymentZalopayReturn = async (req, res) => {
             { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
           );
 
-          // Bắn Socket.io thông báo đơn thanh toán thành công
-          if (global._io) {
-            global._io.emit("SERVER_RETURN_NEW_ORDER", {
-              orderId: orderDetail.id,
-              orderCode: orderDetail.orderCode,
-              fullName: orderDetail.fullName,
-              total: orderDetail.total,
-              createdAt: moment(orderDetail.createdAt).format("HH:mm - DD/MM/YYYY"),
-              paymentMethod: "zaloPay",
-            });
-          }
-
           // Bắn thông báo Realtime Socket.io cho Admin
           if (global._io) {
-            global._io.emit("SERVER_RETURN_NEW_ORDER", {
+            global._io.to("admin_room").emit("SERVER_RETURN_NEW_ORDER", {
               orderId: orderDetail.id,
               orderCode: orderDetail.orderCode,
               fullName: orderDetail.fullName,
@@ -707,9 +695,9 @@ module.exports.paymentVnpayResult = async (req, res) => {
           { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
         );
 
-        // Bắn Socket.io thông báo đơn thanh toán thành công
+        // Bắn Socket.io thông báo đơn thanh toán thành công cho Admin
         if (global._io) {
-          global._io.emit("SERVER_RETURN_NEW_ORDER", {
+          global._io.to("admin_room").emit("SERVER_RETURN_NEW_ORDER", {
             orderId: orderDetail.id,
             orderCode: orderDetail.orderCode,
             fullName: orderDetail.fullName,
@@ -740,6 +728,91 @@ module.exports.paymentVnpayResult = async (req, res) => {
     console.error("VNPay Result Error:", error);
     req.flash("error", "Lỗi hệ thống khi kiểm tra kết quả thanh toán VNPay!");
     res.redirect("/cart");
+  }
+};
+
+// [GET] /order/payment-vnpay-ipn - VNPay Instant Payment Notification (Server-to-Server Webhook)
+module.exports.paymentVnpayIpn = async (req, res) => {
+  try {
+    let vnp_Params = req.query;
+    let secureHash = vnp_Params["vnp_SecureHash"];
+
+    delete vnp_Params["vnp_SecureHash"];
+    delete vnp_Params["vnp_SecureHashType"];
+
+    vnp_Params = sortPayHelper.sortObject(vnp_Params);
+
+    let secretKey = process.env.VNPAY_SECRET;
+    let querystring = require("qs");
+    let signData = querystring.stringify(vnp_Params, { encode: false });
+    let hmac = crypto.createHmac("sha512", secretKey);
+    let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+
+    if (secureHash !== signed) {
+      return res.status(200).json({ RspCode: "97", Message: "Checksum failed" });
+    }
+
+    const [orderId] = (vnp_Params["vnp_TxnRef"] || "").split("-");
+    const orderDetail = await Order.findOne({ _id: orderId, deleted: false });
+
+    if (!orderDetail) {
+      return res.status(200).json({ RspCode: "01", Message: "Order not found" });
+    }
+
+    const checkAmount = Math.round(Number(orderDetail.total)) * 100;
+    if (checkAmount !== Number(vnp_Params["vnp_Amount"])) {
+      return res.status(200).json({ RspCode: "04", Message: "Invalid amount" });
+    }
+
+    if (orderDetail.paymentStatus === "paid") {
+      return res.status(200).json({ RspCode: "02", Message: "Order already confirmed" });
+    }
+
+    if (
+      vnp_Params["vnp_ResponseCode"] === "00" &&
+      vnp_Params["vnp_TransactionStatus"] === "00"
+    ) {
+      const autoTrackingCode = `GHN${moment().format("YYMMDD")}${Math.floor(1000 + Math.random() * 9000)}`;
+      await Order.updateOne(
+        { _id: orderId, deleted: false },
+        {
+          paymentStatus: "paid",
+          status: "shipping",
+          autoApproved: true,
+          trackingCode: autoTrackingCode,
+          shippingCarrier: "Giao Hàng Nhanh (GHN)",
+          approvedBy: "Cổng thanh toán VNPay (IPN Tự động duyệt)",
+          approvedAt: new Date(),
+        },
+      );
+
+      await Cart.updateOne(
+        { _id: orderDetail.cartId },
+        { $set: { products: [], "coupon.code": "", "coupon.discount": 0 } },
+      );
+
+      if (global._io) {
+        global._io.to("admin_room").emit("SERVER_RETURN_NEW_ORDER", {
+          orderId: orderDetail.id,
+          orderCode: orderDetail.orderCode,
+          fullName: orderDetail.fullName,
+          total: orderDetail.total,
+          createdAt: moment(orderDetail.createdAt).format("HH:mm - DD/MM/YYYY"),
+          paymentMethod: "vnPay",
+        });
+      }
+
+      orderMailHelper
+        .sendOrderConfirmationEmail(orderDetail, orderDetail.products)
+        .catch((err) => console.error("Email send err in VNPay IPN:", err));
+
+      return res.status(200).json({ RspCode: "00", Message: "Confirm Success" });
+    } else {
+      return res.status(200).json({ RspCode: "00", Message: "Payment failed acknowledged" });
+    }
+  } catch (error) {
+    console.error("VNPay IPN Error:", error);
+    return res.status(200).json({ RspCode: "99", Message: "Unknown error" });
   }
 };
 
@@ -831,7 +904,7 @@ module.exports.cancelPatch = async (req, res) => {
 
     // 5. Bắn thông báo Realtime Socket.IO cho Admin
     if (global._io) {
-      global._io.emit("SERVER_RETURN_CANCEL_ORDER", {
+      global._io.to("admin_room").emit("SERVER_RETURN_CANCEL_ORDER", {
         orderId: order.id,
         orderCode: order.orderCode,
         fullName: order.fullName,

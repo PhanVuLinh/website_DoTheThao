@@ -5,6 +5,7 @@ const Category = require("../../models/category.model");
 const Account = require("../../models/account.model");
 const variableConfig = require("../../config/variable");
 const paginationHelper = require("../../helpers/pagination.helper");
+const regexHelper = require("../../helpers/regex.helper");
 
 // Helper parse items từ form POST/PATCH
 const parseFlashSaleItems = async (reqBody, existingItems = []) => {
@@ -83,7 +84,7 @@ module.exports.list = async (req, res) => {
 
     // Tìm kiếm từ khóa
     if (req.query.keyword) {
-      const keyword = req.query.keyword.trim();
+      const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
       const regexKeyword = new RegExp(keyword, "i");
       find.$or = [{ title: regexKeyword }, { badge: regexKeyword }, { subTitle: regexKeyword }];
     }
@@ -367,7 +368,7 @@ module.exports.trash = async (req, res) => {
     const find = { deleted: true };
 
     if (req.query.keyword) {
-      const keyword = req.query.keyword.trim();
+      const keyword = regexHelper.escapeRegex(req.query.keyword.trim());
       const regexKeyword = new RegExp(keyword, "i");
       find.$or = [{ title: regexKeyword }, { badge: regexKeyword }];
     }

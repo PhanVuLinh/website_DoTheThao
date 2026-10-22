@@ -23,6 +23,7 @@ router.post(
 router.get("/payment-vnpay/:orderId", orderController.paymentVnpay);
 
 router.get("/payment-vnpay-result", orderController.paymentVnpayResult);
+router.get("/payment-vnpay-ipn", orderController.paymentVnpayIpn);
 
 router.patch("/cancel/:id", orderController.cancelPatch);
 router.post("/cancel/:id", orderController.cancelPatch);
