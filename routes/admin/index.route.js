@@ -7,6 +7,7 @@ router.use(settingMiddleware.websiteInfo);
 
 const authRoutes = require("./auth.route");
 const dashboardRoutes = require("../admin/dashboard.route");
+const statisticRoutes = require("../admin/statistic.route");
 const categoryRoutes = require("../admin/category.route");
 const productRoutes = require("../admin/product.route");
 const orderRoutes = require("../admin/order.route");
@@ -29,6 +30,7 @@ router.get("/", (req, res) => {
 router.use("/auth", authRoutes);
 
 router.use("/dashboard", authMiddleware.requireAuth, dashboardRoutes);
+router.use("/statistic", authMiddleware.requireAuth, statisticRoutes);
 
 router.use("/category", authMiddleware.requireAuth, categoryRoutes);
 

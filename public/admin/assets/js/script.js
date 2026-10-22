@@ -1045,4 +1045,23 @@ document.addEventListener("DOMContentLoaded", function () {
       window.open(url, "_blank");
     });
   }
+
+  // ----------------------------------------------------
+  // NÂNG CẤP XUẤT EXCEL LINH ĐỘNG (DYNAMIC EXPORT BINDING)
+  // Tự động gắn các tham số query hiện tại (status, payment, date, search) vào nút xuất file
+  // ----------------------------------------------------
+  const btnExportFiltered = document.querySelector("#btnExportFiltered");
+  const btnExportCsvFiltered = document.querySelector("#btnExportCsvFiltered");
+  if (btnExportFiltered) {
+    const currentParams = new URLSearchParams(window.location.search);
+    currentParams.delete("page"); // Không giới hạn trang khi xuất Excel
+    const baseHref = btnExportFiltered.getAttribute("href") || "/admin/order/export";
+    const queryString = currentParams.toString();
+    if (queryString) {
+      btnExportFiltered.setAttribute("href", `${baseHref}?${queryString}&format=xlsx`);
+      if (btnExportCsvFiltered) {
+        btnExportCsvFiltered.setAttribute("href", `${baseHref}?${queryString}&format=csv`);
+      }
+    }
+  }
 });

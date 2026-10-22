@@ -14,6 +14,12 @@ block main
         .hero-date
           i.fa-regular.fa-calendar
           span Hôm nay, #{new Date().toLocaleDateString('vi-VN')}
+        a.btn-print-report(
+          href=`/${pathAdmin}/statistic`
+          title="Xem trung tâm báo cáo & phân tích chuyên sâu"
+        )
+          i.fa-solid.fa-chart-line
+          span Báo Cáo Thống Kê
         a.btn-export-revenue(
           href=`/${pathAdmin}/dashboard/export-revenue?chartMonth=${chart.currentMonth}&chartYear=${chart.currentYear}`
           id="btnExportRevenue"

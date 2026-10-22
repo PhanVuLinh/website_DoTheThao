@@ -23,6 +23,12 @@ aside.admin-sidebar#adminSidebar
             i.fa-solid.fa-chart-pie
             span Tổng quan
 
+      if(role && role.permissions && (role.permissions.includes("statistic_view") || role.permissions.includes("dashboard_view")))
+        li
+          a(href=`/${pathAdmin}/statistic`)
+            i.fa-solid.fa-chart-line
+            span Báo cáo thống kê
+
       if(role && role.permissions && role.permissions.includes("order_view"))
         li
           a(href=`/${pathAdmin}/order/list`)

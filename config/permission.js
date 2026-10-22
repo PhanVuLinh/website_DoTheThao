@@ -4,6 +4,13 @@ module.exports.permissionList = [
     permissions: [{ label: "Xem", value: "dashboard_view" }],
   },
   {
+    group: "Báo cáo thống kê",
+    permissions: [
+      { label: "Xem báo cáo", value: "statistic_view" },
+      { label: "Xuất dữ liệu báo cáo", value: "statistic_export" },
+    ],
+  },
+  {
     group: "Quản lý danh mục",
     permissions: [
       { label: "Xem danh sách", value: "category_view" },

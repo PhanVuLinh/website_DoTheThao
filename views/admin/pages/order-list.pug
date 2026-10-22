@@ -55,9 +55,26 @@ block main
           button.btn-print-bulk#btnPrintBulk(type="button" data-path=`/${pathAdmin}/order/print-labels` title="In phiếu đóng hàng / tem vận đơn GHN cho các đơn được chọn")
             i.fa-solid.fa-print
             span In Vận Đơn
-          a(href=`/${pathAdmin}/order/export` class="btn-export-excel" title="Xuất danh sách đơn hàng ra file Excel/CSV")
-            i.fa-solid.fa-file-excel
-            | Xuất Excel
+          .dropdown.d-inline-block.export-order-dropdown
+            button.btn-export-excel.dropdown-toggle#btnOrderExportMenu(type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Xuất danh sách đơn hàng ra file Excel")
+              i.fa-solid.fa-file-excel.me-1
+              span Xuất Excel
+              i.fa-solid.fa-chevron-down.ms-1
+            ul.dropdown-menu.dropdown-menu-end.shadow-sm(aria-labelledby="btnOrderExportMenu")
+              li
+                a.dropdown-item#btnExportFiltered(href=`/${pathAdmin}/order/export`)
+                  i.fa-solid.fa-filter.text-primary.me-2
+                  span Xuất Excel (.xlsx) theo bộ lọc
+              li
+                a.dropdown-item(href=`/${pathAdmin}/order/export?all=true`)
+                  i.fa-solid.fa-database.text-success.me-2
+                  span Xuất Excel (.xlsx) toàn bộ đơn
+              li
+                hr.dropdown-divider
+              li
+                a.dropdown-item#btnExportCsvFiltered(href=`/${pathAdmin}/order/export?format=csv`)
+                  i.fa-solid.fa-file-csv.text-secondary.me-2
+                  span Tải file CSV (.csv)
           if(role && role.permissions && role.permissions.includes("order_trash"))
             a(href=`/${pathAdmin}/order/trash`).btn-trash
               i.fa-regular.fa-trash-can

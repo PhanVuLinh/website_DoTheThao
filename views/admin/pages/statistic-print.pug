@@ -1,0 +1,273 @@
+doctype html
+html(lang="vi")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title #{title} | TitiSport
+    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap")
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css")
+    style.
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: #1e293b;
+        background: #f1f5f9;
+        padding: 30px 20px;
+        line-height: 1.5;
+        font-size: 13px;
+      }
+      .print-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      }
+      .print-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 900px;
+        margin: 0 auto 20px auto;
+      }
+      .btn-print {
+        background: #2563eb;
+        color: #ffffff;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+      }
+      .btn-close {
+        background: #ffffff;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .header-report {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-bottom: 24px;
+        border-bottom: 2px solid #0f172a;
+        margin-bottom: 24px;
+      }
+      .brand-title {
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+      }
+      .store-info {
+        font-size: 12px;
+        color: #64748b;
+        margin-top: 4px;
+      }
+      .report-title-box {
+        text-align: center;
+        margin: 25px 0;
+      }
+      .report-main-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: #0f172a;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+      }
+      .report-time {
+        font-size: 13.5px;
+        color: #475569;
+        margin-top: 6px;
+      }
+      .summary-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 25px;
+      }
+      .summary-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 12px 14px;
+        text-align: center;
+      }
+      .summary-label {
+        font-size: 11px;
+        color: #64748b;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+      .summary-val {
+        font-size: 16px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-top: 4px;
+      }
+      .table-report {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+      }
+      .table-report th {
+        background: #f1f5f9;
+        color: #1e293b;
+        font-weight: 700;
+        font-size: 11.5px;
+        text-transform: uppercase;
+        padding: 10px 8px;
+        border: 1px solid #cbd5e1;
+        text-align: left;
+      }
+      .table-report td {
+        padding: 9px 8px;
+        border: 1px solid #e2e8f0;
+        font-size: 12px;
+      }
+      .text-center { text-align: center !important; }
+      .text-right { text-align: right !important; }
+      .total-row {
+        background: #f8fafc;
+        font-weight: 700;
+        border-top: 2px solid #0f172a;
+      }
+      .signatures-box {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 40px;
+        text-align: center;
+      }
+      .sig-item {
+        width: 200px;
+      }
+      .sig-title {
+        font-weight: 700;
+        font-size: 13px;
+        color: #0f172a;
+      }
+      .sig-sub {
+        font-size: 11px;
+        color: #64748b;
+        font-style: italic;
+        margin-top: 2px;
+      }
+      .sig-space {
+        height: 70px;
+      }
+      .sig-name {
+        font-weight: 700;
+        font-size: 13px;
+      }
+      @media print {
+        body { background: #ffffff; padding: 0; }
+        .print-container { box-shadow: none; padding: 0; max-width: 100%; }
+        .print-toolbar { display: none !important; }
+        @page { size: A4; margin: 15mm; }
+      }
+  body
+    .print-toolbar
+      button.btn-close(onclick="window.close()")
+        i.fa-solid.fa-arrow-left.me-2
+        | Quay lại
+      button.btn-print(onclick="window.print()")
+        i.fa-solid.fa-print
+        | In Báo Cáo / Lưu PDF
+
+    .print-container
+      .header-report
+        .left
+          .brand-title TITISPORT STORE
+          .store-info Hệ thống bán lẻ giày và phụ kiện thể thao chính hãng
+          .store-info Hotline: 0343 842 424 | Website: titisport.vn
+        .right(style="text-align: right;")
+          div(style="font-weight: 700;") MẪU BÁO CÁO DOANH SỐ
+          div.store-info Ngày in: #{exportDate}
+
+      .report-title-box
+        h1.report-main-title BÁO CÁO THỐNG KÊ DOANH THU BÁN HÀNG
+        p.report-time Kỳ báo cáo: <strong>#{timeRangeLabel}</strong>
+
+      .summary-cards-grid
+        .summary-card
+          .summary-label Tổng Đơn Đặt
+          .summary-val #{summary.totalOrders} đơn
+        .summary-card
+          .summary-label Đơn Thành Công
+          .summary-val(style="color: #10b981;") #{summary.completedCount} đơn
+        .summary-card
+          .summary-label Giá Trị Đơn TB (AOV)
+          .summary-val #{summary.aov.toLocaleString('vi-VN')} đ
+        .summary-card
+          .summary-label Doanh Thu Thực
+          .summary-val(style="color: #2563eb;") #{summary.grossRevenue.toLocaleString('vi-VN')} đ
+
+      table.table-report
+        thead
+          tr
+            th.text-center(style="width: 40px;") STT
+            th Mã ĐH
+            th Khách Hàng
+            th SĐT
+            th Thời Gian
+            th.text-center Trạng Thái
+            th.text-right Tạm Tính
+            th.text-right Giảm Giá
+            th.text-right Tổng Thanh Toán
+        tbody
+          if orders && orders.length
+            each ord, idx in orders
+              tr
+                td.text-center #{idx + 1}
+                td #{ord.orderCode || ord._id}
+                td #{ord.fullName}
+                td #{ord.phone}
+                td #{new Date(ord.createdAt).toLocaleDateString('vi-VN')}
+                td.text-center
+                  if ord.status === 'done'
+                    span(style="color: #10b981; font-weight: 600;") Hoàn thành
+                  else if ord.status === 'shipping'
+                    span(style="color: #f59e0b; font-weight: 600;") Đang giao
+                  else if ord.status === 'cancel'
+                    span(style="color: #ef4444; font-weight: 600;") Đã hủy
+                  else
+                    span(style="color: #2563eb; font-weight: 600;") Chờ duyệt
+                td.text-right #{(ord.subtotal || ord.total || 0).toLocaleString('vi-VN')} đ
+                td.text-right #{(ord.discount || 0).toLocaleString('vi-VN')} đ
+                td.text-right(style="font-weight: 600;") #{(ord.total || 0).toLocaleString('vi-VN')} đ
+            tr.total-row
+              td.text-right(colspan="6") TỔNG CỘNG THỰC THU (KHÔNG TÍNH ĐƠN HỦY):
+              td.text-right #{(summary.grossRevenue + summary.totalDiscount).toLocaleString('vi-VN')} đ
+              td.text-right #{summary.totalDiscount.toLocaleString('vi-VN')} đ
+              td.text-right(style="color: #2563eb; font-size: 13.5px;") #{summary.grossRevenue.toLocaleString('vi-VN')} đ
+          else
+            tr
+              td.text-center(colspan="9") Không có đơn hàng nào trong khoảng thời gian này.
+
+      .signatures-box
+        .sig-item
+          .sig-title Người Lập Biểu
+          .sig-sub (Ký, ghi rõ họ tên)
+          .sig-space
+          .sig-name #{account ? account.fullName : 'Ban Quản Trị'}
+        .sig-item
+          .sig-title Kế Toán Trưởng
+          .sig-sub (Ký, ghi rõ họ tên)
+          .sig-space
+          .sig-name Bộ phận Kế toán
+        .sig-item
+          .sig-title Giám Đốc Phê Duyệt
+          .sig-sub (Ký, đóng dấu)
+          .sig-space
+          .sig-name Ban Giám Đốc TitiSport
