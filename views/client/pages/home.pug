@@ -659,7 +659,7 @@ block main
           .brands-logos-list
             each item in brandList
               a.brand-logo-item(
-                href=(item.link || `/?keyword=${item.name}`)
+                href=(item.link || `/search?keyword=${encodeURIComponent(item.name)}`)
                 title=`Thương hiệu ${item.name} - Phân phối chính hãng`
               )
                 if item.logo

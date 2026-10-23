@@ -93,16 +93,20 @@ block main
                   a.social-connect-btn.zalo(href=settingWebsiteInfo.zalo target="_blank" rel="noopener noreferrer" title="Zalo")
                     i.fa-solid.fa-comment-dots
 
-          //- Bản đồ Google Maps nhúng từ DB
+          //- Bản đồ Google Maps nhúng từ DB hoặc tự động theo địa chỉ thực tế
           .map-wrapper
-            if settingWebsiteInfo && settingWebsiteInfo.mapIframe
+            if settingWebsiteInfo && (settingWebsiteInfo.mapIframe || settingWebsiteInfo.footerMapIframe)
               .map-iframe-container
-                | !{settingWebsiteInfo.mapIframe}
+                != (settingWebsiteInfo.mapIframe || settingWebsiteInfo.footerMapIframe)
             else
-              .map-placeholder
-                i.fa-solid.fa-map-location-dot
-                h4 #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
-                p #{settingWebsiteInfo && settingWebsiteInfo.address ? settingWebsiteInfo.address : "123 Đường Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh"}
+              .map-iframe-container
+                iframe(
+                  src=`https://www.google.com/maps?q=${encodeURIComponent(settingWebsiteInfo && settingWebsiteInfo.address ? settingWebsiteInfo.address : "Vĩnh Lộc, Hồ Chí Minh")}&output=embed`
+                  loading="lazy"
+                  allowfullscreen=""
+                  referrerpolicy="no-referrer-when-downgrade"
+                  style="border:0; width:100%; height:320px; border-radius:12px;"
+                )
 
         //- CỘT 2: FORM LIÊN HỆ & GỬI TIN NHẮN
         .contact-form-col

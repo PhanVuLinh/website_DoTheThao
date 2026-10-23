@@ -140,7 +140,7 @@ block main
                           if item.isVerifiedBuyer
                             span.buyer-badge
                               i.fa-solid.fa-circle-check
-                              | Đã mua hàng tại SportStore
+                              | Đã mua hàng tại #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "TitiSport"}
                       .review-time #{item.createdAtFormat}
                     
                     .review-item__rating
