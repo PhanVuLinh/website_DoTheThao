@@ -11883,11 +11883,6 @@ textarea.is-invalid {
     gap: 30px;
   }
 
-  .box-contact {
-    right: 10px;
-    padding: 10px 5px;
-  }
-
   .success-details-grid {
     grid-template-columns: 1fr;
     gap: 10px;
@@ -14725,6 +14720,146 @@ textarea.is-invalid {
   padding: 2px 8px;
   background: #f1f5f9;
   border-radius: 6px;
+}
+
+/* ==========================================================================
+   FLOATING SPEED DIAL QUICK CONTACT (HOTLINE, ZALO, FACEBOOK)
+   ========================================================================== */
+.box-contact {
+  position: fixed;
+  bottom: 28px;
+  left: 24px;
+  z-index: 9990;
+  pointer-events: auto;
+}
+
+.box-contact__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.box-contact .contact-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.box-contact .contact-item a {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 18px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.box-contact .contact-item a:hover {
+  transform: scale(1.12);
+}
+
+/* Tooltip on hover */
+.box-contact .contact-tooltip {
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-8px);
+  background: rgba(15, 23, 42, 0.95);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 9999;
+}
+
+.box-contact .contact-tooltip::before {
+  content: '';
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent rgba(15, 23, 42, 0.95) transparent transparent;
+}
+
+.box-contact .contact-item a:hover .contact-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Specific item colors */
+.box-contact .contact-item--phone a {
+  background: linear-gradient(135deg, #ff4722 0%, #dc2626 100%);
+  box-shadow: 0 4px 16px rgba(255, 71, 34, 0.4);
+  animation: hotlineRipple 2.2s infinite;
+}
+
+.box-contact .contact-item--phone a:hover {
+  box-shadow: 0 6px 22px rgba(255, 71, 34, 0.65);
+}
+
+.box-contact .contact-item--zalo a {
+  background: #0068ff;
+  box-shadow: 0 4px 14px rgba(0, 104, 255, 0.35);
+}
+
+.box-contact .contact-item--zalo a:hover {
+  box-shadow: 0 6px 20px rgba(0, 104, 255, 0.55);
+}
+
+.box-contact .contact-item--facebook a {
+  background: #1877f2;
+  box-shadow: 0 4px 14px rgba(24, 119, 242, 0.35);
+}
+
+.box-contact .contact-item--facebook a:hover {
+  box-shadow: 0 6px 20px rgba(24, 119, 242, 0.55);
+}
+
+@keyframes hotlineRipple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 71, 34, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(255, 71, 34, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 71, 34, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .box-contact {
+    bottom: 20px;
+    left: 14px;
+  }
+  .box-contact .contact-item a {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  .box-contact .contact-tooltip {
+    display: none;
+  }
 }
 
 /* Floating AI Widget Button */

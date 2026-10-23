@@ -1,24 +1,39 @@
-// Box Contact
-.box-contact
-  ul
-    if settingWebsiteInfo && settingWebsiteInfo.facebook
-      li
-        a(target="_blank" rel="noopener noreferrer" href=settingWebsiteInfo.facebook title="Facebook")
-          i.fa-brands.fa-facebook-f
-    if settingWebsiteInfo && settingWebsiteInfo.instagram
-      li
-        a(target="_blank" rel="noopener noreferrer" href=settingWebsiteInfo.instagram title="Instagram")
-          i.fa-brands.fa-instagram
-    if settingWebsiteInfo && settingWebsiteInfo.tiktok
-      li
-        a(target="_blank" rel="noopener noreferrer" href=settingWebsiteInfo.tiktok title="TikTok")
-          i.fa-brands.fa-tiktok
-    if settingWebsiteInfo && settingWebsiteInfo.zalo
-      li
-        a(target="_blank" rel="noopener noreferrer" href=settingWebsiteInfo.zalo title="Zalo")
-          i.fa-solid.fa-comment-dots
+//- ====================================================================
+//- FLOATING SPEED DIAL CONTACT (NÚT LIÊN HỆ NHANH NỔI GÓC TRÁI MÀN HÌNH)
+//- ====================================================================
+.box-contact#boxContactFloating
+  ul.box-contact__list
     if settingWebsiteInfo && (settingWebsiteInfo.hotline || settingWebsiteInfo.phone)
-      li
-        a(href=`tel:${settingWebsiteInfo.hotline || settingWebsiteInfo.phone}` title="Gọi ngay")
+      li.contact-item.contact-item--phone
+        a(
+          href=`tel:${settingWebsiteInfo.hotline || settingWebsiteInfo.phone}` 
+          title=`Hotline: ${settingWebsiteInfo.hotline || settingWebsiteInfo.phone}` 
+          aria-label="Gọi ngay hotline"
+        )
+          .icon-pulse-wave
           i.fa-solid.fa-phone
-// End Box Contact
+          span.contact-tooltip Hotline: #{settingWebsiteInfo.hotline || settingWebsiteInfo.phone}
+
+    if settingWebsiteInfo && settingWebsiteInfo.zalo
+      li.contact-item.contact-item--zalo
+        a(
+          target="_blank" 
+          rel="noopener noreferrer" 
+          href=settingWebsiteInfo.zalo 
+          title="Tư vấn trực tiếp qua Zalo" 
+          aria-label="Chat qua Zalo"
+        )
+          i.fa-solid.fa-comment-dots
+          span.contact-tooltip Chat Zalo
+
+    if settingWebsiteInfo && settingWebsiteInfo.facebook
+      li.contact-item.contact-item--facebook
+        a(
+          target="_blank" 
+          rel="noopener noreferrer" 
+          href=settingWebsiteInfo.facebook 
+          title="Nhắn tin qua Fanpage Facebook" 
+          aria-label="Nhắn tin Facebook"
+        )
+          i.fa-brands.fa-facebook-f
+          span.contact-tooltip Chat Facebook
