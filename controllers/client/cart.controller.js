@@ -160,7 +160,7 @@ module.exports.addToCart = async (req, res) => {
     const cartId = req.cookies.cartId;
 
     if (isNaN(quantity) || quantity < 1) {
-      req.flash("error", "Số lượng sản phẩm không hợp lệ!");
+      req.flash("error", "Số lượng sản phẩm chọn mua không hợp lệ!");
       return res.redirect(req.get("Referer") || "/");
     }
 
@@ -170,7 +170,7 @@ module.exports.addToCart = async (req, res) => {
     });
 
     if (!productInfo) {
-      req.flash("error", "Sản phẩm không tồn tại!");
+      req.flash("error", "Sản phẩm này hiện không còn kinh doanh hoặc đã bị xóa!");
       return res.redirect(req.get("Referer") || "/");
     }
 
@@ -182,11 +182,11 @@ module.exports.addToCart = async (req, res) => {
       const sizeItem = productInfo.sizes.find((item) => item.size === size);
 
       if (!sizeItem) {
-        req.flash("error", "Vui lòng chọn kích cỡ (size) hợp lệ cho sản phẩm!");
+        req.flash("error", "Vui lòng chọn kích cỡ (size) phù hợp trước khi thêm vào giỏ hàng!");
         return res.redirect(req.get("Referer") || "/");
       }
       if (sizeItem.stock <= 0) {
-        req.flash("error", "Sản phẩm kích thước này tạm thời hết hàng!");
+        req.flash("error", "Rất tiếc, kích cỡ bạn chọn hiện đang tạm hết hàng!");
         return res.redirect(req.get("Referer") || "/");
       }
       targetStock = sizeItem.stock;
@@ -194,14 +194,14 @@ module.exports.addToCart = async (req, res) => {
       finalSize = "Tiêu chuẩn";
       targetStock = productInfo.stock !== undefined ? productInfo.stock : 999;
       if (targetStock <= 0) {
-        req.flash("error", "Sản phẩm tạm thời hết hàng!");
+        req.flash("error", "Rất tiếc, sản phẩm này hiện đang tạm thời hết hàng!");
         return res.redirect(req.get("Referer") || "/");
       }
     }
 
     const cart = await Cart.findOne({ _id: cartId });
     if (!cart) {
-      req.flash("error", "Giỏ hàng không hợp lệ!");
+      req.flash("error", "Không tìm thấy phiên giỏ hàng, vui lòng tải lại trang!");
       return res.redirect(req.get("Referer") || "/");
     }
 
@@ -215,7 +215,7 @@ module.exports.addToCart = async (req, res) => {
       newQuantity += existProductInCart.quantity;
     }
     if (newQuantity > targetStock) {
-      req.flash("error", `Chỉ còn ${targetStock} sản phẩm trong kho!`);
+      req.flash("error", `Số lượng đặt vượt quá tồn kho (Hiện chỉ còn ${targetStock} sản phẩm)!`);
       return res.redirect(req.get("Referer") || "/");
     }
     if (existProductInCart) {
@@ -242,15 +242,15 @@ module.exports.addToCart = async (req, res) => {
       req.query.buyNow === "1";
 
     if (isBuyNow) {
-      req.flash("success", "Đã thêm vào giỏ! Vui lòng hoàn tất thông tin nhận hàng.");
+      req.flash("success", "Đã thêm sản phẩm thành công! Vui lòng hoàn tất thông tin nhận hàng.");
       return res.redirect("/cart#checkout-form");
     }
 
-    req.flash("success", "Thêm vào giỏ hàng thành công");
+    req.flash("success", "Đã thêm sản phẩm vào giỏ hàng thành công!");
     res.redirect(req.get("Referer") || "/cart");
   } catch (error) {
     console.error("addToCart error:", error);
-    req.flash("error", "Lỗi thêm vào giỏ hàng!");
+    req.flash("error", "Không thể thêm sản phẩm vào giỏ hàng, vui lòng thử lại!");
     res.redirect(req.get("Referer") || "/");
   }
 };
@@ -272,11 +272,11 @@ module.exports.deleteProduct = async (req, res) => {
       },
     );
 
-    req.flash("success", "Xóa sản phẩm thành công");
+    req.flash("success", "Đã xóa sản phẩm khỏi giỏ hàng!");
     res.redirect(req.get("Referer") || "/cart");
   } catch (error) {
     console.error("deleteProduct error:", error);
-    req.flash("error", "Lỗi xóa sản phẩm!");
+    req.flash("error", "Không thể xóa sản phẩm, vui lòng thử lại sau!");
     res.redirect(req.get("Referer") || "/cart");
   }
 };
@@ -359,14 +359,14 @@ module.exports.applyCoupon = async (req, res) => {
   try {
     const code = (req.body.code || "").trim();
     if (!code) {
-      return res.status(400).json({ code: 400, message: "Vui lòng nhập mã giảm giá!" });
+      return res.status(400).json({ code: 400, message: "Vui lòng nhập hoặc chọn mã giảm giá!" });
     }
 
     const cartId = req.cookies.cartId;
     const token = req.cookies.tokenUser || req.cookies.token;
 
     if (!token) {
-      return res.status(401).json({ code: 400, message: "Vui lòng đăng nhập để dùng mã!" });
+      return res.status(401).json({ code: 400, message: "Vui lòng đăng nhập tài khoản để áp dụng mã giảm giá!" });
     }
 
     let user = null;
@@ -379,7 +379,7 @@ module.exports.applyCoupon = async (req, res) => {
     }
 
     if (!user) {
-      return res.status(401).json({ code: 400, message: "Vui lòng đăng nhập để dùng mã!" });
+      return res.status(401).json({ code: 400, message: "Vui lòng đăng nhập tài khoản để áp dụng mã giảm giá!" });
     }
 
     // Tra cứu mã không phân biệt hoa thường
@@ -389,15 +389,15 @@ module.exports.applyCoupon = async (req, res) => {
       status: "active",
     });
 
-    if (!coupon) return res.status(400).json({ code: 400, message: "Mã giảm giá không tồn tại!" });
+    if (!coupon) return res.status(400).json({ code: 400, message: "Mã giảm giá không hợp lệ hoặc đã kết thúc!" });
     if (coupon.quantity <= 0)
-      return res.status(400).json({ code: 400, message: "Mã đã hết lượt dùng!" });
+      return res.status(400).json({ code: 400, message: "Mã ưu đãi này đã hết lượt sử dụng!" });
     if (new Date() > new Date(coupon.expirationDate))
-      return res.status(400).json({ code: 400, message: "Mã đã hết hạn sử dụng!" });
+      return res.status(400).json({ code: 400, message: "Mã ưu đãi này đã hết hạn sử dụng!" });
 
     // Kiểm tra usedBy an toàn (tránh lỗi includes trên undefined)
     if (coupon.usedBy && coupon.usedBy.includes(user.id)) {
-      return res.status(400).json({ code: 400, message: "Bạn đã sử dụng mã này rồi!" });
+      return res.status(400).json({ code: 400, message: "Bạn đã từng sử dụng mã ưu đãi này rồi!" });
     }
 
     await Cart.updateOne(
@@ -411,10 +411,10 @@ module.exports.applyCoupon = async (req, res) => {
     );
 
     // Trả về JSON để Frontend nhận diện và reload
-    return res.json({ code: 200, message: "Áp dụng thành công!" });
+    return res.json({ code: 200, message: "Áp dụng mã giảm giá thành công!" });
   } catch (error) {
     console.error("applyCoupon error:", error);
-    return res.status(500).json({ code: 500, message: "Lỗi hệ thống!" });
+    return res.status(500).json({ code: 500, message: "Có lỗi xảy ra khi áp dụng mã, vui lòng thử lại sau!" });
   }
 };
 
@@ -425,10 +425,10 @@ module.exports.removeCoupon = async (req, res) => {
       { _id: cartId },
       { $set: { "coupon.code": "", "coupon.discount": 0 } },
     );
-    return res.json({ code: 200, message: "Đã xóa mã!" });
+    return res.json({ code: 200, message: "Đã hủy áp dụng mã giảm giá!" });
   } catch (error) {
     console.error("removeCoupon error:", error);
-    return res.status(500).json({ code: 500, message: "Lỗi hệ thống!" });
+    return res.status(500).json({ code: 500, message: "Không thể xóa mã ưu đãi, vui lòng thử lại!" });
   }
 };
 

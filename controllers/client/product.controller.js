@@ -241,7 +241,7 @@ module.exports.index = async (req, res) => {
     });
   } catch (error) {
     console.error("Product index error:", error);
-    req.flash("error", "Có lỗi xảy ra khi tải danh sách sản phẩm");
+    req.flash("error", "Có lỗi xảy ra khi tải danh sách sản phẩm. Vui lòng thử lại sau!");
     res.redirect("/");
   }
 };
@@ -256,7 +256,7 @@ module.exports.detail = async (req, res) => {
     }).lean();
 
     if (!productDetail) {
-      req.flash("error", "Sản phẩm không tồn tại");
+      req.flash("error", "Sản phẩm không tồn tại hoặc đã ngừng kinh doanh!");
       return res.redirect("/");
     }
 
@@ -381,7 +381,7 @@ module.exports.detail = async (req, res) => {
     });
   } catch (error) {
     console.error("Product detail error:", error);
-    req.flash("error", "Sản phẩm không tồn tại");
+    req.flash("error", "Không tìm thấy thông tin sản phẩm này!");
     return res.redirect("/");
   }
 };

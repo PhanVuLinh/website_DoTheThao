@@ -175,10 +175,16 @@ function notifyVoucher(msg, icon = "info") {
     Swal.fire({
       icon: icon,
       title: msg,
-      timer: 2500,
+      timer: 3000,
+      timerProgressBar: true,
       showConfirmButton: false,
+      showCloseButton: true,
       toast: true,
       position: "top-end",
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
     });
   } else {
     alert(msg);

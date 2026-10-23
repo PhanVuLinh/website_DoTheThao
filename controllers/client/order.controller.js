@@ -35,7 +35,7 @@ module.exports.createPost = async (req, res) => {
     const user = await getAuthUser(req);
     if (!user) {
       req.session.returnTo = "/cart";
-      req.flash("error", "Vui lòng đăng nhập để đặt hàng!");
+      req.flash("error", "Quý khách vui lòng đăng nhập tài khoản trước khi tiến hành đặt hàng!");
       return res.redirect("/auth/login");
     }
 
@@ -43,7 +43,7 @@ module.exports.createPost = async (req, res) => {
     const cart = await Cart.findOne({ _id: cartId });
 
     if (!cart || !cart.products || cart.products.length === 0) {
-      req.flash("error", "Giỏ hàng của bạn đang trống!");
+      req.flash("error", "Giỏ hàng của bạn đang trống. Vui lòng chọn mua sản phẩm trước khi thanh toán!");
       return res.redirect("/cart");
     }
 
@@ -56,7 +56,7 @@ module.exports.createPost = async (req, res) => {
       });
 
       if (!productInfo) {
-        req.flash("error", "Một số sản phẩm trong giỏ không còn tồn tại!");
+        req.flash("error", "Một số sản phẩm trong giỏ hàng hiện đã ngừng kinh doanh. Vui lòng kiểm tra lại giỏ!");
         return res.redirect("/cart");
       }
 
@@ -64,7 +64,7 @@ module.exports.createPost = async (req, res) => {
       if (!sizeItem || sizeItem.stock < item.quantity) {
         req.flash(
           "error",
-          `Sản phẩm "${productInfo.title}" (Size ${item.size}) chỉ còn ${sizeItem ? sizeItem.stock : 0} sản phẩm trong kho!`,
+          `Sản phẩm "${productInfo.title}" (Size ${item.size}) hiện chỉ còn ${sizeItem ? sizeItem.stock : 0} món trong kho!`,
         );
         return res.redirect("/cart");
       }
@@ -262,9 +262,9 @@ module.exports.createPost = async (req, res) => {
           .catch((err) => console.error("Gửi email thất bại:", err));
 
         if (req.body.paymentMethod === "bank") {
-          req.flash("success", "Đặt hàng thành công! Quý khách vui lòng chuyển khoản theo thông tin thanh toán.");
+          req.flash("success", "Đặt hàng thành công! Quý khách vui lòng quét mã QR hoặc chuyển khoản theo thông tin hướng dẫn.");
         } else {
-          req.flash("success", "Đặt hàng thành công!");
+          req.flash("success", "Đặt hàng thành công! Đội ngũ tư vấn sẽ sớm liên hệ xác nhận đơn hàng với quý khách.");
         }
         return res.redirect(`/order/success/${newOrder.id}`);
 
@@ -277,17 +277,17 @@ module.exports.createPost = async (req, res) => {
       case "momo":
         req.flash(
           "error",
-          "Cổng MoMo hiện đang bảo trì, vui lòng chọn COD, ZaloPay, VNPay hoặc Chuyển khoản ngân hàng!",
+          "Cổng thanh toán MoMo đang được nâng cấp bảo trì. Quý khách vui lòng chọn COD, ZaloPay, VNPay hoặc Chuyển khoản ngân hàng!",
         );
         return res.redirect("/cart");
 
       default:
-        req.flash("error", "Phương thức thanh toán không hợp lệ!");
+        req.flash("error", "Phương thức thanh toán đã chọn không hợp lệ!");
         return res.redirect("/cart");
     }
   } catch (error) {
     console.error("Order Create Error:", error);
-    req.flash("error", "Đặt hàng không thành công, vui lòng thử lại!");
+    req.flash("error", "Không thể hoàn tất đặt hàng vào lúc này. Quý khách vui lòng kiểm tra lại thông tin và thử lại sau ít phút!");
     return res.redirect("/cart");
   }
 };
@@ -821,7 +821,7 @@ module.exports.cancelPatch = async (req, res) => {
   try {
     const user = await getAuthUser(req);
     if (!user) {
-      req.flash("error", "Vui lòng đăng nhập để thực hiện thao tác này!");
+      req.flash("error", "Vui lòng đăng nhập tài khoản để thực hiện thao tác này!");
       return res.redirect("/user/login");
     }
 
@@ -833,19 +833,19 @@ module.exports.cancelPatch = async (req, res) => {
     });
 
     if (!order) {
-      req.flash("error", "Đơn hàng không tồn tại hoặc bạn không có quyền thao tác!");
+      req.flash("error", "Không tìm thấy thông tin đơn hàng này trong tài khoản của bạn!");
       return res.redirect("/user/order-history");
     }
 
     // Chỉ cho phép hủy khi đơn ở trạng thái chờ xác nhận
     if (order.status !== "initial") {
-      req.flash("error", "Đơn hàng đang được xử lý hoặc vận chuyển, không thể tự hủy! Vui lòng liên hệ hotline hỗ trợ.");
+      req.flash("error", "Đơn hàng đã được xác nhận hoặc đang trong quá trình vận chuyển, không thể tự hủy trực tuyến! Quý khách vui lòng liên hệ hotline CSKH để được hỗ trợ kịp thời.");
       return res.redirect(`/user/order-history/detail/${orderId}`);
     }
 
-    const cancelReason = typeof req.body.reason === "string" && req.body.reason.trim()
-      ? req.body.reason.trim()
-      : "Khách hàng đổi ý muốn hủy đơn";
+    const cancelReason = (typeof req.body.cancelReason === "string" && req.body.cancelReason.trim())
+      || (typeof req.body.reason === "string" && req.body.reason.trim())
+      || "Khách hàng đổi ý muốn hủy đơn";
 
     // 1. Hoàn lại số lượng tồn kho theo từng size
     if (Array.isArray(order.products)) {
@@ -914,11 +914,11 @@ module.exports.cancelPatch = async (req, res) => {
       });
     }
 
-    req.flash("success", "Hủy đơn hàng thành công! Số lượng sản phẩm và ưu đãi đã được hoàn lại.");
+    req.flash("success", "Hủy đơn hàng thành công! Số lượng sản phẩm và ưu đãi đã được hoàn lại tự động.");
     return res.redirect(`/user/order-history/detail/${orderId}`);
   } catch (error) {
     console.error("Lỗi hủy đơn hàng của khách:", error);
-    req.flash("error", "Đã có lỗi xảy ra khi hủy đơn hàng!");
+    req.flash("error", "Không thể hoàn tất thao tác hủy đơn vào lúc này. Vui lòng thử lại sau!");
     res.redirect("/user/order-history");
   }
 };

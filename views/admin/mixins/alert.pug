@@ -1,5 +1,5 @@
 mixin alert-success(time)
-  if success.length > 0
+  if success && success.length > 0
     each item in success
       div(
         data-alert="success"
@@ -8,7 +8,7 @@ mixin alert-success(time)
       )
 
 mixin alert-error(time)
-  if error.length > 0
+  if error && error.length > 0
     each item in error
       div(
         data-alert="error"
@@ -17,7 +17,7 @@ mixin alert-error(time)
       )
 
 mixin alert-warning(time)
-  if warning.length > 0
+  if warning && warning.length > 0
     each item in warning
       div(
         data-alert="warning"

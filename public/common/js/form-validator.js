@@ -391,10 +391,15 @@
             toast: true,
             position: "top-end",
             icon: "warning",
-            title: "Vui lòng kiểm tra lại thông tin bị lỗi!",
+            title: "Vui lòng kiểm tra và hoàn thiện các trường thông tin bị lỗi!",
             showConfirmButton: false,
-            timer: 3000,
+            showCloseButton: true,
+            timer: 3500,
             timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            },
           });
         }
         return false;

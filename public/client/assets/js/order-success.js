@@ -24,7 +24,13 @@ document.addEventListener("DOMContentLoaded", function () {
             toast: true,
             position: "top-end",
             timer: 5000,
+            timerProgressBar: true,
             showConfirmButton: false,
+            showCloseButton: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            },
           });
         }
         setTimeout(() => {

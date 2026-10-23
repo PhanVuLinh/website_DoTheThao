@@ -129,13 +129,13 @@ if (flashList1 && prevBtn && nextBtn) {
 }
 // end slider flash deals
 
-// sweet alert
+// sweet alert (Thông báo nổi góc màn hình kèm nút X tắt ngay và tự tắt theo thời gian)
 const alertItems = document.querySelectorAll("[data-alert]");
 if (alertItems.length > 0 && typeof Swal !== "undefined") {
   alertItems.forEach((item) => {
     const type = item.dataset.alert;
     const message = item.dataset.message;
-    const time = parseInt(item.dataset.time) || 3000;
+    const time = parseInt(item.dataset.time) || 3500;
 
     Swal.fire({
       toast: true,
@@ -143,8 +143,13 @@ if (alertItems.length > 0 && typeof Swal !== "undefined") {
       icon: type,
       title: message,
       showConfirmButton: false,
+      showCloseButton: true,
       timer: time,
       timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
     });
   });
 }
@@ -975,10 +980,15 @@ if (copyVoucherBtns.length > 0) {
             toast: true,
             position: "top-end",
             icon: "success",
-            title: `Đã sao chép mã "${code}"!`,
+            title: `Đã sao chép mã ưu đãi "${code}"!`,
             showConfirmButton: false,
-            timer: 2000,
+            showCloseButton: true,
+            timer: 2500,
             timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            },
           });
         }
 
@@ -1033,10 +1043,15 @@ if (copyVoucherBtns.length > 0) {
             toast: true,
             position: "top-end",
             icon: "success",
-            title: `Đã lưu mã giảm sốc nhất "${code}"!`,
+            title: `Đã lưu mã giảm giá đặc biệt "${code}"!`,
             showConfirmButton: false,
+            showCloseButton: true,
             timer: 2500,
             timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            },
           });
         }
 
@@ -1405,9 +1420,15 @@ function renderWishlistPage() {
           toast: true,
           position: "top-end",
           icon: "info",
-          title: "Đã xóa khỏi danh sách yêu thích",
+          title: "Đã xóa sản phẩm khỏi danh sách yêu thích",
           showConfirmButton: false,
-          timer: 1500,
+          showCloseButton: true,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
         });
       }
     });
@@ -1447,9 +1468,15 @@ document.addEventListener("click", (e) => {
         toast: true,
         position: "top-end",
         icon: "info",
-        title: "Đã bỏ yêu thích",
+        title: "Đã bỏ sản phẩm khỏi danh sách yêu thích",
         showConfirmButton: false,
-        timer: 1500,
+        showCloseButton: true,
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        },
       });
     }
   } else {
@@ -1473,9 +1500,15 @@ document.addEventListener("click", (e) => {
         toast: true,
         position: "top-end",
         icon: "success",
-        title: "Đã lưu vào danh sách yêu thích!",
+        title: "Đã thêm vào danh sách yêu thích!",
         showConfirmButton: false,
-        timer: 1500,
+        showCloseButton: true,
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        },
       });
     }
   }
@@ -1831,9 +1864,15 @@ document.addEventListener("click", (e) => {
           toast: true,
           position: "top-end",
           icon: "info",
-          title: "Đã xóa khỏi danh sách so sánh",
+          title: "Đã xóa sản phẩm khỏi danh sách so sánh",
           showConfirmButton: false,
-          timer: 1500,
+          showCloseButton: true,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
         });
       }
     } else {
@@ -1873,9 +1912,15 @@ document.addEventListener("click", (e) => {
           toast: true,
           position: "top-end",
           icon: "success",
-          title: "Đã thêm vào danh sách so sánh!",
+          title: "Đã thêm sản phẩm vào danh sách so sánh!",
           showConfirmButton: false,
-          timer: 1500,
+          showCloseButton: true,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
         });
       }
     }
@@ -2311,10 +2356,15 @@ function initProArenaTheme() {
           toast: true,
           position: "top-end",
           icon: "info",
-          title: newTheme === "dark" ? "Đã bật Chế độ Sân Đấu Pro Arena" : "Đã chuyển sang Chế độ Tiêu chuẩn",
+          title: newTheme === "dark" ? "Đã bật Chế độ Sân Đấu Pro Arena (Tối)" : "Đã chuyển sang Giao diện Sáng tiêu chuẩn",
           showConfirmButton: false,
-          timer: 1800,
+          showCloseButton: true,
+          timer: 2200,
           timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
         });
       }
     }
@@ -2812,9 +2862,15 @@ function initQuickViewStudio() {
             toast: true,
             position: "top-end",
             icon: "success",
-            title: `Đã thêm ${quantity} x "${currentProduct.title}" vào giỏ!`,
+            title: `Đã thêm ${quantity} x "${currentProduct.title}" vào giỏ hàng!`,
             showConfirmButton: false,
-            timer: 2000,
+            showCloseButton: true,
+            timer: 2500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            },
           });
         }
 

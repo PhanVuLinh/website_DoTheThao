@@ -886,7 +886,7 @@ document.addEventListener("DOMContentLoaded", function () {
     alertItems.forEach((item) => {
       const type = item.dataset.alert;
       const message = item.dataset.message;
-      const time = parseInt(item.dataset.time) || 3000;
+      const time = parseInt(item.dataset.time) || 3500;
 
       Swal.fire({
         toast: true,
@@ -894,8 +894,13 @@ document.addEventListener("DOMContentLoaded", function () {
         icon: type,
         title: message,
         showConfirmButton: false,
+        showCloseButton: true,
         timer: time,
         timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        },
       });
     });
   } else if (alertItems.length > 0) {

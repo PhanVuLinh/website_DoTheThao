@@ -21,7 +21,7 @@ const getAuthUser = async (req) => {
 module.exports.profile = async (req, res) => {
   const user = await getAuthUser(req);
   if (!user) {
-    req.flash("error", "Vui lòng đăng nhập để xem hồ sơ!");
+    req.flash("error", "Vui lòng đăng nhập tài khoản để xem thông tin cá nhân!");
     return res.redirect("/auth/login");
   }
 
@@ -35,7 +35,7 @@ module.exports.profilePatch = async (req, res) => {
   try {
     const user = await getAuthUser(req);
     if (!user) {
-      req.flash("error", "Không tìm thấy người dùng hoặc phiên đăng nhập đã hết hạn!");
+      req.flash("error", "Phiên đăng nhập đã hết hạn. Quý khách vui lòng đăng nhập lại!");
       return res.redirect("/auth/login");
     }
 
@@ -47,11 +47,11 @@ module.exports.profilePatch = async (req, res) => {
 
     await User.updateOne({ _id: user.id }, updateData);
 
-    req.flash("success", "Cập nhật tài khoản thành công!");
+    req.flash("success", "Cập nhật thông tin tài khoản thành công!");
     return res.redirect(req.get("Referer") || "/user/profile");
   } catch (error) {
     console.error("Profile Patch Error:", error);
-    req.flash("error", "Có lỗi xảy ra, vui lòng thử lại!");
+    req.flash("error", "Không thể cập nhật hồ sơ vào lúc này. Vui lòng thử lại sau!");
     return res.redirect(req.get("Referer") || "/user/profile");
   }
 };
@@ -61,7 +61,7 @@ module.exports.orderHistory = async (req, res) => {
     const user = await getAuthUser(req);
 
     if (!user) {
-      req.flash("error", "Vui lòng đăng nhập để xem lịch sử đơn hàng!");
+      req.flash("error", "Vui lòng đăng nhập tài khoản để xem lịch sử mua hàng!");
       return res.redirect("/auth/login");
     }
 
@@ -91,7 +91,7 @@ module.exports.orderHistory = async (req, res) => {
     });
   } catch (error) {
     console.error("Lỗi load lịch sử đơn hàng:", error);
-    req.flash("error", "Lỗi hệ thống khi tải lịch sử đơn hàng");
+    req.flash("error", "Có lỗi xảy ra khi tải lịch sử đơn hàng. Quý khách vui lòng thử lại sau!");
     return res.redirect("/");
   }
 };
@@ -102,7 +102,7 @@ module.exports.orderHistoryDetail = async (req, res) => {
     const user = await getAuthUser(req);
 
     if (!user) {
-      req.flash("error", "Vui lòng đăng nhập!");
+      req.flash("error", "Vui lòng đăng nhập tài khoản để xem chi tiết đơn hàng!");
       return res.redirect("/auth/login");
     }
 
@@ -114,7 +114,7 @@ module.exports.orderHistoryDetail = async (req, res) => {
     });
 
     if (!order) {
-      req.flash("error", "Đơn hàng không tồn tại hoặc bạn không có quyền xem!");
+      req.flash("error", "Không tìm thấy đơn hàng này trong danh sách mua sắm của bạn!");
       return res.redirect("/user/order-history");
     }
 
@@ -144,7 +144,7 @@ module.exports.orderHistoryDetail = async (req, res) => {
     });
   } catch (error) {
     console.error("Lỗi load chi tiết đơn hàng:", error);
-    req.flash("error", "Lỗi hệ thống khi tải lịch sử đơn hàng");
+    req.flash("error", "Không thể tải chi tiết đơn hàng vào lúc này. Vui lòng thử lại sau!");
     return res.redirect("/user/order-history");
   }
 };
@@ -152,7 +152,7 @@ module.exports.orderHistoryDetail = async (req, res) => {
 module.exports.changePassword = async (req, res) => {
   const user = await getAuthUser(req);
   if (!user) {
-    req.flash("error", "Vui lòng đăng nhập!");
+    req.flash("error", "Vui lòng đăng nhập tài khoản để thực hiện đổi mật khẩu!");
     return res.redirect("/auth/login");
   }
   res.render("client/pages/user-change-password.pug", {
@@ -166,14 +166,14 @@ module.exports.changePasswordPatch = async (req, res) => {
   try {
     const user = await getAuthUser(req);
     if (!user) {
-      req.flash("error", "Vui lòng đăng nhập!");
+      req.flash("error", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
       return res.redirect("/auth/login");
     }
 
     const { currentPassword, newPassword, confirmPassword } = req.body;
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-      req.flash("error", "Vui lòng nhập đầy đủ các trường thông tin!");
+      req.flash("error", "Vui lòng nhập đầy đủ các trường thông tin mật khẩu!");
       return res.redirect(req.get("Referer") || "/user/change-password");
     }
 
@@ -183,13 +183,13 @@ module.exports.changePasswordPatch = async (req, res) => {
     }
 
     if (newPassword !== confirmPassword) {
-      req.flash("error", "Xác nhận mật khẩu mới không khớp!");
+      req.flash("error", "Mật khẩu xác nhận không trùng khớp với mật khẩu mới!");
       return res.redirect(req.get("Referer") || "/user/change-password");
     }
 
     const isMatch = await passwordHelper.comparePassword(currentPassword, user.password);
     if (!isMatch) {
-      req.flash("error", "Mật khẩu hiện tại không chính xác!");
+      req.flash("error", "Mật khẩu hiện tại bạn vừa nhập không chính xác!");
       return res.redirect(req.get("Referer") || "/user/change-password");
     }
 
@@ -218,11 +218,11 @@ module.exports.changePasswordPatch = async (req, res) => {
     res.cookie("tokenUser", newToken, cookieOptions);
     res.cookie("token", newToken, cookieOptions);
 
-    req.flash("success", "Đổi mật khẩu thành công!");
+    req.flash("success", "Đổi mật khẩu tài khoản thành công!");
     return res.redirect(req.get("Referer") || "/user/change-password");
   } catch (error) {
     console.error("Change Password Error:", error);
-    req.flash("error", "Có lỗi xảy ra, vui lòng thử lại!");
+    req.flash("error", "Không thể đổi mật khẩu vào lúc này. Vui lòng thử lại sau!");
     return res.redirect(req.get("Referer") || "/user/change-password");
   }
 };

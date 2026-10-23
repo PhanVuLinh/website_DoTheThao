@@ -20,20 +20,20 @@ module.exports.createPost = async (req, res) => {
   try {
     const user = await getAuthUser(req);
     if (!user) {
-      req.flash("error", "Vui lòng đăng nhập để viết đánh giá!");
+      req.flash("error", "Quý khách vui lòng đăng nhập tài khoản để viết đánh giá sản phẩm!");
       return res.redirect(req.get("Referer") || "/");
     }
 
     const { productId, rating, comment } = req.body;
 
     if (!productId) {
-      req.flash("error", "Sản phẩm không hợp lệ!");
+      req.flash("error", "Thông tin sản phẩm cần đánh giá không hợp lệ!");
       return res.redirect(req.get("Referer") || "/");
     }
 
     const product = await Product.findOne({ _id: productId, deleted: false });
     if (!product) {
-      req.flash("error", "Sản phẩm không tồn tại!");
+      req.flash("error", "Sản phẩm cần đánh giá không tồn tại hoặc đã ngừng kinh doanh!");
       return res.redirect(req.get("Referer") || "/");
     }
 
@@ -58,7 +58,7 @@ module.exports.createPost = async (req, res) => {
       user_id: user.id,
       product_id: productId,
       order_id: orderHistory ? orderHistory._id : null,
-      fullName: user.fullName || "Khách hàng SportStore",
+      fullName: user.fullName || "Khách hàng TiTi Sport",
       avatar: user.avatar || "/client/assets/images/default-avatar.png",
       rating: Math.min(5, Math.max(1, parseInt(rating) || 5)),
       comment: (comment && typeof comment === "string") ? comment.trim() : "",
@@ -69,11 +69,11 @@ module.exports.createPost = async (req, res) => {
 
     await newReview.save();
 
-    req.flash("success", "Đánh giá sản phẩm thành công! Cảm ơn phản hồi của bạn.");
+    req.flash("success", "Đánh giá sản phẩm thành công! Cảm ơn bạn đã đóng góp phản hồi quý báu.");
     return res.redirect(`/product/detail/${product.slug}#reviews-section`);
   } catch (error) {
     console.error("Create Review Error:", error);
-    req.flash("error", "Gửi đánh giá không thành công, vui lòng thử lại!");
+    req.flash("error", "Không thể gửi đánh giá vào lúc này. Vui lòng thử lại sau ít phút!");
     return res.redirect(req.get("Referer") || "/");
   }
 };

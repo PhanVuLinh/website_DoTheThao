@@ -4,33 +4,33 @@ module.exports.orderPost = (req, res, next) => {
 
   // 1. Họ và tên
   if (!fullName || fullName.trim() === "") {
-    req.flashFormError("fullName", "Vui lòng nhập họ và tên người nhận!");
+    req.flashFormError("fullName", "Vui lòng nhập họ và tên người nhận hàng!");
     return res.redirect(referer);
   }
 
   if (fullName.trim().length < 2) {
-    req.flashFormError("fullName", "Họ và tên phải có ít nhất 2 ký tự!");
+    req.flashFormError("fullName", "Họ và tên người nhận cần có ít nhất 2 ký tự!");
     return res.redirect(referer);
   }
   req.body.fullName = fullName.trim();
 
   // 2. Số điện thoại (chấp nhận cả số có khoảng cách, gạch nối ví dụ 0987 123 456)
   if (!phone || phone.trim() === "") {
-    req.flashFormError("phone", "Vui lòng nhập số điện thoại nhận hàng!");
+    req.flashFormError("phone", "Vui lòng cung cấp số điện thoại liên hệ nhận hàng!");
     return res.redirect(referer);
   }
 
   const cleanPhone = phone.replace(/[\s\-\.\(\)]/g, "");
   const phoneRegex = /^(0|\+84)[3|5|7|8|9][0-9]{8}$/;
   if (!phoneRegex.test(cleanPhone)) {
-    req.flashFormError("phone", "Số điện thoại không hợp lệ (cần 10 chữ số, ví dụ: 0912345678)!");
+    req.flashFormError("phone", "Số điện thoại nhận hàng không đúng định dạng (Ví dụ: 0912345678)!");
     return res.redirect(referer);
   }
   req.body.phone = cleanPhone;
 
   // 3. Địa chỉ giao hàng
   if (!address || address.trim() === "") {
-    req.flashFormError("address", "Vui lòng nhập địa chỉ nhận hàng chi tiết!");
+    req.flashFormError("address", "Vui lòng cung cấp địa chỉ giao hàng cụ thể!");
     return res.redirect(referer);
   }
   req.body.address = address.trim();

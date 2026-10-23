@@ -28,7 +28,7 @@ html(lang="vi")
       
     link(
       rel="stylesheet"
-      href="/client/assets/css/style.css?v=1.5.0"
+      href="/client/assets/css/style.css?v=1.6.0"
     )
 
     link(
@@ -53,8 +53,9 @@ html(lang="vi")
     include ../mixins/alert.pug
     include ../partials/header.pug
 
-    +alert-success(3000)
-    +alert-error(3000)
+    +alert-success(3500)
+    +alert-error(4000)
+    +alert-warning(3500)
     block main
   
     include ../partials/footer.pug    
@@ -73,7 +74,7 @@ html(lang="vi")
       window.formErrors = !{JSON.stringify(formErrors || {})};
     script(src="/common/js/form-validator.js")
     script(src="/socket.io/socket.io.js")
-    script(src="/client/assets/js/script.js?v=1.5.0")
+    script(src="/client/assets/js/script.js?v=1.6.0")
     script(src="/common/js/animations.js?v=2.1.0")
 
 

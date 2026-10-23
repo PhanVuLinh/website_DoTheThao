@@ -29,18 +29,18 @@ module.exports.loginPost = async (req, res) => {
     });
 
     if (!user) {
-      req.flashFormError("email", "Email không tồn tại trong hệ thống!");
+      req.flashFormError("email", "Địa chỉ email này chưa được đăng ký trong hệ thống!");
       return res.redirect(req.get("Referer") || "/auth/login");
     }
 
     const isMatch = await passwordHelper.comparePassword(password, user.password);
     if (!isMatch) {
-      req.flashFormError("password", "Sai mật khẩu!");
+      req.flashFormError("password", "Mật khẩu không chính xác, vui lòng thử lại!");
       return res.redirect(req.get("Referer") || "/auth/login");
     }
 
     if (user.status === "inactive") {
-      req.flashFormError("email", "Tài khoản đang bị khóa!");
+      req.flashFormError("email", "Tài khoản của bạn hiện đang bị tạm khóa. Vui lòng liên hệ CSKH!");
       return res.redirect(req.get("Referer") || "/auth/login");
     }
 
@@ -69,7 +69,7 @@ module.exports.loginPost = async (req, res) => {
     res.cookie("tokenUser", token, cookieOptions);
     res.cookie("token", token, cookieOptions); // Hỗ trợ tương thích ngược
 
-    req.flash("success", "Đăng nhập thành công!");
+    req.flash("success", "Đăng nhập thành công! Chào mừng bạn quay trở lại.");
 
     if (req.cookies.cartId) {
       await Cart.updateOne({ _id: req.cookies.cartId }, { user_id: user.id });
@@ -83,7 +83,7 @@ module.exports.loginPost = async (req, res) => {
     return res.redirect(redirectUrl);
   } catch (error) {
     console.error("Login Error:", error);
-    req.flash("error", "Có lỗi xảy ra, vui lòng thử lại!");
+    req.flash("error", "Có lỗi xảy ra trong quá trình đăng nhập. Vui lòng thử lại sau!");
     return res.redirect(req.get("Referer") || "/auth/login");
   }
 };
@@ -102,7 +102,7 @@ module.exports.registerPost = async (req, res) => {
 
     const existEmail = await User.findOne({ email: email, deleted: false });
     if (existEmail) {
-      req.flashFormError("email", "Email đã tồn tại trong hệ thống! Vui lòng dùng email khác.");
+      req.flashFormError("email", "Địa chỉ email này đã được sử dụng. Vui lòng đăng nhập hoặc dùng email khác!");
       return res.redirect(req.get("Referer") || "/auth/register");
     }
 
@@ -124,11 +124,11 @@ module.exports.registerPost = async (req, res) => {
 
     await newUser.save();
 
-    req.flash("success", "Tạo tài khoản thành công! Vui lòng đăng nhập.");
+    req.flash("success", "Đăng ký tài khoản thành công! Vui lòng đăng nhập để bắt đầu mua sắm.");
     return res.redirect("/auth/login");
   } catch (error) {
     console.error("Register Error:", error);
-    req.flash("error", "Có lỗi xảy ra khi tạo tài khoản!");
+    req.flash("error", "Không thể hoàn tất đăng ký vào lúc này. Vui lòng thử lại sau!");
     return res.redirect(req.get("Referer") || "/auth/register");
   }
 };
@@ -142,7 +142,7 @@ module.exports.logout = async (req, res) => {
   }
   res.clearCookie("tokenUser");
   res.clearCookie("token");
-  req.flash("success", "Đã đăng xuất!");
+  req.flash("success", "Bạn đã đăng xuất tài khoản thành công. Hẹn gặp lại quý khách!");
   res.redirect("/");
 };
 
@@ -162,12 +162,12 @@ module.exports.forgotPasswordPost = async (req, res) => {
     });
 
     if (!user) {
-      req.flashFormError("email", "Email không tồn tại trong hệ thống!");
+      req.flashFormError("email", "Địa chỉ email không tồn tại trong hệ thống!");
       return res.redirect(req.get("Referer") || "/auth/forgot-password");
     }
 
     if (user.status === "inactive") {
-      req.flashFormError("email", "Tài khoản đang bị khóa!");
+      req.flashFormError("email", "Tài khoản liên kết với email này hiện đang bị khóa!");
       return res.redirect(req.get("Referer") || "/auth/forgot-password");
     }
 
@@ -212,7 +212,7 @@ module.exports.forgotPasswordPost = async (req, res) => {
     return res.redirect(`/auth/otp-password?email=${encodeURIComponent(email)}`);
   } catch (error) {
     console.error("Forgot Password Error:", error);
-    req.flash("error", "Có lỗi xảy ra, vui lòng thử lại!");
+    req.flash("error", "Có lỗi xảy ra khi tạo mã xác thực. Vui lòng thử lại sau!");
     return res.redirect(req.get("Referer") || "/auth/forgot-password");
   }
 };
@@ -238,7 +238,7 @@ module.exports.otpPasswordPost = async (req, res) => {
     });
 
     if (!forgotPassword) {
-      req.flash("error", "Mã OTP không chính xác hoặc đã hết hạn!");
+      req.flash("error", "Mã OTP không chính xác hoặc đã hết thời gian hiệu lực (3 phút)!");
       return res.redirect(req.get("Referer") || "/auth/forgot-password");
     }
 
@@ -251,14 +251,14 @@ module.exports.otpPasswordPost = async (req, res) => {
     return res.redirect("/auth/reset-password");
   } catch (error) {
     console.error("OTP Error:", error);
-    req.flash("error", "Có lỗi xảy ra, vui lòng thử lại!");
+    req.flash("error", "Có lỗi xảy ra khi kiểm tra OTP. Vui lòng thử lại sau!");
     return res.redirect(req.get("Referer") || "/auth/forgot-password");
   }
 };
 
 module.exports.resetPassword = async (req, res) => {
   if (!req.session.emailReset) {
-    req.flash("error", "Vui lòng hoàn tất xác thực OTP trước!");
+    req.flash("error", "Vui lòng nhập đúng mã OTP xác thực trước khi đổi mật khẩu!");
     return res.redirect("/auth/forgot-password");
   }
   res.render("client/pages/user-reset-password.pug", {
@@ -272,7 +272,7 @@ module.exports.resetPasswordPost = async (req, res) => {
     const email = req.session.emailReset;
 
     if (!email) {
-      req.flash("error", "Phiên làm việc đã hết hạn, vui lòng thử lại!");
+      req.flash("error", "Phiên làm việc đã hết hạn. Vui lòng thực hiện lại yêu cầu quên mật khẩu!");
       return res.redirect("/auth/forgot-password");
     }
 
@@ -294,11 +294,11 @@ module.exports.resetPasswordPost = async (req, res) => {
     );
 
     delete req.session.emailReset;
-    req.flash("success", "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
+    req.flash("success", "Đặt lại mật khẩu mới thành công! Vui lòng đăng nhập bằng mật khẩu mới.");
     return res.redirect("/auth/login");
   } catch (error) {
     console.error("Reset Password Error:", error);
-    req.flash("error", "Có lỗi xảy ra, vui lòng thử lại!");
+    req.flash("error", "Không thể cập nhật mật khẩu vào lúc này. Vui lòng thử lại sau!");
     return res.redirect(req.get("Referer") || "/auth/forgot-password");
   }
 };
