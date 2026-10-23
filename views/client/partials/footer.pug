@@ -1,26 +1,44 @@
 footer.footer
-  div(class="footer__container")
-    div(class="footer__newsletter")
-      div(class="newsletter-info")
-        h3 Đừng bỏ lỡ ưu đãi
-        p Đăng ký để nhận thông tin ưu đãi mới nhất từ #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
-      form(class="newsletter-form" action="/contact/create" method="POST")
-        input(name="email" placeholder="Nhập email của bạn..." type="email" required)
-        button(type="submit") 
-          | Đăng Ký 
-          i.fa-regular.fa-paper-plane
+  //- 1. KHỐI ĐĂNG KÝ NHẬN BẢN TIN ƯU ĐÃI (NEWSLETTER BANNER)
+  if settingWebsiteInfo && settingWebsiteInfo.newsletterActive !== false
+    .footer__container
+      .footer__newsletter
+        .newsletter-info
+          h3 #{settingWebsiteInfo.newsletterTitle || "Đừng Bỏ Lỡ Ưu Đãi Độc Quyền"}
+          p #{settingWebsiteInfo.newsletterSubTitle || ("Đăng ký để nhận thông tin ưu đãi mới nhất từ " + (settingWebsiteInfo.websiteName || "TitiSport"))}
+        form.newsletter-form(action="/contact/create" method="POST")
+          input(name="email" placeholder="Nhập địa chỉ email của bạn..." type="email" required)
+          button(type="submit")
+            span #{settingWebsiteInfo.newsletterBtnText || "Đăng Ký"}
+            i.fa-regular.fa-paper-plane.ms-2
 
-    div(class="footer__main")
-      // Col 1: Brand Info
-      div(class="footer__col brand-col")
+  //- 2. KHU VỰC NỘI DUNG CHÍNH CHÂN TRANG (MAIN CONTENT)
+  .footer__container
+    .footer__main
+      //- CỘT 1: THƯƠNG HIỆU & GIỚI THIỆU & MẠNG XÃ HỘI
+      .footer__col.brand-col
         a.logo(href="/")
           if settingWebsiteInfo && settingWebsiteInfo.logo
-            img(src=settingWebsiteInfo.logo, alt=(settingWebsiteInfo.websiteName || "Logo"))
+            img(src=settingWebsiteInfo.logo alt=(settingWebsiteInfo.websiteName || "Logo"))
           else
-            span.footer-logo-fallback #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}
-        p #{settingWebsiteInfo && settingWebsiteInfo.aboutShort ? settingWebsiteInfo.aboutShort : (settingWebsiteInfo && settingWebsiteInfo.slogan ? settingWebsiteInfo.slogan : "Điểm đến số 1 cho những người đam mê thể thao. Cam kết hàng chính hãng 100%, chất lượng đỉnh cao, dịch vụ tận tâm.")}
+            span.footer-logo-fallback #{settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "TITISPORT"}
         
-        div(class="footer__social")
+        p.brand-about #{settingWebsiteInfo && settingWebsiteInfo.aboutShort ? settingWebsiteInfo.aboutShort : (settingWebsiteInfo && settingWebsiteInfo.slogan ? settingWebsiteInfo.slogan : "Điểm đến tin cậy cho những người đam mê thể thao. Cam kết hàng chính hãng 100%, chất lượng đỉnh cao, dịch vụ tận tâm.")}
+        
+        //- Cam kết chất lượng
+        .footer-commitments
+          .commit-item
+            i.fa-solid.fa-shield-halved
+            span 100% Sản phẩm chính hãng
+          .commit-item
+            i.fa-solid.fa-rotate-left
+            span Đổi mới 7 ngày nếu lỗi
+          .commit-item
+            i.fa-solid.fa-truck-fast
+            span Giao hàng hỏa tốc toàn quốc
+
+        //- Mạng xã hội kết nối
+        .footer__social
           if settingWebsiteInfo && settingWebsiteInfo.facebook
             a(href=settingWebsiteInfo.facebook target="_blank" rel="noopener noreferrer" title="Facebook"): i.fa-brands.fa-facebook-f
           if settingWebsiteInfo && settingWebsiteInfo.instagram
@@ -32,45 +50,124 @@ footer.footer
           if settingWebsiteInfo && settingWebsiteInfo.zalo
             a(href=settingWebsiteInfo.zalo target="_blank" rel="noopener noreferrer" title="Zalo"): i.fa-solid.fa-comment-dots
 
-      // Col 2: Support
-      div(class="footer__col")
-        h4 Hỗ Trợ Khách Hàng
-        ul.footer__links
-          li: a(href="/policy/huong-dan-mua-hang") Hướng dẫn mua hàng
-          li: a(href="/policy/chinh-sach-doi-tra") Chính sách đổi trả
-          li: a(href="/policy/chinh-sach-bao-hanh") Chính sách bảo hành
-          li: a(href="/policy/chinh-sach-van-chuyen") Vận chuyển & Giao nhận
-          li: a(href="/policy/chinh-sach-bao-mat") Bảo mật thông tin
-          li: a(href="/contact") Liên hệ trực tiếp
+      //- CÁC CỘT LIÊN KẾT ĐỘNG (ADMIN QUẢN LÝ THÊM/SỬA/XÓA)
+      if settingWebsiteInfo && settingWebsiteInfo.footerColumns && settingWebsiteInfo.footerColumns.length > 0
+        each col in settingWebsiteInfo.footerColumns
+          .footer__col.nav-col
+            h4 #{col.title}
+            ul.footer__links
+              if col.links && col.links.length > 0
+                each link in col.links
+                  li
+                    a(href=link.url)
+                      i.fa-solid.fa-chevron-right.link-arrow
+                      span #{link.text}
 
-      // Col 3: Contact
-      div(class="footer__col contact-col")
+      //- CỘT THÔNG TIN LIÊN HỆ & SHOWROOM
+      .footer__col.contact-col
         h4 Thông Tin Liên Hệ
         ul.footer__contact
           if settingWebsiteInfo && settingWebsiteInfo.address
             li
-              div.icon-wrapper
-                i.fa-solid.fa-location-dot
-              span #{settingWebsiteInfo.address}
+              .icon-wrapper: i.fa-solid.fa-location-dot
+              .contact-detail
+                strong Trụ sở chính:
+                span #{settingWebsiteInfo.address}
           if settingWebsiteInfo && (settingWebsiteInfo.hotline || settingWebsiteInfo.phone)
             li
-              div.icon-wrapper
-                i.fa-solid.fa-phone
-              span Hotline: #{settingWebsiteInfo.hotline || settingWebsiteInfo.phone}
+              .icon-wrapper: i.fa-solid.fa-phone
+              .contact-detail
+                strong Hotline tư vấn:
+                a.hotline-link(href=`tel:${settingWebsiteInfo.hotline || settingWebsiteInfo.phone}`) #{settingWebsiteInfo.hotline || settingWebsiteInfo.phone}
           if settingWebsiteInfo && settingWebsiteInfo.email
             li
-              div.icon-wrapper
-                i.fa-solid.fa-envelope
-              span #{settingWebsiteInfo.email}
+              .icon-wrapper: i.fa-solid.fa-envelope
+              .contact-detail
+                strong Email:
+                span #{settingWebsiteInfo.email}
           if settingWebsiteInfo && settingWebsiteInfo.workingHours
             li
-              div.icon-wrapper
-                i.fa-regular.fa-clock
-              span Giờ mở cửa: #{settingWebsiteInfo.workingHours}
+              .icon-wrapper: i.fa-regular.fa-clock
+              .contact-detail
+                strong Giờ mở cửa:
+                span #{settingWebsiteInfo.workingHours}
 
-  // BOTTOM
-  div(class="footer__bottom")
-    div(class="footer__bottom-inner")
-      p #{settingWebsiteInfo && settingWebsiteInfo.copyright ? settingWebsiteInfo.copyright : `© ${new Date().getFullYear()} ${settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "SportStore"}. All rights reserved.`}
-      if settingWebsiteInfo && settingWebsiteInfo.businessLicense
-        p.footer-business-license #{settingWebsiteInfo.businessLicense}
+        //- Danh sách Showroom / Chi nhánh cửa hàng (Admin quản lý động)
+        if settingWebsiteInfo && settingWebsiteInfo.footerBranches && settingWebsiteInfo.footerBranches.length > 0
+          .footer-branches-block
+            .branches-header
+              i.fa-solid.fa-store.text-danger.me-1
+              strong Hệ Thống Showroom
+            .branches-scroll
+              each branch in settingWebsiteInfo.footerBranches
+                .branch-row
+                  .branch-dot
+                  .branch-info
+                    span.branch-title #{branch.name}
+                    p.branch-addr #{branch.address}
+                    if branch.phone
+                      span.branch-tel
+                        i.fa-solid.fa-phone.me-1
+                        | #{branch.phone}
+
+      //- CỘT BẢN ĐỒ CHỈ ĐƯỜNG GOOGLE MAPS (HIỂN THỊ TRỰC TIẾP TẠI CHÂN TRANG)
+      if settingWebsiteInfo && settingWebsiteInfo.footerMapActive !== false
+        .footer__col.map-col
+          h4 #{settingWebsiteInfo.footerMapTitle || "Vị Trí Cửa Hàng"}
+          p.map-subtitle #{settingWebsiteInfo.footerMapSubTitle || "Ghé thăm trải nghiệm sản phẩm trực tiếp"}
+          
+          .footer-map-container
+            .footer-map-frame
+              if settingWebsiteInfo.footerMapIframe || settingWebsiteInfo.mapIframe
+                != (settingWebsiteInfo.footerMapIframe || settingWebsiteInfo.mapIframe)
+              else
+                iframe(
+                  src=`https://www.google.com/maps?q=${encodeURIComponent(settingWebsiteInfo.address || "Vĩnh Lộc, Hồ Chí Minh")}&output=embed`
+                  loading="lazy"
+                  allowfullscreen=""
+                  referrerpolicy="no-referrer-when-downgrade"
+                )
+            
+            .footer-map-bar
+              .map-address-pill(title=(settingWebsiteInfo.address || "TitiSport Store"))
+                i.fa-solid.fa-location-dot.text-danger.me-1
+                span #{settingWebsiteInfo.address || "Xem trên bản đồ"}
+              a.btn-map-guide(
+                href=(settingWebsiteInfo.footerMapDirectionUrl || `https://maps.google.com/?q=${encodeURIComponent(settingWebsiteInfo.address || "TitiSport Store")}`)
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Mở Google Maps dẫn đường"
+              )
+                i.fa-solid.fa-diamond-turn-right.me-1
+                | Chỉ đường
+
+  //- 3. DÒNG CHÂN TRANG DƯỚI CÙNG (BOTTOM BAR)
+  .footer__bottom
+    .footer__container
+      .footer__bottom-inner
+        .bottom-left
+          p.footer-copyright #{settingWebsiteInfo && settingWebsiteInfo.copyright ? settingWebsiteInfo.copyright : `© ${new Date().getFullYear()} ${settingWebsiteInfo && settingWebsiteInfo.websiteName ? settingWebsiteInfo.websiteName : "TitiSport"}. Bản quyền thuộc về TitiSport Store.`}
+          if settingWebsiteInfo && settingWebsiteInfo.businessLicense
+            p.footer-business-license #{settingWebsiteInfo.businessLicense}
+        
+        .bottom-right
+          //- Phương thức thanh toán
+          if settingWebsiteInfo && settingWebsiteInfo.footerPaymentActive !== false
+            .footer-payment-methods
+              span.payment-title Thanh toán an toàn:
+              .payment-badges
+                span.badge-pay(title="Thanh toán khi nhận hàng (COD)"): i.fa-solid.fa-money-bill-wave
+                span.badge-pay(title="Chuyển khoản VietQR"): i.fa-solid.fa-qrcode
+                span.badge-pay(title="Thẻ ATM / Visa / Mastercard"): i.fa-solid.fa-credit-card
+                span.badge-pay(title="Ví VNPay QR"): strong VNPAY
+                span.badge-pay(title="Ví ZaloPay"): strong ZaloPay
+
+          //- Huy hiệu chứng nhận
+          if settingWebsiteInfo && settingWebsiteInfo.footerCertificationsActive !== false
+            .footer-certifications
+              span.badge-cert(title="Đã thông báo Bộ Công Thương")
+                i.fa-solid.fa-certificate.text-danger.me-1
+                | Đã Thông Báo BCT
+              span.badge-cert(title="Chứng nhận an toàn SSL 256-bit")
+                i.fa-solid.fa-lock.text-success.me-1
+                | SSL Secure

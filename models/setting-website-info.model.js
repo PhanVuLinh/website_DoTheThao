@@ -197,6 +197,83 @@ const settingwebsiteInfoSchema = new mongoose.Schema(
         allroundSpecs: String,
       },
     ],
+
+    // ==========================================
+    // CẤU HÌNH CHÂN TRANG FOOTER & BẢN ĐỒ SHOP
+    // ==========================================
+    footerMapActive: {
+      type: Boolean,
+      default: true,
+    },
+    footerMapTitle: {
+      type: String,
+      default: "Vị Trí Cửa Hàng & Showroom",
+    },
+    footerMapSubTitle: {
+      type: String,
+      default: "Ghé thăm trực tiếp trải nghiệm trang bị thể thao chính hãng",
+    },
+    footerMapIframe: {
+      type: String,
+      default: "",
+    },
+    footerMapDirectionUrl: {
+      type: String,
+      default: "",
+    },
+
+    // Khối Đăng Ký Nhận Tin (Newsletter)
+    newsletterActive: {
+      type: Boolean,
+      default: true,
+    },
+    newsletterTitle: {
+      type: String,
+      default: "Đừng Bỏ Lỡ Ưu Đãi Độc Quyền",
+    },
+    newsletterSubTitle: {
+      type: String,
+      default: "Đăng ký nhận bản tin khuyến mãi và mã giảm giá 10% từ TitiSport",
+    },
+    newsletterBtnText: {
+      type: String,
+      default: "Đăng Ký",
+    },
+
+    // Danh sách Cột Liên Kết Điều Hướng Động (Thêm, Sửa, Xóa bởi Admin)
+    footerColumns: [
+      {
+        title: String,
+        links: [
+          {
+            text: String,
+            url: String,
+          },
+        ],
+      },
+    ],
+
+    // Danh sách Chi Nhánh / Showroom Cửa Hàng Động (Thêm, Sửa, Xóa bởi Admin)
+    footerBranches: [
+      {
+        name: String,
+        address: String,
+        phone: String,
+        hours: String,
+        mapUrl: String,
+        isMain: Boolean,
+      },
+    ],
+
+    // Huy hiệu chứng nhận & thanh toán
+    footerCertificationsActive: {
+      type: Boolean,
+      default: true,
+    },
+    footerPaymentActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,

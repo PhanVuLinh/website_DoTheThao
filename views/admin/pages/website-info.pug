@@ -451,19 +451,255 @@ block main
                 i.fa-solid.fa-arrow-right
 
         //- ========================================================
-        //- PHẦN 6: THÔNG TIN CHÂN TRANG WEBSITE (FOOTER)
+        //- PHẦN 6: THÔNG TIN CHÂN TRANG WEBSITE & BẢN ĐỒ (FOOTER)
         //- ========================================================
         .settings-tab-pane#tab-footer
           .pane-header
             .pane-header-icon.footer
-              i.fa-solid.fa-shoe-prints
+              i.fa-solid.fa-table-cells
             .pane-header-info
-              h3 6. Thông Tin Chân Trang Website (Footer)
-              p Lời giới thiệu tổng quan, thông tin bản quyền và pháp lý của cửa hàng.
+              h3 6. Thiết Kế & Cấu Hình Chân Trang Website (Footer & Bản Đồ)
+              p Quản lý các cột liên kết điều hướng, thông tin bản quyền, hệ thống showroom và bản đồ chỉ đường Google Maps hiển thị ở chân trang.
+
+          //- 6.1 BẢN ĐỒ CHỈ ĐƯỜNG GOOGLE MAPS
+          .setting-section-divider
+            i.fa-solid.fa-map-location-dot.text-danger.me-2
+            span Bản Đồ Cửa Hàng Google Maps (Hiển Thị Trực Tiếp Ở Chân Trang)
+
+          .form-group
+            .form-check.form-switch
+              input.form-check-input#footerMapActive(
+                type="checkbox"
+                name="footerMapActive"
+                checked=(settingWebsiteInfo && settingWebsiteInfo.footerMapActive !== false)
+              )
+              label.form-check-label.fw-bold(for="footerMapActive") Bật hiển thị bản đồ tương tác Google Maps ở chân trang website
+
+          .form-row-2
+            .form-group
+              label Tiêu đề khối bản đồ
+              input.form-control(
+                type="text"
+                name="footerMapTitle"
+                value=(settingWebsiteInfo && settingWebsiteInfo.footerMapTitle ? settingWebsiteInfo.footerMapTitle : "Vị Trí Cửa Hàng & Showroom")
+                placeholder="Ví dụ: Vị Trí Cửa Hàng & Showroom"
+              )
+            .form-group
+              label Mô tả phụ dưới tiêu đề bản đồ
+              input.form-control(
+                type="text"
+                name="footerMapSubTitle"
+                value=(settingWebsiteInfo && settingWebsiteInfo.footerMapSubTitle ? settingWebsiteInfo.footerMapSubTitle : "Ghé thăm trực tiếp trải nghiệm trang bị thể thao chính hãng")
+                placeholder="Ví dụ: Ghé thăm trực tiếp trải nghiệm trang bị thể thao chính hãng"
+              )
+
+          .form-row-2
+            .form-group
+              label Mã nhúng bản đồ Google Maps (Iframe HTML)
+              textarea.form-control#footerMapIframeInput(
+                name="footerMapIframe"
+                rows="4"
+                placeholder='Dán đoạn mã nhúng bản đồ từ Google Maps (bắt đầu bằng <iframe src="https://www.google.com/maps/embed?...)...'
+              ) #{settingWebsiteInfo ? (settingWebsiteInfo.footerMapIframe || settingWebsiteInfo.mapIframe || "") : ""}
+              p.form-text.text-muted
+                i.fa-solid.fa-circle-info.me-1
+                | Hướng dẫn: Mở Google Maps -> Tìm cửa hàng -> Bấm Chia sẻ -> Chọn "Nhúng bản đồ" -> Sao chép HTML rồi dán vào đây. (Nếu để trống, hệ thống sẽ tự động dùng bản đồ theo địa chỉ cửa hàng).
+            .form-group
+              label Xem trước bản đồ (Live Preview)
+              .map-admin-preview-container#footerMapPreviewFrame
+                if settingWebsiteInfo && (settingWebsiteInfo.footerMapIframe || settingWebsiteInfo.mapIframe)
+                  != (settingWebsiteInfo.footerMapIframe || settingWebsiteInfo.mapIframe)
+                else
+                  .map-placeholder-box
+                    i.fa-solid.fa-map-location-dot
+                    span Chưa có mã nhúng bản đồ (Sẽ dùng bản đồ tự động theo địa chỉ)
+
+          .form-group
+            label Đường dẫn mở ứng dụng / chỉ đường trực tiếp (Google Maps Direction URL)
+            input.form-control(
+              type="text"
+              name="footerMapDirectionUrl"
+              value=(settingWebsiteInfo ? settingWebsiteInfo.footerMapDirectionUrl : "")
+              placeholder="Ví dụ: https://maps.google.com/?q=63+Đường+Ấp+1+Vĩnh+Lộc+Hồ+Chí+Minh"
+            )
+
+          //- 6.2 CÁC CỘT LIÊN KẾT ĐIỀU HƯỚNG ĐỘNG (DYNAMIC FOOTER COLUMNS)
+          .setting-section-divider.mt-4
+            .d-flex.justify-content-between.align-items-center.w-100
+              div
+                i.fa-solid.fa-sitemap.text-primary.me-2
+                span Các Cột Liên Kết Điều Hướng Chân Trang (Admin Thêm / Sửa / Xóa)
+              button.btn-add-section-item#btnAddFooterCol(type="button")
+                i.fa-solid.fa-plus.me-1
+                | Thêm Cột Mới
+
+          p.form-text.text-muted.mb-3 Bạn có thể tự do thêm cột liên kết mới (Chính sách, Hỗ trợ, Danh mục...), chỉnh sửa tiêu đề cột và thêm/xóa từng liên kết bên trong.
+
+          input(type="hidden" name="footerColumnsJson" id="footerColumnsJson")
+          
+          #footer-columns-container.footer-columns-admin-grid
+            if settingWebsiteInfo && settingWebsiteInfo.footerColumns && settingWebsiteInfo.footerColumns.length > 0
+              each col, colIdx in settingWebsiteInfo.footerColumns
+                .footer-col-admin-card(data-col-index=colIdx)
+                  .col-card-header
+                    .d-flex.align-items-center.gap-2
+                      i.fa-solid.fa-table-columns.text-primary
+                      strong.col-card-number Cột Liên Kết ##{colIdx + 1}
+                    button.btn-remove-col(type="button" title="Xóa toàn bộ cột này")
+                      i.fa-solid.fa-trash-can.me-1
+                      | Xóa cột
+                  
+                  .col-card-body
+                    .form-group.mb-3
+                      label Tiêu đề cột (Tên nhóm liên kết)
+                      input.form-control.col-title-input(
+                        type="text"
+                        value=col.title
+                        placeholder="Ví dụ: Hỗ Trợ Khách Hàng, Về Chúng Tôi, Chính Sách..."
+                        required
+                      )
+                    
+                    label.small.fw-bold.text-muted.mb-2 Danh sách liên kết bên trong cột:
+                    .footer-links-list
+                      if col.links && col.links.length > 0
+                        each link, linkIdx in col.links
+                          .footer-link-row(data-link-index=linkIdx)
+                            .link-drag-handle
+                              i.fa-solid.fa-grip-vertical
+                            input.form-control.form-control-sm.link-text-input(
+                              type="text"
+                              value=link.text
+                              placeholder="Tên liên kết (VD: Chính sách đổi trả)"
+                              required
+                            )
+                            input.form-control.form-control-sm.link-url-input(
+                              type="text"
+                              value=link.url
+                              placeholder="Đường dẫn URL (VD: /policy/doi-tra)"
+                              required
+                            )
+                            button.btn-remove-link(type="button" title="Xóa liên kết này")
+                              i.fa-solid.fa-xmark
+                      else
+                        .footer-link-row
+                          .link-drag-handle: i.fa-solid.fa-grip-vertical
+                          input.form-control.form-control-sm.link-text-input(type="text" placeholder="Tên liên kết (VD: Hướng dẫn mua hàng)")
+                          input.form-control.form-control-sm.link-url-input(type="text" placeholder="Đường dẫn URL (VD: /policy/huong-dan)")
+                          button.btn-remove-link(type="button" title="Xóa liên kết này"): i.fa-solid.fa-xmark
+
+                    button.btn-add-link-to-col(type="button")
+                      i.fa-solid.fa-plus.me-1
+                      | Thêm liên kết vào cột này
+
+          //- 6.3 HỆ THỐNG CHI NHÁNH / SHOWROOM (DYNAMIC STORE BRANCHES)
+          .setting-section-divider.mt-4
+            .d-flex.justify-content-between.align-items-center.w-100
+              div
+                i.fa-solid.fa-store.text-success.me-2
+                span Hệ Thống Showroom & Chi Nhánh Cửa Hàng (Admin Thêm / Sửa / Xóa)
+              button.btn-add-section-item#btnAddFooterBranch(type="button")
+                i.fa-solid.fa-plus.me-1
+                | Thêm Chi Nhánh
+
+          input(type="hidden" name="footerBranchesJson" id="footerBranchesJson")
+
+          #footer-branches-container.footer-branches-admin-grid
+            if settingWebsiteInfo && settingWebsiteInfo.footerBranches && settingWebsiteInfo.footerBranches.length > 0
+              each branch, branchIdx in settingWebsiteInfo.footerBranches
+                .footer-branch-admin-card(data-branch-index=branchIdx)
+                  .branch-card-header
+                    .d-flex.align-items-center.gap-2
+                      i.fa-solid.fa-shop.text-success
+                      strong.branch-card-number Chi Nhánh ##{branchIdx + 1}
+                      if branch.isMain
+                        span.badge.bg-success.ms-2 Trụ sở chính
+                    button.btn-remove-branch(type="button" title="Xóa chi nhánh này")
+                      i.fa-solid.fa-trash-can.me-1
+                      | Xóa chi nhánh
+                  
+                  .branch-card-body
+                    .form-row-2
+                      .form-group
+                        label Tên cơ sở / Showroom
+                        input.form-control.branch-name-input(
+                          type="text"
+                          value=branch.name
+                          placeholder="Ví dụ: Showroom Quận 1 (Trụ Sở TP.HCM)"
+                          required
+                        )
+                      .form-group
+                        label Số điện thoại / Hotline chi nhánh
+                        input.form-control.branch-phone-input(
+                          type="text"
+                          value=branch.phone
+                          placeholder="Ví dụ: 0987.654.321"
+                        )
+                    
+                    .form-row-2
+                      .form-group
+                        label Địa chỉ chi nhánh
+                        input.form-control.branch-address-input(
+                          type="text"
+                          value=branch.address
+                          placeholder="Ví dụ: 63 Đường Ấp 1, Xã Vĩnh Lộc, Bình Chánh, TP.HCM"
+                          required
+                        )
+                      .form-group
+                        label Giờ mở cửa hoạt động
+                        input.form-control.branch-hours-input(
+                          type="text"
+                          value=branch.hours
+                          placeholder="Ví dụ: 08:00 - 21:30 (Cả tuần)"
+                        )
+
+          //- 6.4 KHỐI ĐĂNG KÝ NHẬN BẢN TIN (NEWSLETTER BANNER)
+          .setting-section-divider.mt-4
+            i.fa-solid.fa-envelope-open-text.text-warning.me-2
+            span Khối Đăng Ký Nhận Bản Tin Ưu Đãi (Newsletter)
+
+          .form-group
+            .form-check.form-switch
+              input.form-check-input#newsletterActive(
+                type="checkbox"
+                name="newsletterActive"
+                checked=(settingWebsiteInfo && settingWebsiteInfo.newsletterActive !== false)
+              )
+              label.form-check-label.fw-bold(for="newsletterActive") Bật hiển thị khối đăng ký nhận ưu đãi trên đầu chân trang
+
+          .form-row-3
+            .form-group
+              label Tiêu đề khối bản tin
+              input.form-control(
+                type="text"
+                name="newsletterTitle"
+                value=(settingWebsiteInfo && settingWebsiteInfo.newsletterTitle ? settingWebsiteInfo.newsletterTitle : "Đừng Bỏ Lỡ Ưu Đãi Độc Quyền")
+                placeholder="Ví dụ: Đừng Bỏ Lỡ Ưu Đãi Độc Quyền"
+              )
+            .form-group
+              label Lời nhắn / Mô tả ưu đãi
+              input.form-control(
+                type="text"
+                name="newsletterSubTitle"
+                value=(settingWebsiteInfo && settingWebsiteInfo.newsletterSubTitle ? settingWebsiteInfo.newsletterSubTitle : "Đăng ký nhận bản tin khuyến mãi và mã giảm giá 10% từ TitiSport")
+                placeholder="Ví dụ: Đăng ký nhận mã giảm giá 10%..."
+              )
+            .form-group
+              label Tên nút bấm
+              input.form-control(
+                type="text"
+                name="newsletterBtnText"
+                value=(settingWebsiteInfo && settingWebsiteInfo.newsletterBtnText ? settingWebsiteInfo.newsletterBtnText : "Đăng Ký")
+                placeholder="Ví dụ: Đăng Ký"
+              )
+
+          //- 6.5 THÔNG TIN THƯƠNG HIỆU & BẢN QUYỀN & HUY HIỆU
+          .setting-section-divider.mt-4
+            i.fa-solid.fa-copyright.text-info.me-2
+            span Thông Tin Bản Quyền, Pháp Lý & Huy Hiệu Tin Cậy
 
           .form-group
             label Giới thiệu ngắn về cửa hàng (Hiển thị dưới logo ở chân trang)
-            textarea.form-control(name="aboutShort" rows="3" placeholder="Ví dụ: Điểm đến tin cậy cho những người đam mê thể thao. Cam kết 100% hàng chính hãng, chất lượng hàng đầu...") #{settingWebsiteInfo ? settingWebsiteInfo.aboutShort : ""}
+            textarea.form-control(name="aboutShort" rows="2" placeholder="Ví dụ: Điểm đến tin cậy cho những người đam mê thể thao. Cam kết 100% hàng chính hãng, chất lượng hàng đầu...") #{settingWebsiteInfo ? settingWebsiteInfo.aboutShort : ""}
 
           .form-row-2
             .form-group
@@ -473,6 +709,25 @@ block main
             .form-group
               label Mã số thuế / Giấy phép kinh doanh (Nếu có)
               input.form-control(type="text" name="businessLicense" value=(settingWebsiteInfo ? settingWebsiteInfo.businessLicense : "") placeholder="Ví dụ: GPKD số 0102030405 do Sở KH&ĐT cấp ngày 01/01/2026")
+
+          .form-row-2
+            .form-group
+              .form-check.form-switch
+                input.form-check-input#footerPaymentActive(
+                  type="checkbox"
+                  name="footerPaymentActive"
+                  checked=(settingWebsiteInfo && settingWebsiteInfo.footerPaymentActive !== false)
+                )
+                label.form-check-label(for="footerPaymentActive") Hiển thị các icon phương thức thanh toán an toàn (COD, VietQR, Visa, VNPay, ZaloPay)
+            
+            .form-group
+              .form-check.form-switch
+                input.form-check-input#footerCertificationsActive(
+                  type="checkbox"
+                  name="footerCertificationsActive"
+                  checked=(settingWebsiteInfo && settingWebsiteInfo.footerCertificationsActive !== false)
+                )
+                label.form-check-label(for="footerCertificationsActive") Hiển thị huy hiệu chứng nhận: Đã Thông Báo BCT & Chứng nhận bảo mật SSL 256-bit
 
           .pane-footer-actions
             button.btn-next-tab(type="button" data-next="tab-social")

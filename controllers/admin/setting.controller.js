@@ -69,19 +69,93 @@ const defaultAiSports = [
   },
 ];
 
+const defaultFooterColumns = [
+  {
+    title: "Hỗ Trợ Khách Hàng",
+    links: [
+      { text: "Hướng dẫn mua hàng & thanh toán", url: "/policy/huong-dan-mua-hang" },
+      { text: "Chính sách đổi trả 7 ngày", url: "/policy/chinh-sach-doi-tra" },
+      { text: "Chính sách bảo hành chính hãng", url: "/policy/chinh-sach-bao-hanh" },
+      { text: "Vận chuyển & Giao nhận hỏa tốc", url: "/policy/chinh-sach-van-chuyen" },
+      { text: "Chính sách bảo mật thông tin", url: "/policy/chinh-sach-bao-mat" },
+      { text: "Liên hệ tư vấn trực tiếp", url: "/contact" },
+    ],
+  },
+  {
+    title: "Về TitiSport",
+    links: [
+      { text: "Câu chuyện thương hiệu TitiSport", url: "/about" },
+      { text: "Cam kết 100% hàng chính hãng", url: "/policy/cam-ket-chinh-hang" },
+      { text: "Hệ thống Showroom toàn quốc", url: "/contact" },
+      { text: "Tuyển dụng & Cơ hội nghề nghiệp", url: "/contact" },
+      { text: "Tin tức & Cẩm nang thể thao", url: "/article" },
+      { text: "Hợp tác kinh doanh & Đại lý", url: "/contact" },
+    ],
+  },
+  {
+    title: "Danh Mục Nổi Bật",
+    links: [
+      { text: "Giày bóng đá cỏ nhân tạo", url: "/product?category=giay-da-bong" },
+      { text: "Áo đấu câu lạc bộ mới nhất", url: "/product?category=quan-ao-bong-da" },
+      { text: "Vợt & Phụ kiện cầu lông", url: "/product?category=cau-long" },
+      { text: "Quả bóng đá thi đấu FIFA", url: "/product?category=bong-da" },
+      { text: "Phụ kiện & Trang bị bảo hộ", url: "/product" },
+    ],
+  },
+];
+
+const defaultFooterBranches = [
+  {
+    name: "Showroom Chính (Trụ sở TP.HCM)",
+    address: "63 Đường Ấp 1, Xã Vĩnh Lộc, Huyện Bình Chánh, TP. Hồ Chí Minh",
+    phone: "0987.654.321",
+    hours: "08:00 - 21:30 (Thứ 2 - Chủ Nhật)",
+    mapUrl: "https://maps.google.com/?q=63+Đường+Ấp+1+Vĩnh+Lộc+Hồ+Chí+Minh",
+    isMain: true,
+  },
+  {
+    name: "Showroom Cơ Sở 2 (Hà Nội)",
+    address: "186 Đường Cầu Giấy, Phường Quan Hoa, Quận Cầu Giấy, Hà Nội",
+    phone: "0912.345.678",
+    hours: "08:30 - 21:00 (Thứ 2 - Chủ Nhật)",
+    mapUrl: "https://maps.google.com/?q=186+Cầu+Giấy+Hà+Nội",
+    isMain: false,
+  },
+];
+
 module.exports.websiteInfo = async (req, res) => {
   let settingWebsiteInfo = await SettingWebsiteInfo.findOne({});
   if (!settingWebsiteInfo) {
     settingWebsiteInfo = new SettingWebsiteInfo({
       aiSports: defaultAiSports,
+      footerColumns: defaultFooterColumns,
+      footerBranches: defaultFooterBranches,
     });
     await settingWebsiteInfo.save();
-  } else if (!settingWebsiteInfo.aiSports || settingWebsiteInfo.aiSports.length === 0) {
-    settingWebsiteInfo.aiSports = defaultAiSports;
-    await SettingWebsiteInfo.updateOne(
-      { _id: settingWebsiteInfo._id },
-      { aiSports: defaultAiSports }
-    );
+  } else {
+    const updateInit = {};
+    if (!settingWebsiteInfo.aiSports || settingWebsiteInfo.aiSports.length === 0) {
+      settingWebsiteInfo.aiSports = defaultAiSports;
+      updateInit.aiSports = defaultAiSports;
+    }
+    if (!settingWebsiteInfo.footerColumns || settingWebsiteInfo.footerColumns.length === 0) {
+      settingWebsiteInfo.footerColumns = defaultFooterColumns;
+      updateInit.footerColumns = defaultFooterColumns;
+    }
+    if (!settingWebsiteInfo.footerBranches || settingWebsiteInfo.footerBranches.length === 0) {
+      settingWebsiteInfo.footerBranches = defaultFooterBranches;
+      updateInit.footerBranches = defaultFooterBranches;
+    }
+    if (!settingWebsiteInfo.footerMapIframe && settingWebsiteInfo.mapIframe) {
+      settingWebsiteInfo.footerMapIframe = settingWebsiteInfo.mapIframe;
+      updateInit.footerMapIframe = settingWebsiteInfo.mapIframe;
+    }
+    if (Object.keys(updateInit).length > 0) {
+      await SettingWebsiteInfo.updateOne(
+        { _id: settingWebsiteInfo._id },
+        updateInit
+      );
+    }
   }
 
   const parentCategories = await Category.find({
@@ -266,6 +340,65 @@ module.exports.websiteInfoPatch = async (req, res) => {
       });
     }
     req.body.aiSports = parsedSports;
+  }
+
+  // ==========================================
+  // XỬ LÝ CẤU HÌNH CHÂN TRANG FOOTER & BẢN ĐỒ
+  // ==========================================
+  req.body.footerMapActive = req.body.footerMapActive === "on" || req.body.footerMapActive === "true" || req.body.footerMapActive === true;
+  req.body.newsletterActive = req.body.newsletterActive === "on" || req.body.newsletterActive === "true" || req.body.newsletterActive === true;
+  req.body.footerCertificationsActive = req.body.footerCertificationsActive === "on" || req.body.footerCertificationsActive === "true" || req.body.footerCertificationsActive === true;
+  req.body.footerPaymentActive = req.body.footerPaymentActive === "on" || req.body.footerPaymentActive === "true" || req.body.footerPaymentActive === true;
+
+  // Đồng bộ footerMapIframe & mapIframe
+  if (req.body.footerMapIframe) {
+    req.body.mapIframe = req.body.footerMapIframe;
+  } else if (req.body.mapIframe && !req.body.footerMapIframe) {
+    req.body.footerMapIframe = req.body.mapIframe;
+  }
+
+  // Xử lý danh sách Cột liên kết chân trang (Footer Columns)
+  if (req.body.footerColumnsJson) {
+    try {
+      const parsed = JSON.parse(req.body.footerColumnsJson);
+      if (Array.isArray(parsed)) {
+        req.body.footerColumns = parsed;
+      }
+    } catch (e) {
+      console.error("Lỗi parse footerColumnsJson:", e);
+    }
+  }
+
+  // Xử lý danh sách Chi nhánh / Showroom chân trang (Footer Branches)
+  if (req.body.footerBranchesJson) {
+    try {
+      const parsed = JSON.parse(req.body.footerBranchesJson);
+      if (Array.isArray(parsed)) {
+        req.body.footerBranches = parsed;
+      }
+    } catch (e) {
+      console.error("Lỗi parse footerBranchesJson:", e);
+    }
+  } else if (req.body.footerBranch_name !== undefined) {
+    const names = Array.isArray(req.body.footerBranch_name) ? req.body.footerBranch_name : [req.body.footerBranch_name];
+    const addresses = Array.isArray(req.body.footerBranch_address) ? req.body.footerBranch_address : [req.body.footerBranch_address];
+    const phones = Array.isArray(req.body.footerBranch_phone) ? req.body.footerBranch_phone : [req.body.footerBranch_phone];
+    const hours = Array.isArray(req.body.footerBranch_hours) ? req.body.footerBranch_hours : [req.body.footerBranch_hours];
+    const mapUrls = Array.isArray(req.body.footerBranch_mapUrl) ? req.body.footerBranch_mapUrl : [req.body.footerBranch_mapUrl];
+
+    const parsedBranches = [];
+    for (let i = 0; i < names.length; i++) {
+      if (!names[i] && !addresses[i]) continue;
+      parsedBranches.push({
+        name: (names[i] || "").trim(),
+        address: (addresses[i] || "").trim(),
+        phone: (phones[i] || "").trim(),
+        hours: (hours[i] || "").trim(),
+        mapUrl: (mapUrls[i] || "").trim(),
+        isMain: i === 0,
+      });
+    }
+    req.body.footerBranches = parsedBranches;
   }
 
   const settingWebsiteInfo = await SettingWebsiteInfo.findOne({});

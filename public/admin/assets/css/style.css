@@ -5837,5 +5837,264 @@ body.swal2-toast-shown .swal2-container,
   }
 }
 
+/* ==========================================================================
+   FOOTER & MAP MANAGEMENT STYLES (TAB 6)
+   ========================================================================== */
+.setting-section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 28px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid #f1f5f9;
+}
+
+.setting-section-divider i {
+  font-size: 16px;
+}
+
+.btn-add-section-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1.5px solid #bbf7d0;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-add-section-item:hover {
+  background: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.2);
+}
+
+/* Map Admin Preview */
+.map-admin-preview-container {
+  width: 100%;
+  height: 220px;
+  background: #f8fafc;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.map-admin-preview-container iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  display: block;
+}
+
+.map-placeholder-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+  font-size: 13px;
+  text-align: center;
+  padding: 20px;
+}
+
+.map-placeholder-box i {
+  font-size: 32px;
+  color: #cbd5e1;
+}
+
+.map-placeholder-box.text-danger i {
+  color: #ef4444;
+}
+
+/* Footer Columns Manager */
+.footer-columns-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.footer-col-admin-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-col-admin-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.col-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.col-card-number {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.btn-remove-col,
+.btn-remove-branch {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-remove-col:hover,
+.btn-remove-branch:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.footer-links-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.footer-link-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.link-drag-handle {
+  color: #94a3b8;
+  cursor: grab;
+  font-size: 12px;
+  padding: 0 2px;
+}
+
+.footer-link-row .link-text-input {
+  flex: 1.2;
+}
+
+.footer-link-row .link-url-input {
+  flex: 1.4;
+}
+
+.btn-remove-link {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-remove-link:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.btn-add-link-to-col {
+  width: 100%;
+  padding: 8px;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-top: auto;
+}
+
+.btn-add-link-to-col:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+/* Footer Branches Manager */
+.footer-branches-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.footer-branch-admin-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.footer-branch-admin-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.branch-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.branch-card-number {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+
 
 
