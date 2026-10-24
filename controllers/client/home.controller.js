@@ -7,12 +7,165 @@ const Order = require("../../models/order.model");
 const Brand = require("../../models/brand.model");
 const Review = require("../../models/review.model");
 const FlashSale = require("../../models/flash-sale.model");
+const SettingWebsiteInfo = require("../../models/setting-website-info.model");
 
 const productPriceHelper = require("../../helpers/getPriceNew.helper.js");
 
 module.exports.index = async (req, res) => {
   try {
     const settingWebsiteInfo = res.locals.settingWebsiteInfo || {};
+
+    // 0. Chuẩn bị danh sách Hero Slides Banner Chính với Dữ Liệu Thật & Ảnh Thật từ Database
+    const formatVND = (price) => {
+      return price ? new Intl.NumberFormat("vi-VN").format(price) + "đ" : "";
+    };
+
+    // Tìm các sản phẩm thật từ CSDL cho từng bộ môn thể thao
+    const fallbackAnyProd = await Product.findOne({
+      deleted: false,
+      status: "active",
+    }).sort({ position: -1 }).lean();
+
+    const footballProd = (await Product.findOne({
+      deleted: false,
+      status: "active",
+      $or: [
+        { title: { $regex: /Mercurial|Phantom|Predator|bóng đá|đá bóng|Kamito|Wika/i } },
+        { brand: { $regex: /Nike|Adidas|Puma|Kamito|Wika/i } },
+      ],
+    }).sort({ featured: -1, position: -1 }).lean()) || fallbackAnyProd;
+
+    const badmintonProd = (await Product.findOne({
+      deleted: false,
+      status: "active",
+      $or: [
+        { title: { $regex: /Yonex|Astrox|Nanoflare|Axforce|Lining|Victor|Cầu Lông/i } },
+        { brand: { $regex: /Yonex|Lining|Victor/i } },
+      ],
+    }).sort({ featured: -1, position: -1 }).lean()) || fallbackAnyProd;
+
+    const volleyballProd = (await Product.findOne({
+      deleted: false,
+      status: "active",
+      $or: [
+        { title: { $regex: /Asics|Metarise|Lightning|Momentum|Bóng Chuyền|Mikasa|Gerustar/i } },
+        { brand: { $regex: /Asics|Mizuno|Mikasa|Gerustar/i } },
+      ],
+    }).sort({ featured: -1, position: -1 }).lean()) || fallbackAnyProd;
+
+    const dealProd = (await Product.findOne({
+      deleted: false,
+      status: "active",
+      discountPercentage: { $gt: 5 },
+    }).sort({ discountPercentage: -1, position: -1 }).lean()) || fallbackAnyProd;
+
+    if (footballProd) productPriceHelper.priceNewOne(footballProd);
+    if (badmintonProd) productPriceHelper.priceNewOne(badmintonProd);
+    if (volleyballProd) productPriceHelper.priceNewOne(volleyballProd);
+    if (dealProd) productPriceHelper.priceNewOne(dealProd);
+
+    const defaultHeroSlides = [
+      {
+        badge: "🏆 BÓNG ĐÁ CHUYÊN NGHIỆP • MÙA GIẢI 2026",
+        title: "BỨT TỐC MỌI TRẬN ĐẤU<br>LÀM CHỦ SÂN CỎ",
+        description: "Bộ sưu tập giày đinh Nike Mercurial, Puma Future cao cấp cùng bóng thi đấu chuẩn FIFA và đồng phục CLB chính hãng.",
+        btnText: "Khám Phá Bóng Đá",
+        btnLink: "/category/bong-da",
+        secondaryBtnText: "Săn Voucher Hot",
+        secondaryBtnLink: "#voucher-vault",
+        image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1920&auto=format&fit=crop&q=85",
+        showcaseTag: "🔥 BEST SELLER SÂN CỎ",
+        showcaseTitle: footballProd ? footballProd.title : "Giày đá bóng Nike Mercurial Superfly 9 Elite FG",
+        showcasePrice: footballProd ? formatVND(footballProd.priceNew) : "2.450.000đ",
+        showcaseOldPrice: footballProd && footballProd.discountPercentage > 0 ? formatVND(footballProd.price) : "",
+        showcaseImage: footballProd ? (footballProd.thumbnail || (footballProd.images && footballProd.images[0])) : "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80",
+        showcaseLink: footballProd ? `/product/detail/${footballProd.slug}` : "/product",
+      },
+      {
+        badge: "🏸 CẦU LÔNG QUỐC TẾ • TẤN CÔNG ĐỈNH CAO",
+        title: "SMASH UY LỰC<br>KIỂM SOÁT TỪNG ĐƯỜNG CẦU",
+        description: "Vợt carbon Yonex Astrox, Lining Axforce trợ lực đầm đầu, giày bám thảm Power Cushion và phụ kiện thi đấu quốc tế.",
+        btnText: "Xem Đồ Cầu Lông",
+        btnLink: "/category/cau-long",
+        secondaryBtnText: "Voucher Giảm 50%",
+        secondaryBtnLink: "#voucher-vault",
+        image: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=1920&auto=format&fit=crop&q=85",
+        showcaseTag: "⚡ SIÊU PHẨM CẦU LÔNG",
+        showcaseTitle: badmintonProd ? badmintonProd.title : "Vợt Cầu Lông Yonex Astrox 100ZZ Kurenai",
+        showcasePrice: badmintonProd ? formatVND(badmintonProd.priceNew) : "3.890.000đ",
+        showcaseOldPrice: badmintonProd && badmintonProd.discountPercentage > 0 ? formatVND(badmintonProd.price) : "",
+        showcaseImage: badmintonProd ? (badmintonProd.thumbnail || (badmintonProd.images && badmintonProd.images[0])) : "https://images.unsplash.com/photo-1613918431703-aa503f5e55e0?w=600&auto=format&fit=crop&q=80",
+        showcaseLink: badmintonProd ? `/product/detail/${badmintonProd.slug}` : "/product",
+      },
+      {
+        badge: "🏐 BÓNG CHUYỀN CHUYÊN NGHIỆP • BẬT NHẢY TỐI ĐA",
+        title: "BẬT CAO DỨT ĐIỂM<br>CHINH PHỤC LƯỚI ĐẤU",
+        description: "Giày bóng chuyền Asics Metarise, Mizuno Wave Momentum đệm Gel giảm chấn, bảo hộ khớp gối và bóng thi đấu Mikasa chính hãng.",
+        btnText: "Xem Đồ Bóng Chuyền",
+        btnLink: "/category/bong-chuyen",
+        secondaryBtnText: "Ưu Đãi Hôm Nay",
+        secondaryBtnLink: "#voucher-vault",
+        image: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=1920&auto=format&fit=crop&q=85",
+        showcaseTag: "🚀 ĐỆM BẬT POWER CUSHION",
+        showcaseTitle: volleyballProd ? volleyballProd.title : "Giày Bóng Chuyền Asics Metarise Sunrise Red",
+        showcasePrice: volleyballProd ? formatVND(volleyballProd.priceNew) : "2.950.000đ",
+        showcaseOldPrice: volleyballProd && volleyballProd.discountPercentage > 0 ? formatVND(volleyballProd.price) : "",
+        showcaseImage: volleyballProd ? (volleyballProd.thumbnail || (volleyballProd.images && volleyballProd.images[0])) : "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=600&auto=format&fit=crop&q=80",
+        showcaseLink: volleyballProd ? `/product/detail/${volleyballProd.slug}` : "/product",
+      },
+      {
+        badge: "⚡ FLASH SALE HÔM NAY • GIẢM ĐẾN 50%",
+        title: "BỘ SƯU TẬP 2026<br>KHẲNG ĐỊNH ĐẲNG CẤP",
+        description: "Trang bị thể thao chính hãng cao cấp từ Nike, Adidas, Yonex, Mizuno với giá ưu đãi độc quyền chỉ có tại TitiSport.",
+        btnText: "Săn Flash Sale Ngay",
+        btnLink: "/product",
+        secondaryBtnText: "Kho Voucher Ví",
+        secondaryBtnLink: "#voucher-vault",
+        image: "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=1920&auto=format&fit=crop&q=85",
+        showcaseTag: "💥 GIỜ VÀNG GIÁ SỐC",
+        showcaseTitle: dealProd ? dealProd.title : "Giày Đá Bóng Adidas Predator 24 Elite",
+        showcasePrice: dealProd ? formatVND(dealProd.priceNew) : "3.250.000đ",
+        showcaseOldPrice: dealProd && dealProd.discountPercentage > 0 ? formatVND(dealProd.price) : "",
+        showcaseImage: dealProd ? (dealProd.thumbnail || (dealProd.images && dealProd.images[0])) : "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80",
+        showcaseLink: dealProd ? `/product/detail/${dealProd.slug}` : "/product",
+      },
+    ];
+
+    const hasValidRealSlides =
+      Array.isArray(settingWebsiteInfo.heroSlides) &&
+      settingWebsiteInfo.heroSlides.length >= 3 &&
+      settingWebsiteInfo.heroSlides.every(
+        (s) => s.image && typeof s.image === "string" && s.image.startsWith("http") && s.showcaseTitle && s.showcaseImage
+      );
+
+    const heroSlides = hasValidRealSlides ? settingWebsiteInfo.heroSlides : defaultHeroSlides;
+
+    // Tự động đồng bộ vào MongoDB nếu trong CSDL chưa có dữ liệu banner thật đầy đủ
+    if (!hasValidRealSlides) {
+      await SettingWebsiteInfo.updateOne(
+        {},
+        {
+          $set: {
+            heroSlides: defaultHeroSlides,
+            heroImage: defaultHeroSlides[0].image,
+            heroBadge: defaultHeroSlides[0].badge,
+            heroTitle: defaultHeroSlides[0].title,
+            heroDescription: defaultHeroSlides[0].description,
+            heroBtnText: defaultHeroSlides[0].btnText,
+            heroBtnLink: defaultHeroSlides[0].btnLink,
+            promoBannerImage:
+              settingWebsiteInfo.promoBannerImage && settingWebsiteInfo.promoBannerImage.startsWith("http")
+                ? settingWebsiteInfo.promoBannerImage
+                : "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=1600&auto=format&fit=crop&q=80",
+          },
+        }
+      ).catch((err) => console.error("Error updating heroSlides:", err));
+
+      if (res.locals.settingWebsiteInfo) {
+        res.locals.settingWebsiteInfo.heroSlides = defaultHeroSlides;
+        res.locals.settingWebsiteInfo.heroImage = defaultHeroSlides[0].image;
+      }
+    }
 
     // 1. Khám phá các bộ môn thể thao chính & Danh mục con (Sport Hub & Sub-categories)
     const rawParents = await Category.find({
@@ -311,6 +464,7 @@ module.exports.index = async (req, res) => {
 
     res.render("client/pages/home.pug", {
       title: "Trang chủ",
+      heroSlides: heroSlides,
       sportHubList: sportHubList,
       categoryChildren: categoryChildren,
       couponList: couponList,

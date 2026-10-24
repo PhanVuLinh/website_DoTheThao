@@ -276,6 +276,10 @@ module.exports.index = async (req, res) => {
     topCustomers.forEach((c, idx) => {
       c.rank = idx + 1;
       c.lastOrderFormatted = moment(c.lastOrderDate).format("DD/MM/YYYY");
+      const nameParts = (c.fullName || "").trim().split(/\s+/);
+      c.initials = nameParts.length >= 2
+        ? (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
+        : (nameParts[0] ? nameParts[0].slice(0, 2).toUpperCase() : "VIP");
     });
 
     // 8. Tồn kho cảnh báo
@@ -295,9 +299,23 @@ module.exports.index = async (req, res) => {
       if (allZero) lowStockSummary.outOfStockCount++;
     });
 
+    // 9. Tính toán các chỉ số vận hành mở rộng (Executive Operational Health)
+    const cancelRate = orders.length > 0 ? Math.round((orderStatusCounts.cancel / orders.length) * 100) : 0;
+    const avgOrdersPerDay = Math.round((orders.length / durationDays) * 10) / 10;
+    const avgRevenuePerDay = durationDays > 0 ? Math.round(grossRevenue / durationDays) : 0;
+
+    let peakRevenueDay = { date: "Chưa có", revenue: 0, orders: 0 };
+    for (const [dateKey, val] of Object.entries(dateMap)) {
+      if (val.revenue > peakRevenueDay.revenue) {
+        peakRevenueDay = { date: dateKey, revenue: val.revenue, orders: val.orders };
+      }
+    }
+
+    const topCategory = categoryList.length > 0 ? categoryList[0] : null;
+
     // Render trang
     res.render("admin/pages/statistic.pug", {
-      title: "Báo cáo thống kê",
+      title: "Trung Tâm Báo Cáo & Thống Kê",
       activeMenu: "statistic",
       filter: {
         timeRange,
@@ -305,6 +323,7 @@ module.exports.index = async (req, res) => {
         endDate: moment(endDate).format("YYYY-MM-DD"),
         label: timeRangeLabel,
         durationDays,
+        nowFormatted: moment().utcOffset("+07:00").format("HH:mm - DD/MM/YYYY"),
       },
       kpi: {
         grossRevenue,
@@ -317,6 +336,11 @@ module.exports.index = async (req, res) => {
         totalSubtotal,
         totalItemsSold,
         completionRate,
+        cancelRate,
+        avgOrdersPerDay,
+        avgRevenuePerDay,
+        peakRevenueDay,
+        topCategory,
       },
       orderStatusCounts,
       paymentMethodMap,

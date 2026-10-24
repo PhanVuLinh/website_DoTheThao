@@ -6,8 +6,11 @@ block main
   +alert-error(3000)
 
   //- 1. HERO HEADER & BREADCRUMB
-  .dashboard-hero
+  .dashboard-hero.statistic-hero
     .hero-text
+      .hero-tag-badge
+        span.live-pulse-dot
+        span TRUNG TÂM PHÂN TÍCH TỔNG QUAN
       h1.page-title Trung Tâm Báo Cáo & Thống Kê
       p.page-subtitle Phân tích dữ liệu doanh thu, hiệu suất bán hàng, hành vi khách hàng và cơ cấu sản phẩm đa chiều.
     .hero-actions
@@ -15,7 +18,7 @@ block main
         i.fa-regular.fa-calendar-check
         span #{filter.label} (#{filter.durationDays} ngày)
       .dropdown.d-inline-block.export-dropdown-wrap
-        button.btn-export-revenue.dropdown-toggle#exportMenuBtn(type="button" data-bs-toggle="dropdown" aria-expanded="false")
+        button.btn-export-revenue#exportMenuBtn(type="button" aria-expanded="false")
           i.fa-solid.fa-file-excel
           span Xuất Excel Báo Cáo
           i.fa-solid.fa-chevron-down.ms-1
@@ -57,23 +60,42 @@ block main
 
   //- 2. BỘ LỌC THỜI GIAN CHUYÊN SÂU (ADVANCED TIME FILTER)
   .filter-action-card.statistic-filter-card
-    .filter-header-title
-      i.fa-solid.fa-filter
-      span BỘ LỌC THỜI GIAN THỐNG KÊ
+    .filter-card-header
+      .filter-header-title
+        i.fa-solid.fa-filter
+        span BỘ LỌC THỜI GIAN THỐNG KÊ
+      .filter-live-status
+        span.live-pulse-dot
+        span Đang xem: #{filter.label} • Cập nhật: #{filter.nowFormatted}
+
     .statistic-quick-ranges
-      a.quick-range-btn(href=`/${pathAdmin}/statistic?timeRange=today` class=(filter.timeRange === 'today' ? 'active' : '')) Hôm nay
-      a.quick-range-btn(href=`/${pathAdmin}/statistic?timeRange=7days` class=(filter.timeRange === '7days' ? 'active' : '')) 7 ngày qua
-      a.quick-range-btn(href=`/${pathAdmin}/statistic?timeRange=30days` class=(filter.timeRange === '30days' ? 'active' : '')) 30 ngày qua
-      a.quick-range-btn(href=`/${pathAdmin}/statistic?timeRange=thisMonth` class=(filter.timeRange === 'thisMonth' ? 'active' : '')) Tháng này
-      a.quick-range-btn(href=`/${pathAdmin}/statistic?timeRange=lastMonth` class=(filter.timeRange === 'lastMonth' ? 'active' : '')) Tháng trước
-      a.quick-range-btn(href=`/${pathAdmin}/statistic?timeRange=thisYear` class=(filter.timeRange === 'thisYear' ? 'active' : '')) Năm nay
+      a.quick-range-btn(href=`/${pathAdmin}/statistic?timeRange=today` class=(filter.timeRange === 'today' ? 'active' : ''))
+        i.fa-regular.fa-clock.me-1
+        | Hôm nay
+      a.quick-range-btn(href=`/${pathAdmin}/statistic?timeRange=7days` class=(filter.timeRange === '7days' ? 'active' : ''))
+        i.fa-solid.fa-calendar-week.me-1
+        | 7 ngày qua
+      a.quick-range-btn(href=`/${pathAdmin}/statistic?timeRange=30days` class=(filter.timeRange === '30days' ? 'active' : ''))
+        i.fa-regular.fa-calendar-days.me-1
+        | 30 ngày qua
+      a.quick-range-btn(href=`/${pathAdmin}/statistic?timeRange=thisMonth` class=(filter.timeRange === 'thisMonth' ? 'active' : ''))
+        i.fa-regular.fa-calendar.me-1
+        | Tháng này
+      a.quick-range-btn(href=`/${pathAdmin}/statistic?timeRange=lastMonth` class=(filter.timeRange === 'lastMonth' ? 'active' : ''))
+        i.fa-solid.fa-backward.me-1
+        | Tháng trước
+      a.quick-range-btn(href=`/${pathAdmin}/statistic?timeRange=thisYear` class=(filter.timeRange === 'thisYear' ? 'active' : ''))
+        i.fa-solid.fa-calendar-check.me-1
+        | Năm nay
 
     form.statistic-custom-range-form(action=`/${pathAdmin}/statistic` method="GET")
       input(type="hidden" name="timeRange" value="custom")
       .date-input-group
+        i.fa-regular.fa-calendar.date-icon
         label Từ ngày:
         input.form-control.date-picker(type="date" name="startDate" value=filter.startDate required)
       .date-input-group
+        i.fa-regular.fa-calendar.date-icon
         label Đến ngày:
         input.form-control.date-picker(type="date" name="endDate" value=filter.endDate required)
       button.btn-apply-filter(type="submit")
@@ -92,13 +114,15 @@ block main
       .widget-info
         span.label Tổng Doanh Thu Thực
         h3.value #{(kpi.grossRevenue || 0).toLocaleString('vi-VN')} đ
-        .growth-indicator(class=(kpi.revenueGrowth >= 0 ? 'text-success' : 'text-danger'))
-          if kpi.revenueGrowth >= 0
-            i.fa-solid.fa-arrow-trend-up
-            span  +#{kpi.revenueGrowth}% so với kỳ trước
-          else
-            i.fa-solid.fa-arrow-trend-down
-            span  #{kpi.revenueGrowth}% so với kỳ trước
+        .kpi-extra-row
+          .growth-indicator(class=(kpi.revenueGrowth >= 0 ? 'text-success' : 'text-danger'))
+            if kpi.revenueGrowth >= 0
+              i.fa-solid.fa-arrow-trend-up
+              span  +#{kpi.revenueGrowth}% so với kỳ trước
+            else
+              i.fa-solid.fa-arrow-trend-down
+              span  #{kpi.revenueGrowth}% so với kỳ trước
+          span.kpi-sub-pill TB: #{(kpi.avgRevenuePerDay || 0).toLocaleString('vi-VN')} đ/ngày
 
     .widget-card.widget-orders
       .widget-icon.bg-blue
@@ -106,7 +130,11 @@ block main
       .widget-info
         span.label Tổng Đơn / Hoàn Tất
         h3.value #{kpi.totalOrders} đơn
-        span.widget-subtext #{orderStatusCounts.done} đơn hoàn thành (#{kpi.completionRate}%)
+        .kpi-progress-bar-wrap(title=`Tỷ lệ giao hoàn tất: ${kpi.completionRate}%`)
+          .kpi-mini-track
+            .kpi-mini-fill.bg-emerald-fill(style=`width: ${kpi.completionRate}%`)
+          span.kpi-progress-text #{kpi.completionRate}%
+        span.widget-subtext #{orderStatusCounts.done} hoàn thành • #{orderStatusCounts.cancel} đã hủy (#{kpi.cancelRate}%)
 
     .widget-card.widget-kpi
       .widget-icon.bg-indigo
@@ -114,7 +142,9 @@ block main
       .widget-info
         span.label Giá Trị Đơn TB (AOV)
         h3.value #{(kpi.aov || 0).toLocaleString('vi-VN')} đ
-        span.widget-subtext Giảm giá: #{(kpi.totalDiscount || 0).toLocaleString('vi-VN')} đ
+        .kpi-extra-row
+          span.kpi-sub-pill.kpi-sub-pill-indigo Chi tiêu/đơn
+          span.widget-subtext Giảm giá: #{(kpi.totalDiscount || 0).toLocaleString('vi-VN')} đ
 
     .widget-card.widget-users
       .widget-icon.bg-amber
@@ -122,9 +152,47 @@ block main
       .widget-info
         span.label Đã Tiêu Thụ
         h3.value #{kpi.totalItemsSold} sp
-        span.widget-subtext Tồn kho cảnh báo: #{lowStockSummary.lowStockCount} sp
+        .kpi-extra-row
+          if lowStockSummary.lowStockCount > 0
+            span.kpi-alert-pill.kpi-alert-warning
+              i.fa-solid.fa-triangle-exclamation
+              span #{lowStockSummary.lowStockCount} sp sắp hết
+          else
+            span.kpi-alert-pill.kpi-alert-success
+              i.fa-solid.fa-circle-check
+              span Kho hàng an toàn
 
-  //- 4. KHỐI BIỂU ĐỒ TRỰC QUAN ĐA CHIỀU (INTERACTIVE CHARTS)
+  //- 4. THANH CHỈ SỐ VẬN HÀNH NHANH (EXECUTIVE OPERATIONAL HEALTH STRIP)
+  .statistic-health-strip
+    .health-metric-item
+      .health-icon.health-icon-done
+        i.fa-solid.fa-circle-check
+      .health-text
+        span.health-label Tỷ Lệ Hoàn Thành
+        strong.health-value.text-success #{kpi.completionRate}%
+    .health-divider
+    .health-metric-item
+      .health-icon.health-icon-speed
+        i.fa-solid.fa-truck-fast
+      .health-text
+        span.health-label Tần Suất Bán
+        strong.health-value #{kpi.avgOrdersPerDay} đơn/ngày
+    .health-divider
+    .health-metric-item
+      .health-icon.health-icon-cash
+        i.fa-solid.fa-wallet
+      .health-text
+        span.health-label Doanh Thu TB Ngày
+        strong.health-value #{(kpi.avgRevenuePerDay || 0).toLocaleString('vi-VN')} đ
+    .health-divider
+    .health-metric-item
+      .health-icon.health-icon-voucher
+        i.fa-solid.fa-ticket
+      .health-text
+        span.health-label Khách Đã Tiết Kiệm
+        strong.health-value.text-indigo #{(kpi.totalDiscount || 0).toLocaleString('vi-VN')} đ
+
+  //- 5. KHỐI BIỂU ĐỒ TRỰC QUAN ĐA CHIỀU (INTERACTIVE CHARTS)
   .chart-grid-row
     //- BIỂU ĐỒ 1: XU HƯỚNG DOANH THU & ĐƠN HÀNG THEO THỜI GIAN
     .chart-section.chart-main-span
@@ -135,6 +203,11 @@ block main
               i.fa-solid.fa-chart-area
             h2.section-title Xu Hướng Doanh Thu & Lượng Đơn
           p.section-desc Biểu đồ trực quan doanh thu bán hàng và số đơn phát sinh theo từng mốc thời gian
+        .section-header-right
+          if kpi.peakRevenueDay && kpi.peakRevenueDay.revenue > 0
+            .badge-peak-chip(title=`Ngày doanh thu cao nhất: ${kpi.peakRevenueDay.orders} đơn hàng`)
+              i.fa-solid.fa-fire-flame-curved
+              span Đỉnh: #{kpi.peakRevenueDay.date} (#{(kpi.peakRevenueDay.revenue || 0).toLocaleString('vi-VN')} đ)
       .chart-container-large(
         data-timeline-labels=charts.timelineLabels
         data-timeline-revenue=charts.timelineRevenue
@@ -151,6 +224,11 @@ block main
               i.fa-solid.fa-chart-pie
             h2.section-title Doanh Thu Theo Danh Mục
           p.section-desc Tỷ trọng đóng góp doanh số giữa các ngành hàng
+        .section-header-right
+          if kpi.topCategory
+            .badge-category-chip
+              i.fa-solid.fa-trophy
+              span #{kpi.topCategory.name}
       .chart-container-donut(
         data-category-labels=charts.categoryLabels
         data-category-revenue=charts.categoryRevenue
@@ -167,6 +245,10 @@ block main
               i.fa-solid.fa-list-check
             h2.section-title Phân Bổ Trạng Thái Đơn Hàng
           p.section-desc Tỷ lệ đơn hoàn tất, đang giao, chờ duyệt và đơn bị hủy
+        .section-header-right
+          .badge-status-chip
+            i.fa-solid.fa-shield-halved
+            span #{kpi.totalOrders} tổng đơn
       .chart-container-donut(
         data-status-done=orderStatusCounts.done
         data-status-shipping=orderStatusCounts.shipping
@@ -184,39 +266,46 @@ block main
               i.fa-solid.fa-credit-card
             h2.section-title Phương Thức Thanh Toán
           p.section-desc Tỷ trọng phương thức khách hàng lựa chọn chi trả
+        .section-header-right
+          .badge-payment-chip
+            i.fa-solid.fa-money-bill-wave
+            span #{(kpi.grossRevenue || 0).toLocaleString('vi-VN')} đ
       .chart-container-donut(
         data-payment-labels=charts.paymentLabels
         data-payment-revenue=charts.paymentRevenue
       )
         canvas#paymentDoughnutChart
 
-  //- 5. BẢNG DỮ LIỆU PHÂN TÍCH CHUYÊN SÂU (TABS)
+  //- 6. BẢNG DỮ LIỆU PHÂN TÍCH CHUYÊN SÂU (TABS)
   .table-section.statistic-analysis-section
     .analysis-tabs-header
       button.analysis-tab-btn.active(data-tab="tab-top-products")
         i.fa-solid.fa-crown.text-warning.me-2
         span Top Sản Phẩm Bán Chạy
+        span.tab-count-badge #{topProducts ? topProducts.length : 0}
       button.analysis-tab-btn(data-tab="tab-top-customers")
         i.fa-solid.fa-users.text-primary.me-2
         span Khách Hàng Thân Thiết (VIP)
+        span.tab-count-badge #{topCustomers ? topCustomers.length : 0}
       button.analysis-tab-btn(data-tab="tab-categories")
         i.fa-solid.fa-layer-group.text-success.me-2
         span Doanh Thu Từng Danh Mục
+        span.tab-count-badge #{categoryList ? categoryList.length : 0}
 
     //- TAB 1: TOP SẢN PHẨM BÁN CHẠY
     .analysis-tab-content#tab-top-products.active
       if topProducts && topProducts.length
         .table-responsive
-          table.admin-table.table-hover
+          table.admin-table.table-hover.statistic-table
             thead
               tr
-                th(style="width: 70px; text-align: center;") Hạng
+                th(style="width: 75px; text-align: center;") Hạng
                 th Sản phẩm
                 th Danh mục
                 th Đơn giá
                 th(style="text-align: center;") Đã bán
                 th Doanh thu
-                th(style="width: 170px;") Tỷ trọng
+                th(style="width: 180px;") Tỷ trọng
                 th(style="text-align: center;") Chi tiết
             tbody
               each item in topProducts
@@ -226,6 +315,12 @@ block main
                       if item.rank === 1
                         i.fa-solid.fa-crown
                         |  #1
+                      else if item.rank === 2
+                        i.fa-solid.fa-medal
+                        |  #2
+                      else if item.rank === 3
+                        i.fa-solid.fa-award
+                        |  #3
                       else
                         | ##{item.rank}
                   td
@@ -234,25 +329,26 @@ block main
                         src=item.thumbnail 
                         alt=item.title 
                         onerror="this.src='https://placehold.co/80x80/e2e8f0/64748b?text=SP'"
+                        loading="lazy"
                       )
                       .prod-info
                         a.prod-name(href=`/product/detail/${item.slug}` target="_blank" title=item.title) #{item.title}
-                        span.prod-meta Thương hiệu: #{item.brand}
+                        span.prod-meta Thương hiệu: #{item.brand || 'Chính hãng'}
                   td
-                    span.badge-category #{item.categoryName}
+                    span.badge-category #{item.categoryName || 'Chưa phân loại'}
                   td
-                    span.font-weight-600 #{item.price.toLocaleString('vi-VN')} đ
+                    span.font-weight-600 #{(item.price || 0).toLocaleString('vi-VN')} đ
                   td(style="text-align: center;")
                     span.badge-sold-pill #{item.soldQuantity} sp
                   td
-                    span.text-price #{item.totalRevenue.toLocaleString('vi-VN')} đ
+                    span.text-price #{(item.totalRevenue || 0).toLocaleString('vi-VN')} đ
                   td
                     .sales-progress-box(title=`Chiếm ${item.percentage}% tổng lượng bán`)
                       .progress-track
                         .progress-bar-fill(style=`width: ${item.percentage}%`)
                       span.progress-text #{item.percentage}%
                   td(style="text-align: center;")
-                    a.btn-action.btn-view(href=`/product/detail/${item.slug}` target="_blank" title="Xem chi tiết")
+                    a.btn-action.btn-view(href=`/product/detail/${item.slug}` target="_blank" title="Xem chi tiết sản phẩm")
                       i.fa-regular.fa-eye
       else
         .admin-empty-state
@@ -265,10 +361,10 @@ block main
     .analysis-tab-content#tab-top-customers
       if topCustomers && topCustomers.length
         .table-responsive
-          table.admin-table.table-hover
+          table.admin-table.table-hover.statistic-table
             thead
               tr
-                th(style="width: 70px; text-align: center;") Hạng
+                th(style="width: 75px; text-align: center;") Hạng
                 th Khách hàng
                 th Số điện thoại
                 th Địa chỉ nhận hàng
@@ -279,22 +375,40 @@ block main
               each cust in topCustomers
                 tr
                   td(style="text-align: center;")
-                    span.rank-pill(class=`rank-${cust.rank}`) ##{cust.rank}
+                    span.rank-pill(class=`rank-${cust.rank}`)
+                      if cust.rank === 1
+                        i.fa-solid.fa-crown
+                        |  #1
+                      else if cust.rank === 2
+                        i.fa-solid.fa-medal
+                        |  #2
+                      else if cust.rank === 3
+                        i.fa-solid.fa-award
+                        |  #3
+                      else
+                        | ##{cust.rank}
                   td
-                    .customer-info
-                      span.font-weight-600 #{cust.fullName}
-                      if cust.email && cust.email !== '---'
-                        span.text-muted.font-12 #{cust.email}
+                    .customer-profile-cell
+                      .customer-avatar-circle(class=`avatar-bg-${cust.rank % 4}`)
+                        span #{cust.initials || 'VIP'}
+                      .customer-info
+                        span.font-weight-700 #{cust.fullName}
+                        if cust.email && cust.email !== '---'
+                          span.text-muted.font-12 #{cust.email}
                   td
-                    span.font-weight-600 #{cust.phone}
+                    .customer-phone-wrap
+                      i.fa-solid.fa-phone.phone-mini-icon
+                      span.font-weight-600 #{cust.phone}
                   td
-                    span.address-clamp #{cust.address}
+                    span.address-clamp(title=cust.address) #{cust.address}
                   td(style="text-align: center;")
                     span.badge-order-count #{cust.orderCount} đơn
                   td
-                    span.text-price #{cust.totalSpent.toLocaleString('vi-VN')} đ
+                    span.text-price #{(cust.totalSpent || 0).toLocaleString('vi-VN')} đ
                   td
-                    span.text-muted #{cust.lastOrderFormatted}
+                    .customer-last-date
+                      i.fa-regular.fa-clock.me-1
+                      span.text-muted #{cust.lastOrderFormatted}
       else
         .admin-empty-state
           .empty-icon
@@ -306,10 +420,10 @@ block main
     .analysis-tab-content#tab-categories
       if categoryList && categoryList.length
         .table-responsive
-          table.admin-table.table-hover
+          table.admin-table.table-hover.statistic-table
             thead
               tr
-                th STT
+                th(style="width: 70px; text-align: center;") STT
                 th Danh mục sản phẩm
                 th(style="text-align: center;") Số lượng bán
                 th Doanh thu ghi nhận
@@ -318,17 +432,20 @@ block main
               each cat, idx in categoryList
                 - var catPct = kpi.grossRevenue > 0 ? Math.round((cat.revenue / kpi.grossRevenue) * 100) : 0
                 tr
-                  td(style="text-align: center;") #{idx + 1}
+                  td(style="text-align: center;")
+                    span.stt-circle #{idx + 1}
                   td
-                    span.font-weight-600 #{cat.name}
+                    .category-table-item
+                      i.fa-solid.fa-layer-group.cat-icon
+                      span.font-weight-600 #{cat.name}
                   td(style="text-align: center;")
                     span.badge-sold-pill #{cat.quantity} sp
                   td
-                    span.text-price #{cat.revenue.toLocaleString('vi-VN')} đ
+                    span.text-price #{(cat.revenue || 0).toLocaleString('vi-VN')} đ
                   td
                     .sales-progress-box
                       .progress-track
-                        .progress-bar-fill(style=`width: ${catPct}%`)
+                        .progress-bar-fill.progress-cat-fill(style=`width: ${catPct}%`)
                       span.progress-text #{catPct}%
       else
         .admin-empty-state
@@ -337,5 +454,5 @@ block main
           h4.empty-title Chưa có dữ liệu danh mục
           p.empty-desc Chưa có đơn hàng thuộc danh mục nào trong khoảng thời gian đã chọn.
 
-  //- Include client script for Statistic
+block script
   script(src="/admin/assets/js/statistic.js")

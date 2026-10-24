@@ -1220,10 +1220,18 @@ mark.search-highlight {
   visibility: visible;
 }
 
-/* Modal Backdrops & SweetAlert2 in Client: Nền chỉ tối, KHÔNG làm mờ */
+/* Modal Backdrops & SweetAlert2 in Client: Nền chỉ tối, KHÔNG làm mờ (No blur cho tất cả modal/overlay) */
 .modal-backdrop,
+.ai-lab-backdrop,
+.quick-view-backdrop,
+.size-guide-modal-backdrop,
+.voucher-modal-backdrop,
+.filter-drawer-backdrop,
+.mobile-overlay,
+.header-search-backdrop,
+[class*="modal-backdrop"],
+[class*="-backdrop"],
 body:not(.swal2-toast-shown) .swal2-container.swal2-backdrop-show:not(.swal2-top-end):not(.swal2-top-right):not(.swal2-bottom-end):not(.swal2-bottom-right) {
-  background: rgba(15, 23, 42, 0.65) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
@@ -4261,8 +4269,8 @@ body.pro-arena-mode .swal2-popup.swal2-toast .swal2-title {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   z-index: 99998;
   display: none;
 }
@@ -6187,8 +6195,8 @@ label.review-label i {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   z-index: 99998;
   opacity: 0;
   visibility: hidden;
@@ -11171,8 +11179,8 @@ textarea.is-invalid {
     position: fixed;
     inset: 0;
     background: rgba(15, 23, 42, 0.55);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
     z-index: 10000;
     opacity: 0;
     visibility: hidden;
@@ -11439,8 +11447,8 @@ textarea.is-invalid {
     position: fixed;
     inset: 0;
     background: rgba(15, 23, 42, 0.55);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
     z-index: 10000;
     opacity: 0;
     visibility: hidden;
@@ -12981,7 +12989,8 @@ textarea.is-invalid {
   position: fixed;
   inset: 0;
   background-color: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(4px);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   z-index: 99999;
   display: flex;
   align-items: center;
@@ -15083,8 +15092,8 @@ textarea.is-invalid {
   position: fixed;
   inset: 0;
   background: rgba(8, 12, 22, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   animation: fadeIn 0.3s ease forwards;
 }
 
@@ -15855,8 +15864,8 @@ textarea.is-invalid {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .quick-view-dialog {

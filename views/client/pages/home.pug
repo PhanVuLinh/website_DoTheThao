@@ -5,7 +5,7 @@ block main
   //- ==========================================
   //- 1. BANNER CHÍNH & HERO CAROUSEL TRANG CHỦ
   //- ==========================================
-  - var activeHeroSlides = (settingWebsiteInfo && settingWebsiteInfo.heroSlides && settingWebsiteInfo.heroSlides.length > 0) ? settingWebsiteInfo.heroSlides : [{ badge: (settingWebsiteInfo && settingWebsiteInfo.heroBadge ? settingWebsiteInfo.heroBadge : "🏆 THẾ GIỚI ĐỒ THỂ THAO CHÍNH HÃNG"), title: (settingWebsiteInfo && settingWebsiteInfo.heroTitle ? settingWebsiteInfo.heroTitle : "BỨT PHÁ<br>MỌI GIỚI HẠN"), description: (settingWebsiteInfo && settingWebsiteInfo.heroDescription ? settingWebsiteInfo.heroDescription : "Trải nghiệm đẳng cấp với bộ sưu tập thể thao chính hãng mới nhất. Chất lượng vượt trội, thiết kế tối ưu cho mọi chuyển động."), btnText: (settingWebsiteInfo && settingWebsiteInfo.heroBtnText ? settingWebsiteInfo.heroBtnText : "Khám Phá Ngay"), btnLink: (settingWebsiteInfo && settingWebsiteInfo.heroBtnLink ? settingWebsiteInfo.heroBtnLink : "/product"), secondaryBtnText: "Săn Voucher Hot", secondaryBtnLink: "#voucher-vault", image: (settingWebsiteInfo ? settingWebsiteInfo.heroImage : ""), showcaseTag: "🔥 BEST SELLER MÙA GIẢI", showcaseTitle: "Nike Mercurial Superfly 9 Elite FG", showcasePrice: "2.450.000đ", showcaseOldPrice: "3.200.000đ", showcaseImage: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80", showcaseLink: "/product" }, { badge: "⚡ BẢO VỆ & BẬT NHẢY ĐỈNH CAO", title: "BẬT CAO<br>CHINH PHỤC ĐỈNH", description: "Dụng cụ và giày bóng chuyền chuyên nghiệp chuẩn thi đấu quốc tế. Êm ái, đàn hồi và bảo vệ khớp cổ chân tối đa.", btnText: "Xem Đồ Bóng Chuyền", btnLink: "/category/bong-chuyen", secondaryBtnText: "Ưu Đãi Hôm Nay", secondaryBtnLink: "#voucher-vault", image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&auto=format&fit=crop&q=80", showcaseTag: "⚡ GIỜ VÀNG GIÁ SỐC", showcaseTitle: "Mizuno Wave Momentum 3 Pro", showcasePrice: "2.450.000đ", showcaseOldPrice: "2.850.000đ", showcaseImage: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=600&auto=format&fit=crop&q=80", showcaseLink: "/product" }]
+  - var activeHeroSlides = (heroSlides && heroSlides.length > 0) ? heroSlides : ((settingWebsiteInfo && settingWebsiteInfo.heroSlides && settingWebsiteInfo.heroSlides.length > 0) ? settingWebsiteInfo.heroSlides : [])
 
   section.hero.hero-carousel-section
     .swiper.hero-swiper
@@ -13,7 +13,7 @@ block main
         each slide, idx in activeHeroSlides
           .swiper-slide.hero-slide
             if slide.image
-              img.hero__img(src=slide.image alt=(slide.title ? slide.title.replace(/<[^>]*>/g, '') : "Banner TitiSport"))
+              img.hero__img(src=slide.image alt=(slide.title ? slide.title.replace(/<[^>]*>/g, '') : "Banner TitiSport") onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1920&auto=format&fit=crop&q=85'")
             else if settingWebsiteInfo && settingWebsiteInfo.heroImage
               img.hero__img(src=settingWebsiteInfo.heroImage alt="Banner TitiSport")
             else
@@ -70,7 +70,7 @@ block main
                           span #{slide.showcaseTag}
                     if slide.showcaseImage
                       .spotlight-image-holder
-                        img(src=slide.showcaseImage alt=(slide.showcaseTitle || "Sản phẩm nổi bật") loading="lazy")
+                        img(src=slide.showcaseImage alt=(slide.showcaseTitle || "Sản phẩm nổi bật") loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80'")
                     .spotlight-info-box
                       h3.spotlight-item-name #{slide.showcaseTitle || "Sản Phẩm Thể Thao Mới Nhất"}
                       .spotlight-price-row
@@ -546,8 +546,8 @@ block main
       .banner-promo__container
         .banner-promo__inner
           a.banner-promo__link(href=(settingWebsiteInfo.promoBannerLink || "/product"))
-            if settingWebsiteInfo.promoBannerImage
-              img(src=settingWebsiteInfo.promoBannerImage alt=(settingWebsiteInfo.promoBannerTitle || "Banner Khuyến Mãi Đặc Biệt") loading="lazy")
+            - var promoImg = settingWebsiteInfo.promoBannerImage || "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=1600&auto=format&fit=crop&q=80"
+            img(src=promoImg alt=(settingWebsiteInfo.promoBannerTitle || "Banner Khuyến Mãi Đặc Biệt") loading="lazy")
             if settingWebsiteInfo.promoBannerTitle
               .banner-promo__glass-tag
                 i.fa-solid.fa-star

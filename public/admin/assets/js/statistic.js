@@ -11,43 +11,88 @@ document.addEventListener("DOMContentLoaded", function () {
   if (exportBtn && exportDropdown) {
     exportBtn.addEventListener("click", function (e) {
       e.stopPropagation();
-      exportDropdown.classList.toggle("show");
-      const menu = exportDropdown.querySelector(".export-dropdown-menu");
-      if (menu) menu.classList.toggle("show");
+      const isOpen = exportDropdown.classList.contains("show");
+      closeAllDropdowns();
+      if (!isOpen) {
+        exportDropdown.classList.add("show");
+        const menu = exportDropdown.querySelector(".export-dropdown-menu");
+        if (menu) menu.classList.add("show");
+      }
     });
 
     document.addEventListener("click", function (e) {
       if (!exportDropdown.contains(e.target)) {
-        exportDropdown.classList.remove("show");
-        const menu = exportDropdown.querySelector(".export-dropdown-menu");
-        if (menu) menu.classList.remove("show");
+        closeAllDropdowns();
       }
     });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        closeAllDropdowns();
+      }
+    });
+  }
+
+  function closeAllDropdowns() {
+    if (exportDropdown) {
+      exportDropdown.classList.remove("show");
+      const menu = exportDropdown.querySelector(".export-dropdown-menu");
+      if (menu) menu.classList.remove("show");
+    }
   }
 
   // 2. XỬ LÝ CHUYỂN TABS PHÂN TÍCH (TOP SẢN PHẨM / KHÁCH HÀNG VIP / DANH MỤC)
   const tabButtons = document.querySelectorAll(".analysis-tab-btn");
   const tabContents = document.querySelectorAll(".analysis-tab-content");
 
+  function switchTab(targetId) {
+    tabButtons.forEach((b) => b.classList.remove("active"));
+    tabContents.forEach((c) => c.classList.remove("active"));
+
+    const activeBtn = document.querySelector(`.analysis-tab-btn[data-tab="${targetId}"]`);
+    const targetContent = document.getElementById(targetId);
+
+    if (activeBtn) activeBtn.classList.add("active");
+    if (targetContent) targetContent.classList.add("active");
+  }
+
   tabButtons.forEach((btn) => {
     btn.addEventListener("click", function () {
       const targetId = this.dataset.tab;
-
-      tabButtons.forEach((b) => b.classList.remove("active"));
-      tabContents.forEach((c) => c.classList.remove("active"));
-
-      this.classList.add("active");
-      const targetContent = document.getElementById(targetId);
-      if (targetContent) targetContent.classList.add("active");
+      switchTab(targetId);
+      if (history.replaceState) {
+        history.replaceState(null, null, "#" + targetId);
+      }
     });
   });
 
-  // KIỂM TRA THƯ VIỆN CHART.JS
-  if (typeof Chart === "undefined") {
-    console.warn("Chart.js chưa được nạp. Bỏ qua khởi tạo biểu đồ thống kê.");
-    return;
+  // Khôi phục tab từ URL Hash nếu có
+  if (window.location.hash) {
+    const hash = window.location.hash.substring(1);
+    if (document.getElementById(hash)) {
+      switchTab(hash);
+    }
   }
 
+  // 3. KHỞI TẠO BIỂU ĐỒ CHART.JS (HỖ TRỢ TỰ ĐỘNG CHỜ THƯ VIỆN NẠP)
+  let retryCount = 0;
+  function ensureChartInit() {
+    if (typeof Chart === "undefined") {
+      if (retryCount < 20) {
+        retryCount++;
+        setTimeout(ensureChartInit, 100);
+      } else {
+        console.warn("Chart.js không thể nạp sau 20 lần thử. Bỏ qua khởi tạo biểu đồ.");
+      }
+      return;
+    }
+    initStatisticCharts();
+  }
+
+  ensureChartInit();
+});
+
+function initStatisticCharts() {
   // Cấu hình chung cho Chart.js
   Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif";
   Chart.defaults.color = "#64748b";
@@ -99,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
             hoverBackgroundColor: "rgba(16, 185, 129, 0.75)",
             borderColor: "#10b981",
             borderWidth: 1,
-            borderRadius: 4,
+            borderRadius: 5,
             barPercentage: 0.45,
             yAxisID: "yOrders",
             order: 2,
@@ -125,11 +170,12 @@ document.addEventListener("DOMContentLoaded", function () {
             },
           },
           tooltip: {
-            backgroundColor: "rgba(15, 23, 42, 0.92)",
+            backgroundColor: "rgba(15, 23, 42, 0.94)",
             titleFont: { size: 13, weight: "700" },
             bodyFont: { size: 12.5 },
             padding: 12,
-            cornerRadius: 8,
+            cornerRadius: 10,
+            boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
             callbacks: {
               label: function (context) {
                 if (context.dataset.yAxisID === "yRevenue") {
@@ -196,7 +242,6 @@ document.addEventListener("DOMContentLoaded", function () {
     ];
 
     if (labels.length === 0 || data.every((v) => v === 0)) {
-      // Dữ liệu trống
       new Chart(catCanvas, {
         type: "doughnut",
         data: {
@@ -235,10 +280,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 usePointStyle: true,
                 pointStyle: "circle",
                 padding: 12,
-                font: { size: 11, weight: "500" },
+                font: { size: 11.5, weight: "600" },
               },
             },
             tooltip: {
+              backgroundColor: "rgba(15, 23, 42, 0.94)",
+              padding: 12,
+              cornerRadius: 10,
               callbacks: {
                 label: function (ctx) {
                   const val = ctx.parsed || 0;
@@ -279,14 +327,14 @@ document.addEventListener("DOMContentLoaded", function () {
               : ["#10b981", "#f59e0b", "#2563eb", "#ef4444"],
             borderWidth: 2,
             borderColor: "#ffffff",
-            hoverOffset: 5,
+            hoverOffset: 6,
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: "65%",
+        cutout: "66%",
         plugins: {
           legend: {
             position: "bottom",
@@ -298,6 +346,9 @@ document.addEventListener("DOMContentLoaded", function () {
             },
           },
           tooltip: {
+            backgroundColor: "rgba(15, 23, 42, 0.94)",
+            padding: 12,
+            cornerRadius: 10,
             callbacks: {
               label: function (ctx) {
                 if (total === 0) return "Chưa có đơn hàng";
@@ -335,14 +386,14 @@ document.addEventListener("DOMContentLoaded", function () {
               : ["#3b82f6", "#06b6d4", "#10b981", "#8b5cf6"],
             borderWidth: 2,
             borderColor: "#ffffff",
-            hoverOffset: 5,
+            hoverOffset: 6,
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: "65%",
+        cutout: "66%",
         plugins: {
           legend: {
             position: "bottom",
@@ -354,6 +405,9 @@ document.addEventListener("DOMContentLoaded", function () {
             },
           },
           tooltip: {
+            backgroundColor: "rgba(15, 23, 42, 0.94)",
+            padding: 12,
+            cornerRadius: 10,
             callbacks: {
               label: function (ctx) {
                 if (total === 0) return "Chưa có doanh số";
@@ -367,4 +421,4 @@ document.addEventListener("DOMContentLoaded", function () {
       },
     });
   }
-});
+}

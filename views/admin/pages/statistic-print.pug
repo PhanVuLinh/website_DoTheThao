@@ -208,10 +208,10 @@ html(lang="vi")
           .summary-val(style="color: #10b981;") #{summary.completedCount} đơn
         .summary-card
           .summary-label Giá Trị Đơn TB (AOV)
-          .summary-val #{summary.aov.toLocaleString('vi-VN')} đ
+          .summary-val #{(summary.aov || 0).toLocaleString('vi-VN')} đ
         .summary-card
           .summary-label Doanh Thu Thực
-          .summary-val(style="color: #2563eb;") #{summary.grossRevenue.toLocaleString('vi-VN')} đ
+          .summary-val(style="color: #2563eb;") #{(summary.grossRevenue || 0).toLocaleString('vi-VN')} đ
 
       table.table-report
         thead
@@ -248,9 +248,9 @@ html(lang="vi")
                 td.text-right(style="font-weight: 600;") #{(ord.total || 0).toLocaleString('vi-VN')} đ
             tr.total-row
               td.text-right(colspan="6") TỔNG CỘNG THỰC THU (KHÔNG TÍNH ĐƠN HỦY):
-              td.text-right #{(summary.grossRevenue + summary.totalDiscount).toLocaleString('vi-VN')} đ
-              td.text-right #{summary.totalDiscount.toLocaleString('vi-VN')} đ
-              td.text-right(style="color: #2563eb; font-size: 13.5px;") #{summary.grossRevenue.toLocaleString('vi-VN')} đ
+              td.text-right #{(((summary.grossRevenue || 0) + (summary.totalDiscount || 0))).toLocaleString('vi-VN')} đ
+              td.text-right #{(summary.totalDiscount || 0).toLocaleString('vi-VN')} đ
+              td.text-right(style="color: #2563eb; font-size: 13.5px;") #{(summary.grossRevenue || 0).toLocaleString('vi-VN')} đ
           else
             tr
               td.text-center(colspan="9") Không có đơn hàng nào trong khoảng thời gian này.
